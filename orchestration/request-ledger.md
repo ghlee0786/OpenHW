@@ -77,6 +77,11 @@
 | F-008 | 사용자 허가 → orch (O-79) | firmware t18w | ffmpeg/ffprobe 사용자 홈 격리 설치(공식 링크 빌드·sha256), F-007 시험 재실행 | firmware/docs (새 레인) + C:/Users/gh/tools/ffmpeg | 설치 기록, 시험 종료 0, 커밋 | running |
 | R-019 | 사용자 결정 → orch | research t18s | G1·G2 문서 게이트: 짝 BTB 3자 대조(1번 핀·핀 배정·결합 높이·VIN 정격)·S401 홀더 제거 높이·광학 중심·CLA216 리드 커넥터 | docs/research/r019-doc-gates.* (새 레인) | 항목별 일치/불일치/미확인·근거, 커밋 | running |
 | M-006 | 사용자 결정 → orch | mechanical t18x | G1·G2 STEP 결합 교차 확인(코어 STEP↔보드 STEP, 센서 블록·초점) | mechanical/** (새 레인) | R-019와 같은 항목 표, 커밋 | running |
+| VD-001 | 사용자 지시 → lead → orch | 전 칸 | 가상 설계 완료·검증 조건 1~6 (orchestration/queues/VD-001-plan.md) | — | 조건별 기계 판정 + HTML 한 장 | running |
+| C-014 | orch (VD-001 1) | schematic t18z | 계약 v1.11↔회로도 넷리스트 기계 대조 + ERC·netcompare | hardware/schematic/tools (새 레인) | 불일치 수 종료 코드, 커밋 | running |
+| R-020 | orch (VD-001 4) | research t18s | 임피던스·차동 길이/skew·전원 IPC-2152 전류·전압 강하 계산 스크립트, 열 연결 | docs/research/r020 (새 레인) | 한도 초과 수 종료 코드, 커밋 | running |
+| M-007 | orch (VD-001 5) | mechanical t18x | 대체 3D 모델·전체 조립 STEP 틀·간섭/틈/플러그/광축/LED 가림/BTB 기계 판정·렌더 | mechanical/** (M-006 레인) | 실패 수 종료 코드, 커밋 | running |
+| V-006 | orch (VD-001 2·3·6) | review t191 | 완화↔D-003 대조·R-010 16항 자동 검사·VD-001 HTML 생성기 | docs/review, validation/runtime/vd001 (새 레인) | 고장 주입 시험, 커밋 | running |
 
 ## 운영 변경 (2026-11-26, 사용자 지시 · lead 전달)
 - 의견 묻지 않고 진행: 사람 쪽 미정값은 D-003(lead 레인 t-20261126-144135-5470 docs/decisions/D-003-working-defaults.md, 커밋 8ac5ce5) 값으로 확정 취급. 새 갈림길은 기본값 선택 → 아래 「분기 기록」에 분기점·선택·이유·차선책 → lead 요약 보고. 문제 시 해당 행으로 돌아가 차선책.
