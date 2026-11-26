@@ -9,7 +9,7 @@ COLORS = {  # 부품 → (R,G,B,불투명도)
     'LENS_WIN_PMMA': (200, 230, 255, 90), 'WIN_A_PMMA': (200, 230, 255, 90), 'WIN_B_PMMA': (200, 230, 255, 90),
     'ALS_WIN_PMMA': (200, 230, 255, 90), 'FOAM_LENS_RING': (10, 10, 10, 255), 'FOAM_ALS_GASKET': (10, 10, 10, 255),
     'SPREADER_M003': (170, 175, 180, 255), 'INS_PADS_P340': (150, 60, 160, 255), 'GAP_PAD_PX': (150, 60, 160, 255),
-    'HW_STANDOFFS': (200, 170, 60, 255), 'HW_SCREW_HEADS': (120, 120, 120, 255),
+    'HW_STANDOFFS': (200, 170, 60, 255), 'HW_M16_HEADS': (120, 120, 120, 255), 'HW_M25_NUTS': (120, 120, 120, 255),
 }
 
 
@@ -63,7 +63,7 @@ def run(_c):
         design.snapshots.add()
 
     # 이전 생성물 지우기
-    names = set(parts) | set(blocks) | {'ENC_BLOCKS', 'SPREADER_FLANGE_PX', 'AL_SIDE_PLATE'}
+    names = set(parts) | set(blocks) | {'ENC_BLOCKS', 'SPREADER_FLANGE_PX', 'AL_SIDE_PLATE', 'HW_SCREW_HEADS'}
     for o in [o for o in root.occurrences if o.component.name in names]:
         o.deleteMe()
 

@@ -21,7 +21,7 @@ def run(_c):
     hidden = []
     for o in root.allOccurrences:
         n = o.component.name
-        if n == 'ENC_BLOCKS' or any(h in n for h in HIDE):
+        if n in ('ENC_BLOCKS', 'PRINT_COUPON') or any(h in n for h in HIDE):
             if o.isLightBulbOn:
                 o.isLightBulbOn = False
                 hidden.append(o)

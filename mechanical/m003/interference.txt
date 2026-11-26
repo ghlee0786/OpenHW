@@ -1,4 +1,4 @@
-gen 27 / ref 143 bodies, hits involving generated: 4
+gen 28 / ref 143 bodies, hits involving generated: 4
 BLK_J3_PLUG <-> REF_STACK_M002b/HARNESS_CORRIDOR_MX : 0.314 mm3
 BLK_J3_PLUG <-> 본체1? : 9.719 mm3
 HW_STANDOFFS <-> REF_STACK_M002b/CORE_BOT_KEEPIN : 30.401 mm3

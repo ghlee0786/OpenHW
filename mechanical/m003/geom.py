@@ -114,7 +114,7 @@ def parts(d):
     bez = box(xo0, xo1, d['y_out_min'], d['y_out_hi'], zt, zo)
     ccuts = []
     # 렌즈 창 주머니 + 턱 개구
-    ccuts.append(zcyl(0, 0, zw, zo + 1, d['lens_win_d'] / 2 + 0.2))
+    ccuts.append(zcyl(0, 0, zw, zo + 1, d['lens_win_d'] / 2 + d['win_clr']))
     ccuts.append(zcyl(0, 0, zt - 1, zw + 0.01, d['lens_ap_d'] / 2))
     # LED A 창 (+Y), B 창 (−Y)
     ry = d['rib_y']
@@ -124,7 +124,7 @@ def parts(d):
     ccuts.append(box(xi0 + 1, xi1 - 1, d['b_pocket_y0'] + 1, -ry, zt - 1, zw + 0.01))
     # ALS 창 (1.5 깊이) + 관 안쪽
     (ax0, ax1), (ay0, ay1) = d['als_in']
-    ccuts.append(box(ax0 - 1.1, ax1 + 1.1, ay0 - 1.1, ay1 + 1.6, zo - 1.5, zo + 1))
+    ccuts.append(box(ax0 - 1.1, ax1 + 1.1, ay0 - 1.1, ay1 + 1.6, zo - 1.5, zo + 1))   # ALS 주머니 (창은 win_clr 만큼 작게)
     ccuts.append(box(ax0, ax1, ay0, ay1, d['z_fr_top'], zo - 1.49))
     # 덮개 나사 구멍 Ø2.8
     for (x, y) in d['cov_screws']:
@@ -135,17 +135,34 @@ def parts(d):
     als_tube = box(ax0 - w, ax1 + w, ay0 - w, ay1 + w, d['z_fr_top'] + d['als_gap'], zt + 0.1)
     P['FRONT_COVER'] = ('d', ('u', bez, tube, als_tube), *ccuts)
 
+    # ---------- 맞춤 시험 쿠폰 (FDM, 외함 옆 x +100 — 간섭 검사 제외) ----------
+    cx, cz = 100.0, d['z_back_out']
+    cp = [box(cx, cx + 80, -15, 15, cz, cz + 4.0)]
+    cc = []
+    cp.append(zcyl(cx + 8, 0, cz + 3.9, cz + 4.0 + 6.0, d['boss_d'] / 2))                      # M2.5 인서트 보스
+    cc.append(zcyl(cx + 8, 0, cz + 10.0 - d['ins_len'] - 1.0, cz + 11, d['ins_hole_d'] / 2))
+    cp.append(zcyl(cx + 24, 0, cz + 3.9, cz + 4.0 + 6.0, d['tripod_boss_d'] / 2))              # 1/4"-20 인서트 보스
+    cc.append(zcyl(cx + 24, 0, cz + 10.0 - 7.4, cz + 11, d['tripod_hole_d'] / 2))
+    cc.append(zcyl(cx + 38, -6, cz - 1, cz + 5, d['post_hole'] / 2))                         # M1.6 기둥 구멍
+    cc.append(zcyl(cx + 38, 6, cz - 1, cz + 5, 1.4))                                         # M2.5 틈새 Ø2.8
+    cc.append(zcyl(cx + 46, -6, cz - 1, cz + 1.0, d['post_cb_d'] / 2))                       # 카운터보어 Ø3.8
+    cc.append(zcyl(cx + 46, -6, cz - 1, cz + 5, d['post_hole'] / 2))
+    cc.append(zcyl(cx + 63, 0, cz + 1.0, cz + 5, d['lens_win_d'] / 2 + d['win_clr']))         # 렌즈 창 주머니 (깊이 3)
+    cc.append(zcyl(cx + 63, 0, cz - 1, cz + 1.01, d['lens_ap_d'] / 2))
+    P['PRINT_COUPON'] = ('d', ('u', *cp), *cc)
+
     # ---------- 창 (PMMA, 투명) ----------
     P['LENS_WIN_PMMA'] = zcyl(0, 0, zw, zo, d['lens_win_d'] / 2)
     wr = d['win_r']
-    P['WIN_A_PMMA'] = rbox_z(xi0 + 0.2, xi1 - 0.2, ry + 0.2, d['y_in_hi'] + 0.8, zw, zo, wr)
-    P['WIN_B_PMMA'] = rbox_z(xi0 + 0.2, xi1 - 0.2, d['b_pocket_y0'] + 0.2, -ry - 0.2, zw, zo, wr)
-    P['ALS_WIN_PMMA'] = rbox_z(ax0 - 0.9, ax1 + 0.9, ay0 - 0.9, ay1 + 1.4, zo - 1.5, zo, wr)
+    k = d['win_clr']
+    P['WIN_A_PMMA'] = rbox_z(xi0 + k, xi1 - k, ry + k, d['y_in_hi'] + 1.0 - k, zw, zo, wr)
+    P['WIN_B_PMMA'] = rbox_z(xi0 + k, xi1 - k, d['b_pocket_y0'] + k, -ry - k, zw, zo, wr)
+    P['ALS_WIN_PMMA'] = rbox_z(ax0 - 1.1 + k, ax1 + 1.1 - k, ay0 - 1.1 + k, ay1 + 1.6 - k, zo - 1.5, zo, wr)
     # ---------- 흑색 폼 ----------
     fi, fo, ft = d['lens_foam']
     zh = d['z_win_in'] - 0.5 - 1.4   # 렌즈 머리 앞면 = 돔 바닥 (M001: 38.785)
     P['FOAM_LENS_RING'] = ('d', zcyl(0, 0, zh, zt, fo), zcyl(0, 0, zh - 1, zt + 1, fi))
-    P['FOAM_ALS_GASKET'] = ('d', box(ax0 - w, ax1 + w, ay0 - w, ay1 + w, d['z_fr_top'], d['z_fr_top'] + d['als_gap']),
+    P['FOAM_ALS_GASKET'] = ('d', box(ax0 - w, ax1 + w, ay0 - w, ay1 + w, d['z_fr_top'], d['z_fr_top'] + d['als_gap']),   # 압축 상태 (자유 als_gasket_t)
                             box(ax0, ax1, ay0, ay1, d['z_fr_top'] - 1, d['z_fr_top'] + d['als_gap'] + 1))
     # ---------- 방열판 (판 + 일체 기둥 A/B + +X 플랜지) + 절연 패드 + 옆 갭 패드 ----------
     (fx0, fx1), (fy0, fy1), (fz0, fz1) = d['flange']
@@ -180,9 +197,9 @@ def parts(d):
     for (x, y) in d['holes']:
         heads.append(zcyl(x, y, d['z_fr_top'], d['z_fr_top'] + 1.6, 1.5))           # 전면 M1.6 머리
         heads.append(zcyl(x, y, zc - d['post_cb_top'] - 1.6, zc - d['post_cb_top'], 1.5))  # 뒤 M1.6×8 머리
-    for (y, z) in d['al_holes']:
-        heads.append(box(d['x_in_max'] - 2.0, d['x_in_max'], y - 2.5, y + 2.5, z - 2.5, z + 2.5))   # M2.5 너트 (안쪽)
-    P['HW_SCREW_HEADS'] = ('u', *heads)
+    P['HW_M16_HEADS'] = ('u', *heads)
+    nuts = [box(d['x_in_max'] - 2.0, d['x_in_max'], y - 2.5, y + 2.5, z - 2.5, z + 2.5) for (y, z) in d['al_holes']]   # M2.5 너트 (안쪽)
+    P['HW_M25_NUTS'] = ('u', *nuts)
     # ---------- 3D 모델 없는 부품 대체 블록 (간섭 검사용) ----------
     B = {}
     B['BLK_J5_RJ45'] = box(d['rj_x'][0], d['rj_x'][1], d['rj_y'][0], d['rj_y'][1], zc - d['rj_h'], zc)

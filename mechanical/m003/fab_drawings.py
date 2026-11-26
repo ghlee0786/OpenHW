@@ -75,9 +75,9 @@ ITEMS = []   # (파일, 그리기 함수, 제목, 노트)
 # ---- PMMA 창 (부품표 5–8) ----
 W = {
     'WIN_LENS': ('circle', d['lens_win_d'], d['win_t']),
-    'WIN_A': ('rrect', (xi1 - 0.2) - (xi0 + 0.2), (d['y_in_hi'] + 0.8) - (ry + 0.2), d['win_t']),
-    'WIN_B': ('rrect', (xi1 - 0.2) - (xi0 + 0.2), (-ry - 0.2) - (d['b_pocket_y0'] + 0.2), d['win_t']),
-    'WIN_ALS': ('rrect', (ax1 + 0.9) - (ax0 - 0.9), (ay1 + 1.4) - (ay0 - 0.9), 1.5),
+    'WIN_A': ('rrect', (xi1 - xi0) - 2 * d['win_clr'], (d['y_in_hi'] + 1.0 - ry) - 2 * d['win_clr'], d['win_t']),
+    'WIN_B': ('rrect', (xi1 - xi0) - 2 * d['win_clr'], (-ry - d['b_pocket_y0']) - 2 * d['win_clr'], d['win_t']),
+    'WIN_ALS': ('rrect', (ax1 - ax0 + 2.2) - 2 * d['win_clr'], (ay1 - ay0 + 2.7) - 2 * d['win_clr'], 1.5),
 }
 for name, spec in W.items():
     dx = DXF()
@@ -90,7 +90,7 @@ for name, spec in W.items():
 fi, fo, ft = d['lens_foam']
 dx = DXF(); dx.circle((0, 0), fo); dx.circle((0, 0), fi, 'HOLE'); dx.save('FOAM_LENS_RING_t%.1f.dxf' % ft)
 gw, gh = ax1 - ax0 + 2 * d['als_wall'], ay1 - ay0 + 2 * d['als_wall']
-dx = DXF(); dx.poly([(0, 0), (gw, 0), (gw, gh), (0, gh)]); dx.poly([(1, 1), (gw - 1, 1), (gw - 1, gh - 1), (1, gh - 1)], 'HOLE'); dx.save('FOAM_ALS_GASKET_t1.5.dxf')
+dx = DXF(); dx.poly([(0, 0), (gw, 0), (gw, gh), (0, gh)]); dx.poly([(1, 1), (gw - 1, 1), (gw - 1, gh - 1), (1, gh - 1)], 'HOLE'); dx.save('FOAM_ALS_GASKET_t%.1f.dxf' % d['als_gasket_t'])
 # ---- P340 패드 (11, 12) ----
 (nx0, nx1), (ny0, ny1) = d['b2_notch']
 PADS = {}
@@ -152,7 +152,7 @@ for name, spec in W.items():
         dim(ax, 0, spec[1], -2.5); dim(ax, 0, spec[2], -2, horiz=False)
         ax.set_xlim(-6, spec[1] + 4); ax.set_ylim(-6, spec[2] + 4)
     frame(ax, 'PMMA %s — t%.1f 투명, 모서리 R%.1f' % (name, spec[-1], wr if spec[0] != 'circle' else 0))
-    ax.text(0.02, 0.02, '레이저 컷 · 양면 보호지 유지(조립 직전 제거)\n외형 공차 ±0.1 (print-prep.md §5) · 버·녹은 자국 없이', transform=ax.transAxes, fontsize=5.5)
+    ax.text(0.02, 0.02, '레이저 컷 · 양면 보호지 유지(조립 직전 제거)\n외형 공차 ±0.25 (업체 표준) — 주머니 틈 %.2f/변 · 버·녹은 자국 없이' % d['win_clr'], transform=ax.transAxes, fontsize=5.5)
 ax = axs.flat[k]; k += 1
 ax.add_patch(plt.Circle((0, 0), fo, fill=False, lw=1)); ax.add_patch(plt.Circle((0, 0), fi, fill=False, lw=1, ec='#c0392b'))
 dim(ax, -fo, fo, -fo - 1.5, txt='OD %.1f' % (2 * fo)); dim(ax, -fi, fi, fi + 0.6, txt='ID %.1f' % (2 * fi))
@@ -160,7 +160,7 @@ frame(ax, '흑색 폼 렌즈 링 t%.1f → 0.7 압축 (30%%)' % ft); ax.set_xlim
 ax = axs.flat[k]; k += 1
 ax.add_patch(Rectangle((0, 0), gw, gh, fill=False, lw=1)); ax.add_patch(Rectangle((1, 1), gw - 2, gh - 2, fill=False, lw=1, ec='#c0392b'))
 dim(ax, 0, gw, -1.2); dim(ax, 0, gh, -1, horiz=False)
-frame(ax, '흑색 폼 ALS 개스킷 t1.5 → %.1f 압축 (20%%)' % d['als_gap']); ax.set_xlim(-4, gw + 3); ax.set_ylim(-4, gh + 2)
+frame(ax, '흑색 폼 ALS 개스킷 t%.1f → %.1f 압축 (%.0f%%)' % (d['als_gasket_t'], d['als_gap'], 100 * (1 - d['als_gap'] / d['als_gasket_t']))); ax.set_xlim(-4, gw + 3); ax.set_ylim(-4, gh + 2)
 for nm, pts in PADS.items():
     ax = axs.flat[k]; k += 1
     xs = [p[0] for p in pts] + [pts[0][0]]; ys = [p[1] for p in pts] + [pts[0][1]]

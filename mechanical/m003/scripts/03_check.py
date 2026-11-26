@@ -21,7 +21,7 @@ def run(_c):
             top = top.assemblyContext
         tn = top.component.name
         for b in o.bRepBodies:
-            if not b.isSolid or b.name.startswith('PRINT_TAB_'):   # 출력용 희생 기둥은 조립 전 잘라냄
+            if not b.isSolid or b.name.startswith(('PRINT_TAB_', 'PRINT_COUPON')):   # 출력용 희생 기둥은 조립 전 잘라냄
                 continue
             if tn.startswith('REF_'):
                 # KiCad 일반 DC 잭 모델은 XKB 블록으로 대체
