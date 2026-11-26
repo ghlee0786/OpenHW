@@ -38,10 +38,11 @@
 | M-002 | orch (P-003 Q3·Q4·Q5) | mechanical t18x | 캐리어 외형(40×54 vs 45×45)·FFC −X 경로·IR LED 열 접촉 자리 | mechanical/** (M-001 레인) | 외형·좌표·FFC 길이·열 자리, 커밋 | completed — 커밋 3f7ceee. 캐리어 40×54·전면 40×40, (+17,−17) 구멍 삭제, GH 6P 하니스 35mm, LED 열 경로 패드→Al 기둥→방열판→외함 (실측 판정) |
 | C-004 | orch (V-004 반영) | schematic t18z | R1~R13·K1~K4 수정: I2C2 풀업·X1 → CAM_1V8 스위칭(O-33), RESET 보호, TPS54302 Cff·출력 C, 5V_SYS TVS, DC 잭 풋프린트, microSD 소프트스타트, AL8860 L·D·C, USB_DET, DRV8837 IN 레벨, 계약 v1.4 | hardware/schematic/**, hardware/libraries/** (C-002 레인), 계약(C-001 레인) | 최종 커밋, 의도 차이 목록, ERC 0, pcb용 변경 부품표 | completed — 58eb49b (계약 v1.4 d159068), orch 재실행 ERC 0/0, carrier 91→97부품·front 78→83 |
 | V-004b | orch | review t191 | C-004 수정분 재검토 | validation/review-V004b-C004.md | 판정표, 레인·커밋 | completed — 6404bf7. ERC 0/0, 의도 밖 변경 0, 해소 R3·R4·R6·R7·R9·R11·R13·K1~K4·MODE, 부분/신규 N1(Q6 게이트 순서)·R2·R5·R8·R10·R12 |
-| R-008b | orch | research t18s | C-004 58eb49b 기준 BOM 재내보내기 + 남은 MPN 확인(RT9013-28GB·F1·C1·L1·SS24·22µF DC 바이어스·XKB 외곽·GH 케이블) | docs/research/bom-full.csv (R-008 레인) | 차이표, 21열, 커밋 | running (b3b376a 기준) |
+| R-008b | orch | research t18s | C-004 58eb49b 기준 BOM 재내보내기 + 남은 MPN 확인(RT9013-28GB·F1·C1·L1·SS24·22µF DC 바이어스·XKB 외곽·GH 케이블) | docs/research/bom-full.csv (R-008 레인) | 차이표, 21열, 커밋 | completed — 82e2bc6·a7ccff4(355ab3e 기준), 99행·21열 orch 확인, kicad-cli bom 0/0 |
 | C-005 | orch | schematic t18z | R-009·V-004b 반영: 전면 J2 PicoBlade(O-34), ALS-PT19 풋프린트, DC 잭 대조, V-004b 미해소 | hardware/schematic/**, hardware/libraries/** | ERC 0, 의도 차이, 부품표 | completed — b3b376a (계약 v1.5 a2b4945), orch 재실행 ERC 0/0, carrier 98·front 85부품, 라이브러리 silk 0 |
 | V-004c | orch | review t191 | C-005 수정분 재검토(N1 Q6 게이트·OE·SMBJ6.0A·R11·SSA24·F1·계약 v1.5) | validation/review-V004c-C005.md | 판정표, 레인·커밋 | completed — 레인 t-20261126-183643-3f9e 커밋 9b24181. 전부 해소, ERC 0/0, 의도 밖 변경 0. 권고 R17 10k → C-006 |
 | C-006 | orch (V-004c 권고) | schematic t18z | 전면 R17 100k → 10k (값만) | hardware/schematic/front (C-002 레인) | netcompare R17 값 1건, ERC 0, 커밋 | completed — 355ab3e (계약 v1.6 fb6629c), orch 재실행 front ERC 0 |
+| C-007 | orch | schematic t18z | 캐리어 5V 출력 22µF 1210 1개 추가, 전면 D1/D2 MPN SS24S-E3/61T | hardware/schematic/** (C-002 레인) | 의도 차이, ERC 0, 커밋 | running |
 
 ## 운영 변경 (2026-11-26, 사용자 지시 · lead 전달)
 - 의견 묻지 않고 진행: 사람 쪽 미정값은 D-003(lead 레인 t-20261126-144135-5470 docs/decisions/D-003-working-defaults.md, 커밋 8ac5ce5) 값으로 확정 취급. 새 갈림길은 기본값 선택 → 아래 「분기 기록」에 분기점·선택·이유·차선책 → lead 요약 보고. 문제 시 해당 행으로 돌아가 차선책.
@@ -90,6 +91,8 @@
 | O-34 | CLA216 리드 짝 커넥터 (계열 미확정, DocSend 미열람) | Molex PicoBlade 53261-0271 1안 | 도면 실측(칼라·레버 없음·비율)과 CLA214 사진 근거, LCSC 재고 | JST GH SM02B-GHS-TB / G2 실물 확인 전 PCB 확정 금지 |
 | O-35 | PCB 저속 넷 배선 방식 (pcb 결정 요청, de797f0) | 사용자 결정 대기 — 그동안 공통(고속 차동·BTB 탈출·전원·귀환) 진행, 공통 끝날 때까지 답 없으면 (B) 스크립트 배선 | (A) Freerouting+Java 21은 외부 도구 설치라 사용자 결정 | (A) 혼합 자동 배선 — lead가 사용자에게 (A) 권고로 올림, 승인 시 조건: 사용자 홈 아래 격리 설치(PATH·시스템 Java 불변)·버전/해시 기록·결과는 DRC·검토 대상, 최적 주장 금지 / (C) 사람 GUI 배선 |
 | O-36 | Q6 게이트 풀업 R17 값 (V-004c 선택 권고) | 10k | τ 81µs→8µs로 1V8 빠른 상승 시 순간 켜짐 방지, 값만 바뀌어 배선 영향 없음 | 100k 유지(S401 원값) |
+| O-37 | TPS54302 출력 C 실효 (R-008b: 3개 공칭 52.5µF, 공차·온도 최악 약 40µF < 44µF 추정) | 22µF 1210 1개 추가(4개) | 최악 조건 여유 확보, 부품 하나 | 3개 유지 + bring-up 실측 |
+| O-38 | 전면 D1/D2 품번 (SSA24-M3/61T 재고 0·리드타임 15주) | SS24S-E3/61T (같은 Vishay SMA 40V 2A, 재고 충분) | 조달 가능 | SSA24-M3/61T |
 
 ## 발주 패키지 직전 정리 목록
 - [ ] 회로도 표시 겹침: 캐리어 J2 옆 12V_IN_RAW 라벨, D3 PWR_LED 라벨, J1 품번 문자 (O-32)
@@ -97,3 +100,4 @@
 - [ ] 발주 게이트 G1 짝 BTB 실물 결합(1번 핀·VIN 정격) · G2 S401 홀더 분리·높이·강판 외곽·공동 깊이·DF30 결합 높이 실측 (O-17·O-26)
 - [ ] CLA216 리드 커넥터 계열 실물 확인(G2와 함께) — PicoBlade/GH (O-34)
 - [ ] 회로도 표제란 Rev가 C-005로 남음(C-006 값 변경 반영) — 최종 리비전 표기로 통일
+- [ ] GH 6P 하니스: AWG26 1:1 기성품 없음 → 자가 크림프(GHR-06V-S + SSHL-002T-P0.2), 전선 MPN 미확정 (R-008b)
