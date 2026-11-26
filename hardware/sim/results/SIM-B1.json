@@ -9,7 +9,7 @@
    "R2",
    "R3"
   ],
-  "schematic_commit": "7760f38"
+  "schematic_commit": "a2d878c"
  },
  "model": {
   "source": "계산 (ngspice .op)",

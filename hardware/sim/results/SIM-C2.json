@@ -13,7 +13,7 @@
    "R18",
    "R19"
   ],
-  "schematic_commit": "7760f38"
+  "schematic_commit": "a2d878c"
  },
  "model": {
   "source": "레벨 1 MOSFET (데이터시트 VGS(th) 최악·RDS(on) 최대 점 맞춤)",
