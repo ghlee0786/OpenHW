@@ -1,0 +1,3008 @@
+{
+ "head": "434e960",
+ "base": "656b50a",
+ "checks": [
+  {
+   "sec": "4절",
+   "item": "carrier J1-1 짝 핀",
+   "expected": "2",
+   "actual": "2",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "4절",
+   "item": "carrier J1-1 (USB_DN)",
+   "expected": "USB_DN",
+   "actual": "USB_DN",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "4절",
+   "item": "carrier J1-2 짝 핀",
+   "expected": "1",
+   "actual": "1",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "4절",
+   "item": "carrier J1-2 (EPHY_TXP)",
+   "expected": "EPHY_TXP",
+   "actual": "EPHY_TXP",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "4절",
+   "item": "carrier J1-3 짝 핀",
+   "expected": "4",
+   "actual": "4",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "4절",
+   "item": "carrier J1-3 (USB_DP)",
+   "expected": "USB_DP",
+   "actual": "USB_DP",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "4절",
+   "item": "carrier J1-4 짝 핀",
+   "expected": "3",
+   "actual": "3",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "4절",
+   "item": "carrier J1-4 (EPHY_TXN)",
+   "expected": "EPHY_TXN",
+   "actual": "EPHY_TXN",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "4절",
+   "item": "carrier J1-5 짝 핀",
+   "expected": "6",
+   "actual": "6",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "4절",
+   "item": "carrier J1-5 (GND)",
+   "expected": "GND",
+   "actual": "GND",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "4절",
+   "item": "carrier J1-6 짝 핀",
+   "expected": "5",
+   "actual": "5",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "4절",
+   "item": "carrier J1-6 (GND)",
+   "expected": "GND",
+   "actual": "GND",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "4절",
+   "item": "carrier J1-7 짝 핀",
+   "expected": "8",
+   "actual": "8",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "4절",
+   "item": "carrier J1-7 (RESERVE1)",
+   "expected": "RESERVE1",
+   "actual": "RESERVE1",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "4절",
+   "item": "carrier J1-8 짝 핀",
+   "expected": "7",
+   "actual": "7",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "4절",
+   "item": "carrier J1-8 (EPHY_RXP)",
+   "expected": "EPHY_RXP",
+   "actual": "EPHY_RXP",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "4절",
+   "item": "carrier J1-9 짝 핀",
+   "expected": "10",
+   "actual": "10",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "4절",
+   "item": "carrier J1-9 (RESERVE2)",
+   "expected": "RESERVE2",
+   "actual": "RESERVE2",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "4절",
+   "item": "carrier J1-10 짝 핀",
+   "expected": "9",
+   "actual": "9",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "4절",
+   "item": "carrier J1-10 (EPHY_RXN)",
+   "expected": "EPHY_RXN",
+   "actual": "EPHY_RXN",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "4절",
+   "item": "carrier J1-11 짝 핀",
+   "expected": "12",
+   "actual": "12",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "4절",
+   "item": "carrier J1-11 (SD1_CLK)",
+   "expected": "NC",
+   "actual": "NC",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "4절",
+   "item": "carrier J1-12 짝 핀",
+   "expected": "11",
+   "actual": "11",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "4절",
+   "item": "carrier J1-12 (GND)",
+   "expected": "GND",
+   "actual": "GND",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "4절",
+   "item": "carrier J1-13 짝 핀",
+   "expected": "14",
+   "actual": "14",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "4절",
+   "item": "carrier J1-13 (GND)",
+   "expected": "GND",
+   "actual": "GND",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "4절",
+   "item": "carrier J1-14 짝 핀",
+   "expected": "13",
+   "actual": "13",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "4절",
+   "item": "carrier J1-14 (USB_DET)",
+   "expected": "USB_DET",
+   "actual": "USB_DET",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "4절",
+   "item": "carrier J1-15 짝 핀",
+   "expected": "16",
+   "actual": "16",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "4절",
+   "item": "carrier J1-15 (SD1_CMD)",
+   "expected": "NC",
+   "actual": "NC",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "4절",
+   "item": "carrier J1-16 짝 핀",
+   "expected": "15",
+   "actual": "15",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "4절",
+   "item": "carrier J1-16 (MIPI_TXM2/IIC1_SDA/PWM)",
+   "expected": "I2C1_SDA",
+   "actual": "I2C1_SDA",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "4절",
+   "item": "carrier J1-17 짝 핀",
+   "expected": "18",
+   "actual": "18",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "4절",
+   "item": "carrier J1-17 (SD1_D0)",
+   "expected": "NC",
+   "actual": "NC",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "4절",
+   "item": "carrier J1-18 짝 핀",
+   "expected": "17",
+   "actual": "17",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "4절",
+   "item": "carrier J1-18 (MIPI_TXP2/IIC1_SCL/PWM)",
+   "expected": "I2C1_SCL",
+   "actual": "I2C1_SCL",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "4절",
+   "item": "carrier J1-19 짝 핀",
+   "expected": "20",
+   "actual": "20",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "4절",
+   "item": "carrier J1-19 (SD1_D1)",
+   "expected": "NC",
+   "actual": "NC",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "4절",
+   "item": "carrier J1-20 짝 핀",
+   "expected": "19",
+   "actual": "19",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "4절",
+   "item": "carrier J1-20 (MIPI_TXM1/IIC2_SDA/PWM)",
+   "expected": "SPARE1",
+   "actual": "SPARE1",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "4절",
+   "item": "carrier J1-21 짝 핀",
+   "expected": "22",
+   "actual": "22",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "4절",
+   "item": "carrier J1-21 (SD1_D2)",
+   "expected": "NC",
+   "actual": "NC",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "4절",
+   "item": "carrier J1-22 짝 핀",
+   "expected": "21",
+   "actual": "21",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "4절",
+   "item": "carrier J1-22 (MIPI_TXP1/IIC2_SCL/PWM)",
+   "expected": "IR_LED_EN",
+   "actual": "IR_LED_EN",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "4절",
+   "item": "carrier J1-23 짝 핀",
+   "expected": "24",
+   "actual": "24",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "4절",
+   "item": "carrier J1-23 (SD1_D3)",
+   "expected": "NC",
+   "actual": "NC",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "4절",
+   "item": "carrier J1-24 짝 핀",
+   "expected": "23",
+   "actual": "23",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "4절",
+   "item": "carrier J1-24 (MIPI_TXM0/GPIO12/PWM)",
+   "expected": "STATUS_LED",
+   "actual": "STATUS_LED",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "4절",
+   "item": "carrier J1-25 짝 핀",
+   "expected": "26",
+   "actual": "26",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "4절",
+   "item": "carrier J1-25 (GND)",
+   "expected": "GND",
+   "actual": "GND",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "4절",
+   "item": "carrier J1-26 짝 핀",
+   "expected": "25",
+   "actual": "25",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "4절",
+   "item": "carrier J1-26 (MIPI_TXM0/WL_BT_EN/GPIO13)",
+   "expected": "NC",
+   "actual": "NC",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "4절",
+   "item": "carrier J1-27 짝 핀",
+   "expected": "28",
+   "actual": "28",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "4절",
+   "item": "carrier J1-27 (+3V3)",
+   "expected": "CORE_3V3",
+   "actual": "CORE_3V3",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "4절",
+   "item": "carrier J1-28 짝 핀",
+   "expected": "27",
+   "actual": "27",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "4절",
+   "item": "carrier J1-28 (GND)",
+   "expected": "GND",
+   "actual": "GND",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "4절",
+   "item": "carrier J1-29 짝 핀",
+   "expected": "30",
+   "actual": "30",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "4절",
+   "item": "carrier J1-29 (VIN)",
+   "expected": "5V_SYS",
+   "actual": "5V_SYS",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "4절",
+   "item": "carrier J1-30 짝 핀",
+   "expected": "29",
+   "actual": "29",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "4절",
+   "item": "carrier J1-30 (GND)",
+   "expected": "GND",
+   "actual": "GND",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "4절",
+   "item": "carrier J1-31 짝 핀",
+   "expected": "32",
+   "actual": "32",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "4절",
+   "item": "carrier J1-31 (VIN)",
+   "expected": "5V_SYS",
+   "actual": "5V_SYS",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "4절",
+   "item": "carrier J1-32 짝 핀",
+   "expected": "31",
+   "actual": "31",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "4절",
+   "item": "carrier J1-32 (PWR_WAKEUP1)",
+   "expected": "ALS_INT_RSV",
+   "actual": "ALS_INT_RSV",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "4절",
+   "item": "carrier J1-33 짝 핀",
+   "expected": "34",
+   "actual": "34",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "4절",
+   "item": "carrier J1-33 (VIN)",
+   "expected": "5V_SYS",
+   "actual": "5V_SYS",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "4절",
+   "item": "carrier J1-34 짝 핀",
+   "expected": "33",
+   "actual": "33",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "4절",
+   "item": "carrier J1-34 (nRESET)",
+   "expected": "nRESET",
+   "actual": "nRESET",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "4절",
+   "item": "carrier J1-35 짝 핀",
+   "expected": "36",
+   "actual": "36",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "4절",
+   "item": "carrier J1-35 (VIN)",
+   "expected": "5V_SYS",
+   "actual": "5V_SYS",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "4절",
+   "item": "carrier J1-36 짝 핀",
+   "expected": "35",
+   "actual": "35",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "4절",
+   "item": "carrier J1-36 (UPGRAD_KEY)",
+   "expected": "UPGRAD_KEY",
+   "actual": "UPGRAD_KEY",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "4절",
+   "item": "carrier J1-37 짝 핀",
+   "expected": "38",
+   "actual": "38",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "4절",
+   "item": "carrier J1-37 (NC)",
+   "expected": "NC",
+   "actual": "NC",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "4절",
+   "item": "carrier J1-38 짝 핀",
+   "expected": "37",
+   "actual": "37",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "4절",
+   "item": "carrier J1-38 (SD0_PWR_EN)",
+   "expected": "SD0_PWR_EN",
+   "actual": "SD0_PWR_EN",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "4절",
+   "item": "carrier J1-39 짝 핀",
+   "expected": "40",
+   "actual": "40",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "4절",
+   "item": "carrier J1-39 (NC)",
+   "expected": "NC",
+   "actual": "NC",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "4절",
+   "item": "carrier J1-40 짝 핀",
+   "expected": "39",
+   "actual": "39",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "4절",
+   "item": "carrier J1-40 (SDIO_D3/3V3)",
+   "expected": "SDIO_D3",
+   "actual": "SDIO_D3",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "4절",
+   "item": "carrier J1-41 짝 핀",
+   "expected": "42",
+   "actual": "42",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "4절",
+   "item": "carrier J1-41 (NC)",
+   "expected": "NC",
+   "actual": "NC",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "4절",
+   "item": "carrier J1-42 짝 핀",
+   "expected": "41",
+   "actual": "41",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "4절",
+   "item": "carrier J1-42 (SDIO_D2/3V3)",
+   "expected": "SDIO_D2",
+   "actual": "SDIO_D2",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "4절",
+   "item": "carrier J1-43 짝 핀",
+   "expected": "44",
+   "actual": "44",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "4절",
+   "item": "carrier J1-43 (NC)",
+   "expected": "NC",
+   "actual": "NC",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "4절",
+   "item": "carrier J1-44 짝 핀",
+   "expected": "43",
+   "actual": "43",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "4절",
+   "item": "carrier J1-44 (SDIO_D1/3V3)",
+   "expected": "SDIO_D1",
+   "actual": "SDIO_D1",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "4절",
+   "item": "carrier J1-45 짝 핀",
+   "expected": "46",
+   "actual": "46",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "4절",
+   "item": "carrier J1-45 (NC)",
+   "expected": "NC",
+   "actual": "NC",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "4절",
+   "item": "carrier J1-46 짝 핀",
+   "expected": "45",
+   "actual": "45",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "4절",
+   "item": "carrier J1-46 (SDIO_D0/3V3)",
+   "expected": "SDIO_D0",
+   "actual": "SDIO_D0",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "4절",
+   "item": "carrier J1-47 짝 핀",
+   "expected": "48",
+   "actual": "48",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "4절",
+   "item": "carrier J1-47 (NC)",
+   "expected": "NC",
+   "actual": "NC",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "4절",
+   "item": "carrier J1-48 짝 핀",
+   "expected": "47",
+   "actual": "47",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "4절",
+   "item": "carrier J1-48 (SDIO_CMD/3V3)",
+   "expected": "SDIO_CMD",
+   "actual": "SDIO_CMD",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "4절",
+   "item": "carrier J1-49 짝 핀",
+   "expected": "50",
+   "actual": "50",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "4절",
+   "item": "carrier J1-49 (NC)",
+   "expected": "NC",
+   "actual": "NC",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "4절",
+   "item": "carrier J1-50 짝 핀",
+   "expected": "49",
+   "actual": "49",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "4절",
+   "item": "carrier J1-50 (GND)",
+   "expected": "GND",
+   "actual": "GND",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "4절",
+   "item": "carrier J1-51 짝 핀",
+   "expected": "52",
+   "actual": "52",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "4절",
+   "item": "carrier J1-51 (NC)",
+   "expected": "NC",
+   "actual": "NC",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "4절",
+   "item": "carrier J1-52 짝 핀",
+   "expected": "51",
+   "actual": "51",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "4절",
+   "item": "carrier J1-52 (SDIO_CLK/3V3)",
+   "expected": "SDIO_CLK",
+   "actual": "SDIO_CLK",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "4절",
+   "item": "carrier J1-53 짝 핀",
+   "expected": "54",
+   "actual": "54",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "4절",
+   "item": "carrier J1-53 (BT_UART1_RX)",
+   "expected": "UART1_RX",
+   "actual": "UART1_RX",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "4절",
+   "item": "carrier J1-54 짝 핀",
+   "expected": "53",
+   "actual": "53",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "4절",
+   "item": "carrier J1-54 (GND)",
+   "expected": "GND",
+   "actual": "GND",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "4절",
+   "item": "carrier J1-55 짝 핀",
+   "expected": "56",
+   "actual": "56",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "4절",
+   "item": "carrier J1-55 (BT_UART1_TX)",
+   "expected": "UART1_TX",
+   "actual": "UART1_TX",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "4절",
+   "item": "carrier J1-56 짝 핀",
+   "expected": "55",
+   "actual": "55",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "4절",
+   "item": "carrier J1-56 (SDIO_CD/3V3)",
+   "expected": "SDIO_CD",
+   "actual": "SDIO_CD",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "4절",
+   "item": "carrier J1-57 짝 핀",
+   "expected": "58",
+   "actual": "58",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "4절",
+   "item": "carrier J1-57 (BT_UART1_CTS)",
+   "expected": "UART1_CTS",
+   "actual": "UART1_CTS",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "4절",
+   "item": "carrier J1-58 짝 핀",
+   "expected": "57",
+   "actual": "57",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "4절",
+   "item": "carrier J1-58 (DEBUG_UART0_TX)",
+   "expected": "DEBUG_UART0_TX",
+   "actual": "DEBUG_UART0_TX",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "4절",
+   "item": "carrier J1-59 짝 핀",
+   "expected": "60",
+   "actual": "60",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "4절",
+   "item": "carrier J1-59 (BT_UART1_RTS)",
+   "expected": "UART1_RTS",
+   "actual": "UART1_RTS",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "4절",
+   "item": "carrier J1-60 짝 핀",
+   "expected": "59",
+   "actual": "59",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "4절",
+   "item": "carrier J1-60 (DEBUG_UART0_RX)",
+   "expected": "DEBUG_UART0_RX",
+   "actual": "DEBUG_UART0_RX",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "5절",
+   "item": "front J1-1 짝 핀",
+   "expected": "2",
+   "actual": "2",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "5절",
+   "item": "front J1-1 (RESERVE2)",
+   "expected": "NC",
+   "actual": "NC",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "5절",
+   "item": "front J1-2 짝 핀",
+   "expected": "1",
+   "actual": "1",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "5절",
+   "item": "front J1-2 (GND)",
+   "expected": "GND",
+   "actual": "GND",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "5절",
+   "item": "front J1-3 짝 핀",
+   "expected": "4",
+   "actual": "4",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "5절",
+   "item": "front J1-3 (RESERVE1)",
+   "expected": "NC",
+   "actual": "NC",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "5절",
+   "item": "front J1-4 짝 핀",
+   "expected": "3",
+   "actual": "3",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "5절",
+   "item": "front J1-4 (CAM_RX0_4N)",
+   "expected": "NC",
+   "actual": "NC",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "5절",
+   "item": "front J1-5 짝 핀",
+   "expected": "6",
+   "actual": "6",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "5절",
+   "item": "front J1-5 (WH_PWM)",
+   "expected": "WH_PWM",
+   "actual": "WH_PWM",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "5절",
+   "item": "front J1-6 짝 핀",
+   "expected": "5",
+   "actual": "5",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "5절",
+   "item": "front J1-6 (CAM_RX0_4P)",
+   "expected": "NC",
+   "actual": "NC",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "5절",
+   "item": "front J1-7 짝 핀",
+   "expected": "8",
+   "actual": "8",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "5절",
+   "item": "front J1-7 (GND)",
+   "expected": "GND",
+   "actual": "GND",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "5절",
+   "item": "front J1-8 짝 핀",
+   "expected": "7",
+   "actual": "7",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "5절",
+   "item": "front J1-8 (GND)",
+   "expected": "GND",
+   "actual": "GND",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "5절",
+   "item": "front J1-9 짝 핀",
+   "expected": "10",
+   "actual": "10",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "5절",
+   "item": "front J1-9 (CAM_I2C2_SCL)",
+   "expected": "CAM_I2C2_SCL",
+   "actual": "CAM_I2C2_SCL",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "5절",
+   "item": "front J1-10 짝 핀",
+   "expected": "9",
+   "actual": "9",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "5절",
+   "item": "front J1-10 (CAM_RX0_CLKN)",
+   "expected": "CAM_RX0_CLKN",
+   "actual": "CAM_RX0_CLKN",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "5절",
+   "item": "front J1-11 짝 핀",
+   "expected": "12",
+   "actual": "12",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "5절",
+   "item": "front J1-11 (CAM_I2C2_SDA)",
+   "expected": "CAM_I2C2_SDA",
+   "actual": "CAM_I2C2_SDA",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "5절",
+   "item": "front J1-12 짝 핀",
+   "expected": "11",
+   "actual": "11",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "5절",
+   "item": "front J1-12 (CAM_RX0_CLKP)",
+   "expected": "CAM_RX0_CLKP",
+   "actual": "CAM_RX0_CLKP",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "5절",
+   "item": "front J1-13 짝 핀",
+   "expected": "14",
+   "actual": "14",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "5절",
+   "item": "front J1-13 (GND)",
+   "expected": "GND",
+   "actual": "GND",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "5절",
+   "item": "front J1-14 짝 핀",
+   "expected": "13",
+   "actual": "13",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "5절",
+   "item": "front J1-14 (GND)",
+   "expected": "GND",
+   "actual": "GND",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "5절",
+   "item": "front J1-15 짝 핀",
+   "expected": "16",
+   "actual": "16",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "5절",
+   "item": "front J1-15 (IR_PWM)",
+   "expected": "IR_PWM",
+   "actual": "IR_PWM",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "5절",
+   "item": "front J1-16 짝 핀",
+   "expected": "15",
+   "actual": "15",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "5절",
+   "item": "front J1-16 (CAM_RX0_0N)",
+   "expected": "CAM_RX0_0N",
+   "actual": "CAM_RX0_0N",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "5절",
+   "item": "front J1-17 짝 핀",
+   "expected": "18",
+   "actual": "18",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "5절",
+   "item": "front J1-17 (LIGHT_SENSE)",
+   "expected": "LIGHT_SENSE",
+   "actual": "LIGHT_SENSE",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "5절",
+   "item": "front J1-18 짝 핀",
+   "expected": "17",
+   "actual": "17",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "5절",
+   "item": "front J1-18 (CAM_RX0_0P)",
+   "expected": "CAM_RX0_0P",
+   "actual": "CAM_RX0_0P",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "5절",
+   "item": "front J1-19 짝 핀",
+   "expected": "20",
+   "actual": "20",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "5절",
+   "item": "front J1-19 (NC)",
+   "expected": "NC",
+   "actual": "NC",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "5절",
+   "item": "front J1-20 짝 핀",
+   "expected": "19",
+   "actual": "19",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "5절",
+   "item": "front J1-20 (GND)",
+   "expected": "GND",
+   "actual": "GND",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "5절",
+   "item": "front J1-21 짝 핀",
+   "expected": "22",
+   "actual": "22",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "5절",
+   "item": "front J1-21 (NC)",
+   "expected": "NC",
+   "actual": "NC",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "5절",
+   "item": "front J1-22 짝 핀",
+   "expected": "21",
+   "actual": "21",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "5절",
+   "item": "front J1-22 (CAM_RX0_1N)",
+   "expected": "CAM_RX0_1N",
+   "actual": "CAM_RX0_1N",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "5절",
+   "item": "front J1-23 짝 핀",
+   "expected": "24",
+   "actual": "24",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "5절",
+   "item": "front J1-23 (NC)",
+   "expected": "NC",
+   "actual": "NC",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "5절",
+   "item": "front J1-24 짝 핀",
+   "expected": "23",
+   "actual": "23",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "5절",
+   "item": "front J1-24 (CAM_RX0_1P)",
+   "expected": "CAM_RX0_1P",
+   "actual": "CAM_RX0_1P",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "5절",
+   "item": "front J1-25 짝 핀",
+   "expected": "26",
+   "actual": "26",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "5절",
+   "item": "front J1-25 (NC)",
+   "expected": "NC",
+   "actual": "NC",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "5절",
+   "item": "front J1-26 짝 핀",
+   "expected": "25",
+   "actual": "25",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "5절",
+   "item": "front J1-26 (GND)",
+   "expected": "GND",
+   "actual": "GND",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "5절",
+   "item": "front J1-27 짝 핀",
+   "expected": "28",
+   "actual": "28",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "5절",
+   "item": "front J1-27 (NC)",
+   "expected": "NC",
+   "actual": "NC",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "5절",
+   "item": "front J1-28 짝 핀",
+   "expected": "27",
+   "actual": "27",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "5절",
+   "item": "front J1-28 (CAM_RX0_3N)",
+   "expected": "NC",
+   "actual": "NC",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "5절",
+   "item": "front J1-29 짝 핀",
+   "expected": "30",
+   "actual": "30",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "5절",
+   "item": "front J1-29 (NC)",
+   "expected": "NC",
+   "actual": "NC",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "5절",
+   "item": "front J1-30 짝 핀",
+   "expected": "29",
+   "actual": "29",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "5절",
+   "item": "front J1-30 (CAM_RX0_3P)",
+   "expected": "NC",
+   "actual": "NC",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "5절",
+   "item": "front J1-31 짝 핀",
+   "expected": "32",
+   "actual": "32",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "5절",
+   "item": "front J1-31 (NC)",
+   "expected": "NC",
+   "actual": "NC",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "5절",
+   "item": "front J1-32 짝 핀",
+   "expected": "31",
+   "actual": "31",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "5절",
+   "item": "front J1-32 (GND)",
+   "expected": "GND",
+   "actual": "GND",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "5절",
+   "item": "front J1-33 짝 핀",
+   "expected": "34",
+   "actual": "34",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "5절",
+   "item": "front J1-33 (GND)",
+   "expected": "GND",
+   "actual": "GND",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "5절",
+   "item": "front J1-34 짝 핀",
+   "expected": "33",
+   "actual": "33",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "5절",
+   "item": "front J1-34 (GPIO15/IR_CUT)",
+   "expected": "IR_CUT",
+   "actual": "IR_CUT",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "5절",
+   "item": "front J1-35 짝 핀",
+   "expected": "36",
+   "actual": "36",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "5절",
+   "item": "front J1-35 (GND)",
+   "expected": "GND",
+   "actual": "GND",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "5절",
+   "item": "front J1-36 짝 핀",
+   "expected": "35",
+   "actual": "35",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "5절",
+   "item": "front J1-36 (GND)",
+   "expected": "GND",
+   "actual": "GND",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "5절",
+   "item": "front J1-37 짝 핀",
+   "expected": "38",
+   "actual": "38",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "5절",
+   "item": "front J1-37 (VIN)",
+   "expected": "VIN",
+   "actual": "VIN",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "5절",
+   "item": "front J1-38 짝 핀",
+   "expected": "37",
+   "actual": "37",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "5절",
+   "item": "front J1-38 (GND)",
+   "expected": "GND",
+   "actual": "GND",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "5절",
+   "item": "front J1-39 짝 핀",
+   "expected": "40",
+   "actual": "40",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "5절",
+   "item": "front J1-39 (VIN)",
+   "expected": "VIN",
+   "actual": "VIN",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "5절",
+   "item": "front J1-40 짝 핀",
+   "expected": "39",
+   "actual": "39",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "5절",
+   "item": "front J1-40 (AUD_MIC)",
+   "expected": "NC",
+   "actual": "NC",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "5절",
+   "item": "front J1-41 짝 핀",
+   "expected": "42",
+   "actual": "42",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "5절",
+   "item": "front J1-41 (VIN)",
+   "expected": "VIN",
+   "actual": "VIN",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "5절",
+   "item": "front J1-42 짝 핀",
+   "expected": "41",
+   "actual": "41",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "5절",
+   "item": "front J1-42 (GND)",
+   "expected": "GND",
+   "actual": "GND",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "5절",
+   "item": "front J1-43 짝 핀",
+   "expected": "44",
+   "actual": "44",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "5절",
+   "item": "front J1-43 (VIN)",
+   "expected": "VIN",
+   "actual": "VIN",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "5절",
+   "item": "front J1-44 짝 핀",
+   "expected": "43",
+   "actual": "43",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "5절",
+   "item": "front J1-44 (AUD_AOUTR)",
+   "expected": "NC",
+   "actual": "NC",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "5절",
+   "item": "front J1-45 짝 핀",
+   "expected": "46",
+   "actual": "46",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "5절",
+   "item": "front J1-45 (GND)",
+   "expected": "GND",
+   "actual": "GND",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "5절",
+   "item": "front J1-46 짝 핀",
+   "expected": "45",
+   "actual": "45",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "5절",
+   "item": "front J1-46 (GND)",
+   "expected": "GND",
+   "actual": "GND",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "5절",
+   "item": "front J1-47 짝 핀",
+   "expected": "48",
+   "actual": "48",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "5절",
+   "item": "front J1-47 (GND)",
+   "expected": "GND",
+   "actual": "GND",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "5절",
+   "item": "front J1-48 짝 핀",
+   "expected": "47",
+   "actual": "47",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "5절",
+   "item": "front J1-48 (CAM_EN)",
+   "expected": "CAM_EN",
+   "actual": "CAM_EN",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "5절",
+   "item": "front J1-49 짝 핀",
+   "expected": "50",
+   "actual": "50",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "5절",
+   "item": "front J1-49 (1V8)",
+   "expected": "CORE_1V8",
+   "actual": "CORE_1V8",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "5절",
+   "item": "front J1-50 짝 핀",
+   "expected": "49",
+   "actual": "49",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "5절",
+   "item": "front J1-50 (NC)",
+   "expected": "NC",
+   "actual": "NC",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "5절",
+   "item": "front J1-51 짝 핀",
+   "expected": "52",
+   "actual": "52",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "5절",
+   "item": "front J1-51 (1V8)",
+   "expected": "CORE_1V8",
+   "actual": "CORE_1V8",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "5절",
+   "item": "front J1-52 짝 핀",
+   "expected": "51",
+   "actual": "51",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "5절",
+   "item": "front J1-52 (NC)",
+   "expected": "NC",
+   "actual": "NC",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "5절",
+   "item": "front J1-53 짝 핀",
+   "expected": "54",
+   "actual": "54",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "5절",
+   "item": "front J1-53 (GND)",
+   "expected": "GND",
+   "actual": "GND",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "5절",
+   "item": "front J1-54 짝 핀",
+   "expected": "53",
+   "actual": "53",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "5절",
+   "item": "front J1-54 (NC)",
+   "expected": "NC",
+   "actual": "NC",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "5절",
+   "item": "front J1-55 짝 핀",
+   "expected": "56",
+   "actual": "56",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "5절",
+   "item": "front J1-55 (GND)",
+   "expected": "GND",
+   "actual": "GND",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "5절",
+   "item": "front J1-56 짝 핀",
+   "expected": "55",
+   "actual": "55",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "5절",
+   "item": "front J1-56 (NC)",
+   "expected": "NC",
+   "actual": "NC",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "5절",
+   "item": "front J1-57 짝 핀",
+   "expected": "58",
+   "actual": "58",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "5절",
+   "item": "front J1-57 (3V3)",
+   "expected": "CORE_3V3",
+   "actual": "CORE_3V3",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "5절",
+   "item": "front J1-58 짝 핀",
+   "expected": "57",
+   "actual": "57",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "5절",
+   "item": "front J1-58 (NC)",
+   "expected": "NC",
+   "actual": "NC",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "5절",
+   "item": "front J1-59 짝 핀",
+   "expected": "60",
+   "actual": "60",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "5절",
+   "item": "front J1-59 (3V3)",
+   "expected": "CORE_3V3",
+   "actual": "CORE_3V3",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "5절",
+   "item": "front J1-60 짝 핀",
+   "expected": "59",
+   "actual": "59",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "5절",
+   "item": "front J1-60 (NC)",
+   "expected": "NC",
+   "actual": "NC",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "5.1",
+   "item": "front J3-1 (CAM_I2C2_SDA)",
+   "expected": "CAM_I2C2_SDA",
+   "actual": "CAM_I2C2_SDA",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "5.1",
+   "item": "front J3-2 (GND)",
+   "expected": "GND",
+   "actual": "GND",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "5.1",
+   "item": "front J3-3 (CAM_I2C2_SCL)",
+   "expected": "CAM_I2C2_SCL",
+   "actual": "CAM_I2C2_SCL",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "5.1",
+   "item": "front J3-4 (MCLK 24MHz (X1 → R18 0Ω))",
+   "expected": "CAM_MCLK",
+   "actual": "CAM_MCLK",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "5.1",
+   "item": "front J3-5 (CAM_RX0_0N (D0−))",
+   "expected": "CAM_RX0_0N",
+   "actual": "CAM_RX0_0N",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "5.1",
+   "item": "front J3-6 (GND)",
+   "expected": "GND",
+   "actual": "GND",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "5.1",
+   "item": "front J3-7 (CAM_RX0_0P (D0+))",
+   "expected": "CAM_RX0_0P",
+   "actual": "CAM_RX0_0P",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "5.1",
+   "item": "front J3-8 (GND)",
+   "expected": "GND",
+   "actual": "GND",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "5.1",
+   "item": "front J3-9 (CAM_RX0_CLKN)",
+   "expected": "CAM_RX0_CLKN",
+   "actual": "CAM_RX0_CLKN",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "5.1",
+   "item": "front J3-10 (GND)",
+   "expected": "GND",
+   "actual": "GND",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "5.1",
+   "item": "front J3-11 (CAM_RX0_CLKP)",
+   "expected": "CAM_RX0_CLKP",
+   "actual": "CAM_RX0_CLKP",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "5.1",
+   "item": "front J3-12 (AVDD 3.3V 전원 입력 (CORE_3V)",
+   "expected": "CAM_AVDD",
+   "actual": "CAM_AVDD",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "5.1",
+   "item": "front J3-13 (CAM_RX0_1N (D1−))",
+   "expected": "CAM_RX0_1N",
+   "actual": "CAM_RX0_1N",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "5.1",
+   "item": "front J3-14 (**IOVDD 3.3V 전원 입력** (신호)",
+   "expected": "CAM_IOVDD",
+   "actual": "CAM_IOVDD",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "5.1",
+   "item": "front J3-15 (CAM_RX0_1P (D1+))",
+   "expected": "CAM_RX0_1P",
+   "actual": "CAM_RX0_1P",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "5.1",
+   "item": "front J3-16 (DVDD → AVDD 레일 (S401과 같음)",
+   "expected": "CAM_AVDD",
+   "actual": "CAM_AVDD",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "5.1",
+   "item": "front J3-17 (GND)",
+   "expected": "GND",
+   "actual": "GND",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "5.1",
+   "item": "front J3-18 (GND)",
+   "expected": "GND",
+   "actual": "GND",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "5.1",
+   "item": "front J3-19 (GND)",
+   "expected": "GND",
+   "actual": "GND",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "5.1",
+   "item": "front J3-20 (GND)",
+   "expected": "GND",
+   "actual": "GND",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "5.1",
+   "item": "front J3-21 (GND)",
+   "expected": "GND",
+   "actual": "GND",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "5.1",
+   "item": "front J3-22 (GND)",
+   "expected": "GND",
+   "actual": "GND",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "5.1",
+   "item": "front J3-23 (GND)",
+   "expected": "GND",
+   "actual": "GND",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "5.1",
+   "item": "front J3-24 (**RESET** (V-002 ④ 확정) —)",
+   "expected": "CAM_RESET",
+   "actual": "CAM_RESET",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "5.1",
+   "item": "MCLK 직렬 저항 (X1 OUT → J3-4) 참조·값",
+   "expected": "R18 0R",
+   "actual": "R8 22R",
+   "ok": false,
+   "info": false
+  },
+  {
+   "sec": "6절",
+   "item": "CAM_I2C2_SDA 풀업 4.7k → CAM_1V8",
+   "expected": "4.7k",
+   "actual": "4.7k",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "6절",
+   "item": "CAM_I2C2_SCL 풀업 4.7k → CAM_1V8",
+   "expected": "4.7k",
+   "actual": "4.7k",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "13절 C18",
+   "item": "I2C2 풀업 레일 (C18 ④ 문구)",
+   "expected": "CORE_1V8",
+   "actual": "CAM_1V8",
+   "ok": false,
+   "info": false
+  },
+  {
+   "sec": "6절",
+   "item": "LTR-329 VDD = 전면 2.8V",
+   "expected": "FRONT_2V8",
+   "actual": "FRONT_2V8",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "6절",
+   "item": "LTR-329 SDA = CAM_I2C2",
+   "expected": "CAM_I2C2_SDA",
+   "actual": "CAM_I2C2_SDA",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "6절",
+   "item": "LTR-329 SCL = CAM_I2C2",
+   "expected": "CAM_I2C2_SCL",
+   "actual": "CAM_I2C2_SCL",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "7절",
+   "item": "ICR IN1: 코어 J1-33 ↔ front 34 짝",
+   "expected": "33",
+   "actual": "33",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "7절",
+   "item": "ICR IN1: front J1-34 넷",
+   "expected": "IR_CUT",
+   "actual": "IR_CUT",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "7절",
+   "item": "ICR IN1: 4·5절 표의 같은 핀 넷과 같음",
+   "expected": "IR_CUT",
+   "actual": "IR_CUT",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "7절",
+   "item": "ICR IN2: 코어 J1-6 ↔ front 5 짝",
+   "expected": "6",
+   "actual": "6",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "7절",
+   "item": "ICR IN2: front J1-5 넷",
+   "expected": "WH_PWM",
+   "actual": "WH_PWM",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "7절",
+   "item": "ICR IN2: 4·5절 표의 같은 핀 넷과 같음",
+   "expected": "WH_PWM",
+   "actual": "WH_PWM",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "7절",
+   "item": "IR LED 밝기: 코어 J1-16 ↔ front 15 짝",
+   "expected": "16",
+   "actual": "16",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "7절",
+   "item": "IR LED 밝기: front J1-15 넷",
+   "expected": "IR_PWM",
+   "actual": "IR_PWM",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "7절",
+   "item": "IR LED 밝기: 4·5절 표의 같은 핀 넷과 같음",
+   "expected": "IR_PWM",
+   "actual": "IR_PWM",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "7절",
+   "item": "IR LED 전원: 코어 J2-21 ↔ carrier 22 짝",
+   "expected": "21",
+   "actual": "21",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "7절",
+   "item": "IR LED 전원: carrier J1-22 넷",
+   "expected": "IR_LED_EN",
+   "actual": "IR_LED_EN",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "7절",
+   "item": "IR LED 전원: 4·5절 표의 같은 핀 넷과 같음",
+   "expected": "IR_LED_EN",
+   "actual": "IR_LED_EN",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "7절",
+   "item": "예비: 코어 J2-19 ↔ carrier 20 짝",
+   "expected": "19",
+   "actual": "19",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "7절",
+   "item": "예비: carrier J1-20 넷",
+   "expected": "SPARE1",
+   "actual": "SPARE1",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "7절",
+   "item": "예비: 4·5절 표의 같은 핀 넷과 같음",
+   "expected": "SPARE1",
+   "actual": "SPARE1",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "7절",
+   "item": "예비: 「FPC 8」 = 캐리어 J7-8",
+   "expected": "SPARE1",
+   "actual": "NC",
+   "ok": false,
+   "info": false
+  },
+  {
+   "sec": "7절",
+   "item": "상태 LED: 코어 J2-23 ↔ carrier 24 짝",
+   "expected": "23",
+   "actual": "23",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "7절",
+   "item": "상태 LED: carrier J1-24 넷",
+   "expected": "STATUS_LED",
+   "actual": "STATUS_LED",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "7절",
+   "item": "상태 LED: 4·5절 표의 같은 핀 넷과 같음",
+   "expected": "STATUS_LED",
+   "actual": "STATUS_LED",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "7절",
+   "item": "조도 INT 예비: 코어 J2-31 ↔ carrier 32 짝",
+   "expected": "31",
+   "actual": "31",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "7절",
+   "item": "조도 INT 예비: carrier J1-32 넷",
+   "expected": "ALS_INT_RSV",
+   "actual": "ALS_INT_RSV",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "7절",
+   "item": "조도 INT 예비: 4·5절 표의 같은 핀 넷과 같음",
+   "expected": "ALS_INT_RSV",
+   "actual": "ALS_INT_RSV",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "7절",
+   "item": "조도 INT 예비: 「FPC 7」 = 캐리어 J7-7",
+   "expected": "ALS_INT_RSV",
+   "actual": "NC",
+   "ok": false,
+   "info": false
+  },
+  {
+   "sec": "7절",
+   "item": "센서 전원·리셋: 코어 J1-47 ↔ front 48 짝",
+   "expected": "47",
+   "actual": "47",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "7절",
+   "item": "센서 전원·리셋: front J1-48 넷",
+   "expected": "CAM_EN",
+   "actual": "CAM_EN",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "7절",
+   "item": "센서 전원·리셋: 4·5절 표의 같은 핀 넷과 같음",
+   "expected": "CAM_EN",
+   "actual": "CAM_EN",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "7절",
+   "item": "업그레이드 버튼: 코어 J2-35 ↔ carrier 36 짝",
+   "expected": "35",
+   "actual": "35",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "7절",
+   "item": "업그레이드 버튼: carrier J1-36 넷",
+   "expected": "UPGRAD_KEY",
+   "actual": "UPGRAD_KEY",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "7절",
+   "item": "업그레이드 버튼: 4·5절 표의 같은 핀 넷과 같음",
+   "expected": "UPGRAD_KEY",
+   "actual": "UPGRAD_KEY",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "7절",
+   "item": "microSD 전원: 코어 J2-37 ↔ carrier 38 짝",
+   "expected": "37",
+   "actual": "37",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "7절",
+   "item": "microSD 전원: carrier J1-38 넷",
+   "expected": "SD0_PWR_EN",
+   "actual": "SD0_PWR_EN",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "7절",
+   "item": "microSD 전원: 4·5절 표의 같은 핀 넷과 같음",
+   "expected": "SD0_PWR_EN",
+   "actual": "SD0_PWR_EN",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "7절",
+   "item": "microSD 감지: 코어 J2-55 ↔ carrier 56 짝",
+   "expected": "55",
+   "actual": "55",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "7절",
+   "item": "microSD 감지: carrier J1-56 넷",
+   "expected": "SDIO_CD",
+   "actual": "SDIO_CD",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "7절",
+   "item": "microSD 감지: 4·5절 표의 같은 핀 넷과 같음",
+   "expected": "SDIO_CD",
+   "actual": "SDIO_CD",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "7절",
+   "item": "아날로그 조도 (차선): 코어 J1-18 ↔ front 17 짝",
+   "expected": "18",
+   "actual": "18",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "7절",
+   "item": "아날로그 조도 (차선): front J1-17 넷",
+   "expected": "LIGHT_SENSE",
+   "actual": "LIGHT_SENSE",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "7절",
+   "item": "아날로그 조도 (차선): 4·5절 표의 같은 핀 넷과 같음",
+   "expected": "LIGHT_SENSE",
+   "actual": "LIGHT_SENSE",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "4절",
+   "item": "용도 「SPARE1 → FPC 8」 = 캐리어 J7-8",
+   "expected": "SPARE1",
+   "actual": "NC",
+   "ok": false,
+   "info": false
+  },
+  {
+   "sec": "4절",
+   "item": "용도 「ALS_INT_RSV → FPC 7」 = 캐리어 J7-7",
+   "expected": "ALS_INT_RSV",
+   "actual": "NC",
+   "ok": false,
+   "info": false
+  },
+  {
+   "sec": "12A",
+   "item": "J7-1 넷",
+   "expected": "GND",
+   "actual": "GND",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "12A",
+   "item": "J4-6 넷",
+   "expected": "GND",
+   "actual": "GND",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "12A",
+   "item": "J7-1 ↔ J4-(7−n)",
+   "expected": "6",
+   "actual": "6",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "12A",
+   "item": "J7-2 넷",
+   "expected": "12V_IR",
+   "actual": "12V_IR",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "12A",
+   "item": "J4-5 넷",
+   "expected": "12V_IR",
+   "actual": "12V_IR",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "12A",
+   "item": "J7-2 ↔ J4-(7−n)",
+   "expected": "5",
+   "actual": "5",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "12A",
+   "item": "J7-3 넷",
+   "expected": "SPARE1",
+   "actual": "SPARE1",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "12A",
+   "item": "J4-4 넷",
+   "expected": "SPARE1",
+   "actual": "SPARE1",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "12A",
+   "item": "J7-3 ↔ J4-(7−n)",
+   "expected": "4",
+   "actual": "4",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "12A",
+   "item": "J7-3 캐리어 쪽 「캐리어 20」",
+   "expected": "SPARE1",
+   "actual": "SPARE1",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "12A",
+   "item": "J7-4 넷",
+   "expected": "ALS_INT_RSV",
+   "actual": "ALS_INT_RSV",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "12A",
+   "item": "J4-3 넷",
+   "expected": "ALS_INT_RSV",
+   "actual": "ALS_INT_RSV",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "12A",
+   "item": "J7-4 ↔ J4-(7−n)",
+   "expected": "3",
+   "actual": "3",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "12A",
+   "item": "J7-4 캐리어 쪽 「캐리어 32」",
+   "expected": "ALS_INT_RSV",
+   "actual": "ALS_INT_RSV",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "12A",
+   "item": "J7-5 넷",
+   "expected": "12V_IR",
+   "actual": "12V_IR",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "12A",
+   "item": "J4-2 넷",
+   "expected": "12V_IR",
+   "actual": "12V_IR",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "12A",
+   "item": "J7-5 ↔ J4-(7−n)",
+   "expected": "2",
+   "actual": "2",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "12A",
+   "item": "J7-6 넷",
+   "expected": "GND",
+   "actual": "GND",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "12A",
+   "item": "J4-1 넷",
+   "expected": "GND",
+   "actual": "GND",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "12A",
+   "item": "J7-6 ↔ J4-(7−n)",
+   "expected": "1",
+   "actual": "1",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "12A",
+   "item": "J7-MP 넷",
+   "expected": "GND",
+   "actual": "GND",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "12A",
+   "item": "J4-MP 넷",
+   "expected": "GND",
+   "actual": "GND",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "3.1·12절",
+   "item": "TPS26600 ILIM 저항",
+   "expected": "8.06k",
+   "actual": "8.06k",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "3.1·12절",
+   "item": "TPS26600 ILIM 저항",
+   "expected": "8.06k",
+   "actual": "8.06k",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "12절",
+   "item": "TPS26600 dVdT 커패시터",
+   "expected": "22nF",
+   "actual": "22nF",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "3.1·12절",
+   "item": "TPS26600 SHDN 넷",
+   "expected": "IR_LED_EN",
+   "actual": "IR_LED_EN",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "3.1·12절",
+   "item": "IR_LED_EN 풀다운",
+   "expected": "10k",
+   "actual": "10k",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "3.1·12절",
+   "item": "TPS26600 SHDN 넷",
+   "expected": "IR_LED_EN",
+   "actual": "IR_LED_EN",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "3.1·12절",
+   "item": "IR_LED_EN 풀다운",
+   "expected": "10k",
+   "actual": "10k",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "3.1",
+   "item": "5V_SYS 출력 커패시터 개수 (C7·C8·C20·C23)",
+   "expected": "4",
+   "actual": "4",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "3.1",
+   "item": "5V_SYS C7",
+   "expected": "22uF/25V on 5V_SYS",
+   "actual": "22uF/25V on 5V_SYS",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "3.1",
+   "item": "5V_SYS C8",
+   "expected": "22uF/25V on 5V_SYS",
+   "actual": "22uF/25V on 5V_SYS",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "3.1",
+   "item": "5V_SYS C20",
+   "expected": "22uF/25V on 5V_SYS",
+   "actual": "22uF/25V on 5V_SYS",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "3.1",
+   "item": "5V_SYS C23",
+   "expected": "22uF/25V on 5V_SYS",
+   "actual": "22uF/25V on 5V_SYS",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "12절",
+   "item": "TPS26600 UVLO → IN",
+   "expected": "12V_IN",
+   "actual": "12V_IN",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "12절",
+   "item": "TPS26600 OVP → RTN",
+   "expected": "GND",
+   "actual": "GND",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "3.1·12절",
+   "item": "TPS26600 MODE 개방",
+   "expected": "NC",
+   "actual": "NC",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "3.1",
+   "item": "5V 벅 출력 (R 100k 1%/13.3k 1%, VREF 0.596V) ±5% 안",
+   "expected": "True",
+   "actual": "True",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "3.1",
+   "item": "R17 값·넷",
+   "expected": "10k CAM_1V8_G-CORE_1V8",
+   "actual": "10k CAM_1V8_G-CORE_1V8",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "3.1",
+   "item": "Q6 품명",
+   "expected": "DMG2305UX",
+   "actual": "DMG2305UX",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "3.1",
+   "item": "Q6 S/G/D",
+   "expected": "CORE_1V8/CAM_1V8_G/CAM_1V8",
+   "actual": "CORE_1V8/CAM_1V8_G/CAM_1V8",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "3.1",
+   "item": "Q7 G / D",
+   "expected": "CAM_EN/CAM_1V8_G",
+   "actual": "CAM_EN/CAM_1V8_G",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "3.1",
+   "item": "FRONT_2V8 LDO 품명·VIN·VOUT",
+   "expected": "RT9013-28GB VIN FRONT_2V8",
+   "actual": "RT9013-28GB VIN FRONT_2V8",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "9절",
+   "item": "X1 OE / VDD",
+   "expected": "CAM_1V8/CAM_1V8",
+   "actual": "CAM_1V8/CAM_1V8",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "12절",
+   "item": "D7 품명·K 넷",
+   "expected": "SMBJ6.0A 5V_SYS",
+   "actual": "SMBJ6.0A 5V_SYS",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "12절",
+   "item": "12V 입력 TVS",
+   "expected": "SMBJ15A",
+   "actual": "SMBJ15A",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "12절",
+   "item": "F1 정격 2.5~3A 안 (3A slow-blow 63V)",
+   "expected": "True",
+   "actual": "True",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "7절",
+   "item": "IR_PWM 풀업 R12",
+   "expected": "100k CORE_1V8",
+   "actual": "100k CORE_1V8",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "7절",
+   "item": "UPGRAD_KEY 직렬 저항",
+   "expected": "1k",
+   "actual": "1k",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "4절",
+   "item": "USB_DET 분압 위",
+   "expected": "200k",
+   "actual": "200k",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "4절",
+   "item": "USB_DET 분압 아래",
+   "expected": "100k",
+   "actual": "100k",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "4절",
+   "item": "C22 USB_DET 필터",
+   "expected": "10nF USB_DET",
+   "actual": "10nF USB_DET",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "13절 C17",
+   "item": "U4 Rs (12V_IR–SET)",
+   "expected": "0.1R",
+   "actual": "0.1R",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "13절 C17",
+   "item": "U5 Rs (12V_IR–SET)",
+   "expected": "0.1R",
+   "actual": "0.1R",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "13절 C18",
+   "item": "AL8860 CTRL 공유 넷 = IR_PWM N-MOSFET 드레인",
+   "expected": "IR_CTRL",
+   "actual": "IR_CTRL",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "7절",
+   "item": "DRV8837 nSLEEP 풀업 → VCC",
+   "expected": "10k FRONT_2V8",
+   "actual": "10k FRONT_2V8",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "DNP",
+   "item": "3.1 「스트링 A·B 실장」: IR LED·AL8860 DNP 수",
+   "expected": "0",
+   "actual": "0",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "DNP",
+   "item": "13절 C19 「B는 DNP」: 스트링 B DNP 수",
+   "expected": "3",
+   "actual": "0",
+   "ok": false,
+   "info": false
+  },
+  {
+   "sec": "DNP",
+   "item": "5.1 RESET RC 저항 10k 실장",
+   "expected": "10k 실장",
+   "actual": "10k 실장",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "DNP",
+   "item": "5.1 RESET RC 커패시터 100nF DNP",
+   "expected": "100nF DNP",
+   "actual": "100nF 실장",
+   "ok": false,
+   "info": false
+  },
+  {
+   "sec": "DNP",
+   "item": "7절 LIGHT_SENSE 「미실장 패드」: 부품 모두 DNP",
+   "expected": "Q4,R11",
+   "actual": "Q4,R11",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "DNP",
+   "item": "carrier: 계약에 근거 문구가 없는 DNP (정보)",
+   "expected": "",
+   "actual": "C15,C16,R13,R14,R15,R16,R17",
+   "ok": false,
+   "info": true
+  },
+  {
+   "sec": "DNP",
+   "item": "front: 계약에 근거 문구가 없는 DNP (정보)",
+   "expected": "",
+   "actual": "C6,R16",
+   "ok": false,
+   "info": true
+  }
+ ],
+ "mismatches": 8,
+ "erc": {
+  "carrier": 0,
+  "front": 0
+ },
+ "netcompare": {
+  "carrier": 0,
+  "front": 0
+ },
+ "exit": 8
+}
