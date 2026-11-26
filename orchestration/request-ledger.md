@@ -14,8 +14,8 @@
 | P-001 | orch (단계 5 준비) | pcb t190 | PCBWay 공정 규칙·스택업·임피던스, 0.5mm 커넥터 조립 조건 → KiCad 규칙 제안 | hardware/pcb/fab-rules-pcbway.md | 규칙표 출처·확인일, 스택업 안, 레인·커밋 | completed — 레인 t-20261126-155216-aede 커밋 2d346ad, orch 재실행 microstrip_fd.py --check 종료 0 |
 | V-001 | orch | review t191 | R-002·R-003 핵심 6주장 독립 재확인 | validation/review-V001-R002-R003.md | 판정표·영향, 레인·커밋 | completed — 레인 t-20261126-155240-aa11 커밋 2a7bf47. ①②③ 일치(보완 있음) ④ 불일치(CIL327 HFOV 약 121°) ⑤⑥ 조건부 |
 | C-001b | orch | schematic t18z | 계약의 FW 확인 대기 열을 sdk-facts와 대조·확정 → 계약 v1 | hardware/schematic/hw-fw-contract.md (C-001 레인) | FW 대기 0 또는 사유, 커밋 | completed — 커밋 8613910 계약 v1(FW 대기 0, C-002 전 필요 6·실물 확인 6). ICR 1안 DRV8837(C13), IR 1.0A·직렬≤2(C17), 12V 최악 약 14.7W |
-| L-001 | orch (단계 4 준비) | schematic t18z | KiCad 라이브러리: AP1511B·AL8860·VSMA1085600·LTR-329·M12/ICR 홀더·FPC 10P (BTB·벅·RJ45·SD·센서는 의존 대기) | hardware/libraries/** | 핀↔패드 대조표, kicad-cli 결과, 레인·커밋 | running (G-001 KiCad GUI, 레인 t-20261126-161205-dcb9 — 창 뜸 확인 01-project.png) |
-| F-002 | orch | firmware t18w | reCamera-OS 0.2.4 원본 Docker 기준 빌드(slot 경유, 산출물은 저장소 밖) | firmware/docs/build-baseline.md, firmware/scripts/** | 종료 코드 0+해시 또는 실패 원인 판정, 레인·커밋 | running |
+| L-001 | orch (단계 4 준비) | schematic t18z | KiCad 라이브러리: AP1511B·AL8860·VSMA1085600·LTR-329·M12/ICR 홀더·FPC 10P (BTB·벅·RJ45·SD·센서는 의존 대기) | hardware/libraries/** | 핀↔패드 대조표, kicad-cli 결과, 레인·커밋 | completed — 커밋 90d24bd (계약 v1.1 be646c2). 공식 참조 4·신규 4·파생 3(Apache 고지), orch 재실행 fp export svg 종료 0. GUI 02·03 스크린샷은 화면 잠김으로 보류 → C-002에서 다시 |
+| F-002 | orch | firmware t18w | reCamera-OS 0.2.4 원본 Docker 기준 빌드(slot 경유, 산출물은 저장소 밖) | firmware/docs/build-baseline.md, firmware/scripts/** | 종료 코드 0+해시 또는 실패 원인 판정, 레인·커밋 | running — 중간 bd15815: 원인 A(slot 15분)·B(-j32 경합, -j1 선빌드로 해결)·C(호스트 메모리 부족) 각 1회, O-19로 재시작 |
 | R-006 | orch (V-001 ④⑥ 분기 복귀, O-8) | research t18s | 렌즈 재선정(GC2053 HFOV 85~95°, 왜곡 모델·BFL·IR 보정) + IR LED 조사각·개수(1.0A, 직렬 ≤2) | docs/research/optics-ir-r006.md (+csv) | 렌즈 1안·차선 계산 근거, LED 결론, 레인·커밋 | queued (R-004 뒤, R-005보다 먼저) |
 | M-001 | orch | mechanical t18x | 공개 STEP 측정 → 3층 적층·광축·IR LED·창·체결 기준안 (외함 아님) | mechanical/** | 측정표·기준안·Fusion MCP 결과, 레인·커밋 | completed — 레인 t-20261126-161155-50dc 커밋 ad23d15. Fusion MCP read·execute 성공, J1 윗면/J2 아랫면 독립 확인, 적층안 z·M1.6 나사·IR 후보 영역, 분기 K1~K8 |
 | G-001 | lead t18q (사용자 요청 2026-11-26) | schematic t18z | L-001·C-002를 KiCad 10 GUI로 보이게 진행, 단계별 스크린샷, GUI 단일 소유(pcb 금지 통지) | 스크린샷 C:/workspace_python/OpenHW/validation/runtime/kicad-gui/** (gitignore) | 창 뜸 즉시 보고 → lead 전달, ERC는 kicad-cli 종료 코드 | running (C-001b 뒤 L-001부터) |
@@ -23,6 +23,7 @@
 | M-001b | orch | mechanical t18x | 적층 갱신: 짝 BTB 높이 8.0 추정, 높이 매개변수화, DF30 모듈 자리 변수 | mechanical/** (M-001 레인) | z표·매개변수·간섭, 커밋 | completed — 커밋 fd9ed82. btb_h 8.0 기본(4.0/8.0 재생성 OK), 전체 39.9mm, 허용 높이 캐리어 윗면 ≤6.2·전면 아랫면 ≤5.2, 의도 외 간섭 0 |
 | P-002 | orch | pcb t190 | KiCad .kicad_dru·넷클래스·캐리어/전면 보드 외형(GUI 없이) | hardware/pcb/rules/**, hardware/pcb/outline/** | 파일·kicad-cli 결과, 레인·커밋 | completed — 레인 t-20261126-163344-acdf 커밋 022c364. 외형 40×40·4층·넷클래스, orch 재실행 kicad-cli pcb drc carrier 0·front 0 |
 | V-002 | orch | review t191 | R-004 핵심 6주장 독립 검증(BTB 원품번·HCTL 치수 대조·짝 높이·DF30 핀·재고·전원 IC 정격) | validation/review-V002-R004.md | 판정표·영향, 레인·커밋 | running |
+| C-002 | orch (단계 4) | schematic t18z | 캐리어·전면 보드 회로도(KiCad GUI), ERC·netlist | hardware/schematic/carrier/**, hardware/schematic/front/** (*.kicad_sch·*.kicad_pro) | 두 보드 ERC 종료 코드, netlist, 핀↔계약 대조표, 스크린샷 목록, 레인·커밋 | running |
 
 ## 운영 변경 (2026-11-26, 사용자 지시 · lead 전달)
 - 의견 묻지 않고 진행: 사람 쪽 미정값은 D-003(lead 레인 t-20261126-144135-5470 docs/decisions/D-003-working-defaults.md, 커밋 8ac5ce5) 값으로 확정 취급. 새 갈림길은 기본값 선택 → 아래 「분기 기록」에 분기점·선택·이유·차선책 → lead 요약 보고. 문제 시 해당 행으로 돌아가 차선책.
@@ -51,3 +52,5 @@
 | O-16 | 모듈 5개 (O-7 판정) | (a) 유지 | Seeed 공개 재고 101991223 창고 55+7, MP·IN_STOCK, EOL 없음(R-004). Digi-Key Marketplace 3개는 제외 | (b) 변형 혼용 |
 | O-17 | 짝 BTB (원품 SUNGTECH 유통 없음) | 풋프린트 = B301 파생 SUNGTECH ST-BTB-058060(-A 캐리어/-B 전면), BOM 턴키 대표 = 치수 일치 HCTL HC-PBB05-2-60-M/F-H4.0, 게이트: 실물 결합 확인 전 발주 금지 | 턴키 조달 가능 + 원품 치수 유지 | ① Seeed Fusion PCBA 원품 OPL ② Seeed B301·S401 보드 재사용 |
 | O-18 | GC2053 조달 (칩 공인 유통 없음) | S401 보드의 BXF4677 모듈(DF30 24P)을 전면 보드에 꽂는 안 잠정 | IQ 그대로, 칩 실장 위험 없음 | O-3 차선 순서(GC4653 → CAM-GC2083) · M12·ICR 병용은 R-006 판정 |
+| O-19 | F-002 재시작 (메모리 부족 중단) | 기존 볼륨 이어서 make -j4, slot --timeout-min 240, 시작 전 여유 메모리 ≥8GB일 때만, 1시간 안 확보 안 되면 보고 | 같은 원인 반복 방지, 다른 프로젝트 컨테이너는 사용자 판단(lead에 올림) | WSL2 직접 빌드(F5 차선) |
+| O-20 | KiCad 프로젝트 위치 | 보드마다 hardware/schematic/<carrier|front>/ 에 프로젝트, *.kicad_sch·*.kicad_pro=schematic, *.kicad_pcb=pcb(P-003에서 이동) | KiCad는 회로도·PCB가 같은 프로젝트 폴더여야 동기화됨 | hardware/pcb/<보드>/ 에 프로젝트 |
