@@ -1,8 +1,8 @@
 # C-001 HW/FW 계약 — reCamera Core 2002 캐리어·전면 보드
 
-- 상태: **계약 v1.3 (FW 대조 완료 · C-003 회로도 반영)** · 2026-11-26
+- 상태: **계약 v1.4 (FW 대조 완료 · C-004 회로도 반영)** · 2026-11-26
 - 배정: orch t18r C-001 → C-001b(FW 대조) · 작성자: schematic (단독) · 레인 `t-20261126-155208-d030`
-- 이력: 초안 `ac12920` → v1 `8613910` → v1.1 `be646c2` → v1.2 `fd12ba4` → v1.3 (이 커밋: 보드 간 연결을 FFC에서 JST GH 6P로 — V-003 ⑥ 「Signal application only」, C-003 회로도 `08d0a3e`와 일치. O-31 IR 열 상한)
+- 이력: 초안 `ac12920` → v1 `8613910` → v1.1 `be646c2` → v1.2 `fd12ba4` → v1.3 `e3ccdd0` → v1.4 (이 커밋: V-004 K1~K4 · O-33 — C-004 회로도 `58eb49b`와 일치)
 - KiCad 회로도는 C-002에서 그린다. 부품은 「1안」이고 재고·정격 확정은 C-002/R-004에서 한다.
 
 ## 0. 입력과 근거
@@ -48,7 +48,7 @@
    - IR_LED_EN·SPARE1: **I2C1(ADS1015 사용 중) 패드에서 MIPI_TXP1/TXM1로 이동**
    - IR_PWM 패드: F-001 미확인 → **PAD_ZQ = GPIO_ZQ (PWR_GPIO_24 = gpio376 또는 PWM_2)**
    - CSI 레인: F-001 미확인 → **lane_id {2,0,3}과 넷 대응 일치**
-3. **ICR 구동 (V-001 ⑤ 반영):** 1안을 **TI DRV8837**로 바꾼다(VM = 5V VIN, VCC = 전면 3.3V, 펄스 100~500ms). AP1511B는 차선으로 내린다. 이유는 정격 근거다. DRV8837은 데이터시트에 VIH·UVLO·rDS(on)·열저항이 있고, AP1511B는 권장 전류·열 데이터가 없다.
+3. **ICR 구동 (V-001 ⑤ 반영):** 1안을 **TI DRV8837**로 바꾼다(VM = 5V VIN, VCC = 전면 2.8V (v1.4), 펄스 100~500ms). AP1511B는 차선으로 내린다. 이유는 정격 근거다. DRV8837은 데이터시트에 VIH·UVLO·rDS(on)·열저항이 있고, AP1511B는 권장 전류·열 데이터가 없다.
 4. **IR LED (V-001 ⑥ 반영):**
    - AL8860을 **1.0A(Rs 0.1Ω)**로 설정하고, 12V에서 **직렬 2개 이하**, 방열 기판을 전제로 한다.
    - **LED 개수는 R-006 대기.**
@@ -92,7 +92,7 @@
 ```
 12V DC 잭 ─ 퓨즈/PTC ─ 역접 P-MOSFET ─ TVS ─┬─ 5V 벅 (≥3A) ── 5V_SYS ─┬─ 캐리어 BTB VIN (29·31·33·35) ─▶ 코어 VIN
                                               │                         │     코어 안: VDDC 0.96V(1.3A) · VDDQ 1.344V(1A) · +3V3(1A) · +1V8 LDO(0.3A) · VDD_RTC 1.8V(0.1A)
-                                              │                         │     코어 VIN ─▶ 코어 J1 VIN(38·40·42·44) ─▶ 전면: DRV8837 VM(5V) · 3.3V LDO(DRV8837 VCC·LTR-329)
+                                              │                         │     코어 VIN ─▶ 코어 J1 VIN(38·40·42·44) ─▶ 전면: DRV8837 VM(5V) · 2.8V LDO(DRV8837 VCC·LTR-329, v1.4)
                                               │                         │     코어 +3V3 ─▶ 캐리어 27 ─ P-FET(SD0_PWR_EN) ─▶ microSD
                                               │                         │     코어 +3V3/+1V8 ─▶ 전면 센서 전원 스위치(CAM_EN)
                                               │                         └─ 전원 LED, STATUS_LED
@@ -105,8 +105,9 @@
 | 코어 +3V3 | 코어 SY80004 | Imax 1A, 공유 | 코어 SCH 03 | 확인됨 |
 | 코어 +1V8 | 코어 SGM2036 LDO | Imax 300mA, 공유 | 코어 SCH 03 | 확인됨 |
 | 5V_SYS | 캐리어 벅 | 3A급, 입력 정격 ≥28V | 3.2절 | 가정 |
-| 12V_IR | 캐리어 부하 스위치 | 1.0A 연속 | V-001 ⑥ | 가정 |
-| 전면 3V3 | 전면 LDO (입력 코어 VIN) | ≥50mA (DRV8837 VCC + LTR-329 + 시프터) | DRV8837 IVCC 최대 1.5mA | 가정 |
+| 12V_IR | 캐리어 eFuse TPS26600 | **2스트링 최악 1.22A · ILIM 8.06kΩ ≈ 1.49A** (MODE 개방 = 회로차단기 + 자동 재시도, v1.4) | V-001 ⑥, V-004 K3 | 가정 |
+| 전면 2V8 (v1.4, 넷 FRONT_2V8) | 전면 LDO RT9013-28GB (입력 코어 VIN) | ≥50mA (DRV8837 VCC + LTR-329) | DRV8837 VIH max 0.5×2.8 = 1.4V → 1.8V GPIO 여유 0.4V (V-004 R9) | 가정 |
+| CAM_1V8 (v1.4) | 전면 Q6 DMG2305UX (CORE_1V8 스위칭, 게이트 CAM_PG) | I2C2 풀업 + 24MHz 발진기 | V-004 R1·R2, O-33 | 가정 |
 
 ### 3.2 전력 예산 (야간 최악)
 
@@ -115,7 +116,7 @@
 | 코어 모듈 + 센서 | 5V VIN | 1.0A | 5.0W | Seeed 「5V 1A」 (R-003) | 공식 표기 · 실측 필요 |
 | microSD | 코어 +3V3 | ≤0.2A | ≤0.66W | SD 일반값 | 가정 (코어 3V3 1A에 포함) |
 | ICR 코일 (CLA216 20Ω) | 5V VIN (DRV8837 VM) | 약 0.245A, 100~500ms 펄스 | 피크 1.2W, 평균 ≈0 | 5V/(20Ω+rDS 0.33Ω max) 계산 | 계산 |
-| 전면 3V3 LDO · 발진기 · LED | — | <30mA | <0.15W | 일반값 | 가정 |
+| 전면 2V8 LDO · 발진기 · LED | — | <30mA | <0.15W | 일반값 | 가정 |
 | **5V_SYS 합계 (피크)** | | **≈1.3A** | **6.5W** | | 가정 |
 | 5V 벅 입력 (효율 88%) | 12V | 0.62A | 7.4W | | 가정 |
 | IR LED (v1.2, O-25): VSMA1085400 2직렬 × 2스트링, 스트링마다 1.0A | 12V_IR | — | LED 12.4W typ / 13.2W max | V-001 ⑥, R-006 | 스트링 B는 DNP로 시작 |
@@ -152,7 +153,7 @@
 | 11 | 12 | SD1_CLK | SG2002 SD1 (R48~R53 0Ω, 2002w DNP) · 패드 번호 미확인 | 미확인 (1.8V 추정) | 미사용 (NC) | wifisd okay · 2002 실장 실물 확인 | 07 |
 | 12 | 11 | GND | GND | — | GND | — | — |
 | 13 | 14 | GND | GND | — | GND | — | — |
-| 14 | 13 | USB_DET | 60 USB_VBUS_DET | 분압 입력 (B101: VIN 20k/10k) | USB-C VBUS 20k/10k 분압 (B101과 같은 비) | USB_VBUS_DET 기능 (일치) | 05 |
+| 14 | 13 | USB_DET | 60 USB_VBUS_DET | 분압 입력 (B101: VIN 20k/10k) | USB-C VBUS **200k/100k** 분압 (v1.4, V-004 R11: 역급전 1/10) | USB_VBUS_DET 기능 (일치) | 05 |
 | 15 | 16 | SD1_CMD | SG2002 SD1 (R48~R53 0Ω, 2002w DNP) · 패드 번호 미확인 | 미확인 (1.8V 추정) | 미사용 (NC) | wifisd okay · 2002 실장 실물 확인 | 07 |
 | 16 | 15 | MIPI_TXM2/IIC1_SDA/PWM | 83 PAD_MIPI_TXM2 | 1.8V 추정(VDD18A_MIPI) | IIC1_SDA → 캐리어 예비 I2C 패드 | IIC1 (i2c1 okay) · ADS1015@0x48 노드 삭제 → FW | 05 |
 | 17 | 18 | SD1_D0 | SG2002 SD1 (R48~R53 0Ω, 2002w DNP) · 패드 번호 미확인 | 미확인 (1.8V 추정) | 미사용 (NC) | wifisd okay · 2002 실장 실물 확인 | 07 |
@@ -245,13 +246,13 @@
 | 34 | 33 | GPIO15/IR_CUT | 17 SPK_EN (XGPIOA_15) | 미확인 (SD0/EMMC 그룹 3.3V 추정) | ICR IN1 (DRV8837) | XGPIOA_15 = gpio495 · DTS red LED(heartbeat) 삭제 → FW | 05 |
 | 35 | 36 | GND | GND | — | GND | — | — |
 | 36 | 35 | GND | GND | — | GND | — | — |
-| 37 | 38 | VIN | 모듈 전원 입력 (코어 내부 VIN 공통, J1 38~44와 같은 넷) | 5V | DRV8837 VM(5V) · 전면 3.3V LDO 입력 | — | 03·07 |
+| 37 | 38 | VIN | 모듈 전원 입력 (코어 내부 VIN 공통, J1 38~44와 같은 넷) | 5V | DRV8837 VM(5V) · 전면 2.8V LDO 입력 | — | 03·07 |
 | 38 | 37 | GND | GND | — | GND | — | — |
-| 39 | 40 | VIN | 모듈 전원 입력 (코어 내부 VIN 공통, J1 38~44와 같은 넷) | 5V | DRV8837 VM(5V) · 전면 3.3V LDO 입력 | — | 03·07 |
+| 39 | 40 | VIN | 모듈 전원 입력 (코어 내부 VIN 공통, J1 38~44와 같은 넷) | 5V | DRV8837 VM(5V) · 전면 2.8V LDO 입력 | — | 03·07 |
 | 40 | 39 | AUD_MIC | 2 PAD_AUD_AINL_MIC (R97 0Ω) | 아날로그 | 미사용 (NC) | — | 05 |
-| 41 | 42 | VIN | 모듈 전원 입력 (코어 내부 VIN 공통, J1 38~44와 같은 넷) | 5V | DRV8837 VM(5V) · 전면 3.3V LDO 입력 | — | 03·07 |
+| 41 | 42 | VIN | 모듈 전원 입력 (코어 내부 VIN 공통, J1 38~44와 같은 넷) | 5V | DRV8837 VM(5V) · 전면 2.8V LDO 입력 | — | 03·07 |
 | 42 | 41 | GND | GND | — | GND | — | — |
-| 43 | 44 | VIN | 모듈 전원 입력 (코어 내부 VIN 공통, J1 38~44와 같은 넷) | 5V | DRV8837 VM(5V) · 전면 3.3V LDO 입력 | — | 03·07 |
+| 43 | 44 | VIN | 모듈 전원 입력 (코어 내부 VIN 공통, J1 38~44와 같은 넷) | 5V | DRV8837 VM(5V) · 전면 2.8V LDO 입력 | — | 03·07 |
 | 44 | 43 | AUD_AOUTR | 4 PAD_AUD_AOUTR | 아날로그 | 미사용 (NC) | — | 05 |
 | 45 | 46 | GND | GND | — | GND | — | — |
 | 46 | 45 | GND | GND | — | GND | — | — |
@@ -303,16 +304,16 @@
 - **조도센서 읽기 (O-9):**
   - 커널 5.10에는 LTR-329 드라이버가 없다(F-001).
   - `CONFIG_I2C_CHARDEV=y`이므로 사용자 공간 i2c-dev 폴링으로 읽는다. 커널 백포트는 하지 않는다.
-- **풀업 (v1.2, O-22):**
-  - 전면 보드가 4.7k를 **CORE_1V8(상시)**에 둔다. CAM_EN 스위치 레일에는 두지 않는다. 그래서 LTR-329 폴링이 CAM_EN과 무관해진다.
-  - 역급전: CAM_EN=0이면 모듈 IOVDD가 꺼진다. 이때 풀업에서 모듈 I/O로 흐를 수 있는 전류는 최대 1.8V/4.7k ≈ 0.38mA/선이다. 모듈 내부가 미공개라 실물로 측정한다(C-002 분기 C2-6).
-  - FW 기본은 CAM_EN 상시 1이다(`S70hardware`). 차선 규칙: CAM_EN=1일 때만 LTR-329를 폴링한다.
+- **풀업 (v1.4, O-33 · V-004 R1·K2 — v1.2의 상시 풀업 분기 C2-6을 되돌림):**
+  - 전면 보드가 4.7k를 **CAM_1V8(스위칭)**에 둔다. 스위치는 Q6 DMG2305UX이고 CAM_EN=1일 때 켜진다(S401 방식).
+  - 꺼진 센서 I/O로 역급전이 없다. GC2053 데이터시트에는 전원이 꺼진 상태의 입력 허용 근거가 없다(V-004 S4).
+  - **FW 규칙: LTR-329는 CAM_EN=1일 때만 폴링한다.** FW 기본은 CAM_EN 상시 1이다(`S70hardware`).
 - **LTR-329 레벨 (v1.1 확인됨):**
   - 근거 문서: Lite-On DS86-2014-0006 Rev C (2020-03-14, 파일명 V1.5). 제조사 사이트가 자동 접근을 거부해서 Adafruit 미러로 받았다(sha256 72948664…8b22, L-001 README).
   - 8절 Recommended Operating Conditions: VDD 2.4~3.6V, **VIO 1.7~3.6V**. 절대최대: VDD·SCL·SDA 3.8V.
   - 12절: 7비트 주소 0x29. 7절 핀 표: 1 VDD · 2 GND · 3 SDA · 4 SCL, INT 없음.
   - 권장 풀업은 1k~10k다(7절).
-  - **C-002 규칙:** LTR-329 VDD = 전면 3.3V, SDA/SCL은 CAM_I2C2(1.8V)에 직결한다. 레벨시프터는 두지 않는다.
+  - **C-002 규칙:** LTR-329 VDD = 전면 2.8V (v1.4), SDA/SCL은 CAM_I2C2(1.8V)에 직결한다. 레벨시프터는 두지 않는다.
 
 ## 7. GPIO 배정 (FW 대조 완료)
 
@@ -320,7 +321,7 @@
 |---|---|---|---|---|---|---|---|---|
 | ICR IN1 | GPIO15/IR_CUT | 17 SPK_EN → XGPIOA_15 | gpio495 | J1-33 / 전면 34 | 3.3V 추정 (미확인) | 출력 Low | DRV8837 IN1 | red LED heartbeat → 삭제, ICR용으로 |
 | ICR IN2 | WH_PWM | 47 PWR_GPIO0 → PWR_GPIO_0 | gpio352 | J1-6 / 전면 5 | 1.8V | 출력 Low | DRV8837 IN2 | white LED → 삭제 |
-| IR LED 밝기 | IR_PWM | 35 PAD_ZQ → PWR_GPIO_24 또는 **PWM_2** | gpio376 / pwm 채널 2 (pwmchip 번호는 FW) | J1-16 / 전면 15 | 1.8V 추정 | Low = 끔 | N-MOSFET → AL8860 CTRL 끌어내림 (FW에서 논리 반전, PWM ≤500Hz — V-001) | blue LED(mmc0) → 삭제, `PINMUX_CONFIG(GPIO_ZQ, PWM_2)` |
+| IR LED 밝기 | IR_PWM | 35 PAD_ZQ → PWR_GPIO_24 또는 **PWM_2** | gpio376 / pwm 채널 2 (pwmchip 번호는 FW) | J1-16 / 전면 15 | 1.8V 추정 | **전기 High = LED 끔 · Low/Hi-Z = 켬(CTRL 개방)** (v1.4 K1). 하드웨어 기본: R12 100k → CORE_1V8 풀업 = 끔 | N-MOSFET → AL8860 CTRL 끌어내림 (PWM 극성 반전, ≤500Hz — V-001). **FW 규칙: IR_LED_EN을 올리기 전에 IR_PWM을 High로 둔다** · 평균 듀티는 ≤25% 끔 비율 기준으로 환산 (O-31) | blue LED(mmc0) → 삭제, `PINMUX_CONFIG(GPIO_ZQ, PWM_2)` |
 | IR LED 전원 | IR_LED_EN | 86 PAD_MIPI_TXP1 → XGPIOC_15 | gpio431 (추론) | J2-21 / 캐리어 22 | 1.8V 추정 | Low = 끔 (하드웨어 풀다운) | 12V_IR 부하 스위치 EN | spi0 SDI 기능 → spi0/mcp2518fd 삭제, GPIO로 |
 | 예비 | SPARE1 | 85 PAD_MIPI_TXM1 → XGPIOC_14 | gpio430 (추론) | J2-19 / 캐리어 20 → FPC 8 | 1.8V 추정 | 입력 | 예비 | 위와 같음 |
 | 상태 LED | STATUS_LED | 87 PAD_MIPI_TXM0 → XGPIOC_12 | gpio428 (추론) | J2-23 / 캐리어 24 | 1.8V 추정 | Low = 끔 | N-MOSFET + LED | portc 12를 쓰는 mm610x reset·mcp2518fd IRQ → 삭제 |
@@ -338,7 +339,7 @@
   - 1/1 → 브레이크
   - CLA216 원문 「正極性で開路、負極性で閉路」의 극성과 JST 핀 순서는 **실물로 확인**한다.
   - 펄스 폭 100~500ms는 FW 타이머로 준다(SDK에 ICR 구현 없음 — F-001, F-002에서 새로 작성).
-- **DRV8837 nSLEEP:** VCC(3.3V)로 10k 풀업한다(상시 활성). 대기 전류는 FW가 IN1=IN2=0으로 관리한다.
+- **DRV8837 nSLEEP:** VCC(2.8V, v1.4)로 10k 풀업한다(상시 활성). 대기 전류는 FW가 IN1=IN2=0으로 관리한다.
 - **IIC1:** 캐리어 예비 I2C 패드로 남긴다(풀업 자리만). DTS의 ADS1015 노드는 FW가 지운다.
 
 ## 8. FW가 할 DTS·핀먹스 변경 (F-002로 넘김)
@@ -383,7 +384,7 @@
 - **캐리어 시험점:**
   - 전원: 12V_IN(보호 후), 5V_SYS, 12V_IR, 코어 +3V3(27), SD_PWR_3V3, GND 2곳 이상
   - 신호: USB D±, USB_DET, nRESET, UPGRAD_KEY, STATUS_LED, IR_LED_EN, SPARE1, IIC1 SDA/SCL, RESERVE1/2
-- **전면 시험점:** 전면 3V3, CAM_1V8, AVDD, IOVDD, MCLK, CAM_EN, DRV8837 OUT1/OUT2, AL8860 SW·LED+, IR_PWM, LIGHT_SENSE, I2C2 SDA/SCL
+- **전면 시험점:** 전면 2V8, CAM_1V8, AVDD, IOVDD, MCLK, CAM_EN, DRV8837 OUT1/OUT2, AL8860 SW·LED+, IR_PWM, LIGHT_SENSE, I2C2 SDA/SCL
 
 ## 12. 보호회로
 
@@ -392,11 +393,11 @@
 | 12V 입력 | 역접 | P-MOSFET (Vds ≥30V, 게이트 제너) | 일반 설계 |
 | 〃 | 과전압·서지 | TVS SMBJ15A급 + 하위 IC 입력 정격 ≥28V (AL8860 4.5~40V) | R-002, V-001 |
 | 〃 | 과전류 | PTC 또는 퓨즈 2.5~3A (예산 1.2A의 약 2배) | 3.2절 |
-| 5V_SYS | 벅 고장 시 과전압 | 5V 출력 TVS (5.6~6V급). DRV8837 VM 최대 11V, 코어 상한 미확인 | 3.1절 |
+| 5V_SYS | 벅 고장 시 과전압 | **D7 SMBJ5.0A** (VRWM 5.0V, VBR ≥ 6.4V, 단방향) — v1.4에서 회로 반영(V-004 R5·K4). DRV8837 VM 최대 11V, 코어 상한 미확인 | 3.1절 |
 | USB-C | ESD | D± 저용량 ESD, VBUS TVS, CC 5.1k 풀다운 | B101 패턴 |
 | microSD | ESD | 7선 ESD | B101 패턴 |
 | RJ45 | 서지·ESD | 칩 쪽 쌍마다 저용량 TVS, 칩 쪽 센터탭 100nF → GND, 라인 쪽 Bob Smith 75Ω + 1nF/2kV → 실드, GNDPWR–GND 1M + 1nF | B101 넷리스트 |
-| 12V_IR | 단락·과전류 | **TPS26600 eFuse**: SHDN ← IR_LED_EN(10k 풀다운, 기본 끔), UVLO → IN(SLVSDG2G: 「must be connected to the IN terminal」), OVP·MODE → RTN(내장 33V OVP, 전류 제한 후 자동 재시도), RTN = GND(역접은 앞단 P-FET가 맡음), **ILIM 8.06kΩ ≈ 1.49A**(2스트링 1.22A 기준, O-21의 10k/1.2A는 1스트링용), dVdT 22nF | O-21, V-002 ⑥, C-002 C2-4 |
+| 12V_IR | 단락·과전류 | **TPS26600 eFuse**: SHDN ← IR_LED_EN(10k 풀다운, 기본 끔), UVLO → IN(SLVSDG2G: 「must be connected to the IN terminal」), OVP → RTN(내장 33V OVP), **MODE 개방(회로차단기 + 자동 재시도, v1.4 — 과부하 때 합계가 어댑터 2.08A를 넘지 않게)**, RTN = GND(역접은 앞단 P-FET가 맡음), **ILIM 8.06kΩ ≈ 1.49A**(2스트링 1.22A 기준, O-21의 10k/1.2A는 1스트링용), dVdT 22nF | O-21, V-002 ⑥, C-002 C2-4 |
 | ICR | 코일 단락 | DRV8837 과전류 차단 1.9~3.5A, 열 차단 150°C | SLVSBA4F 6.5 |
 | UPGRAD_KEY | 출력과 버튼 충돌 | 직렬 1kΩ | 7절 |
 
@@ -434,15 +435,16 @@
 | C7 | ICR 제어선 | GPIO15/IR_CUT(gpio495) + WH_PWM(gpio352) | 둘 다 J1에 있고 SDK에서는 LED 용도라 바꾸기 쉽다 | SPARE1(gpio430) |
 | C8 | IR 밝기 | IR_PWM(PWM_2) → N-MOSFET → AL8860 CTRL + IR_LED_EN 하드웨어 차단 | 1.8V PWM으로는 CTRL 선형 구간(0.3~2.5V)에 걸린다. 끔을 두 겹으로 보장 | IR_PWM을 CTRL에 직결 (V-001: 3.3V 로직 직구동 가능 — 패드 도메인이 3.3V로 확인될 때) |
 | C9 | 이더넷 자기부품 | 칩 쪽 센터탭이 따로 나오는 통합 마그넷 RJ45 | 부품 수·면적 | B101식 개별 트랜스 |
-| C10 | 전면 3.3V | 코어 VIN → 전면 LDO | 코어 3V3을 센서에 남긴다 | 코어 +3V3 |
+| C10 | 전면 LDO (v1.4: 2.8V) | 코어 VIN → 전면 LDO | 코어 3V3을 센서에 남긴다 | 코어 +3V3 |
 | C11 | 보드 간 링크 (v1.3) | **JST GH 6P SM06B-GHS-TB 대칭** (12A절) | FFC 사양이 「Signal application only」(V-003 ⑥). GH는 1.0A/접점 전원 정격 | FFC 10P(신호) + JST PH 2P(12V_IR) 분리 |
 | C12 | BTB 짝 커넥터 | 캐리어 -A, 전면 -B (Sungtech). 풋프린트는 B301 파생 허용 (O-12, Apache-2.0 고지) | 코어와 같은 시리즈 | 호환품 (R-004) |
-| **C13** | **ICR 드라이버 (V-001 ⑤)** | **TI DRV8837DSGR**: VM = 5V(VIN), VCC = 전면 3.3V, IN1/IN2를 GPIO에 직결 | 정격 근거가 있다(SLVSBA4F): VCC 1.8~7V, **VIH ≤ 0.5×VCC = 1.65V** → 1.8V GPIO 직결 가능. rDS(on) HS+LS 280/330mΩ → 코일 약 4.9V·0.245A로 CLA216 3.0~5.0V 안. θJA 60.9°C/W. VCC = 1.8V는 **UVLO 상승 최대 1.8V**에 걸려 쓰지 않는다 | UMW AP1511B (VDD 5V, 펄스만 — V-001 조건). 권장 전류·열 데이터가 없고 1.8V 입력 VIH도 미확인 |
+| **C13** | **ICR 드라이버 (V-001 ⑤)** | **TI DRV8837DSGR**: VM = 5V(VIN), VCC = 전면 3.3V → **v1.4: 2.8V (VIH max 1.4V, 여유 0.4V — V-004 R9)**, IN1/IN2를 GPIO에 직결 | 정격 근거가 있다(SLVSBA4F): VCC 1.8~7V, **VIH ≤ 0.5×VCC = 1.65V** → 1.8V GPIO 직결 가능. rDS(on) HS+LS 280/330mΩ → 코일 약 4.9V·0.245A로 CLA216 3.0~5.0V 안. θJA 60.9°C/W. VCC = 1.8V는 **UVLO 상승 최대 1.8V**에 걸려 쓰지 않는다 | UMW AP1511B (VDD 5V, 펄스만 — V-001 조건). 권장 전류·열 데이터가 없고 1.8V 입력 VIH도 미확인 |
 | **C14** | **캐리어 GPIO 재배정 (F-001 대조)** | IR_LED_EN = MIPI_TXP1(gpio431), SPARE1 = MIPI_TXM1(gpio430), IIC1(TXM2/TXP2)은 예비 I2C | 초안은 IIC1 패드에 GPIO를 뒀는데 SDK가 IIC1(ADS1015)로 쓴다. IIC2 대체 기능인 TXM1/TXP1은 IIC2가 이미 PWR_GPIO1/2에 있어 비어 있다 | 초안대로 IIC1 패드를 GPIO로 (FW가 i2c1 삭제) |
 | **C15** | **조도센서 레벨 (O-9, v1.1 확정)** | LTR-329를 1.8V CAM_I2C2에 직결 (VDD 3.3V, 레벨시프터 없음) | 데이터시트 Rev C: VIO 1.7~3.6V, 주소 0x29 ≠ 0x3f | LIGHT_SENSE 포토트랜지스터(ALS-PT19) — 미실장 패드만 남긴다 |
 | **C16** | **UPGRAD_KEY 보호** | 버튼 직렬 1kΩ | DTS wifi_pin이 gpio510을 출력으로 쓸 수 있다 | FW가 wifi_pin을 지우면 0Ω |
 | **C17** | **IR LED 설정 (V-001 ⑥)** | AL8860 Rs 0.1Ω(1.0A), 12V에서 직렬 ≤2, 방열 기판 | 1.5A 설정은 절대최대에 여유가 0 | FR4 + thermal via + 0.8A 이하 |
 | **C18** | **C-002 반영 (v1.2)** | ① FPC 대칭 핀배치(12A절) ② ILIM 8.06k ③ 두 AL8860 CTRL이 IR_PWM 하나를 공유 ④ I2C2 풀업은 CORE_1V8 상시 ⑤ DVDD를 AVDD 레일로 | C-002 README 12절 C2-3~C2-8 | 각 행의 차선은 C-002 README에 있다 |
+| **C20** | **V-004 반영 (v1.4)** | I2C2 풀업·X1을 CAM_1V8로(O-33) · IR_PWM 극성(High = 끔) + R12 풀업 · 전면 LDO 2.8V · TPS26600 MODE 개방 · USB_DET 200k/100k · 5V TVS · RESET RC + BAT54 | V-004 R1~R13 · K1~K4 | C-004 README 16.5 |
 | **C19** | **ICR·IR 부품 (O-25)** | IR LED VSMA1085400(±40°) 4자리 = 2직렬 × 2스트링, B는 DNP. 풋프린트는 VSMA1085600과 같다(도면 6.550-5366.9-3) | R-006 | VSMA1085600(±60°) |
 
 ## 14. 남은 미확인
