@@ -469,7 +469,9 @@ def build(board_name):
     done = set(FIXED[board_name])
 
     def put(ref, side, anchor, want=None):
-        if not pl.free(ref, fps[ref], side, anchor, want):
+        other = "F" if side == "B" else "B"
+        # 시험점은 그 면에 자리가 없으면 반대 면에(C-016~C-021 로 전면 부품이 늘어 뒷면이 찼다 — TP21 보드 밖)
+        if not pl.free(ref, fps[ref], side, anchor, want) and not (ref.startswith("TP") and pl.free(ref, fps[ref], other, anchor, want)):
             missing.append(ref)
             place(fps[ref], side, 0.0, (40.0 + len(missing) * 3, 0.0))  # 보드 밖에 둔다 → DRC가 잡는다
         done.add(ref)
