@@ -1,0 +1,198 @@
+diff -ruN a/external/br2-external/Config.in b/external/br2-external/Config.in
+--- a/external/br2-external/Config.in
++++ b/external/br2-external/Config.in
+@@ -8,3 +8,4 @@
+ source "$BR2_EXTERNAL_BR2EXT_PATH/bt-init/Config.in"
+ source "$BR2_EXTERNAL_BR2EXT_PATH/wpa_supplicant_s1g/Config.in"
+ source "$BR2_EXTERNAL_BR2EXT_PATH/morse_cli/Config.in"
++source "$BR2_EXTERNAL_BR2EXT_PATH/openhw-daynight/Config.in"
+diff -ruN a/external/br2-external/openhw-daynight/Config.in b/external/br2-external/openhw-daynight/Config.in
+--- a/external/br2-external/openhw-daynight/Config.in
++++ b/external/br2-external/openhw-daynight/Config.in
+@@ -0,0 +1,5 @@
++config BR2_PACKAGE_OPENHW_DAYNIGHT
++    bool "openhw-daynight"
++    default y
++    help
++      OpenHW 캐리어 주야 전환 데몬 (LTR-329 → ICR · IR LED · ISP 모드).
+diff -ruN a/external/br2-external/openhw-daynight/openhw-daynight.mk b/external/br2-external/openhw-daynight/openhw-daynight.mk
+--- a/external/br2-external/openhw-daynight/openhw-daynight.mk
++++ b/external/br2-external/openhw-daynight/openhw-daynight.mk
+@@ -0,0 +1,22 @@
++################################################################################
++#
++# openhw-daynight — 소스는 firmware/apps/daynight (apply-f003.sh 가 src/ 로 복사)
++#
++################################################################################
++
++OPENHW_DAYNIGHT_VERSION = 1.0
++OPENHW_DAYNIGHT_SITE = $(BR2_EXTERNAL_BR2EXT_PATH)/openhw-daynight/src
++OPENHW_DAYNIGHT_SITE_METHOD = local
++OPENHW_DAYNIGHT_LICENSE = Proprietary
++
++define OPENHW_DAYNIGHT_BUILD_CMDS
++	$(TARGET_MAKE_ENV) $(MAKE) -C $(@D) CC="$(TARGET_CC)" CFLAGS="$(TARGET_CFLAGS)" daynight
++endef
++
++define OPENHW_DAYNIGHT_INSTALL_TARGET_CMDS
++	$(INSTALL) -D -m 0755 $(@D)/daynight $(TARGET_DIR)/usr/bin/daynight
++	$(INSTALL) -D -m 0644 $(@D)/daynight.conf $(TARGET_DIR)/etc/openhw/daynight.conf
++	$(INSTALL) -D -m 0755 $(@D)/S96daynight $(TARGET_DIR)/etc/init.d/S96daynight
++endef
++
++$(eval $(generic-package))
+diff -ruN a/external/build/boards/cv181x/sg2002_recamera_emmc/dts_riscv/sg2002_recamera_emmc.dts b/external/build/boards/cv181x/sg2002_recamera_emmc/dts_riscv/sg2002_recamera_emmc.dts
+--- a/external/build/boards/cv181x/sg2002_recamera_emmc/dts_riscv/sg2002_recamera_emmc.dts
++++ b/external/build/boards/cv181x/sg2002_recamera_emmc/dts_riscv/sg2002_recamera_emmc.dts
+@@ -12,12 +12,7 @@
+     /delete-property/ cap-sd-highspeed;
+     /delete-property/ sd-uhs-sdr104;
+ 
+-	mm610x_sdio: mm610x-sdio {
+-		compatible = "morse,mm610x";
+-		reg = <2>;
+-        reset-gpios = <&portc 12 GPIO_ACTIVE_HIGH>;
+-		status = "okay";
+-	};
++	/* OpenHW C-001 8: no wireless - mm610x removed (portc 12 = STATUS_LED) */
+ };
+ 
+ &emmc {
+@@ -42,19 +37,9 @@
+ 	#interrupt-cells = <2>;
+ };
+ 
++/* OpenHW C-001 8: no CAN on carrier - mcp2518fd removed, MIPI_TXM1/TXP1 used as GPIO */
+ &spi0 {
+-	status = "okay";
+-	num-cs = <1>;
+-	cs-gpios = <&porta 12 0>;
+-
+-	mcp2518fd: mcp2518fd@0 {
+-		reg = <0>;
+-		compatible = "microchip,mcp2518fd";
+-		spi-max-frequency = <10000000>;
+-		clocks = <&mcp2518fd_osc>;
+-		interrupts = <12 IRQ_TYPE_LEVEL_LOW>;
+-		interrupt-parent = <&portc>;
+-	};
++	status = "disabled";
+ };
+ 
+ &spi1 {
+@@ -74,21 +59,8 @@
+ };
+ 
+ &i2c1 {
++    /* OpenHW C-001 6: no ADS1015 - kept as spare I2C on carrier */
+     status = "okay";
+-    #address-cells = <1>;
+-    #size-cells = <0>;
+-
+-    adc@48 {
+-        compatible = "ti,ads1015";
+-        reg = <0x48>;
+-        #address-cells = <1>;
+-        #size-cells = <0>;
+-        channel@4 {
+-            reg = <4>;
+-            ti,gain = <1>;
+-            ti,datarate = <2>;
+-        };
+-    };
+ };
+ 
+ &i2c2 {
+@@ -129,43 +101,22 @@
+ 	/delete-node/ cvi-spif@10000000;
+ 	/delete-node/ cv-spinf@4060000;
+ 
++	/* OpenHW C-001 7/8: red(porta 15)=ICR IN1, white(porte 0)=ICR IN2,
++	 * blue(porte 24 pad)=IR_PWM(PWM_2) -> the three LEDs are removed.
++	 * STATUS_LED = portc 12 (High = on) */
+ 	leds {
+ 		compatible = "gpio-leds";
+ 
+-		led0 {
+-			label = "red";
+-			gpios = <&porta 15 GPIO_ACTIVE_HIGH>;
+-			linux,default-trigger = "heartbeat";
+-			default-state = "on";
+-		};
+-
+-		led1 {
+-			label = "blue";
+-			gpios = <&porte 24 GPIO_ACTIVE_HIGH>;
+-			linux,default-trigger = "mmc0";
+-			default-state = "on";
+-		};
+-
+-		led2 {
+-			label = "white";
+-			gpios = <&porte 0 GPIO_ACTIVE_HIGH>;
++		status_led {
++			label = "status";
++			gpios = <&portc 12 GPIO_ACTIVE_HIGH>;
+ 			default-state = "off";
+ 		};
+ 	};
+ 
+ 	/delete-node/ bt_pin;
+ 	/delete-node/ wifi_pin;
+-	wifi_pin {
+-		compatible = "cvitek,wifi-pin";
+-		poweron-gpio = <&porta 30 GPIO_ACTIVE_HIGH>;
+-		/*wakeup-gpio = <&porte 8 GPIO_ACTIVE_HIGH>;*/
+-	};
+-
+-	mcp2518fd_osc: mcp2518fd_osc {
+-		#clock-cells = <0>;
+-		compatible = "fixed-clock";
+-		clock-frequency = <40000000>;
+-	};
++	/* OpenHW C-001 7/8: wifi_pin removed - gpio510 (AUX0) is the UPGRAD_KEY button. mcp2518fd_osc removed */
+ };
+ 
+ /* Override CV181X cooling configuration for maximum performance */
+diff -ruN a/external/build/boards/cv181x/sg2002_recamera_emmc/u-boot/cvi_board_init.c b/external/build/boards/cv181x/sg2002_recamera_emmc/u-boot/cvi_board_init.c
+--- a/external/build/boards/cv181x/sg2002_recamera_emmc/u-boot/cvi_board_init.c
++++ b/external/build/boards/cv181x/sg2002_recamera_emmc/u-boot/cvi_board_init.c
+@@ -1,7 +1,7 @@
+ int cvi_board_init(void)
+ {
+ 	// WIFI/BT
+-	PINMUX_CONFIG(AUX0, XGPIOA_30); // BT_REG_ON & WIFI_REG_ON -- gpio510
++	PINMUX_CONFIG(AUX0, XGPIOA_30); // OpenHW: UPGRAD_KEY button input -- gpio510
+ 	PINMUX_CONFIG(JTAG_CPU_TMS, UART1_RTS);
+ 	PINMUX_CONFIG(JTAG_CPU_TCK, UART1_CTS);
+ 	PINMUX_CONFIG(IIC0_SDA, UART1_RX);
+@@ -12,11 +12,15 @@
+ 	PINMUX_CONFIG(PWR_GPIO1, IIC2_SCL); // PWR_GPIO1 -- IIC2_SCL
+ 	PINMUX_CONFIG(PWR_GPIO2, IIC2_SDA); // PWR_GPIO2 -- IIC2_SDA
+ 
+-	// Red & Blue leds
+-	PINMUX_CONFIG(SPK_EN, XGPIOA_15); // GPIO15/IR_CUT -- gpio495
+-	PINMUX_CONFIG(GPIO_ZQ, PWR_GPIO_24); // PAD_ZQ -- gpio376
+-	// White led
+-	PINMUX_CONFIG(PWR_GPIO0, PWR_GPIO_0); // PWR_GPIO0 -- gpio352
++	// OpenHW C-001 7: ICR (DRV8837) IN1/IN2, IR_PWM
++	PINMUX_CONFIG(SPK_EN, XGPIOA_15); // GPIO15/IR_CUT = ICR IN1 -- gpio495
++	PINMUX_CONFIG(GPIO_ZQ, PWM_2); // PAD_ZQ = IR_PWM -- pwm0 ch2 (High = IR off)
++	PINMUX_CONFIG(PWR_GPIO0, PWR_GPIO_0); // WH_PWM = ICR IN2 -- gpio352
++
++	// OpenHW C-001 7: carrier GPIOs (portc base 416, inferred)
++	PINMUX_CONFIG(PAD_MIPI_TXM0, XGPIOC_12); // STATUS_LED -- gpio428
++	PINMUX_CONFIG(PAD_MIPI_TXM1, XGPIOC_14); // SPARE1 -- gpio430
++	PINMUX_CONFIG(PAD_MIPI_TXP1, XGPIOC_15); // IR_LED_EN -- gpio431
+ 
+     PINMUX_CONFIG(SD0_CLK, SDIO0_CLK);
+     PINMUX_CONFIG(SD0_CMD, SDIO0_CMD);
+@@ -26,7 +30,7 @@
+     PINMUX_CONFIG(SD0_D2, SDIO0_D_2);
+     PINMUX_CONFIG(SD0_D3, SDIO0_D_3);
+ 
+-    // ADC
++    // IIC1: OpenHW spare I2C on carrier (no ADS1015)
+     PINMUX_CONFIG(PAD_MIPI_TXM2, IIC1_SDA);
+     PINMUX_CONFIG(PAD_MIPI_TXP2, IIC1_SCL);
+ 

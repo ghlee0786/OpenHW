@@ -1,0 +1,13 @@
+#!/bin/sh
+# openhw-daynight — S70hardware(CAM_EN) 뒤에 시작한다
+case "$1" in
+  start)
+    start-stop-daemon -S -b -m -p /var/run/daynight.pid -x /usr/bin/daynight -- /etc/openhw/daynight.conf
+    ;;
+  stop)
+    start-stop-daemon -K -p /var/run/daynight.pid -s TERM
+    ;;
+  restart)
+    "$0" stop; sleep 1; "$0" start
+    ;;
+esac
