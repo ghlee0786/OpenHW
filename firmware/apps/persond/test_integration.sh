@@ -50,7 +50,7 @@ sleep 0.5
 check "쿨다운 60초 안 재등장 없음" '[ "$(grep -c person_enter /tmp/ev.log)" = 1 ]'
 check "camera 노드 생성 요청" 'grep -aq "node/in/openhw_cam .*\"type\":\"camera\"" /tmp/in.log'
 check "camera dependents 에 model·stream" 'grep -a "node/in/openhw_cam " /tmp/in.log | grep -q "\"dependents\":\[ *\"openhw_person\", *\"openhw_rtsp\" *\]"'
-check "model 노드: algorithm 3·모델 경로" 'grep -a "node/in/openhw_person " /tmp/in.log | grep -q "\"algorithm\":3" && grep -q "yolox_nano_person_416_int8_cv181x.cvimodel" /tmp/in.log'
+check "model 노드: algorithm 3·모델 경로" 'grep -a "node/in/openhw_person " /tmp/in.log | grep -q "\"algorithm\":3" && grep -q "yolox_nano_person_416_bf16_cv181x.cvimodel" /tmp/in.log'
 check "stream 노드: 554·비밀번호" 'grep -a "node/in/openhw_rtsp " /tmp/in.log | grep -q "\"port\":554" && grep -a "node/in/openhw_rtsp " /tmp/in.log | grep -q testpass'
 check "websocket 끔" '! grep -q "\"websocket\":true" /tmp/in.log'
 mosquitto_pub -t $OUT -m 'not json'; mosquitto_pub -t $OUT -m '{"name":"invoke","data":{"boxes":[[1,2]],"resolution":[0,0]}}'

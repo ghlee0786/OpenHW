@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
-# F-004: YOLOX-Nano(Apache-2.0) → 사람 감지 cvimodel (cv181x INT8, sscma-node YoloV5 형식).
+# F-004: YOLOX-Nano(Apache-2.0) → 사람 감지 cvimodel (cv181x, sscma-node YoloV5 형식).
+# 정밀도 QUANT (기본 BF16): F-004c K-1 에서 INT8 은 백본 셋째 conv 부터 오차가 쌓여 기준 불합격(원인 K),
+# 전체 BF16 은 기준 합격 → 기본 BF16. INT8 은 QUANT=INT8 (보정표 run_calibration 포함).
 # 무거운 단계라 hc 칸 + slot 으로 돌린다:
 #   node harness/cli.js slot --label F-004-model --timeout-min 240 -- bash firmware/models/convert-yolox-person.sh
 # 작업 폴더는 Docker 볼륨 openhw-tpumlir (저장소 밖). 결과: /w/out/*.cvimodel → OUT_DIR 로 복사, sha256 출력.
@@ -14,6 +16,8 @@ FW="$(cd "$(dirname "$0")/.." && pwd)"
 command -v cygpath >/dev/null && FW="$(cygpath -w "$FW")"
 ONNX_URL="https://github.com/Megvii-BaseDetection/YOLOX/releases/download/0.1.1rc0/yolox_nano.onnx"
 NAME=yolox_nano_person_416
+QUANT="${QUANT:-BF16}"
+Q=$(echo "$QUANT" | tr A-Z a-z)
 
 mkdir -p "$OUT_DIR"
 docker volume create "$VOL" >/dev/null
@@ -36,11 +40,13 @@ docker run --rm -v "$VOL":/w -v "$FW":/fw:ro -v "$OUT_DIR":/out "$IMAGE" bash -c
   model_transform --model_name '"$NAME"' --model_def ../'"$NAME"'.onnx \
     --input_shapes [[1,3,416,416]] --mean 0,0,0 --scale 1,1,1 --pixel_format bgr --keep_aspect_ratio \
     --test_input $TEST --test_result '"$NAME"'_top.npz --mlir '"$NAME"'.mlir
-  run_calibration '"$NAME"'.mlir --dataset $DS --input_num 100 -o '"$NAME"'_cali_table
+  CAL=""
+  if [ "'"$QUANT"'" = INT8 ]; then
+    run_calibration '"$NAME"'.mlir --dataset $DS --input_num 100 -o '"$NAME"'_cali_table
+    CAL="--calibration_table '"$NAME"'_cali_table"
+  fi
   # 시험 모의 실행 옵션(--test_input/--test_reference)은 메시지 없이 rc=1(원인 H) → 빼고, 검증은 verify_cvimodel.py 로 따로
-  model_deploy --mlir '"$NAME"'.mlir --quantize INT8 --calibration_table '"$NAME"'_cali_table \
-    --processor cv181x --quant_input --customization_format RGB_PACKED --fuse_preprocess --aligned_input \
-    --model '"$NAME"'_int8_cv181x.cvimodel
-  cp '"$NAME"'_int8_cv181x.cvimodel /out/
-  cd /out && ls -l '"$NAME"'_int8_cv181x.cvimodel && sha256sum '"$NAME"'_int8_cv181x.cvimodel
+  model_deploy --mlir '"$NAME"'.mlir --quantize '"$QUANT"' $CAL     --processor cv181x --quant_input --customization_format RGB_PACKED --fuse_preprocess --aligned_input     --model '"$NAME"'_'"$Q"'_cv181x.cvimodel
+  cp '"$NAME"'_'"$Q"'_cv181x.cvimodel /out/
+  cd /out && ls -l '"$NAME"'_'"$Q"'_cv181x.cvimodel && sha256sum '"$NAME"'_'"$Q"'_cv181x.cvimodel
 '

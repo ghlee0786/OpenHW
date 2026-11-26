@@ -31,7 +31,7 @@ diff -ruN a/external/br2-external/openhw-persond/openhw-persond.mk b/external/br
 +OPENHW_PERSOND_VERSION = 1.0
 +OPENHW_PERSOND_SITE = $(BR2_EXTERNAL_BR2EXT_PATH)/openhw-persond/src
 +OPENHW_PERSOND_SITE_METHOD = local
-+OPENHW_PERSOND_LICENSE = Proprietary (model: YOLOX Apache-2.0)
++OPENHW_PERSOND_LICENSE = Proprietary (model: YOLOX-Nano Apache-2.0, BF16 cvimodel)
 +OPENHW_PERSOND_DEPENDENCIES = mosquitto json-c
 +
 +define OPENHW_PERSOND_BUILD_CMDS
@@ -43,9 +43,9 @@ diff -ruN a/external/br2-external/openhw-persond/openhw-persond.mk b/external/br
 +	$(INSTALL) -D -m 0644 $(@D)/persond.conf $(TARGET_DIR)/etc/openhw/persond.conf
 +	$(INSTALL) -D -m 0755 $(@D)/S97persond $(TARGET_DIR)/etc/init.d/S97persond
 +	# 모델은 검증을 통과한 것만 apply-f004.sh 가 넣는다. 없으면 설치하지 않는다
-+	if [ -f $(@D)/yolox_nano_person_416_int8_cv181x.cvimodel ]; then \
-+		$(INSTALL) -D -m 0644 $(@D)/yolox_nano_person_416_int8_cv181x.cvimodel \
-+			$(TARGET_DIR)/usr/share/openhw/models/yolox_nano_person_416_int8_cv181x.cvimodel; \
++	if [ -f $(@D)/yolox_nano_person_416_bf16_cv181x.cvimodel ]; then \
++		$(INSTALL) -D -m 0644 $(@D)/yolox_nano_person_416_bf16_cv181x.cvimodel \
++			$(TARGET_DIR)/usr/share/openhw/models/yolox_nano_person_416_bf16_cv181x.cvimodel; \
 +	fi
 +endef
 +

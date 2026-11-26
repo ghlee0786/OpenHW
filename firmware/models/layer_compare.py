@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """F-004c K-1 층별 비교: float top MLIR · INT8 tpu MLIR · cvimodel(층 묶음 끔) 의 모든 텐서를 top 순서대로 비교한다.
 진단용(변환 시도 아님). 사용(tpuc_dev, PYTHONPATH=$TP/python:$TP, cd <진단 폴더>):
-  layer_compare.py <top.mlir> <tpu.mlir> <cvimodel> [이미지]
+  layer_compare.py <top.mlir> <tpu.mlir 또는 -> <cvimodel 또는 -> [이미지]
+  (tpu.mlir 에 행 정렬 입력을 주면 모의기가 Floating point exception 으로 죽어 - 로 건너뛴다)
 출력: 층마다 cos(top,tpu) cos(top,cvi) · 최대값, 그리고 obj 경로(top.Sigmoid 1채널 입력 쪽)에서 처음 cos<0.9 인 층.
 """
 import sys
@@ -43,10 +44,11 @@ def feed(parser, bgr):
 
 
 bgr = letterbox(cv2.imread(IMG))
-tp, qp = MlirParser(TOP), MlirParser(TPU)
+tp = MlirParser(TOP)
 top = mlir_inference(feed(tp, bgr), TOP, dump_all=True)
-tpu = mlir_inference(feed(qp, bgr), TPU, dump_all=True)
-cvi = model_inference({"images_raw": aligned_rgb(bgr)}, CVI, dump_all=True)
+tpu = mlir_inference(feed(MlirParser(TPU), bgr), TPU, dump_all=True) if TPU != "-" else {}
+cvi = model_inference({"images_raw": aligned_rgb(bgr)}, CVI, dump_all=True) if CVI != "-" else {}
+print("cvi tensors:", len(cvi), list(cvi)[:12])
 
 
 def pick(d, k):
@@ -55,7 +57,8 @@ def pick(d, k):
     for s in ("_f32", "_si8", "_i8", "_bf16"):
         if k + s in d:
             return d[k + s]
-    return None
+    m = [x for x in d if x.endswith(k) or x.endswith(k + "_f32")]   # 융합 이름(앞층이름+이 층이름)
+    return d[m[0]] if m else None
 
 
 ops = [op for op in tp.ops if op.type not in ("top.Weight", "top.None", "top.Input")]

@@ -34,7 +34,7 @@ static struct {
     char rtsp_user[32];
     char rtsp_pass[64];
 } g = {
-    "localhost", 1883, "recamera", "localhost", 1883, "openhw/v1/event", "", "/usr/share/openhw/models/yolox_nano_person_416_int8_cv181x.cvimodel",
+    "localhost", 1883, "recamera", "localhost", 1883, "openhw/v1/event", "", "/usr/share/openhw/models/yolox_nano_person_416_bf16_cv181x.cvimodel",
     1, 15, 1, 554, "admin", "",
 };
 
