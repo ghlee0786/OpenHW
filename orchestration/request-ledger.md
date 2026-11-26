@@ -48,7 +48,7 @@
 | M-001e | orch | mechanical t18x | DF30 180°(센서 모듈 회전)·LED B1/B2 (±7.5,−16.5)·GH 6P ±0.3 이동 반영, 간섭 재검사 | mechanical/** (M-001 레인) | 간섭 결과, 커밋 | completed — 1504c93. DF30 180°는 모델 변경 없음, B1/B2 가림 각 감소, GH 하니스 27.4mm(35mm 유지), 실제 충돌 0, K23 케이블 핀 반전 발견 |
 | C-009 | orch (O-41) | schematic t18z | 전면 J4 핀 3·4 넷 맞바꿈(직선 GH 케이블), 계약 v1.8 | hardware/schematic/front (C-002 레인) | netcompare 2넷, ERC 0, 커밋 | completed — c653eac (계약 v1.8 2dde4a2), orch 재실행 front ERC 0. 회로도 배선 기준 c653eac |
 | R-011 | orch (단계 6 준비) | research t18s | PCBWay 9열 BOM 생성기(보드별)·참조 지정자 일치 검사 | manufacturing/bom/** | 스크립트 종료 0·일치 검사, 레인·커밋 | completed — 레인 t-20261126-190248-efe1 커밋 7dc3996, orch 재실행 종료 0. carrier 50행(참조 73)·front 39행(참조 62) KiCad 일치, 음성 시험 검출 |
-| R-012 | orch | research t18s | GH 6P 하니스 AWG26 전선 MPN(SSHL 허용 외경 안) | bom-full.csv·manufacturing/bom | 품번·차선·재고, 커밋 | running |
+| R-012 | orch | research t18s | GH 6P 하니스 AWG26 전선 MPN(SSHL 허용 외경 안) | bom-full.csv·manufacturing/bom | 품번·차선·재고, 커밋 | completed — 9a5fbfb·dce3c91, orch 생성기 재실행 0. 1안 Alpha Wire 422607 UL1061 26AWG(OD 공차 상한 1.04 > 단자 1.0 → 조건부), 차선 Remington 26UL1061STR |
 
 ## 운영 변경 (2026-11-26, 사용자 지시 · lead 전달)
 - 의견 묻지 않고 진행: 사람 쪽 미정값은 D-003(lead 레인 t-20261126-144135-5470 docs/decisions/D-003-working-defaults.md, 커밋 8ac5ce5) 값으로 확정 취급. 새 갈림길은 기본값 선택 → 아래 「분기 기록」에 분기점·선택·이유·차선책 → lead 요약 보고. 문제 시 해당 행으로 돌아가 차선책.
@@ -110,7 +110,7 @@
 - [ ] 발주 게이트 G1 짝 BTB 실물 결합(1번 핀·VIN 정격) · G2 S401 홀더 분리·높이·강판 외곽·공동 깊이·DF30 결합 높이 실측 (O-17·O-26)
 - [ ] CLA216 리드 커넥터 계열 실물 확인(G2와 함께) — PicoBlade/GH (O-34)
 - [ ] 회로도 표제란 Rev가 C-005로 남음(C-006 값 변경 반영) — 최종 리비전 표기로 통일
-- [ ] GH 6P 하니스: AWG26 1:1 기성품 없음 → 자가 크림프(GHR-06V-S + SSHL-002T-P0.2), 전선 MPN 미확정 (R-008b)
+- [ ] GH 6P 하니스: 자가 크림프(GHR-06V-S + SSHL-002T-P0.2), 전선 Alpha Wire 422607 — 받은 롤 OD 실측(단자 허용 0.76~1.0)·크림프 시험 (R-012)
 - [ ] G2 추가: 센서 광학 중심의 블록 대비 XY 어긋남 실측 (M-001e)
 - [ ] PCBWay 미확인: 좌표 회전 보정 정책·PCBA 등급·X-ray 비용·0.4/0.5mm 커넥터 명시 — 확인 회신은 외부 연락이라 사용자 지시 필요 (R-010)
 - [ ] 두 보드 모두 50×100 미만 → 패널 설계 필요 (R-010)
