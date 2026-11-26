@@ -1,0 +1,78 @@
+# PCBWay 형식 BOM (보드별) — R-011
+
+- 배정: orch t18r R-011 · 작성 research t18s · 2026-11-26
+- 생성기: `make_pcbway_bom.py` — 표준 라이브러리만 쓴다. `python -I`로 실행한다.
+- 출력: `carrier-pcbway.csv` · `front-pcbway.csv`
+  - PCBWay 공식 템플릿 9열이다(R-010 1.1절, `Sample_BOM_PCBWay.xlsx?v=1.1`의 머리글을 그대로 썼다).
+  - 수량은 **보드 1장 기준**이다. 주문 수량은 주문 폼에 넣는다.
+- **견적 요청·업로드는 하지 않았다.**
+
+## 입력 (고정 사본 — `inputs/`)
+
+| 파일 | 출처 | sha256 |
+|---|---|---|
+| `inputs/bom-full.csv` | research R-008 레인 t-20261126-171912-e7d2 커밋 **9a5fbfb** `docs/research/bom-full.csv` (`git show`, R-012 전선 MPN 반영) | 9738121e9c01933115b5878f6485ebda92f1d54977f6240df696d5161e09fa02 |
+| `inputs/carrier-kicad-bom.csv` | 회로도 **c653eac** `hardware/schematic/carrier/carrier.kicad_sch`(sha256 1f7cb20b…62b0)를 `git show`로 꺼내 `kicad-cli sch export bom`으로 내보냄 | 3c597c2ec691b0ca3bfe4fe8e48ae14848c6cbaee718313650fe46eea7149a58 |
+| `inputs/front-kicad-bom.csv` | 같은 방법 (`front.kicad_sch` sha256 4bd5b354…1b304) | c4f429b83e7ae6de4293e304dfd6ebb0a37604c8a8f4c7fd24ce24466c8c0eab |
+
+KiCad 내보내기 명령(KiCad 10.0.8, 종료 코드 carrier 0 · front 0):
+
+```
+kicad-cli sch export bom --fields 'Reference,Value,Footprint,${QUANTITY},${DNP}' --labels 'Refs,Value,Footprint,Qty,DNP' --group-by 'Value,Footprint,${DNP}' --ref-range-delimiter '' -o inputs/<board>-kicad-bom.csv <board>.kicad_sch
+```
+
+## 실행과 종료 코드
+
+```
+python -I make_pcbway_bom.py
+python -I make_pcbway_bom.py --bom-full <csv> --kicad-carrier <csv> --kicad-front <csv> --out <dir>
+```
+
+| 종료 코드 | 뜻 |
+|---|---|
+| 0 | 보드마다 **참조 지정자 집합**과 **DNP 집합**이 KiCad BOM과 같다 |
+| 1 | 하나라도 다르다. 차이는 stderr에 「BOM에만 / KiCad에만」으로 나온다 |
+| 2 | 입력 파일이 없거나 형식이 다르다 (bom-full 21열, KiCad의 Refs/DNP 열) |
+
+## 변환 규칙
+
+| 항목 | 규칙 |
+|---|---|
+| 보드 구분 | bom-full `Reference`의 접두어 `[캐리어]` → carrier, `[전면]` → front |
+| `*Designator` | 콤마로 구분하고(공백 없음) 참조 번호 순서로 정렬한다 |
+| `*Qty` | 참조 지정자 개수 (보드 1장) |
+| `Manufacturer` · `*Mfg Part #` · `Description / Value` · `*Package/Footprint` | bom-full의 Manufacturer · MPN · Value · Package |
+| `Type` | `SMD` · `THT` (DC 잭 J2, RJ45 J5) · `Hybrid` (USB-C J3 — SMD 패드에 쉘 다리가 스루홀) · `Manual` (MH1 CLA216-ICR, 납땜하지 않는 기구 부품) · **DNP는 `DNS`** (R-010: 템플릿 표기) |
+| `Your Instructions / Notes` | DNP면 `DNS - do not purchase/place` · bom-full AssemblyNotes에 「위탁」이 있으면 **`Consigned`**, 없으면 `Turnkey` · BTB(J1)는 `Gate G1: BTB mating check before production` · 기구 부품은 `Not soldered…` · 끝에 `Source: <유통처 번호>` |
+| **시험점 (TP)** | 부품이 아니므로(PCB 패드) **BOM에서 뺀다**. 일치 검사에서도 KiCad 쪽 TP를 같이 빼고, 뺀 개수를 출력한다 (carrier 26 · front 23) |
+| 회로도 밖 부품 | 모듈 101991223 · S401(BXF4677) · 렌즈 CIL093 · GH 케이블 · 어댑터 · AC 코드는 **PCBA BOM에 넣지 않는다**. 실행할 때 목록만 출력한다(우리가 조립 — R-010 S10) |
+| 문자 | 출력은 **ASCII만** 쓴다 (`µ`→`u`, `≥`→`>=`, 「재고」→`stock` 등으로 바꾸고, 바꿀 수 없는 문자는 지운다). 줄바꿈은 CRLF |
+
+## 실행 결과 (2026-11-26)
+
+| 보드 | 행 | 참조 지정자 | 실장 | DNS | KiCad 일치 (TP 제외) | 위탁 (Consigned) |
+|---|---|---|---|---|---|---|
+| carrier | **50** | 73 | 66 | 7 | 참조 73 · DNP 7 **일치** | 없음 |
+| front | **39** | 62 | 50 | 12 | 참조 62 · DNP 12 **일치** | D_IR_A1·A2 (VSMA1085400, Digi-Key) · D_IR_B1·B2 (DNS) · MH1 CLA216-ICR (Manual) |
+
+- 일반 실행 `python -I make_pcbway_bom.py` → **종료 코드 0**
+- 음성 시험: carrier KiCad BOM에서 C23을 뺀 입력 → **종료 코드 1** (「BOM에만: ['C23']」 출력)
+- 음성 시험: 입력 파일 없음 → **종료 코드 2**
+
+## 분기점·선택·이유·차선책
+
+| # | 분기점 | 선택 | 이유 | 차선책 |
+|---|---|---|---|---|
+| B1 | 시험점 | BOM에서 빼고, 검사에서도 TP를 제외 | 부품이 아니다. PCBWay가 시험점을 구매·실장 대상으로 잘못 볼 수 있다 | `Type=DNS` 행으로 표시 |
+| B2 | 회로도 밖 부품 | PCBA BOM에서 빼고 목록만 출력 | 참조 지정자가 없고 납땜하지 않는다. 일치 검사를 깨지 않는다 | 별도 「Box build」 목록으로 PCBWay에 위탁 |
+| B3 | 위탁 판정 | bom-full AssemblyNotes의 「위탁」 (R-009 판정: VSMA1085400 · CLA216) | 한 곳(bom-full)에서만 판정하게 한다 | 생성기에 품번 목록을 직접 두는 방식 |
+| B4 | SRN6045TA-470M | `Turnkey` | C-005의 47µH(C5151734)는 LCSC 재고 3,990이다. R-009의 위탁 판정은 68µH 기준이었다 | 재고가 부족하면 Consigned |
+| B5 | Type 값 | SMD/THT/Hybrid/Manual/DNS | R-010의 「Surface mount, Thru-hole or Hybrid」와 템플릿의 `DNS`. Manual은 우리가 추가한 값이다 | Manual 대신 `DNS`로 쓰고 Notes에 표시 |
+| B6 | 입력 고정 | `inputs/`에 사본과 sha256을 둔다 | 다른 레인이 바뀌어도 재현할 수 있다 | 다른 레인 경로를 인자로 직접 준다 |
+| B7 | 일치 검사 범위 | 참조 지정자 + DNP 집합 | DNP가 틀리면 실장 사고가 난다 | 참조 지정자만 |
+
+## 한계
+
+- **값·풋프린트 검사:** 일치 검사는 집합만 본다. 값·풋프린트가 회로도와 같은지는 bom-full을 만들 때(R-008b) 맞췄고, 이 생성기는 다시 보지 않는다.
+- **회로도가 바뀌면:** `inputs/`를 새 커밋 기준으로 다시 만들고 실행해야 한다.
+- **PCBWay 쪽 해석:** `Type`의 `Hybrid`·`Manual` 값을 PCBWay가 그대로 받는지는 미확인이다(템플릿 예시에는 SMD와 DNS만 있다).
