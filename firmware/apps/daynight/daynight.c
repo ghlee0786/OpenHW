@@ -293,9 +293,9 @@ int main(int argc, char **argv)
         sleep_ms(g_cfg.poll_ms);
     }
 
-    /* 끝낼 때: IR 끔(PWM High → EN 0), ICR 은 코스트로 둔다 */
-    pwm_off();
+    /* 끝낼 때: IR 끔(EN 0 먼저 → PWM High), ICR 은 코스트로 둔다 */
     gpio_set(GPIO_IR_EN, 0);
+    pwm_off();
     if (ltr >= 0)
         close(ltr);
     return 0;
