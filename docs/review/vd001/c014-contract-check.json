@@ -1,5 +1,5 @@
 {
- "head": "434e960",
+ "head": "48042d5",
  "base": "656b50a",
  "checks": [
   {
@@ -1948,7 +1948,7 @@
   },
   {
    "sec": "5.1",
-   "item": "front J3-4 (MCLK 24MHz (X1 → R18 0Ω))",
+   "item": "front J3-4 (MCLK 24MHz (X1 → R8 22Ω,)",
    "expected": "CAM_MCLK",
    "actual": "CAM_MCLK",
    "ok": true,
@@ -2117,9 +2117,9 @@
   {
    "sec": "5.1",
    "item": "MCLK 직렬 저항 (X1 OUT → J3-4) 참조·값",
-   "expected": "R18 0R",
+   "expected": "R8 22R",
    "actual": "R8 22R",
-   "ok": false,
+   "ok": true,
    "info": false
   },
   {
@@ -2141,9 +2141,9 @@
   {
    "sec": "13절 C18",
    "item": "I2C2 풀업 레일 (C18 ④ 문구)",
-   "expected": "CORE_1V8",
+   "expected": "CAM_1V8",
    "actual": "CAM_1V8",
-   "ok": false,
+   "ok": true,
    "info": false
   },
   {
@@ -2292,10 +2292,10 @@
   },
   {
    "sec": "7절",
-   "item": "예비: 「FPC 8」 = 캐리어 J7-8",
+   "item": "예비: 「→ 3」 = 캐리어 J7-3",
    "expected": "SPARE1",
-   "actual": "NC",
-   "ok": false,
+   "actual": "SPARE1",
+   "ok": true,
    "info": false
   },
   {
@@ -2348,10 +2348,10 @@
   },
   {
    "sec": "7절",
-   "item": "조도 INT 예비: 「FPC 7」 = 캐리어 J7-7",
+   "item": "조도 INT 예비: 「→ 4」 = 캐리어 J7-4",
    "expected": "ALS_INT_RSV",
-   "actual": "NC",
-   "ok": false,
+   "actual": "ALS_INT_RSV",
+   "ok": true,
    "info": false
   },
   {
@@ -2476,18 +2476,18 @@
   },
   {
    "sec": "4절",
-   "item": "용도 「SPARE1 → FPC 8」 = 캐리어 J7-8",
+   "item": "용도 「SPARE1 → 3」 = 캐리어 J7-3",
    "expected": "SPARE1",
-   "actual": "NC",
-   "ok": false,
+   "actual": "SPARE1",
+   "ok": true,
    "info": false
   },
   {
    "sec": "4절",
-   "item": "용도 「ALS_INT_RSV → FPC 7」 = 캐리어 J7-7",
+   "item": "용도 「ALS_INT_RSV → 4」 = 캐리어 J7-4",
    "expected": "ALS_INT_RSV",
-   "actual": "NC",
-   "ok": false,
+   "actual": "ALS_INT_RSV",
+   "ok": true,
    "info": false
   },
   {
@@ -2948,14 +2948,6 @@
   },
   {
    "sec": "DNP",
-   "item": "13절 C19 「B는 DNP」: 스트링 B DNP 수",
-   "expected": "3",
-   "actual": "0",
-   "ok": false,
-   "info": false
-  },
-  {
-   "sec": "DNP",
    "item": "5.1 RESET RC 저항 10k 실장",
    "expected": "10k 실장",
    "actual": "10k 실장",
@@ -2964,10 +2956,10 @@
   },
   {
    "sec": "DNP",
-   "item": "5.1 RESET RC 커패시터 100nF DNP",
-   "expected": "100nF DNP",
+   "item": "5.1 RESET RC 커패시터 100nF",
+   "expected": "100nF 실장",
    "actual": "100nF 실장",
-   "ok": false,
+   "ok": true,
    "info": false
   },
   {
@@ -2979,23 +2971,111 @@
    "info": false
   },
   {
-   "sec": "DNP",
-   "item": "carrier: 계약에 근거 문구가 없는 DNP (정보)",
-   "expected": "",
+   "sec": "12B",
+   "item": "carrier DNP 집합",
+   "expected": "C15,C16,R13,R14,R15,R16,R17",
    "actual": "C15,C16,R13,R14,R15,R16,R17",
-   "ok": false,
-   "info": true
+   "ok": true,
+   "info": false
   },
   {
-   "sec": "DNP",
-   "item": "front: 계약에 근거 문구가 없는 DNP (정보)",
-   "expected": "",
-   "actual": "C6,R16",
-   "ok": false,
-   "info": true
+   "sec": "12B",
+   "item": "carrier C15 값",
+   "expected": "100nF",
+   "actual": "100nF",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "12B",
+   "item": "carrier C16 값",
+   "expected": "100nF",
+   "actual": "100nF",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "12B",
+   "item": "carrier R13 값",
+   "expected": "47k",
+   "actual": "47k",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "12B",
+   "item": "carrier R14 값",
+   "expected": "47k",
+   "actual": "47k",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "12B",
+   "item": "carrier R15 값",
+   "expected": "47k",
+   "actual": "47k",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "12B",
+   "item": "carrier R16 값",
+   "expected": "47k",
+   "actual": "47k",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "12B",
+   "item": "carrier R17 값",
+   "expected": "47k",
+   "actual": "47k",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "12B",
+   "item": "front DNP 집합",
+   "expected": "C6,Q4,R11,R16",
+   "actual": "C6,Q4,R11,R16",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "12B",
+   "item": "front C6 값",
+   "expected": "100nF",
+   "actual": "100nF",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "12B",
+   "item": "front Q4 값",
+   "expected": "ALS-PT19",
+   "actual": "ALS-PT19",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "12B",
+   "item": "front R11 값",
+   "expected": "10k",
+   "actual": "10k",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "12B",
+   "item": "front R16 값",
+   "expected": "10k",
+   "actual": "10k",
+   "ok": true,
+   "info": false
   }
  ],
- "mismatches": 8,
+ "mismatches": 0,
  "erc": {
   "carrier": 0,
   "front": 0
@@ -3004,5 +3084,5 @@
   "carrier": 0,
   "front": 0
  },
- "exit": 8
+ "exit": 0
 }

@@ -3,9 +3,9 @@
 대조하는 것 (계약 절):
   4절  캐리어 BTB 60핀 (넷, 짝 핀 홀짝 반전, 「미사용」= NC)        5절  전면 BTB 60핀 (같은 규칙)
   5.1  DF30 24P 센서 커넥터 핀                                     6절  I2C2 풀업 레일·LTR-329 결선
-  7절  GPIO 표 (커넥터 핀 넷, 4·5절과 같은 넷인지, 「FPC n」, DRV8837 IN1/IN2)
+  7절  GPIO 표 (커넥터 핀 넷, 4·5절과 같은 넷인지, 「→ J7-n」, DRV8837 IN1/IN2)
   12A  하니스 J7-n ↔ J4-(7−n) 결선                                 3.1·9·12절 전원 레일·보호 값 문구 (정규식으로 읽은 값)
-  DNP  계약 문구가 실장/미실장을 말하는 부품 + 계약에 근거가 없는 회로도 DNP (정보, 개수에 안 넣음)
+  DNP  계약 문구가 실장/미실장을 말하는 부품 · 12B절 DNP 목록 = 넷리스트 DNP 집합(값 포함)
 함께 (같은 실행): 두 보드 ERC --exit-code-violations, netcompare(기준 커밋 넷리스트 대비).
 
 usage:
@@ -83,15 +83,18 @@ def table_after(t, heading):
             break
     return rows[1:]  # drop header
 
+FOUND = {}
 def find(t, rx):
-    return [m.groups() for m in re.finditer(rx, t)]
+    out = [m.groups() for m in re.finditer(rx, t)]
+    FOUND[rx] = FOUND.get(rx, 0) + len(out)
+    return out
 
 def mate(p):
     p = int(p); return p + 1 if p % 2 else p - 1
 
 # ---------------------------------------------------------------- checks
 def check(t, N):
-    res = []
+    res = []; FOUND.clear()
     def add(sec, item, exp, act, info=False):
         res.append({'sec': sec, 'item': item, 'expected': str(exp), 'actual': str(act), 'ok': str(exp) == str(act), 'info': info})
     C, F = N['carrier'], N['front']
@@ -117,7 +120,7 @@ def check(t, N):
             a, _, b = pins.partition('~')
             for p in range(int(a), int(b or a) + 1):
                 add('5.1', f'front J3-{p} ({txt[:24]})', exp, F.at('J3', p))
-    for ref, val in find(t, r'MCLK 24MHz \(X1 → (R\d+) ([\d.]+)Ω\)'):
+    for ref, val in find(t, r'MCLK 24MHz \(X1 → (R\d+) ([\d.]+)Ω[,)]'):
         r = F.two_pin(F.fn('X1', 'OUT'), F.at('J3', 4))
         add('5.1', 'MCLK 직렬 저항 (X1 OUT → J3-4) 참조·값', f'{ref} {val}R', ' '.join(f'{x} {F.comps[x]}' for x in r) or '없음')
 
@@ -136,20 +139,20 @@ def check(t, N):
     # 7절 GPIO
     for row in table_after(t, '## 7.'):
         func, cn, conn, link = row[0], row[1], row[4], row[8]
-        m = re.match(r'J(\d)-(\d+) / (전면|캐리어) (\d+)(?: → FPC (\d+))?', conn)
+        m = re.match(r'J(\d)-(\d+) / (전면|캐리어) (\d+)(?: → (?:FPC |J7-)(\d+))?', conn)
         board = 'front' if m.group(3) == '전면' else 'carrier'
         pin = m.group(4)
         add('7절', f'{func}: 코어 J{m.group(1)}-{m.group(2)} ↔ {board} {pin} 짝', mate(pin), m.group(2))
         add('7절', f'{func}: {board} J1-{pin} 넷', alias(board, cn), N[board].at('J1', pin))
         add('7절', f'{func}: 4·5절 표의 같은 핀 넷과 같음', alias(board, cn), btb.get((board, pin)))
         if m.group(5):
-            add('7절', f'{func}: 「FPC {m.group(5)}」 = 캐리어 J7-{m.group(5)}', alias(board, cn), C.at('J7', m.group(5)))
+            add('7절', f'{func}: 「→ {m.group(5)}」 = 캐리어 J7-{m.group(5)}', alias(board, cn), C.at('J7', m.group(5)))
         d = re.search(r'DRV8837 (IN\d)', link)
         if d:
             u = next(r for r, v in F.comps.items() if v.startswith('DRV8837'))
             add('7절', f'{func}: DRV8837 {d.group(1)}', alias('front', cn), F.fn(u, d.group(1)))
-    for txt, n in find(t, r'\| ([A-Z_0-9]+) → FPC (\d+) \|'):
-        add('4절', f'용도 「{txt} → FPC {n}」 = 캐리어 J7-{n}', txt, C.at('J7', n))
+    for txt, n in find(t, r'\| ([A-Z_0-9]+) → (?:FPC |J7-)(\d+)[ |]'):
+        add('4절', f'용도 「{txt} → {n}」 = 캐리어 J7-{n}', txt, C.at('J7', n))
 
     # 12A 하니스
     for row in table_after(t, '## 12A.'):
@@ -229,20 +232,24 @@ def check(t, N):
     leds = [r for r, v in F.comps.items() if v.startswith('VSMA') or v.startswith('AL8860')]
     if find(t, r'스트링 A·B 실장'):
         add('DNP', '3.1 「스트링 A·B 실장」: IR LED·AL8860 DNP 수', 0, len([r for r in leds if r in F.dnp]))
-    if find(t, r'B는 DNP'):
-        add('DNP', '13절 C19 「B는 DNP」: 스트링 B DNP 수', len([r for r in leds if 'B' in r or F.fn(r, 'SET') == 'IRB_SET']),
-            len([r for r in leds if r in F.dnp]))
-    for r_, c_ in find(t, r'CAM_EN → (\d+)k \+ (\d+)nF\(DNP\) RC'):
+    for r_, c_, d_ in find(t, r'CAM_EN → (\d+)k \+ (\d+)nF(\(DNP\))? RC'):
+        st = lambda r: 'DNP' if r in F.dnp else '실장'
         rr = [r for r in F.two_pin('CAM_EN', 'CAM_RESET') if r.startswith('R')]; cc = [r for r in F.two_pin('CAM_RESET', 'GND') if r.startswith('C')]
-        add('DNP', f'5.1 RESET RC 저항 {r_}k 실장', f'{r_}k 실장', ','.join(f'{F.comps[r]} {"DNP" if r in F.dnp else "실장"}' for r in rr))
-        add('DNP', f'5.1 RESET RC 커패시터 {c_}nF DNP', f'{c_}nF DNP', ','.join(f'{F.comps[r]} {"DNP" if r in F.dnp else "실장"}' for r in cc))
+        add('DNP', f'5.1 RESET RC 저항 {r_}k 실장', f'{r_}k 실장', ','.join(f'{F.comps[r]} {st(r)}' for r in rr))
+        add('DNP', f'5.1 RESET RC 커패시터 {c_}nF', f'{c_}nF {"DNP" if d_ else "실장"}', ','.join(f'{F.comps[r]} {st(r)}' for r in cc))
     if find(t, r'LIGHT_SENSE \| .*미실장 패드'):
         parts = sorted({r for r, p in F.members.get('LIGHT_SENSE', []) if not r.startswith(('J', 'TP'))})
         add('DNP', '7절 LIGHT_SENSE 「미실장 패드」: 부품 모두 DNP', ','.join(parts), ','.join(r for r in parts if r in F.dnp))
-    covered = set(leds) | {r for r, p in F.members.get('LIGHT_SENSE', [])} | {r for r, p in F.members.get('CAM_RESET', []) if r.startswith('C')}
+    # 12B절 DNP 목록 = 넷리스트 DNP 집합 (보드마다, 값도)
+    rows = table_after(t, '## 12B.')
     for b in BOARDS:
-        rest = sorted(r for r in N[b].dnp if not (b == 'front' and r in covered))
-        add('DNP', f'{b}: 계약에 근거 문구가 없는 DNP (정보)', '', ','.join(rest), info=True)
+        listed = {r[1]: r[2] for r in rows if r[0] == b}
+        add('12B', f'{b} DNP 집합', ','.join(sorted(listed)), ','.join(sorted(N[b].dnp)))
+        for ref, val in sorted(listed.items()):
+            add('12B', f'{b} {ref} 값', val, N[b].comps.get(ref, '없음').split()[0] if ref in N[b].comps else '없음')
+    # 값 문구 정규식이 계약에서 사라지면 대조가 조용히 빠지므로 불일치로 센다
+    for rx, n in FOUND.items():
+        if n == 0: add('문구', f'계약 문구를 찾지 못함: {rx}', '1개 이상', 0)
     return res
 
 # ---------------------------------------------------------------- kicad runs
@@ -329,6 +336,11 @@ FAULTS = [
     ('3.1 5V_SYS C23 → C24', 'C7·C8·C20·C23,', 'C7·C8·C20·C24,'),
     ('3.1 R17 10k → 100k', '= R17 10k', '= R17 100k'),
     ('12절 D7 SMBJ6.0A → SMBJ5.0A', '**D7 SMBJ6.0A**', '**D7 SMBJ5.0A**'),
+    ('12B DNP 목록 front C6 → C5', '| front | C6 | 100nF |', '| front | C5 | 100nF |'),
+    ('12B DNP 목록 carrier R17 행 빠짐', '| carrier | R17 | 47k | SD D3 풀업 옵션 | 위와 같음 |\n', ''),
+    ('5.1 MCLK 문구 R8 22Ω → R18 0Ω', 'X1 → R8 22Ω', 'X1 → R18 0Ω'),
+    ('「스트링 A·B 실장」 문구 모두 삭제', '스트링 A·B 실장', '스트링 A 실장'),
+    ('7절 SPARE1 → J7-3 → J7-4', '캐리어 20 → J7-3', '캐리어 20 → J7-4'),
 ]
 
 def selftest(contract):
@@ -341,7 +353,7 @@ def selftest(contract):
     for name, a, b in FAULTS:
         if a not in t:
             print(f'  MISSING-ANCHOR {name}'); missed += 1; continue
-        n = count(t.replace(a, b, 1))
+        n = count(t.replace(a, b))  # 같은 문구가 여러 곳이면 모두 바꾼다
         ok = n > base; missed += not ok
         print(f"  {'DETECTED' if ok else 'MISSED  '} {name}: 불일치 {base} → {n}")
     print(f'selftest: {len(FAULTS)}건 중 놓침 {missed}')

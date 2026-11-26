@@ -1,8 +1,8 @@
 # C-001 HW/FW 계약 — reCamera Core 2002 캐리어·전면 보드
 
-- 상태: **계약 v1.11 (FW 대조 완료 · C-012 회로도 반영)** · 2026-11-27
+- 상태: **계약 v1.12 (FW 대조 완료 · C-014 기계 대조 불일치 8 해소 · DNP 목록 12B절)** · 2026-11-27
 - 배정: orch t18r C-001 → C-001b(FW 대조) · 작성자: schematic (단독) · 레인 `t-20261126-155208-d030`
-- 이력: 초안 `ac12920` → v1 `8613910` → v1.1 `be646c2` → v1.2 `fd12ba4` → v1.3 `e3ccdd0` → v1.4 `d159068` → v1.5 `a2b4945` ( V-004b — IR_PWM Hi-Z 상태 정정·듀티 기준, N1 Q6 게이트, X1 OE, SMBJ6.0A, USB_DET 필터 — C-005 회로도 `b3b376a`와 일치) → v1.6 `fb6629c` (R17 100k → 10k, V-004c/O-36) → v1.7 `62145e8` (5V 출력 22µF×4, O-37) → v1.8 `2dde4a2` (보드 간 GH 6P 직선 케이블, O-41) → v1.9 `f6d188e` (RJ45 쪽 MDI P/N 반전, O-46 — 철회) → v1.10 `4d5d49e` (v1.9 철회, RJ45 극성 표준 배정, O-47) → v1.11 (이 커밋: IR 스트링 B 실장, O-69 · R-016 · D-003 #10·#17)
+- 이력: 초안 `ac12920` → v1 `8613910` → v1.1 `be646c2` → v1.2 `fd12ba4` → v1.3 `e3ccdd0` → v1.4 `d159068` → v1.5 `a2b4945` ( V-004b — IR_PWM Hi-Z 상태 정정·듀티 기준, N1 Q6 게이트, X1 OE, SMBJ6.0A, USB_DET 필터 — C-005 회로도 `b3b376a`와 일치) → v1.6 `fb6629c` (R17 100k → 10k, V-004c/O-36) → v1.7 `62145e8` (5V 출력 22µF×4, O-37) → v1.8 `2dde4a2` (보드 간 GH 6P 직선 케이블, O-41) → v1.9 `f6d188e` (RJ45 쪽 MDI P/N 반전, O-46 — 철회) → v1.10 `4d5d49e` (v1.9 철회, RJ45 극성 표준 배정, O-47) → v1.11 `f56945b` (IR 스트링 B 실장, O-69 · R-016 · D-003 #10·#17) → v1.12 (이 커밋: C-014 `contract_check.py` 불일치 8 해소 — 계약 문구만 회로도에 맞춤, DNP 목록 12B절 신설, O-82 · C-015)
 - KiCad 회로도는 C-002에서 그린다. 부품은 「1안」이고 재고·정격 확정은 C-002/R-004에서 한다.
 
 ## 0. 입력과 근거
@@ -159,7 +159,7 @@
 | 17 | 18 | SD1_D0 | SG2002 SD1 (R48~R53 0Ω, 2002w DNP) · 패드 번호 미확인 | 미확인 (1.8V 추정) | 미사용 (NC) | wifisd okay · 2002 실장 실물 확인 | 07 |
 | 18 | 17 | MIPI_TXP2/IIC1_SCL/PWM | 84 PAD_MIPI_TXP2 | 1.8V 추정 | IIC1_SCL → 캐리어 예비 I2C 패드 | IIC1 · ADS1015@0x48 노드 삭제 → FW | 05 |
 | 19 | 20 | SD1_D1 | SG2002 SD1 (R48~R53 0Ω, 2002w DNP) · 패드 번호 미확인 | 미확인 (1.8V 추정) | 미사용 (NC) | wifisd okay · 2002 실장 실물 확인 | 07 |
-| 20 | 19 | MIPI_TXM1/IIC2_SDA/PWM | 85 PAD_MIPI_TXM1 | 1.8V 추정 | SPARE1 → FPC 8 | XGPIOC_14 = gpio430 (portc 416 추론) · DTS spi0(mcp2518fd) 삭제 → FW | 05 |
+| 20 | 19 | MIPI_TXM1/IIC2_SDA/PWM | 85 PAD_MIPI_TXM1 | 1.8V 추정 | SPARE1 → J7-3 (GH 6P, 12A절 — v1.12) | XGPIOC_14 = gpio430 (portc 416 추론) · DTS spi0(mcp2518fd) 삭제 → FW | 05 |
 | 21 | 22 | SD1_D2 | SG2002 SD1 (R48~R53 0Ω, 2002w DNP) · 패드 번호 미확인 | 미확인 (1.8V 추정) | 미사용 (NC) | wifisd okay · 2002 실장 실물 확인 | 07 |
 | 22 | 21 | MIPI_TXP1/IIC2_SCL/PWM | 86 PAD_MIPI_TXP1 | 1.8V 추정 | IR_LED_EN → 12V_IR 부하 스위치 | XGPIOC_15 = gpio431 (추론) · DTS spi0(mcp2518fd) 삭제 → FW | 05 |
 | 23 | 24 | SD1_D3 | SG2002 SD1 (R48~R53 0Ω, 2002w DNP) · 패드 번호 미확인 | 미확인 (1.8V 추정) | 미사용 (NC) | wifisd okay · 2002 실장 실물 확인 | 07 |
@@ -171,7 +171,7 @@
 | 29 | 30 | VIN | 모듈 전원 입력 (코어 내부 VIN 공통, J1 38~44와 같은 넷) | 5V | 5V_SYS 공급 | — | 03·07 |
 | 30 | 29 | GND | GND | — | GND | — | — |
 | 31 | 32 | VIN | 모듈 전원 입력 (코어 내부 VIN 공통, J1 38~44와 같은 넷) | 5V | 5V_SYS 공급 | — | 03·07 |
-| 32 | 31 | PWR_WAKEUP1 | 44 PWR_BUTTON1 (기능 PWR_GPIO_8, 2002w: BT_HOST_WAKE) | 1.8V (VDDIO_RTC) | ALS_INT_RSV → FPC 7 | PWR_BUTTON1 → PWR_GPIO_8 = gpio360 (pinlist·DTS 주석 porte 8) | 04·06 |
+| 32 | 31 | PWR_WAKEUP1 | 44 PWR_BUTTON1 (기능 PWR_GPIO_8, 2002w: BT_HOST_WAKE) | 1.8V (VDDIO_RTC) | ALS_INT_RSV → J7-4 (GH 6P, 12A절 — v1.12) | PWR_BUTTON1 → PWR_GPIO_8 = gpio360 (pinlist·DTS 주석 porte 8) | 04·06 |
 | 33 | 34 | VIN | 모듈 전원 입력 (코어 내부 VIN 공통, J1 38~44와 같은 넷) | 5V | 5V_SYS 공급 | — | 03·07 |
 | 34 | 33 | nRESET | 39 PWR_RSTN/1V8 (10k PU→VDD_RTC, 100nF) | 1.8V | 리셋 버튼 (GND로) | 하드웨어 (일치) | 04 |
 | 35 | 36 | VIN | 모듈 전원 입력 (코어 내부 VIN 공통, J1 38~44와 같은 넷) | 5V | 5V_SYS 공급 | — | 03·07 |
@@ -276,14 +276,14 @@
 | 핀 | 넷 | 핀 | 넷 |
 |---|---|---|---|
 | 1 | CAM_I2C2_SDA | 2 | GND |
-| 3 | CAM_I2C2_SCL | 4 | MCLK 24MHz (X1 → R18 0Ω) |
+| 3 | CAM_I2C2_SCL | 4 | MCLK 24MHz (X1 → R8 22Ω, v1.12) |
 | 5 | CAM_RX0_0N (D0−) | 6 | GND |
 | 7 | CAM_RX0_0P (D0+) | 8 | GND |
 | 9 | CAM_RX0_CLKN | 10 | GND |
 | 11 | CAM_RX0_CLKP | 12 | AVDD 3.3V 전원 입력 (CORE_3V3 → AO3401A 스위치, CAM_EN 제어) |
 | 13 | CAM_RX0_1N (D1−) | 14 | **IOVDD 3.3V 전원 입력** (신호 레벨 아님, V-002 ④) |
 | 15 | CAM_RX0_1P (D1+) | 16 | DVDD → AVDD 레일 (S401과 같음) |
-| 17~23 | GND | 24 | **RESET** (V-002 ④ 확정) — CAM_EN → 10k + 100nF(DNP) RC 자리 (O-22) |
+| 17~23 | GND | 24 | **RESET** (V-002 ④ 확정) — CAM_EN → 10k + 100nF RC (R7·**C10 실장**, C-004 R3) + BAT54 D3 방전 · R16 10k CAM_RESET→GND는 DNP (O-22, v1.12) |
 
 - **CSI 레인 (F-001 대조, 일치):** SDK `sns_cfg_gc2053.as16LaneId = {2,0,3,-1,-1}`, PN swap 없음.
   - 0번 항목은 클록 레인이다(추론, Milk-V GC2083 `lane_id=1,0,2`와 같은 형식).
@@ -323,9 +323,9 @@
 | ICR IN2 | WH_PWM | 47 PWR_GPIO0 → PWR_GPIO_0 | gpio352 | J1-6 / 전면 5 | 1.8V | 출력 Low | DRV8837 IN2 | white LED → 삭제 |
 | IR LED 밝기 | IR_PWM | 35 PAD_ZQ → PWR_GPIO_24 또는 **PWM_2** | gpio376 / pwm 채널 2 (pwmchip 번호는 FW) | J1-16 / 전면 15 | 1.8V 추정 | **전기 High = LED 끔 · Hi-Z = 끔(R12 풀업) · Low = 켬(CTRL 개방)** (v1.5, V-004b). 하드웨어 기본: R12 100k → CORE_1V8 풀업 = 끔 | N-MOSFET → AL8860 CTRL 끌어내림 (PWM 극성 반전, ≤500Hz — V-001). **FW 규칙: IR_LED_EN을 올리기 전에 IR_PWM을 High로 둔다** · **IR_PWM Low(켬) 비율 ≤25%** (O-31) | blue LED(mmc0) → 삭제, `PINMUX_CONFIG(GPIO_ZQ, PWM_2)` |
 | IR LED 전원 | IR_LED_EN | 86 PAD_MIPI_TXP1 → XGPIOC_15 | gpio431 (추론) | J2-21 / 캐리어 22 | 1.8V 추정 | Low = 끔 (하드웨어 풀다운) | 12V_IR 부하 스위치 EN | spi0 SDI 기능 → spi0/mcp2518fd 삭제, GPIO로 |
-| 예비 | SPARE1 | 85 PAD_MIPI_TXM1 → XGPIOC_14 | gpio430 (추론) | J2-19 / 캐리어 20 → FPC 8 | 1.8V 추정 | 입력 | 예비 | 위와 같음 |
+| 예비 | SPARE1 | 85 PAD_MIPI_TXM1 → XGPIOC_14 | gpio430 (추론) | J2-19 / 캐리어 20 → J7-3 | 1.8V 추정 | 입력 | 예비 | 위와 같음 |
 | 상태 LED | STATUS_LED | 87 PAD_MIPI_TXM0 → XGPIOC_12 | gpio428 (추론) | J2-23 / 캐리어 24 | 1.8V 추정 | Low = 끔 | N-MOSFET + LED | portc 12를 쓰는 mm610x reset·mcp2518fd IRQ → 삭제 |
-| 조도 INT 예비 | PWR_WAKEUP1 | 44 PWR_BUTTON1 → PWR_GPIO_8 | gpio360 | J2-31 / 캐리어 32 → FPC 7 | 1.8V | 입력 | 차선 센서 INT | DTS에 주석으로만 있음 |
+| 조도 INT 예비 | PWR_WAKEUP1 | 44 PWR_BUTTON1 → PWR_GPIO_8 | gpio360 | J2-31 / 캐리어 32 → J7-4 | 1.8V | 입력 | 차선 센서 INT | DTS에 주석으로만 있음 |
 | 센서 전원·리셋 | CAM_EN | 43 PWR_WAKEUP0 → PWR_GPIO_6 | gpio358 | J1-47 / 전면 48 | 1.8V | 부팅 때 High | 전원 스위치(Q3·Q7)·센서 리셋 (발진기 OE = CAM_1V8, v1.5) | `S70hardware`가 켬 (그대로) |
 | 업그레이드 버튼 | UPGRAD_KEY | 30 AUX0 → XGPIOA_30 | gpio510 | J2-35 / 캐리어 36 | 3.3V | 풀업 (누르면 0) | 버튼 → **직렬 1kΩ** → GND | DTS `wifi_pin poweron-gpio = porta 30`이 출력으로 쓸 수 있음 → 삭제. 출력과 버튼이 부딪칠 때를 막으려고 1kΩ을 넣는다 |
 | microSD 전원 | SD0_PWR_EN | 15 → XGPIOA_14 | gpio494 | J2-37 / 캐리어 38 | 3.3V | High = 켬 (B101 NPN+PFET 패턴, 같은 SDK로 동작) | P-FET 스위치 | 그대로 |
@@ -423,6 +423,26 @@
 - **미확인:** 인접 접점 동시 통전 감액, 케이블 길이에 따른 AWG26 전압강하.
 - **차선 (C-003 C3-1 ②):** FFC는 신호용으로 남기고, 12V_IR만 JST PH 2P(S2B-PH-SM4-TB, 「2 A AC/DC (AWG #24)」)로 분리한다.
 
+## 12B. DNP (미실장) 목록 (v1.12, O-82)
+
+- 두 보드 넷리스트의 `dnp` 부품 **전부**다. 아래에 없는 부품은 모두 실장한다.
+- `contract_check.py`가 이 표를 읽어 넷리스트 DNP 집합과 대조한다(판정).
+- 이유는 회로도 README 10절과 결정 번호를 따른다.
+
+| 보드 | 레퍼런스 | 값 | 이유 | 근거 |
+|---|---|---|---|---|
+| carrier | C15 | 100nF | EPHY TX 센터탭 커패시터 자리 (통합 마그넷 RJ45라 불필요할 수 있음) | R-004 P6-주의 · README 10절 |
+| carrier | C16 | 100nF | EPHY RX 센터탭 커패시터 자리 | 위와 같음 |
+| carrier | R13 | 47k | SD CMD 풀업 옵션 (코어 내부 풀업 기대) | README 10절 |
+| carrier | R14 | 47k | SD D0 풀업 옵션 | 위와 같음 |
+| carrier | R15 | 47k | SD D1 풀업 옵션 | 위와 같음 |
+| carrier | R16 | 47k | SD D2 풀업 옵션 | 위와 같음 |
+| carrier | R17 | 47k | SD D3 풀업 옵션 | 위와 같음 |
+| front | C6 | 100nF | AVDD 켜짐 지연 옵션 — **DNP 유지 필수** (실장하면 GC2053 9.3절 전원 끄는 순서 위반) | V-004 R13 |
+| front | Q4 | ALS-PT19 | 아날로그 조도 차선 (LIGHT_SENSE 미실장 패드) | 13절 C15 |
+| front | R11 | 10k | Q4 부하 저항 (아날로그 조도 차선) | 13절 C15 |
+| front | R16 | 10k | CAM_RESET → GND 자리 (실장하려면 ≥100k) | C-004 R3 · V-004b R3 |
+
 ## 13. 분기점·선택·이유·차선책 (v1 갱신)
 
 | # | 분기점 | 선택 | 이유 | 차선책 |
@@ -444,10 +464,10 @@
 | **C15** | **조도센서 레벨 (O-9, v1.1 확정)** | LTR-329를 1.8V CAM_I2C2에 직결 (VDD 3.3V, 레벨시프터 없음) | 데이터시트 Rev C: VIO 1.7~3.6V, 주소 0x29 ≠ 0x3f | LIGHT_SENSE 포토트랜지스터(ALS-PT19) — 미실장 패드만 남긴다 |
 | **C16** | **UPGRAD_KEY 보호** | 버튼 직렬 1kΩ | DTS wifi_pin이 gpio510을 출력으로 쓸 수 있다 | FW가 wifi_pin을 지우면 0Ω |
 | **C17** | **IR LED 설정 (V-001 ⑥)** | AL8860 Rs 0.1Ω(1.0A), 12V에서 직렬 ≤2, 방열 기판 | 1.5A 설정은 절대최대에 여유가 0 | FR4 + thermal via + 0.8A 이하 |
-| **C18** | **C-002 반영 (v1.2)** | ① FPC 대칭 핀배치(12A절) ② ILIM 8.06k ③ 두 AL8860 CTRL이 IR_PWM 하나를 공유 ④ I2C2 풀업은 CORE_1V8 상시 ⑤ DVDD를 AVDD 레일로 | C-002 README 12절 C2-3~C2-8 | 각 행의 차선은 C-002 README에 있다 |
+| **C18** | **C-002 반영 (v1.2)** | ① FPC 대칭 핀배치(12A절) ② ILIM 8.06k ③ 두 AL8860 CTRL이 IR_PWM 하나를 공유 ④ I2C2 풀업은 CAM_1V8 (v1.2의 CORE_1V8 상시는 v1.4 C20이 대체 — O-33, 꺼진 센서로 역급전 방지. **FW: I2C2(GC2053·LTR-329)는 CAM_EN=1로 카메라 전원이 켜진 뒤에만 쓴다**, v1.12) ⑤ DVDD를 AVDD 레일로 | C-002 README 12절 C2-3~C2-8 | 각 행의 차선은 C-002 README에 있다 |
 | **C21** | **V-004b 반영 (v1.5)** | Q6 게이트 자기 소스 풀업 + Q7(N1) · X1 OE = CAM_1V8 · SMBJ6.0A · R11 → SD_PWR_GD · USB_DET 10nF · CLA216 리드 PicoBlade(O-34) | V-004b · R-009 | C-005 README 17.5 |
 | **C20** | **V-004 반영 (v1.4)** | I2C2 풀업·X1을 CAM_1V8로(O-33) · IR_PWM 극성(High = 끔) + R12 풀업 · 전면 LDO 2.8V · TPS26600 MODE 개방 · USB_DET 200k/100k · 5V TVS · RESET RC + BAT54 | V-004 R1~R13 · K1~K4 | C-004 README 16.5 |
-| **C19** | **ICR·IR 부품 (O-25)** | IR LED VSMA1085400(±40°) 4자리 = 2직렬 × 2스트링, B는 DNP. 풋프린트는 VSMA1085600과 같다(도면 6.550-5366.9-3) | R-006 | VSMA1085600(±60°) |
+| **C19** | **ICR·IR 부품 (O-25)** | IR LED VSMA1085400(±40°) 4자리 = 2직렬 × 2스트링, **A·B 모두 실장 (v1.11, O-69)**. 풋프린트는 VSMA1085600과 같다(도면 6.550-5366.9-3) | R-006 | VSMA1085600(±60°) |
 
 ## 14. 남은 미확인
 
