@@ -64,13 +64,13 @@ s.add('C23', 'Device:C', '22uF/25V X7R', 'Capacitor_SMD:C_1210_3225Metric', {'1'
 s.add('D7', 'Device:D_Zener', 'SMBJ6.0A', 'Diode_SMD:D_SMB', {'1': '5V_SYS', '2': 'GND'}, fields={'MPN': 'SMBJ6.0A (VRWM 6.0V > Vout max 5.30V, V-004b R5)', 'Note': 'unidirectional TVS, K=1'})
 s.add('D3', 'Device:LED', 'PWR green', 'LED_SMD:LED_0603_1608Metric', {'2': 'PWR_LED_A', '1': 'GND'})
 R(s, 'R4', '2.2k', '5V_SYS', 'PWR_LED_A')
-s.block('EFUSE','12V_IR eFuse TPS26600 (IR LED 전원)',['SHDN = IR_LED_EN (1.8V GPIO, 10k 풀다운 = 기본 끔) · UVLO = IN · OVP/MODE/RTN = GND (O-21)','ILIM 8.06k = 약 1.49A (2스트링 최악 1.22A, 분기 C2-4) · dVdT 22nF'],cols=4)
+s.block('EFUSE','12V_IR eFuse TPS26600 (IR LED 전원)',['SHDN = IR_LED_EN (1.8V GPIO, 10k 풀다운 = 기본 끔) · UVLO = IN · OVP/MODE/RTN = GND (O-21)','ILIM 6.98k = 약 1.72A (C-017/O-87: 2스트링 맥놀이 20µs 창 1.585A 여유, 분기 C2-4) · dVdT 22nF'],cols=4)
 # --- 12V_IR eFuse TPS26600 (O-21, V-002: SHDN + 10k pulldown, UVLO=IN, OVP/MODE=RTN, ILIM per 2 strings)
 s.add('U2', 'Power_Management:TPS26600PWP', 'TPS26600PWPR', 'Package_SO:HTSSOP-16-1EP_4.4x5mm_P0.65mm_EP3.4x5mm_Mask2.66x2.46mm_ThermalVias',
       {'1': '12V_IN', '2': '12V_IN', '3': '12V_IN', '5': 'GND', '7': 'IR_LED_EN', '8': 'GND', '9': 'GND', '11': 'EFUSE_ILIM', '12': 'EFUSE_DVDT', '15': '12V_IR', '16': '12V_IR', '17': 'GND'},
       fields={'MPN': 'TI TPS26600PWPR (LCSC C544399)', 'Note': 'UVLO=IN (no UVLO); OVP=RTN internal 33V; MODE open = circuit-breaker + auto-retry (C-004 C4-6); RTN=GND allowed (SLVSDG2G, reverse polarity handled by Q1); FLT/IMON unused (leave floating per datasheet)'})
 R(s, 'R5', '10k', 'IR_LED_EN', 'GND')
-R(s, 'R6', '8.06k 1%', 'EFUSE_ILIM', 'GND')
+R(s, 'R6', '6.98k 1%', 'EFUSE_ILIM', 'GND')  # C-017/O-87 S2 (was 8.06k)
 C(s, 'C9', '22nF', 'EFUSE_DVDT', 'GND')
 C(s, 'C10', '1uF/25V', '12V_IN', 'GND', 'Capacitor_SMD:C_0603_1608Metric')
 C(s, 'C11', '10uF/25V', '12V_IR', 'GND', 'Capacitor_SMD:C_1206_3216Metric')
@@ -193,7 +193,11 @@ R(f, 'R16', '10k', 'CAM_RESET', 'GND', dnp=True)
 f.add('Q6', 'Transistor_FET:Q_PMOS_GSD', 'DMG2305UX', 'Package_TO_SOT_SMD:SOT-23', {'1': 'CAM_1V8_G', '2': 'CORE_1V8', '3': 'CAM_1V8'}, fields={'MPN': 'Diodes DMG2305UX', 'Note': 'CAM_1V8 switch (V-004 R1, O-33): RDS(on) <=200mR @ VGS -1.8V, VGS(th) -0.5..-0.9V (DS36196 Rev 8-2); AO3401A unsuitable'})
 C(f, 'C18', '1uF', 'CAM_1V8', 'GND')
 R(f, 'R17', '10k', 'CORE_1V8', 'CAM_1V8_G')
-f.add('Q7', 'Transistor_FET:DMG1012T', 'DMG1012T', 'Package_TO_SOT_SMD:SOT-523', {'1': 'CAM_EN', '2': 'GND', '3': 'CAM_1V8_G'}, fields={'Note': 'V-004b N1: Q6 gate pulled to its own source (CORE_1V8), driven by CAM_EN (S401 pattern)'})
+f.add('Q7', 'Transistor_FET:DMG1012T', 'DMG1012T', 'Package_TO_SOT_SMD:SOT-523', {'1': 'CAM_EN', '2': 'GND', '3': 'CAM_1V8_PD'}, fields={'Note': 'V-004b N1: Q6 gate pulled to its own source (CORE_1V8), driven by CAM_EN (S401 pattern); C-017: via R18 1k'})
+# C-017/O-87 S1: Miller soft start for Q6 (inrush 5.11A -> 0.133A, on 36us, SIM-001b) · S4: CAM_1V8 bleeder
+R(f, 'R18', '1k', 'CAM_1V8_PD', 'CAM_1V8_G')
+C(f, 'C19', '10nF', 'CAM_1V8_G', 'CAM_1V8')
+R(f, 'R19', '10k', 'CAM_1V8', 'GND')
 # MCLK 24MHz (OT7EL89, OE=CAM_EN, supply CORE_1V8 always-on)
 f.add('X1', 'Oscillator:ASE-xxxMHz', 'OT7EL89CJI-111YLC-24M', 'Oscillator:Oscillator_SMD_SiT_PQFN-4Pin_2.0x1.6mm',
       {'1': 'CAM_1V8', '2': 'GND', '3': 'MCLK_OSC', '4': 'CAM_1V8'}, fields={'MPN': 'YXC OT7EL89CJI-111YLC-24M (LCSC C5280583)', 'Note': '2016 4P OE/GND/OUT/VDD; footprint SiT 2.0x1.6 - verify land vs YXC drawing'})

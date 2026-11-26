@@ -194,8 +194,13 @@ def check(t, N):
     if find(t, r'전면 Q6 DMG2305UX'):
         add('3.1', 'Q6 품명', 'DMG2305UX', F.comps.get('Q6'))
         add('3.1', 'Q6 S/G/D', 'CORE_1V8/CAM_1V8_G/CAM_1V8', '/'.join(F.fn('Q6', k) for k in 'SGD'))
-    if find(t, r'Q7 DMG1012T\(G = CAM_EN\)'):
-        add('3.1', 'Q7 G / D', 'CAM_EN/CAM_1V8_G', f'{F.fn("Q7", "G")}/{F.fn("Q7", "D")}')
+    for ref, val in find(t, r'Q7 DMG1012T\(G = CAM_EN, D → (R\d+) (\d+k) → 게이트\)'):
+        add('3.1', 'Q7 G', 'CAM_EN', F.fn('Q7', 'G'))
+        add('3.1', f'Q7 D → {ref} {val} → Q6 게이트', f'{ref} {val}', ' '.join(f'{r} {F.comps[r]}' for r in F.two_pin(F.fn('Q7', 'D'), F.fn('Q6', 'G'))) or '없음')
+    for ref, val in find(t, r'게이트–드레인 (C\d+) (\d+nF) 밀러'):
+        add('3.1', f'Q6 게이트–드레인 {ref}', f'{ref} {val}', ' '.join(f'{r} {F.comps[r]}' for r in F.two_pin(F.fn('Q6', 'G'), F.fn('Q6', 'D'))) or '없음')
+    for ref, val in find(t, r'CAM_1V8 → GND (R\d+) (\d+k) 블리더'):
+        add('3.1', f'CAM_1V8 블리더 {ref}', f'{ref} {val}', ' '.join(f'{r} {F.comps[r]}' for r in F.two_pin('CAM_1V8', 'GND') if r.startswith('R')) or '없음')
     for (part,) in find(t, r'전면 LDO (RT9013-\d+GB) \(입력 코어 VIN\)'):
         u = next(r for r, v in F.comps.items() if v.startswith('RT9013'))
         add('3.1', 'FRONT_2V8 LDO 품명·VIN·VOUT', f'{part} VIN FRONT_2V8', f'{F.comps[u]} {F.fn(u, "VIN")} {F.fn(u, "VOUT")}')
@@ -332,7 +337,9 @@ FAULTS = [
     ('7절 IR_LED_EN 커넥터 캐리어 22 → 24', 'J2-21 / 캐리어 22', 'J2-21 / 캐리어 24'),
     ('12A J7-4 ↔ J4-3 → J4-4', '| 4 | ALS_INT_RSV | 시험점 TP26만 (BTB 미연결, v1.12 O-83) | **3** |', '| 4 | ALS_INT_RSV | 시험점 TP26만 (BTB 미연결, v1.12 O-83) | **4** |'),
     ('12A J7-2 신호 12V_IR → GND', '| 2 | 12V_IR | TPS26600 OUT |', '| 2 | GND | TPS26600 OUT |'),
-    ('3.1 ILIM 8.06kΩ → 10kΩ', 'ILIM 8.06kΩ ≈', 'ILIM 10kΩ ≈'),
+    ('3.1 ILIM 6.98kΩ → 10kΩ', 'ILIM 6.98kΩ ≈', 'ILIM 10kΩ ≈'),
+    ('3.1 Q7 → R18 1k → 2k', 'D → R18 1k → 게이트', 'D → R18 2k → 게이트'),
+    ('3.1 블리더 R19 → R20', 'GND R19 10k 블리더', 'GND R20 10k 블리더'),
     ('3.1 5V_SYS C23 → C24', 'C7·C8·C20·C23,', 'C7·C8·C20·C24,'),
     ('3.1 R17 10k → 100k', '= R17 10k', '= R17 100k'),
     ('12절 D7 SMBJ6.0A → SMBJ5.0A', '**D7 SMBJ6.0A**', '**D7 SMBJ5.0A**'),
