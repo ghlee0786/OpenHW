@@ -95,9 +95,10 @@
 | F-010 | orch (O-89) | firmware t18w | 패치 0001에서 dtb vo 노드 reset-gpio·pwm-gpio·power-ct-gpio 삭제, 이미지 빌드(slot, --memory 상한)·해시, 호스트 시험 | firmware/** (새 레인) | 빌드 종료 0, dtb에 속성 0, 시험 0, 커밋 | completed — 레인 t-20261127-052120-dbd1 6ac6ba8→b1bc731: 새 패치 0004(0001 수정은 표시 파일 때문에 재적용 안 됨 — 원인 M 회피), 빌드 rc 0, out-f010 upgrade.zip a275afb1…(orch 해시 확인), dtb vo 세 속성·porte 참조 0, 호스트 시험 40/33/16·사전 시험 0 |
 | C-018 | orch (O-91) | schematic t18z | SIM-001a 전류 순서 표(정상 최악×1.15 ≤ eFuse 최소, eFuse 최대+벅 < 어댑터 OLP) → R6 재계산, S5 R17 4.7k·C19 4.7n, U2 열 비아 없는 풋프린트, .net 재생성, 계약 v1.14 | hardware/schematic/**, hardware/sim | 표 통과·ERC 0·contract_check 0, 커밋 | completed — b9cd a61dc63(+89647b4): R6 6.04k(I(OL) 1.861~2.115A, A5 표 두 조건 통과), R17 4.7k·C19 4.7n, U2 열 비아 없는 HTSSOP, .net 재생성, 계약 v1.14(어댑터 GST40A12). orch 재실행 contract_check 0. SIM-001a 레인 t-20261127-042501-44b5 4733be6: 15개 중 13 pass·2 fail(B1 5V 최악 5.298V, C3 CORE_3V3 강하 0.23V) — orch 재실행 종료 2 동일. GST25A12는 부적합 확인 → O-93·C-019 |
 | C-019 | orch (O-93) | schematic t18z | SIM-001a fail 2: 5V 분압 E96 재선정, 전면 Q1 1k+Q1/Q2 4.7nF 밀러, SIM B1·C3 재실행, 계약 v1.15 | hardware/schematic, hardware/sim | SIM 종료 0·ERC 0·contract_check 0, 커밋 | completed — b9cd 7760f38(+45c1fcd): 5V 분압 R2 78.7k·R3 10.7k(E96, 최악 4.770~5.196V), 전면 R20 1k·C20/C21 4.7nF(Q1/Q2 밀러), 계약 v1.15. orch 재실행 contract_check 0·selftest 0(22). SIM-001a 재실행 50aec69 15/15 종료 0(orch 재실행 0). 알림: C-017 f0745ed에서 전면 X1 심벌 UUID 바뀜 → pcb 링크 확인 |
-| SIM-001c | orch (O-92·O-93) | firmware t18w | SIM-B1~B8 → SIM-L1~L8 이름 바꿈, C-018/C-019 회로로 L2·L3·L5·L6 재시뮬 + CAM_EN 끄는 순서 | hardware/sim (3ed1 레인) | 같은 기준, 결과 JSON, 커밋 | running — ① b99b4e8 SIM-L1~L8 이름 바꿈(재실행 같음, 종료 2), 새 항목 L9·L10 기준 f47e537 먼저 커밋. ② C-019 대기 |
+| SIM-001c | orch (O-92·O-93) | firmware t18w | SIM-B1~B8 → SIM-L1~L8 이름 바꿈, C-018/C-019 회로로 L2·L3·L5·L6 재시뮬 + CAM_EN 끄는 순서 | hardware/sim (3ed1 레인) | 같은 기준, 결과 JSON, 커밋 | ② completed — 레인 t-20261127-054721-bf55 43eb4f7(3ed1 병합 뒤 새 레인): 종료 3(orch 재실행 같음). L2·L5·L6·L8 등 pass 7, L3(S3 기록 유지)·새 L9 끄는 순서(IOVDD 2.31ms 먼저)·L10 켜는 순서(1.0µs < 50µs) fail → O-97 S6 |
 | REN-002 | lead 판정 → orch | mechanical t18x | 최종 렌더: 3D 모델 전수 감사·대체 모델·연결 표, PCB 렌더 재생성, 제품 렌더 재질·추가 컷(뒷면 커넥터·사용 장면·치수선)·턴테이블 | mechanical/** (30c6), validation/runtime/vd001/render | 빠짐 0, judge 0, manifest, 커밋 | running |
 | R-022 | orch | research t18s | BOM 갱신: C-018(R6 6.04k·R17 4.7k·C19 4.7n·U2 풋프린트) + C-019(R2 78.7k·R3 10.7k·R20 1k·C20/C21 4.7nF) | bom-full·PCBWay BOM (새 레인) | make_pcbway_bom 0, 커밋 | completed — 레인 t-20261127-054531-37bc 3ce97b3: C-018·C-019 반영(R2 78.7k C67239 재고 2,100·차선 ROHM C308010, R3 10.7k C138068, R6 6.04k C25913, U2 풋프린트, C19–C21 4.7nF C1538, R17 4.7k, R20 1k), make_pcbway_bom 종료 0(orch 재실행 0·출력 변화 없음) |
+| C-020 | orch (O-97) | schematic t18z | 카메라 레일 순서 S6: Q1 게이트 100k∥(1k+BAT54), Q2 게이트 100k∥BAT54, 계약 v1.16 | hardware/schematic (새 레인) | ERC 0·contract_check 0, 커밋 | running |
 
 ## 운영 변경 (2026-11-26, 사용자 지시 · lead 전달)
 - 의견 묻지 않고 진행: 사람 쪽 미정값은 D-003(lead 레인 t-20261126-144135-5470 docs/decisions/D-003-working-defaults.md, 커밋 8ac5ce5) 값으로 확정 취급. 새 갈림길은 기본값 선택 → 아래 「분기 기록」에 분기점·선택·이유·차선책 → lead 요약 보고. 문제 시 해당 행으로 돌아가 차선책.
@@ -212,6 +213,7 @@
 | O-94 | REN-001: V4(B 창 가운데 연장)를 M-007 조립에서 덧씌움 — M-003 원본 params/geom은 8089 레인, 30c6은 그 사본 | V4를 30c6 레인의 params.py/geom.py에 옮겨 외함 STEP/STL/도면 재생성, O-61 재검사는 30c6 run_all.py가 맡음 → (정정) 8089는 이미 main 45fa2be로 병합됨 — 30c6만 남음, main M-003 파일 위에 들어감 | 같은 파일 두 레인 수정 충돌 방지 | 30c6에서만 계속, 8089 cancel |
 | O-95 | lead batch: firmware F-010 레인 dbd1이 main과 충돌(firmware/docs/bringup-checklist.md — F-008/F-009가 main에서 같은 파일 수정), dbd1에는 병합 상태가 남지 않음(깨끗), 직접 git merge 금지 | firmware가 SIM-001c ② 뒤 main 최신에서 새 레인 → F-010 변경(패치 0004·apply 스크립트·절차서 2-1·14절 줄)을 main 판 위에 손으로 옮겨 커밋(O-72 방식) → dbd1 cancel, 새 레인 batch | 하네스 규칙 안에서 충돌 해소, main 쪽 수정 보존 | lead가 dbd1 단독 accept로 병합 상태를 레인에 남기면 거기서 해결 |
 | O-96 | mechanical 30c6 레인(기준 0c2ec91)이 main에 나중에 들어온 mechanical/m003(8089 병합분)을 restore로 가져와 고침 → 병합 때 add/add 충돌 50파일 예상 | REN-002 끝에서 main 최신 새 레인 → git restore --source <30c6 최종> -- mechanical/ (및 validation 해시 문서 등 바뀐 경로) 커밋 → 30c6 cancel, 새 레인 batch | 하네스 규칙 안에서 충돌 없이 반영(O-72·O-95와 같은 방식) | lead가 30c6 단독 accept 후 레인에서 해결 |
+| O-97 | SIM-001c: GC2053 전원 순서(켤 때 AVDD−IOVDD ≥50µs, 끌 때 IOVDD 마지막) 불합격 — Q1·Q2 동시 동작 | S6 게이트 비대칭 RC+BAT54(같은 모델 검증 180µs·1.1ms·돌입 310mA) 채택, 재시뮬로 확인, 실물은 bring-up 프로브 | 하드웨어만으로 해결, FW·계약 핀 변경 없음 | AVDD 스위치를 SPARE1(gpio430)로 분리해 FW 순서 제어 |
 
 ## 발주 패키지 직전 정리 목록
 - [ ] 회로도 표시 겹침: 캐리어 J2 옆 12V_IN_RAW 라벨, D3 PWR_LED 라벨, J1 품번 문자 (O-32)
@@ -251,3 +253,4 @@
 - [ ] bring-up(G2 잔여): 센서 블록 두께·강판 귀·공동 깊이·DF30 결합·광학 중심·Tflex 두께 실측
 - [ ] bring-up: SIM B3 IR 끔 구간 링잉(6mA 피크, 평균 41µA 역방향) — 꺼짐 중 발광 없음 확인
 - [ ] VD-001: M-007 J5 LED 직접광 84.6%(렌즈 경통 가림, analysis2 86) — mechanical 개선 검토
+- [ ] bring-up: 센서 IOVDD/AVDD 켜기·끄기 순서 프로브 확인(SIM은 보드 레일 90% 대리 — 모듈 내부 LDO 지연 미상)
