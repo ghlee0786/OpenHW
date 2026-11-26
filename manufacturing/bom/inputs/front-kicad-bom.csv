@@ -25,6 +25,7 @@
 "R11,R16","10k","Resistor_SMD:R_0402_1005Metric","2","DNP"
 "R13,R14","0.1R 1% 0.25W","Resistor_SMD:R_1206_3216Metric","2",""
 "R18,R21","1k","Resistor_SMD:R_0402_1005Metric","2",""
+"R22,R23","10k 1%","Resistor_SMD:R_0402_1005Metric","2",""
 "TP1","VIN","TestPoint:TestPoint_Pad_D1.0mm","1",""
 "TP2","FRONT_2V8","TestPoint:TestPoint_Pad_D1.0mm","1",""
 "TP3","CORE_1V8","TestPoint:TestPoint_Pad_D1.0mm","1",""

@@ -19,6 +19,7 @@
 - **R-021 (2026-11-27): 입력 3개를 모두 바꿨다.** `inputs/bom-full.csv` = R-021 레인 t-20261127-051043-fac0의 `docs/research/bom-full.csv`(sha256 93e344677d719e73a13b2c57908b1bc66621c6b461ae260acb51695767db57ba → **O-90 판 c364206b04a7f73e96c54ef7bd4a0efd903ba563329b263bccefd63cd1edd124**: 캐리어 C18·C22를 FH 0402B103K500NT C1524로). KiCad BOM 2개는 회로도 **f0745ed**(C-017, C-016 ea1336b 포함)를 `git show`로 꺼내 같은 명령으로 내보냈다(종료 0 · 0): carrier sha256 9f2b6eea1f530f5b521e15aa075824b077773e209d0593456376b712213f1abd, front sha256 ce2a9138418a36cc1a74bf6ba7e7a3c7068309bfc0041f234fc7ff41e889b8e7. 위 표의 sha256은 이전 판 기록이다.
 - **R-022 (2026-11-27): 입력 3개를 다시 바꿨다.** `inputs/bom-full.csv` = R-022 레인 t-20261127-054531-37bc의 `docs/research/bom-full.csv`(sha256 e3fae849edcd7fbdf6c145ecad58107bcf8510a7be7aba717df9290357b8cbd0). KiCad BOM은 회로도 **7760f38**(C-019, C-018 a61dc63 포함)을 `git show`로 꺼내 같은 명령으로 내보냈다(종료 0 · 0): carrier sha256 9f44da04eaf791a8789afd6b05bae157172e6f67980fe7a486510043dd2ba45d, front sha256 fa44d6f9f8185853c27c6ca756439d01df0c3929430d7f782ad1b19b82f821db.
 - **R-023 (2026-11-27):** `inputs/bom-full.csv` = R-023 레인 t-20261127-060023-2ca0의 `docs/research/bom-full.csv`(sha256 23a0aeebd53a7e5983b8af05d99e787dca9f1574242ebb72775a9e614574bce8). KiCad BOM은 회로도 **a2d878c**(C-020)에서 내보냈다(종료 0 · 0): carrier는 R-022와 같음(sha256 9f44da04…a45d), front sha256 b379086400b3131923d15a5453a2dacd4a3cdb3e2f5769d037512fb5e44f1ac0.
+- **R-024 (2026-11-27):** `inputs/bom-full.csv` = R-024 레인 t-20261127-063202-e8f3의 `docs/research/bom-full.csv`(sha256 0f8bea5df3f28da4f218422cd7d5812d66b33df47c52df8ec28cb1bd9a3d8675). KiCad BOM은 회로도 **613cf14**(C-021)에서 내보냈다(종료 0 · 0): carrier 변화 없음, front sha256 90862738ed47cfde3d5db0cc0b63c0ccdae8d0bd9426504c954bd5837f457e39(LF 기준).
 
 KiCad 내보내기 명령(KiCad 10.0.8, 종료 코드 carrier 0 · front 0):
 
@@ -101,6 +102,12 @@ python -I make_pcbway_bom.py --bom-full <csv> --kicad-carrier <csv> --kicad-fron
 | front | 40 | 69 | 65 | 4 | 참조 69 · DNP 4 일치 (TP 24개 제외) | **D4·D5** BAT54WS 추가 → `D3,D4,D5` BAT54WS-7-F C124205 ×3 (재고 51,975) · **R5** 10k → 100k, **R20** 1k → 100k → 10k `R1,R7,R19` ×3 · 100k `R2,R3,R4,R5,R6,R12,R20` ×7 (C25741 재고 3,379,100) · **R21** 1k 추가 → `R18,R21` ×2 |
 
 - `python -I make_pcbway_bom.py` → **종료 코드 0**
+
+### R-024 재생성 (2026-11-27, C-021)
+
+- front: **R22·R23 10k 1%** 추가 → 새 행 `[전면] R22,R23` UNI-ROYAL 0402WGF1002TCE C25744 ×2 (LCSC 재고 9,383,600, 확인일 2026-11-27). KiCad가 값 「10k 1%」를 「10k」(R1,R7,R19)와 다른 묶음으로 내보내므로 bom-full도 따로 둔다
+- 결과: carrier 50행 73/66/DNS 7 · front **41행 71/67/DNS 4** 일치 (TP 24개 제외) → `python -I make_pcbway_bom.py` **종료 코드 0**
+- 기록: 첫 실행은 **종료 코드 1**(「BOM에만: ['R22', 'R23']」)이었다. 원인은 새 front KiCad BOM을 `inputs/`로 복사하는 명령의 문법 오류라 옛 입력과 비교된 것이다. 복사를 고쳐 다시 돌려 종료 0
 
 - 음성 시험: carrier KiCad BOM에서 C23을 뺀 입력 → **종료 코드 1** (「BOM에만: ['C23']」 출력)
 - 음성 시험: 입력 파일 없음 → **종료 코드 2**
