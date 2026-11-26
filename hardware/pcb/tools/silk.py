@@ -128,6 +128,7 @@ def edge_dist(edge, x, y):
 
 def clip_lines(b, s, openings, edge, log, apply=True):
     cut = removed = 0
+    drop = []
     infl = pcbnew.SHAPE_POLY_SET(openings)
     infl.Inflate(MM(CLR_MASK), pcbnew.CORNER_STRATEGY_ROUND_ALL_CORNERS, ERR)
     for fp, g in silk_items(b, s):
@@ -232,9 +233,9 @@ def clip_lines(b, s, openings, edge, log, apply=True):
                     simp.append(run[i])
             simp.append(run[-1])
             pieces += [(a2, c2) for a2, c2 in zip(simp[:-1], simp[1:]) if math.hypot(c2[0] - a2[0], c2[1] - a2[1]) >= 0.05]
-        # 원래 도형은 지우지 않는다(swig 에서 Remove 가 보드 객체를 깨뜨림): 남는 조각이 없으면 Fab 층으로 옮겨 조립도에만 남긴다
+        # 남는 조각이 없으면 지운다(Fab 로 옮기면 실크 밖 그림이 원본과 달라짐 — O-74b). 지우기는 반복이 끝난 뒤 한꺼번에(swig)
         if not pieces:
-            g.SetLayer(FAB[s])
+            drop.append((fp, g))
             removed += 1
             continue
         if k == pcbnew.SHAPE_T_SEGMENT:
@@ -242,10 +243,12 @@ def clip_lines(b, s, openings, edge, log, apply=True):
             g.SetEnd(V(*pieces[0][1]))
             rest = pieces[1:]
         else:
-            g.SetLayer(FAB[s])
+            drop.append((fp, g))
             rest = pieces
         for a2, c2 in rest:
             add_shape(fp, b, layer, pcbnew.SHAPE_T_SEGMENT, a2, c2, w)
+    # 지우기는 호출한 쪽이 모든 판정이 끝난 뒤에(Remove 뒤에는 보드 반복 객체가 swig 에서 깨진다)
+    log.setdefault("drop", []).extend(drop)
     log["clipped"][s] = log["clipped"].get(s, 0) + cut
     log.setdefault("to_fab", {})[s] = log.setdefault("to_fab", {}).get(s, 0) + removed
 
@@ -344,21 +347,42 @@ def place_refs(b, edge, log):
             log["refs_fab_only"].append(ref)
 
 
+def check_texts(b, edge, log):
+    """실크 글자(참조 지정자) bbox + 0.15 가 마스크 개구 · 비아에 닿거나 외곽 0.30 안이면 충돌로 적는다."""
+    for s in ("F", "B"):
+        o = pcbnew.SHAPE_POLY_SET(mask_openings(b, s))
+        o.Inflate(MM(CLR_MASK), pcbnew.CORNER_STRATEGY_ROUND_ALL_CORNERS, ERR)
+        for fp in b.GetFootprints():
+            t = fp.Reference()
+            if t.GetLayer() != SILK[s]:
+                continue
+            tb = t.GetBoundingBox()
+            x0, y0, x1, y1 = TO(tb.GetLeft()), TO(tb.GetTop()), TO(tb.GetRight()), TO(tb.GetBottom())
+            if min(x0 - edge[0], edge[2] - x1, y0 - edge[1], edge[3] - y1) < CLR_EDGE or hits(rect_poly(x0, y0, x1, y1), o):
+                log.setdefault("conflicts", []).append({"ref": fp.GetReference(), "side": s, "text": True})
+
+
 def main():
+    """mode refs: 배선 전에 참조 지정자를 실크에 놓고 저장(route_export 가 글자 둘레를 비아 금지로 내보낸다).
+    mode check: 배선 뒤 실크 선 · 글자의 남은 충돌(비아 · 외곽 · 이웃 패드)만 판정 — 보드는 바꾸지 않는다.
+    극성 표시 · 선폭 · 자기 패드 둘레 자르기는 silk_lib.py(보드별 사본 라이브러리)에서 한다(풋프린트 그림을 바꾸면 lib_footprint_mismatch, O-74)."""
     path, rep = sys.argv[1], sys.argv[2]
+    mode = sys.argv[3] if len(sys.argv) > 3 else "refs"
     b = pcbnew.LoadBoard(path)
     eb = b.GetBoardEdgesBoundingBox()
     edge = (TO(eb.GetLeft()), TO(eb.GetTop()), TO(eb.GetRight()), TO(eb.GetBottom()))
     log = {"marks": [], "widened": 0, "clipped": {}, "dots_fail": [], "other_shapes": [], "marks_moved": [], "refs_silk": [], "refs_fab_only": []}
-    # 극성 표시 · 선폭 · 자기 패드 둘레 자르기는 silk_lib.py(보드별 사본 라이브러리)에서 했다. 여기서는 참조 지정자만 놓고
-    # 비아 · 외곽 · 이웃 패드에 남은 실크 충돌을 판정해 목록으로 남긴다(풋프린트 그림을 바꾸면 lib_footprint_mismatch, O-74)
-    place_refs(b, edge, log)
-    for s in ("F", "B"):
-        clip_lines(b, s, mask_openings(b, s), edge, log, apply=False)
-    b.Save(path)
+    if mode == "refs":
+        place_refs(b, edge, log)
+        b.Save(path)
+    else:
+        for s in ("F", "B"):
+            clip_lines(b, s, mask_openings(b, s), edge, log, apply=False)
+        check_texts(b, edge, log)
+        log["refs_silk"] = [fp.GetReference() for fp in b.GetFootprints() if fp.Reference().GetLayer() in (pcbnew.F_SilkS, pcbnew.B_SilkS)]
+        log["refs_fab_only"] = sorted(fp.GetReference() for fp in b.GetFootprints() if fp.Reference().GetLayer() not in (pcbnew.F_SilkS, pcbnew.B_SilkS))
     json.dump(log, open(rep, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
-    print(f"실크: 표시 {len(log['marks'])} · 폭 0.15로 {log['widened']} · 잘라 낸 선 {log['clipped']} · 점 실패 {len(log['dots_fail'])} · "
-          f"기타 도형 {len(log['other_shapes'])} · 남은 실크 충돌 {len(log.get('conflicts', []))} · 참조 실크 {len(log['refs_silk'])} · Fab 만 {len(log['refs_fab_only'])} {log['refs_fab_only']}")
+    print(f"실크 {mode}: 남은 실크 충돌 {len(log.get('conflicts', []))} · 참조 실크 {len(log['refs_silk'])} · Fab 만 {len(log['refs_fab_only'])} {log['refs_fab_only']}")
 
 
 if __name__ == "__main__":

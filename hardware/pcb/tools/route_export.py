@@ -66,8 +66,19 @@ def main():
             if g.GetClass() != "PCB_SHAPE" or g.GetLayer() not in (pcbnew.F_SilkS, pcbnew.B_SilkS):
                 continue
             ps = pcbnew.SHAPE_POLY_SET()
-            g.TransformShapeToPolygon(ps, g.GetLayer(), pcbnew.FromMM(0.20), pcbnew.FromMM(0.01), pcbnew.ERROR_OUTSIDE)
-            data["keepouts"].append({"name": f"SILK_{fp.GetReference()}", "layers": [], "polys": poly_points(ps),
+            # 실크–비아 0.15 + 실크 반폭 0.075 + 래스터 여유 0.075
+            g.TransformShapeToPolygon(ps, g.GetLayer(), pcbnew.FromMM(0.30), pcbnew.FromMM(0.01), pcbnew.ERROR_OUTSIDE)
+            data["keepouts"].append({"name": f"SILK_{fp.GetReference()}", "layers": ["F.Cu"],  # 비아 금지는 보드 전체(hardvia) — 층 하나만 있으면 된다
+                                     "polys": poly_points(ps),
+                                     "tracks": False, "vias": True})
+        t = fp.Reference()  # 배선 전에 실크에 놓은 참조 지정자(silk.py refs) 둘레도 비아 금지
+        if t.GetLayer() in (pcbnew.F_SilkS, pcbnew.B_SilkS):
+            bb = t.GetBoundingBox()
+            m = pcbnew.FromMM(0.25)
+            x0, y0, x1, y1 = bb.GetLeft() - m, bb.GetTop() - m, bb.GetRight() + m, bb.GetBottom() + m
+            data["keepouts"].append({"name": f"SILKTXT_{fp.GetReference()}", "layers": ["F.Cu"],  # 비아 금지는 보드 전체(hardvia) — 층 하나만 있으면 된다
+                                    
+                                     "polys": [[[mm(x0), mm(y0)], [mm(x1), mm(y0)], [mm(x1), mm(y1)], [mm(x0), mm(y1)]]],
                                      "tracks": False, "vias": True})
     json.dump(data, open(sys.argv[2], "w", encoding="utf-8"))
     print(f"pads {len(data['pads'])} · locked tracks {len(data['tracks'])} · vias {len(data['vias'])} · keepouts {len(data['keepouts'])}")

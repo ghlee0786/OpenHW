@@ -1,13 +1,11 @@
 (footprint "Oscillator_SMD_SiT_PQFN-4Pin_2.0x1.6mm"
 	(version 20260206)
-	(generator "pcbnew")
-	(generator_version "10.0")
+	(generator "kicad-footprint-generator")
 	(layer "F.Cu")
 	(descr "SiTime SiT8008B, MEMS programmable oscillator, 2.0x1.6mm package, SMD, https://www.sitime.com/datasheet/SiT8008 page 10")
-	(property "Reference" "REF"
+	(property "Reference" "REF**"
 		(at 0 -2 0)
 		(layer "F.SilkS")
-		(uuid "cb72aa42-b287-4064-a4e1-8dc52c4b1754")
 		(effects
 			(font
 				(size 1 1)
@@ -18,7 +16,6 @@
 	(property "Value" "Oscillator_SMD_SiT_PQFN-4Pin_2.0x1.6mm"
 		(at 0 2 0)
 		(layer "F.Fab")
-		(uuid "edc38089-662e-4086-a026-cb9d9021d993")
 		(effects
 			(font
 				(size 1 1)
@@ -26,33 +23,10 @@
 			)
 		)
 	)
-	(property "Datasheet" ""
-		(at 0 0 0)
-		(layer "F.Fab")
-		(hide yes)
-		(uuid "040ad0c1-8db3-4fae-9ec3-6f65847a4123")
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-		)
-	)
-	(property "Description" ""
-		(at 0 0 0)
-		(layer "F.Fab")
-		(hide yes)
-		(uuid "2632c6aa-2324-4cc1-8770-bb5f5a589a22")
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-		)
-	)
 	(property "KiLib_Generator" "crystal_resonator_oscillator"
 		(at 0 0 0)
 		(layer "F.SilkS")
 		(hide yes)
-		(uuid "9838e1c3-07d1-407d-9d33-b2ea28a56a0f")
 		(effects
 			(font
 				(size 1 1)
@@ -70,7 +44,7 @@
 			(type solid)
 		)
 		(layer "F.SilkS")
-		(uuid "05bf7657-3384-49b2-aa0b-5408d027a802")
+		(uuid "313ad069-d6df-4bbb-af5f-a5ef735a2b47")
 	)
 	(fp_line
 		(start -1.46 -0.26)
@@ -80,7 +54,7 @@
 			(type default)
 		)
 		(layer "F.SilkS")
-		(uuid "1558f6ac-b754-43d2-ae98-6ffb7f96f696")
+		(uuid "a424811d-7b28-48a1-87ad-1ee091778775")
 	)
 	(fp_line
 		(start -1.46 0.94)
@@ -90,7 +64,7 @@
 			(type default)
 		)
 		(layer "F.SilkS")
-		(uuid "2a145e90-e184-4a66-8761-39c091056bd4")
+		(uuid "0ab4b94a-b3ad-4a02-9e29-3fe6d5ad84cf")
 	)
 	(fp_line
 		(start -1.46 1.26)
@@ -100,7 +74,7 @@
 			(type solid)
 		)
 		(layer "F.SilkS")
-		(uuid "cf3b7b2f-97d7-4793-a7ef-46938ec94a6a")
+		(uuid "c5462c82-d21a-4f2d-a562-76bf651bec46")
 	)
 	(fp_line
 		(start -0.359999 1.26)
@@ -110,7 +84,7 @@
 			(type default)
 		)
 		(layer "F.SilkS")
-		(uuid "82c53183-a4de-4fd1-996f-d8759161794c")
+		(uuid "a5d4ff1a-91d4-4bed-91a9-3b83e557f246")
 	)
 	(fp_line
 		(start 1.14 1.26)
@@ -120,7 +94,7 @@
 			(type default)
 		)
 		(layer "F.SilkS")
-		(uuid "1f3eb997-d521-4e56-8053-94d7b792a844")
+		(uuid "1319c7b6-def0-452c-ae43-ae6b65a62bde")
 	)
 	(fp_circle
 		(center -1.63 1.43)
@@ -131,7 +105,7 @@
 		)
 		(fill yes)
 		(layer "F.SilkS")
-		(uuid "e75cbabb-8e5f-4ef8-9b96-bb136350f6e4")
+		(uuid "cc1f1dc8-21f3-4eea-b038-9a9cf958f77f")
 	)
 	(fp_rect
 		(start -1.5 -1.3)
@@ -142,11 +116,14 @@
 		)
 		(fill no)
 		(layer "F.CrtYd")
-		(uuid "a9a20ae6-c9c1-435f-b3dd-28f459dde540")
 	)
 	(fp_poly
 		(pts
-			(xy 1 -0.8) (xy 1 0.8) (xy -0.6 0.8) (xy -1 0.4) (xy -1 -0.8)
+			(xy 1 -0.8)
+			(xy 1 0.8)
+			(xy -0.6 0.8)
+			(xy -1 0.4)
+			(xy -1 -0.8)
 		)
 		(stroke
 			(width 0.1)
@@ -154,12 +131,10 @@
 		)
 		(fill no)
 		(layer "F.Fab")
-		(uuid "83517fc0-cae0-428f-a967-3fc772adae30")
 	)
 	(fp_text user "${REFERENCE}"
 		(at 0 0 0)
 		(layer "F.Fab")
-		(uuid "f7e4873a-c250-48a2-a558-f463fc25447c")
 		(effects
 			(font
 				(size 0.5 0.5)
@@ -172,28 +147,24 @@
 		(size 0.9 0.8)
 		(layers "F.Cu" "F.Mask" "F.Paste")
 		(roundrect_rratio 0.25)
-		(uuid "fd54a829-7e80-4d5a-a686-bc0b2f13f13b")
 	)
 	(pad "2" smd roundrect
 		(at 0.75 0.6)
 		(size 0.9 0.8)
 		(layers "F.Cu" "F.Mask" "F.Paste")
 		(roundrect_rratio 0.25)
-		(uuid "c8cdd90d-ae2f-4275-8aa0-fd70e8cab1aa")
 	)
 	(pad "3" smd roundrect
 		(at 0.75 -0.6)
 		(size 0.9 0.8)
 		(layers "F.Cu" "F.Mask" "F.Paste")
 		(roundrect_rratio 0.25)
-		(uuid "d732218d-3d7b-4caf-a374-94259905a0fb")
 	)
 	(pad "4" smd roundrect
 		(at -0.75 -0.6)
 		(size 0.9 0.8)
 		(layers "F.Cu" "F.Mask" "F.Paste")
 		(roundrect_rratio 0.25)
-		(uuid "d81abc40-0e7d-4c26-9565-ee58454c4d59")
 	)
 	(embedded_fonts no)
 	(model "${KICAD10_3DMODEL_DIR}/Oscillator.3dshapes/Oscillator_SMD_SiT_PQFN-4Pin_2.0x1.6mm.step"

@@ -5,10 +5,10 @@
 	(layer "F.Cu")
 	(descr "Vishay VSMA1085600 850nm IRED 3.4x3.4x1.8mm; resist openings 2.8x0.55/2.8x1.0/2.8x0.55, Cu heat area 5.5x5.5 per Vishay doc 80298 Rev 1.4 recommended footprint (https://www.vishay.com/docs/80298/vsma1085600.pdf). Pad1=K, Pad2=A (centre thermal pad is anode)")
 	(tags "IR LED IRED 850nm VSMA")
-	(property "Reference" "REF"
+	(property "Reference" "REF**"
 		(at 0 -3.6 0)
 		(layer "F.SilkS")
-		(uuid "8d6ac088-7c3c-4edb-8f48-e81d0e9d408d")
+		(uuid "579c722c-6baa-492b-b37d-63758f8a4440")
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -18,7 +18,7 @@
 	(property "Value" "Vishay_VSMA1085600_3.4x3.4mm"
 		(at 0 3.6 0)
 		(layer "F.Fab")
-		(uuid "0c9d3252-4486-4436-b1ce-3f75cced544b")
+		(uuid "5ebf03d7-98e2-4579-aae5-a84a16798c9b")
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -29,7 +29,7 @@
 		(at 0 0 0)
 		(layer "F.Fab")
 		(hide yes)
-		(uuid "83ce3012-f557-44f3-99bc-1cf6913371f3")
+		(uuid "5666b5c7-30e9-4759-b865-27a569ff6c27")
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -40,7 +40,7 @@
 		(at 0 0 0)
 		(layer "F.Fab")
 		(hide yes)
-		(uuid "63a8fc7e-00db-462f-b1bb-1d0733310248")
+		(uuid "53a53742-c0a6-4483-a484-493875d5cd0a")
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -57,7 +57,7 @@
 			(type default)
 		)
 		(layer "F.SilkS")
-		(uuid "269e8044-1c55-41b5-84cf-e5ba5f7e466f")
+		(uuid "70f3b5ed-abeb-474e-90e5-59013b101053")
 	)
 	(fp_circle
 		(center -3.2 2.9)
@@ -68,7 +68,7 @@
 		)
 		(fill yes)
 		(layer "F.SilkS")
-		(uuid "24acd834-0e28-4720-b454-6ee1007c23bb")
+		(uuid "b39e7fa0-9ff1-44a7-823d-03b89f134bb7")
 	)
 	(fp_rect
 		(start -3 -3)
@@ -79,7 +79,7 @@
 		)
 		(fill no)
 		(layer "F.CrtYd")
-		(uuid "62e78455-d9a1-4e86-81f2-0903bef14629")
+		(uuid "58088f9d-dbc9-450b-89b9-5cfc69002213")
 	)
 	(fp_rect
 		(start -1.7 -1.7)
@@ -90,7 +90,7 @@
 		)
 		(fill no)
 		(layer "F.Fab")
-		(uuid "0b1897e7-915f-4ba8-a3ef-a569bcc6d30f")
+		(uuid "db7db82f-be2d-42b7-81f6-db1d83f1f5a5")
 	)
 	(fp_circle
 		(center -1.35 1.35)
@@ -101,7 +101,7 @@
 		)
 		(fill yes)
 		(layer "F.Fab")
-		(uuid "753ee4f5-17c5-46fe-9bcf-70e202dfc535")
+		(uuid "368b2044-30b1-4d30-b88a-6e30b21fa956")
 	)
 	(fp_circle
 		(center 0 0)
@@ -112,7 +112,7 @@
 		)
 		(fill no)
 		(layer "F.Fab")
-		(uuid "f6fd2250-d5b6-4008-877f-4596e71cb039")
+		(uuid "92dafdee-7868-4093-880b-db4c6f4bea03")
 	)
 	(pad "1" smd rect
 		(at 0 1.125)
@@ -120,28 +120,28 @@
 		(layers "F.Cu" "F.Mask" "F.Paste")
 		(solder_paste_margin -0.075)
 		(thermal_bridge_angle 45)
-		(uuid "beab1d44-83b2-4d35-b130-4742d436a614")
+		(uuid "d1a80332-8773-4a94-8955-d5a8cfa2f3ae")
 	)
 	(pad "1" smd rect
 		(at 0 1.8)
 		(size 2.8 1.9)
 		(layers "F.Cu")
 		(thermal_bridge_angle 45)
-		(uuid "79dff1a0-a3db-44f2-8afa-a441d2de7529")
+		(uuid "0995f874-bf1e-4db4-8d4f-a7bb4c5023f4")
 	)
 	(pad "2" smd rect
 		(at -2.25 0)
 		(size 1 5.5)
 		(layers "F.Cu")
 		(thermal_bridge_angle 45)
-		(uuid "fccea672-7983-48d3-858d-1319745cfd24")
+		(uuid "a45222c9-266b-4f83-8940-0078d92a45c5")
 	)
 	(pad "2" smd rect
 		(at 0 -1.8)
 		(size 2.8 1.9)
 		(layers "F.Cu")
 		(thermal_bridge_angle 45)
-		(uuid "1823df92-8d6e-41e2-b073-bf33ae87fc8d")
+		(uuid "152c965f-17fe-445f-bf54-e848c092f25c")
 	)
 	(pad "2" smd rect
 		(at 0 -1.125)
@@ -149,7 +149,7 @@
 		(layers "F.Cu" "F.Mask" "F.Paste")
 		(solder_paste_margin -0.075)
 		(thermal_bridge_angle 45)
-		(uuid "7ecb5f64-d1bc-4716-8576-d70a4a054b9d")
+		(uuid "08345078-0365-4ac1-8084-09df2e5d0ffe")
 	)
 	(pad "2" smd rect
 		(at 0 0)
@@ -157,21 +157,21 @@
 		(layers "F.Cu" "F.Mask" "F.Paste")
 		(solder_paste_margin -0.05)
 		(thermal_bridge_angle 45)
-		(uuid "f025d309-1d8f-409d-ae6b-c44ab490d0e2")
+		(uuid "6758b6be-8e5b-4e3f-81fc-400b965df220")
 	)
 	(pad "2" smd rect
 		(at 0 0)
 		(size 3.5 1)
 		(layers "F.Cu")
 		(thermal_bridge_angle 45)
-		(uuid "0ee12d99-e2dd-4380-b8b6-089c6d38d94f")
+		(uuid "cca787f5-828d-4ce0-93b2-154093808dcb")
 	)
 	(pad "2" smd rect
 		(at 2.25 0)
 		(size 1 5.5)
 		(layers "F.Cu")
 		(thermal_bridge_angle 45)
-		(uuid "3aaeeb15-e269-4e10-b706-1006a7a6df29")
+		(uuid "8d09276c-924b-4720-99e5-d718ec7e3d10")
 	)
 	(embedded_fonts no)
 )

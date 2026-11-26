@@ -5,10 +5,10 @@
 	(layer "F.Cu")
 	(descr "Lite-On LTR-329ALS-01 ALS, ChipLED 2.0x2.0x0.7mm, 4 pads 0.70x0.60, land per DS86-2014-0006 Rev C sec.14 (https://cdn-learn.adafruit.com/assets/assets/000/115/507/original/LTR-329ALS-01_DS_V1.5.PDF)")
 	(tags "light sensor ALS i2c LTR-329")
-	(property "Reference" "REF"
+	(property "Reference" "REF**"
 		(at 0 -1.9 0)
 		(layer "F.SilkS")
-		(uuid "6a5c8358-a8c5-4321-a767-41566baea84f")
+		(uuid "f04ecce6-d6a4-4490-9b97-16ad610101fc")
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -18,7 +18,7 @@
 	(property "Value" "Lite-On_LTR-329ALS-01_2x2mm_P1.2mm"
 		(at 0 1.9 0)
 		(layer "F.Fab")
-		(uuid "dc7918cd-7899-44ba-8807-c645b3bc90d9")
+		(uuid "c6ff4a5b-6912-4cab-a28f-b3a54619def6")
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -29,7 +29,7 @@
 		(at 0 0 0)
 		(layer "F.Fab")
 		(hide yes)
-		(uuid "949fd24c-796c-4d36-81d7-b69109209800")
+		(uuid "41acdb32-d7d8-4b67-9208-f4eea54c319d")
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -40,7 +40,7 @@
 		(at 0 0 0)
 		(layer "F.Fab")
 		(hide yes)
-		(uuid "65a4cece-aca9-4160-9ef9-73a66b6cb908")
+		(uuid "0166a0ae-262c-48ea-9c13-66e9ec9be057")
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -58,7 +58,7 @@
 		)
 		(fill yes)
 		(layer "F.SilkS")
-		(uuid "39043740-ee38-4589-bafb-28bd74dd9a2c")
+		(uuid "0ad9e682-7986-4192-b46d-08b549d4ecd8")
 	)
 	(fp_rect
 		(start -1.35 -1.35)
@@ -69,27 +69,7 @@
 		)
 		(fill no)
 		(layer "F.CrtYd")
-		(uuid "17ef2fb0-85a2-4710-850d-813affd71e6c")
-	)
-	(fp_line
-		(start -1.11 -1.11)
-		(end 1.11 -1.11)
-		(stroke
-			(width 0.15)
-			(type default)
-		)
-		(layer "F.Fab")
-		(uuid "b4b07385-5d02-468b-9311-4df0ede5d8d4")
-	)
-	(fp_line
-		(start -1.11 1.11)
-		(end 1.11 1.11)
-		(stroke
-			(width 0.15)
-			(type default)
-		)
-		(layer "F.Fab")
-		(uuid "301fc6c6-b6dd-4ad9-b74a-d42a1cbecf1f")
+		(uuid "b933e112-e4bd-4fc3-87db-6b7b42ea40bf")
 	)
 	(fp_line
 		(start -1 0.6)
@@ -99,7 +79,7 @@
 			(type default)
 		)
 		(layer "F.Fab")
-		(uuid "a2459584-0cf3-441e-a2a9-e570958c82aa")
+		(uuid "bf9047dc-0bde-43d2-a60d-ffcc2c9aecb5")
 	)
 	(fp_rect
 		(start -1 -1)
@@ -110,35 +90,35 @@
 		)
 		(fill no)
 		(layer "F.Fab")
-		(uuid "0bb230fc-feb1-47d9-b6d6-6c12c7b8546f")
+		(uuid "d22990d1-3cf4-4fef-aef3-2e33cbf75b4c")
 	)
 	(pad "1" smd rect
 		(at -0.6 0.7)
 		(size 0.7 0.6)
 		(layers "F.Cu" "F.Mask" "F.Paste")
 		(thermal_bridge_angle 45)
-		(uuid "df6f7b01-f73c-41bc-b496-a041d5985982")
+		(uuid "37171769-c1c5-4932-b6fd-10ee8b32d046")
 	)
 	(pad "2" smd rect
 		(at 0.6 0.7)
 		(size 0.7 0.6)
 		(layers "F.Cu" "F.Mask" "F.Paste")
 		(thermal_bridge_angle 45)
-		(uuid "9594d217-7775-4a64-950f-20b816df5d45")
+		(uuid "b777ea0d-7bcb-4d54-9196-0e51b2119512")
 	)
 	(pad "3" smd rect
 		(at 0.6 -0.7)
 		(size 0.7 0.6)
 		(layers "F.Cu" "F.Mask" "F.Paste")
 		(thermal_bridge_angle 45)
-		(uuid "e8e67088-4978-4649-93f6-2203254ea380")
+		(uuid "2c11a122-4149-40f9-a943-c5c8e13b14e4")
 	)
 	(pad "4" smd rect
 		(at -0.6 -0.7)
 		(size 0.7 0.6)
 		(layers "F.Cu" "F.Mask" "F.Paste")
 		(thermal_bridge_angle 45)
-		(uuid "da4e7fef-6a16-4fef-8451-91a8af4dbd1d")
+		(uuid "b70bbb91-30b5-4408-a99b-0e43d30ccbcb")
 	)
 	(embedded_fonts no)
 )

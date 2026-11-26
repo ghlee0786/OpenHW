@@ -31,6 +31,64 @@ FAR = (-1e6, -1e6, 1e6, 1e6)
 IO = pcbnew.PCB_IO_MGR.FindPlugin(pcbnew.PCB_IO_MGR.KICAD_SEXP)
 
 
+# 지울 실크 도형 표시용 선폭. swig 에서 FOOTPRINT.Remove 는 이후 객체를 깨뜨리므로(P-003 실측) graft() 가 그 도형을 빼고 옮긴다
+DROP_W = pcbnew.FromMM(0.0111)
+
+
+def top_blocks(t):
+    """풋프린트 파일의 최상위 자식 블록 (시작, 끝) — 시작은 앞 공백 포함."""
+    out, depth, j = [], 0, t.index("(") + 1
+    start = None
+    while j < len(t):
+        ch = t[j]
+        if ch == "(":
+            if depth == 0:
+                k = j
+                while k > 0 and t[k - 1] in " \t\r\n":
+                    k -= 1
+                start = k
+            depth += 1
+        elif ch == ")":
+            if depth == 0:
+                break
+            depth -= 1
+            if depth == 0:
+                out.append((start, j + 1))
+        j += 1
+    return out
+
+
+def is_silk(blk):
+    s = blk.lstrip()
+    return s.startswith(("(fp_line", "(fp_arc", "(fp_circle", "(fp_rect", "(fp_poly")) and \
+        ('(layer "F.SilkS")' in blk or '(layer "B.SilkS")' in blk)
+
+
+def graft(saved, src):
+    """원본 파일 글자는 그대로 두고 실크 도형 블록만 저장본(고친 것)의 실크 블록으로 바꾼다 — 패드 · 구멍 · 실크 밖 그림은 원본과 글자까지 같다
+    (O-74b · review E4). 지울 표시(선폭 0.0111)는 넣지 않는다."""
+    ts = open(saved, encoding="utf-8").read()
+    new = [ts[a:b] for a, b in top_blocks(ts) if is_silk(ts[a:b]) and "(width 0.0111)" not in ts[a:b]]
+    to = open(src, encoding="utf-8").read()
+    bl = top_blocks(to)
+    silk_bl = [(a, b) for a, b in bl if is_silk(to[a:b])]
+    if silk_bl:
+        at = silk_bl[0][0]
+    else:
+        at = next(a for a, b in bl if to[a:b].lstrip().startswith("(pad"))
+    out, i = [], 0
+    for a, b in silk_bl:
+        out.append(to[i:a])
+        if a == at:
+            out.append("".join(new))
+        i = b
+    if not silk_bl:
+        out.append(to[:at] + "".join(new))
+        i = at
+    out.append(to[i:])
+    open(saved, "w", encoding="utf-8", newline="").write("".join(out))
+
+
 def src_path(lib):
     return SRC.get(lib, STD / f"{lib}.pretty")
 
@@ -70,15 +128,20 @@ def fix_types(board):
         for s in ("F", "B"):
             silk.clip_lines(b, s, silk.mask_openings(b, s), FAR, log)
         fp.SetReference("REF")
+        for _, g in log.pop("drop", []):
+            g.SetWidth(DROP_W)
         lp = od / f"{lib}.pretty"
         lp.mkdir(parents=True, exist_ok=True)
         IO.FootprintSave(str(lp), fp)
-        rows.append((fpid, str(sp), sha(sp)))
+        graft(lp / f"{name}.kicad_mod", sp)
+        src = f"{lib}:{name}" if lib in SRC else "${KICAD10_FOOTPRINT_DIR}/" + f"{lib}.pretty/{name}.kicad_mod"
+        rows.append((f"{lib}.pretty/{name}.kicad_mod", src, sha(sp)))
+    # O-74b: copy = 사본 파일(이 폴더 기준), source = 원본(KiCad 10.0.8 표준 또는 프로젝트 라이브러리:이름), sha256 = 원본 파일
     with open(od / "SOURCES.tsv", "w", encoding="utf-8", newline="\n") as f:
-        f.write("fpid\tsource_path\tsource_sha256\tkicad\n")
-        for fpid, p, h in rows:
-            f.write(f"{fpid}\t{p}\t{h}\tKiCad 10.0.8\n")
-    print(f"{board}: 실크 사본 {len(rows)}종 · 폭 0.15로 {log['widened']} · 자름 {log['clipped']} · Fab 로 {log['to_fab']} · "
+        f.write("copy\tsource\tsha256\n")
+        for c_, s_, h in rows:
+            f.write(f"{c_}\t{s_}\t{h}\n")
+    print(f"{board}: 실크 사본 {len(rows)}종 · 폭 0.15로 {log['widened']} · 자름 {log['clipped']} · 지운 실크 {log['to_fab']} · "
           f"표시 {len(log['marks'])} · 옮긴 표시 {len(log['marks_moved'])}")
     return log
 
@@ -104,6 +167,8 @@ def fix_places(board, pcb_path):
             c = pcbnew.Cast_to_FOOTPRINT(fp.Duplicate(False))
             tmp.Add(c)
             silk.clip_lines(tmp, s, op, edge, log)
+            for _, g in log.pop("drop", []):
+                g.SetWidth(DROP_W)
             if not log["clipped"].get(s) and not log["marks_moved"]:
                 continue
             k = fp.GetFPIDAsString()
@@ -112,6 +177,8 @@ def fix_places(board, pcb_path):
                 continue
             lib = k.split(":", 1)[0]
             IO.FootprintSave(str(od / f"{lib}.pretty"), c)
+            nm = k.split(":", 1)[1]
+            graft(od / f"{lib}.pretty" / f"{nm}.kicad_mod", src_path(lib) / f"{nm}.kicad_mod")
             res["saved"].append({"ref": fp.GetReference(), "fpid": k})
     json.dump(res, open(ROOT / f"hardware/pcb/route/silk-lib-{board}.json", "w", encoding="utf-8"), ensure_ascii=False, indent=1)
     print(f"{board}: 자리별 사본 {len(res['saved'])} {[r['ref'] for r in res['saved']]} · 여러 개라 못 고침 {len(res['multi_left'])} "
