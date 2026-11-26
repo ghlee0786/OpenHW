@@ -232,6 +232,7 @@ for k, dn in (('A', False), ('B', False)):
           {'1': f'IR{k}_SET', '2': 'GND', '3': 'GND', '4': 'IR_CTRL', '5': f'IR{k}_SW', '6': f'IR{k}_SW', '8': '12V_IR', '9': 'GND'}, dnp=dn,
           fields={'MPN': 'Diodes AL8860MP-13 (LCSC C500782)', 'Note': f'string {k}' + (' DNP (R-006 O-25)' if dn else '')})
     R(f, f'R{13+base//10}', '0.1R 1% 0.25W', '12V_IR', f'IR{k}_SET', 'Resistor_SMD:R_1206_3216Metric', dnp=dn)
+    R(f, 'R22' if k == 'A' else 'R23', '10k 1%', f'IR{k}_SET', f'IR{k}_K')  # C-021/O-99: off-time bleeder across LED string (SIM-001e c1, 8591271)
     f.add(f'D_IR_{k}1', 'Device:LED', 'VSMA1085400', 'openhw:Vishay_VSMA1085600_3.4x3.4mm', {'2': f'IR{k}_SET', '1': f'IR{k}_M'}, dnp=dn,
           fields={'MPN': 'Vishay VSMA1085400 (+-40deg; package drawing 6.550-5367.01-4; land drawing 6.550-5366.9-3 = VSMA1085600 land)'})
     f.add(f'D_IR_{k}2', 'Device:LED', 'VSMA1085400', 'openhw:Vishay_VSMA1085600_3.4x3.4mm', {'2': f'IR{k}_M', '1': f'IR{k}_K'}, dnp=dn,

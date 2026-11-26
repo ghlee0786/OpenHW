@@ -198,7 +198,7 @@ def check(t, N):
         add('3.1', f'전면 Q{q} 게이트–드레인 {ref}', f'{ref} {val}', ' '.join(f'{r} {F.comps[r]}' for r in F.two_pin(F.fn(f'Q{q}', 'G'), F.fn(f'Q{q}', 'D'))) or '없음')
     # v1.16 S6: 저항 「Rn 값(넷A–넷B)」, 다이오드 「Dn BAT54(애노드 넷 → 캐소드 넷)」
     for ref, val, a, b in find(t, r'(R\d+) ([\d.]+k)\(([A-Z0-9_]+)–([A-Z0-9_]+)\)'):
-        add('3.1', f'전면 {ref} {a}–{b}', f'{ref} {val}', ' '.join(f'{r} {F.comps[r]}' for r in F.two_pin(a, b) if r.startswith('R')) or '없음')
+        add('3.1', f'전면 {ref} {a}–{b}', f'{ref} {val}', ' '.join(f'{r} {F.comps[r].split()[0]}' for r in F.two_pin(a, b) if r.startswith('R')) or '없음')
     for ref, a, k in find(t, r'(D\d+) BAT54\(애노드 (\w+) → 캐소드 (\w+)\)'):
         add('3.1', f'전면 {ref} 애노드/캐소드', f'{a}/{k}', f'{F.fn(ref, "A")}/{F.fn(ref, "K")}')
     for g, val in find(t, r'게이트 (CAM_1V8_G) = R17 ([\d.]+k)'):
@@ -363,6 +363,7 @@ FAULTS = [
     ('3.1 Q2 게이트–드레인 C21 → C22', 'Q2 게이트–드레인 C21', 'Q2 게이트–드레인 C22'),
     ('3.1 D5 극성 뒤집힘', 'D5 BAT54(애노드 CAM_PG → 캐소드 CAM_PG_AV)', 'D5 BAT54(애노드 CAM_PG_AV → 캐소드 CAM_PG)'),
     ('3.1 R20 100k → 1k', 'R20 100k(CAM_PG–CAM_PG_IO)', 'R20 1k(CAM_PG–CAM_PG_IO)'),
+    ('3.2 블리더 R23 넷 IRB_K → IRB_M', 'R23 10k(IRB_SET–IRB_K)', 'R23 10k(IRB_SET–IRB_M)'),
     ('7절 SPARE1 → J7-3 → J7-4', '캐리어 20 → J7-3', '캐리어 20 → J7-4'),
 ]
 
