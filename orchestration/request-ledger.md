@@ -49,7 +49,7 @@
 | C-009 | orch (O-41) | schematic t18z | 전면 J4 핀 3·4 넷 맞바꿈(직선 GH 케이블), 계약 v1.8 | hardware/schematic/front (C-002 레인) | netcompare 2넷, ERC 0, 커밋 | completed — c653eac (계약 v1.8 2dde4a2), orch 재실행 front ERC 0. 회로도 배선 기준 c653eac |
 | R-011 | orch (단계 6 준비) | research t18s | PCBWay 9열 BOM 생성기(보드별)·참조 지정자 일치 검사 | manufacturing/bom/** | 스크립트 종료 0·일치 검사, 레인·커밋 | completed — 레인 t-20261126-190248-efe1 커밋 7dc3996, orch 재실행 종료 0. carrier 50행(참조 73)·front 39행(참조 62) KiCad 일치, 음성 시험 검출 |
 | R-012 | orch | research t18s | GH 6P 하니스 AWG26 전선 MPN(SSHL 허용 외경 안) | bom-full.csv·manufacturing/bom | 품번·차선·재고, 커밋 | completed — 9a5fbfb·dce3c91, orch 생성기 재실행 0. 1안 Alpha Wire 422607 UL1061 26AWG(OD 공차 상한 1.04 > 단자 1.0 → 조건부), 차선 Remington 26UL1061STR |
-| F-004 | orch | firmware t18w | 사람 감지(tdl_models) → 이벤트 전송·RTSP, 이벤트 로직 시험, 패치 빌드 | firmware/** | 모델 출처·라이선스·해시, 시험·빌드 결과, 레인·커밋 | running |
+| F-004 | orch | firmware t18w | 사람 감지(tdl_models) → 이벤트 전송·RTSP, 이벤트 로직 시험, 패치 빌드 | firmware/** | 모델 출처·라이선스·해시, 시험·빌드 결과, 레인·커밋 | waiting-user — 레인 t-20261126-210506-1e37 c4a6334. persond 33/0·daynight 40/0(orch 재실행), 모델 없는 이미지 빌드 0. 모델: tdl 라이선스 미확인·Seeed AGPL 미사용, YOLOX-Nano 변환 검증 원인 J 3회 중단 → 사용자 결정(A 회피 재변환/B AGPL/C 문의/D 연기) |
 | M-002b | orch (O-43) | mechanical t18x | IR LED 열 경로 전기 절연: 절연 갭 패드 품번·수치, 기둥 접촉면, ΔT 재계산 | mechanical/** (M-001 레인) | 품번·열 저항·간섭, 커밋 | completed — e33bdde. Laird Tflex P340 1겹(>5kV)+방열판 일체 GND 기둥, 금속 접촉 0, ΔT A 9.5K·B 7.0K(추정), 차선 Fujipoly GR25B |
 
 ## 운영 변경 (2026-11-26, 사용자 지시 · lead 전달)
@@ -107,6 +107,7 @@
 | O-42 | TP_B 열 패드 vs LED B1/B2 중심 어긋남 (M-001e K22) | 유지(몸체 94% 패드 위), pcb가 D2를 x ≤ 4.0으로 옮길 수 있으면 정렬 | B 스트링은 DNP 시작 | D2 이동 후 정렬 |
 | O-43 | IR LED 열 패드 (pcb 발견: 열 랜드 = 애노드 넷, 한 장이면 IRA_SET↔IRA_M 단락) | TP_A를 TP_A1(IRA_SET)·TP_A2(IRA_M) 두 장으로 분할(틈 0.6), 열 경로는 전기 절연 갭 패드 필수(최대 12V) | LED 우회 단락 방지, 금속 외함 단락 방지 | 열 패드 없이 보드 구리 확산만 |
 | O-44 | IR LED 열 비아 (pcb: 빈자리 비아 4개/LED ≈43 K/W, ΔT≈33K) | 빈자리 비아 유지(추가 비용 없음), 랜드 안 비아 자리 좌표 기록 | 추정 접합 ≈95°C로 허용 안(가정 포함, 실측 판정) | via-in-pad 수지 충전 약 12개/LED(≈11K, PCBWay 추가 비용 — 견적 때 결정) |
+| O-45 | 이벤트·영상 네트워크 노출 (F-004) | MQTT 1883 LAN 비공개(로컬, event_host로 외부 지정), RTSP는 비밀번호 설정 시만, 기본 admin/admin 안 씀 | 보안 기본 닫힘, LAN 공개는 사용자 결정 | 사용자 지시 시 LAN 공개 |
 
 ## 발주 패키지 직전 정리 목록
 - [ ] 회로도 표시 겹침: 캐리어 J2 옆 12V_IN_RAW 라벨, D3 PWR_LED 라벨, J1 품번 문자 (O-32)
