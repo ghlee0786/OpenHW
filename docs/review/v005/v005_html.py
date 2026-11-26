@@ -63,7 +63,7 @@ code{font-family:ui-monospace,Consolas,monospace;font-size:13px}
 """
 
 parts.append('<h1>V-005 PCB 독립 감수 — 사람 확인용</h1>')
-parts.append('<p class="mut">기준 커밋 <code>%s</code> (pcb 레인 t-20261126-171922-251f) · 생성: <code>v005_html.py</code> · KiCad 10.0.8 kicad-cli 렌더·SVG. '
+parts.append('<p class="mut">기준 커밋 <code>%s</code> (pcb 레인 t-20261126-171922-251f) · 생성: <code>v005_html.py</code> (V-005b) · KiCad 10.0.8 kicad-cli 렌더·SVG. '
              '이 장의 <span class="hum tag">사람</span> 항목은 사용자가 보고 체크하기 전까지 통과가 아니다. 체크 상태는 이 브라우저에만 남는다(저장소·검토자에게 전달되지 않음 — 결과는 orch에 직접 알려 주세요).</p>' % E(commit))
 
 # 요약 표
@@ -81,10 +81,15 @@ def cell(v, good):
 rows.append(('DRC 위반 (kicad-cli pcb drc --severity-all --schematic-parity)', [(len(D[b]['violations']), len(D[b]['violations']) == 0) for b in BOARDS]))
 rows.append(('미연결', [(len(D[b]['unconnected_items']), len(D[b]['unconnected_items']) == 0) for b in BOARDS]))
 rows.append(('회로도 일치 문제', [(len(D[b].get('schematic_parity', [])), len(D[b].get('schematic_parity', [])) == 0) for b in BOARDS]))
-for k, lab in (('S1_on_mask_open', '패드·노출 동박 위 실크(잘림)'), ('S2_clear_lt_0p15', '실크–마스크 개구 < 0.15mm'), ('S3_line_lt_0p15', '실크 선폭 < 0.15mm'),
-               ('S4_text', '글자 높이 < 1.0 · 획 < 0.15'), ('S5_edge', '보드 외곽까지 < 0.30mm'), ('S6_ref_hidden', '부품 아래 숨는 참조 지정자'), ('S7_text_text', '겹치는 글자')):
-    rows.append((lab, [(SI[b]['summary'][k], SI[b]['summary'][k] == 0) for b in BOARDS]))
-rows.append(('실크 글자 수(앞/뒤)', [('%d / %d' % (SI[b]['counts']['F']['text'], SI[b]['counts']['B']['text']), True) for b in BOARDS]))
+for k, lab in (('S1_on_mask_open', 'S1 패드·노출 동박 위 실크(잘림)'), ('S1v_over_via', 'S1v 비아 위 실크'), ('S1h_over_hole', 'S1h 구멍 위 실크'),
+               ('S2_clear_lt_0p15', 'S2 실크–마스크 개구 < 0.15mm'), ('S3_line_lt_0p15', 'S3 실크 선폭 < 0.15mm'),
+               ('S4_text', 'S4 글자 높이 < 1.0 · 획 < 0.15'), ('S4r_ratio_lt_1to5', 'S4r 획/높이 < 1:5 (획 0.2)'), ('S5_edge', 'S5 보드 외곽까지 < 0.30mm'),
+               ('S6_ref_hidden', 'S6 부품 아래 숨는 참조'), ('S6a_ref_far', 'S6a 자기 부품에서 먼 참조(>2mm)'), ('S6a_ref_ambiguous', 'S6a 다른 부품이 더 가까운 참조'),
+               ('S7_text_text', 'S7 글자–글자 겹침'), ('S7l_text_line', 'S7l 글자–선 겹침'), ('S7s_text_space', 'S7s 글자–실크 간격 < 0.127'),
+               ('S8_orient_gt2', 'S8 읽는 방향 > 2종(면 수)'), ('S8m_mirror', 'S8m 거울상 오류'), ('S9_missing', 'S9 1번 핀·극성 표시 없음'), ('S9_wrong_side', 'S9 표시가 반대쪽')):
+    rows.append((lab, [(SI[b]['summary'].get(k, 0), SI[b]['summary'].get(k, 0) == 0) for b in BOARDS]))
+rows.append(('실크 글자 수 / 참조 수 (앞·뒤)', [('%d·%d / %d·%d' % (SI[b]['counts']['F']['text'], SI[b]['counts']['B']['text'], SI[b]['counts']['F'].get('ref', 0), SI[b]['counts']['B'].get('ref', 0)), True) for b in BOARDS]))
+rows.append(('읽는 방향 (앞 / 뒤, 각도:개수)', [('%s / %s' % (SI[b].get('orientation', {}).get('F', {}), SI[b].get('orientation', {}).get('B', {})), True) for b in BOARDS]))
 for lab, vals in rows:
     parts.append('<tr><td>%s</td>%s</tr>' % (E(lab), ''.join(cell(v, g) for v, g in vals)))
 parts.append('</table><p class="mut">수치 판정 근거와 수정 요청은 <code>docs/review/v005-pcb-review.md</code>.</p></div>')
@@ -100,7 +105,7 @@ for bd in BOARDS:
 # 실크 SVG + 표시
 parts.append('<h2>3. 실크 레이어 (노랑 = 실크, 보라 = 마스크 개구, 회색 = 외곽)</h2>'
              '<p class="legend"><span><i class="dot" style="background:#ff4d4d"></i>실크–마스크 &lt;0.15</span><span><i class="dot" style="background:#ffb000"></i>외곽 &lt;0.30</span>'
-             '<span><i class="dot" style="background:#4da3ff"></i>1번 핀·극성 확인 대상</span></p><p class="mut">뒷면은 뒤에서 본 모습(좌우 반전)이다.</p>')
+             '<span><i class="dot" style="background:#4da3ff"></i>1번 핀·극성 판정 대상</span><span><i class="dot" style="background:#d63bff"></i>S9 표시 없음·반대</span></p><p class="mut">뒷면은 뒤에서 본 모습(좌우 반전)이다.</p>')
 for bd in BOARDS:
     for side in 'FB':
         gid = '%s_%s' % (bd, side)
@@ -119,6 +124,9 @@ for bd in BOARDS:
         for c in SI[bd]['pin1_candidates']:
             if c['side'] != side:
                 continue
+            if c.get('verdict') in ('missing', 'wrong_side'):
+                vx, vy, vw, vh = box_to_view(side, c['bbox'], 0.3)
+                marks.append('<rect x="%.3f" y="%.3f" width="%.3f" height="%.3f" fill="none" stroke="#d63bff" stroke-width="0.25"/>' % (vx, vy, vw, vh))
             vx, vy, vw, vh = box_to_view(side, c['bbox'], 0.15)
             marks.append('<rect x="%.3f" y="%.3f" width="%.3f" height="%.3f" fill="none" stroke="#4da3ff" stroke-width="0.1" stroke-dasharray="0.4 0.3"/>'
                          '<text x="%.3f" y="%.3f" font-size="0.9" fill="#4da3ff">%s</text>' % (vx, vy, vw, vh, vx, vy - 0.15, E(c['ref'])))
@@ -126,26 +134,28 @@ for bd in BOARDS:
                      % ('캐리어' if bd == 'carrier' else '전면', '앞면 실크' if side == 'F' else '뒷면 실크', H + 2, gid, ''.join(marks)))
 
 # 사람 확인 항목
-parts.append('<h2>4. 사람 확인 항목 (verifiable 아니오)</h2>')
-parts.append('<div class="card"><table><tr><th>#</th><th>볼 것</th><th>어디를</th><th>확인</th></tr>'
-             '<tr><td>H1</td><td>1번 핀·극성 표시를 조립자가 알아볼 수 있는가 (다이오드·LED·IC·커넥터·전해)</td><td>아래 4.1 확대 그림, 3절 파란 점선</td><td>각 그림 체크</td></tr>'
-             '<tr><td>H2</td><td>실크에 참조 지정자·라벨 글자가 0개다(배치 스크립트가 참조를 조립도 Fab 층으로 옮김). 조립도(R-010 S6)로 대신하는 것을 받아들이는가, 시험점·커넥터 이름 정도는 실크에 둘 것인가</td><td>2절 렌더 전체</td><td><label class="chk"><input type="checkbox" data-k="H2">확인</label></td></tr>'
-             '<tr><td>H3</td><td>읽는 방향 — 실크 글자가 없어 판정 대상 없음. 글자를 넣기로 하면 다시 본다</td><td>—</td><td><label class="chk"><input type="checkbox" data-k="H3">확인</label></td></tr>'
-             '<tr><td>H4</td><td>표시가 잘려 보기 흉한 곳(빨간 원: 마스크 개구에서 0.05~0.149mm, PCBWay가 개구 둘레를 깎을 수 있음)</td><td>3절 빨간 원</td><td><label class="chk"><input type="checkbox" data-k="H4">확인</label></td></tr>'
-             '<tr><td>H5</td><td>보드 끝 커넥터(USB-C J3·microSD J4·DC 잭 J2) 실크가 외곽 0.15~0.30mm — 외형 가공 공차(±0.2)로 일부 깎여도 되는가</td><td>3절 주황 원(캐리어 뒷면)</td><td><label class="chk"><input type="checkbox" data-k="H5">확인</label></td></tr>'
-             '</table></div>')
-parts.append('<h3>4.1 1번 핀·극성 확대 (H1)</h3><p class="mut">파란 숫자 = 기계 힌트(1번 패드 1mm 안, 다른 패드보다 1번 패드에 가까운 실크 항목 수). 0이라도 표시가 있을 수 있고(예: 모서리 점), 1 이상이어도 알아보기 어려울 수 있다 — 판정은 사람이 한다.</p><div class="crops">')
+parts.append('<h2>4. 사람 확인 항목 (verifiable 아니오 — V-005b에서 줄인 뒤 남은 것)</h2>')
+parts.append('<div class="card"><table><tr><th>#</th><th>볼 것</th><th>왜 기계로 못 정하나</th><th>확인</th></tr>'
+             '<tr><td>H1</td><td>1번 핀 판정이 <b>exempt(기구 키)</b>인 커넥터에 정말 방향 표시가 필요 없는가</td><td>부품 몸체가 방향을 정하는지는 실물·데이터시트 판단</td><td>아래 4.1의 exempt 칸 체크</td></tr>'
+             '<tr><td>H2</td><td>판정 <b>ok_half</b>(1번 쪽 반에만 치우친 약한 표시)를 조립자가 알아보는가</td><td>표시 모양이 관례적인지는 사람 판단</td><td>아래 4.1의 ok_half 칸 체크</td></tr>'
+             '<tr><td>H3</td><td>첫 보드 실물에서 0.15 선·1.0 글자가 읽히는가(인쇄 번짐·잘림)</td><td>제조 결과물이 필요 — 지금은 볼 수 없음</td><td><label class="chk"><input type="checkbox" data-k="H3">실물 확인</label></td></tr>'
+             '</table><p class="mut">V-005 1차의 H2(실크 글자 0)는 O-65로, H5(외곽 문턱)는 O-66으로, 읽는 방향 개수·숨는 참조·겹침·1번 핀 ok/missing/wrong_side는 기계 판정(S6~S9)으로 옮겼다.</p></div>')
+parts.append('<h3>4.1 1번 핀·극성 확대 — 기계 판정(S9)</h3><p class="mut">ok = 1번(캐소드·+) 쪽 사분면·반쪽에 실크가 더 많음 · ok_marker = 1번 쪽 2mm 안에 대칭 짝 없는 작은 표시(점·삼각·+) · ok_half = 반쪽에만 약하게 치우침(사람 H2) · missing = 치우친 실크 없음 · wrong_side = 반대쪽에 치우침 · exempt = 기구 키(사람 H1). 규칙·한계는 보고서 B9.</p><div class="crops">')
 for bd in BOARDS:
     for c in SI[bd]['pin1_candidates']:
         side = c['side']
         vx, vy, vw, vh = box_to_view(side, c['bbox'], 1.0)
         # 1번 패드 위치 표시용: 부품 중심
         key = '%s:%s' % (bd, c['ref'])
+        v = c.get('verdict', '?')
+        cls = {'ok': 'ok', 'ok_marker': 'ok', 'ok_half': 'hum', 'exempt': 'hum', 'missing': 'bad', 'wrong_side': 'bad'}.get(v, 'warn')
+        human = v in ('ok_half', 'exempt')
+        chk = ('<label class="chk"><input type="checkbox" data-k="%s">%s</label>' % (E(key), '방향 표시 불필요 확인' if v == 'exempt' else '표시 알아봄')) if human else ''
         parts.append('<div class="crop"><svg viewBox="%.3f %.3f %.3f %.3f"><use href="#%s_%s"/></svg>'
-                     '<div class="t"><b>%s</b> %s · %s%s · <span class="hum">힌트 %d</span></div>'
-                     '<div class="t mut">%s</div><label class="chk"><input type="checkbox" data-k="%s">표시 알아봄</label></div>'
+                     '<div class="t"><b>%s</b> %s · %s%s · <span class="%s tag">%s</span></div>'
+                     '<div class="t mut">%s %s</div>%s</div>'
                      % (vx, vy, vw, vh, bd, side, E(c['ref']), '캐리어' if bd == 'carrier' else '전면', '앞' if side == 'F' else '뒤',
-                        ' · DNP' if c['dnp'] else '', c['pin1_hint_items'], E(c['fpid'].split(':')[-1][:40]), E(key)))
+                        ' · DNP' if c['dnp'] else '', cls, E(v), E(c['fpid'].split(':')[-1][:40]), E(c.get('reason', '')), chk))
 parts.append('</div>')
 
 js = """
