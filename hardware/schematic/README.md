@@ -654,3 +654,16 @@
 - **ERC:** 캐리어 종료 0·위반 0, 전면 종료 0·위반 0. SVG는 `validation/runtime/kicad-gui/C-007/`에 있다.
 - **표제란 Rev:** 「C-007」.
 - **pcb:** 캐리어 C23 `Capacitor_SMD:C_1210_3225Metric` 새로 — C7·C8·C20 옆, TPS54302 출력 노드. 전면은 바뀌는 것이 없다.
+
+## 20. C-009 — 보드 간 GH 6P 직선 케이블 (orch O-41 · M-001e K23)
+
+- **근거:** 두 커넥터 모두 −X 쪽에서 들어오고 하니스가 U자로 굽는다. 그래서 꼬지 않은 직선 배선이면 핀이 n ↔ 7−n으로 이어진다.
+  - 전원(2/5)과 GND(1/6)는 대칭이라 영향이 없다.
+  - 3(SPARE1)과 4(ALS_INT_RSV)만 뒤바뀐다.
+- **수정:** 전면 J4 핀 3 = **ALS_INT_RSV**, 핀 4 = **SPARE1** (맞바꿈). 캐리어 J7은 그대로다.
+- **케이블:** 직선, J7-n ↔ J4-(7−n).
+  - J7-3 SPARE1 ↔ J4-4 SPARE1
+  - J7-4 ALS_INT_RSV ↔ J4-3 ALS_INT_RSV
+- **넷리스트 차이 (C-007 `f651dfe` → C-009):** 전면 넷 2개만 바뀌었다(SPARE1: J4-3 → J4-4, ALS_INT_RSV: J4-4 → J4-3). 도구 출력으로는 before/after 4줄이다. 캐리어 차이 0.
+- **ERC:** 두 보드 종료 0·위반 0. SVG는 `validation/runtime/kicad-gui/C-009/`에 있다. 표제란 Rev 「C-009」.
+- **pcb:** 전면 J4 핀 3·4의 넷이 맞바뀐다(풋프린트 그대로).
