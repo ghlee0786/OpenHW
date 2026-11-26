@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # F-003: 기준 빌드 볼륨(reCamera-OS 0.2.4)에 OpenHW 패치와 주야 전환 앱을 넣는다. 다시 돌려도 된다(이미 적용된 패치는 건너뜀).
 # 그 뒤 build-baseline.sh build 로 이어 빌드한다.
-#   1) firmware/patches/reCamera-OS/*.patch → /work/src (DTS·보드 초기화·br2-external 패키지 openhw-daynight)
+#   1) firmware/patches/reCamera-OS/*.patch → /work/src (0001 DTS·보드 초기화·openhw-daynight, 0002 openhw-persond, 0003 ethtool)
 #   2) firmware/apps/daynight → external/br2-external/openhw-daynight/src (패키지 소스)
 #   3) firmware/patches/sscma-node/*.patch → external/br2-external/sscma-node/ (buildroot 가 패키지 패치로 적용)
 #   4) sscma-node · openhw-daynight 를 dirclean 해 패치·소스가 다시 들어가게 한다
