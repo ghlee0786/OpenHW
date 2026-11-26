@@ -552,9 +552,10 @@ def main():
             win = B.window([c0, c1], 5.0)
             passable, viaok = B.free_maps(win, own, hw, VIA["dia"] / 2, layers, hs=True, own_tracks_block=True)
             r0, _, cc0, _ = win
-            ends_ = {(q["ref"], q["num"]) for q in (P0, N0, P1, N1)}
+            # 쌍의 P/N 패드는 끝 패드까지 모두 장애물 — 탈출은 패드→탈출점 직선으로 따로 그리고, A* 는 탈출점끼리만 잇는다
+            #   (끝 패드를 열어 두면 중심선이 돌아와 J1.2/J1.4 위를 가로질러 P/N 단락, P-003 캐리어 TX)
             for q in B.pads:
-                if q["net"] in (pn, nn) and (q["ref"], q["num"]) not in ends_:
+                if q["net"] in (pn, nn):
                     for L_, rr_, cc_ in pad_cells(q, layers):
                         m_ = int((hw + CLR + EPS) / G) + 1
                         a0, a1 = max(rr_ - r0 - m_, 0), max(rr_ - r0 + m_ + 1, 0)
