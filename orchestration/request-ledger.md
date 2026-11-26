@@ -23,11 +23,14 @@
 | M-001b | orch | mechanical t18x | 적층 갱신: 짝 BTB 높이 8.0 추정, 높이 매개변수화, DF30 모듈 자리 변수 | mechanical/** (M-001 레인) | z표·매개변수·간섭, 커밋 | completed — 커밋 fd9ed82. btb_h 8.0 기본(4.0/8.0 재생성 OK), 전체 39.9mm, 허용 높이 캐리어 윗면 ≤6.2·전면 아랫면 ≤5.2, 의도 외 간섭 0 |
 | P-002 | orch | pcb t190 | KiCad .kicad_dru·넷클래스·캐리어/전면 보드 외형(GUI 없이) | hardware/pcb/rules/**, hardware/pcb/outline/** | 파일·kicad-cli 결과, 레인·커밋 | completed — 레인 t-20261126-163344-acdf 커밋 022c364. 외형 40×40·4층·넷클래스, orch 재실행 kicad-cli pcb drc carrier 0·front 0 |
 | V-002 | orch | review t191 | R-004 핵심 6주장 독립 검증(BTB 원품번·HCTL 치수 대조·짝 높이·DF30 핀·재고·전원 IC 정격) | validation/review-V002-R004.md | 판정표·영향, 레인·커밋 | completed — 레인 t-20261126-163344-e260 커밋 51489c5. ①③④⑤ 일치, ② 부분(패드 0.25 vs 0.30·몸체 폭), ⑥ TPS26600 연결 조건부 → O-21~O-23 |
-| C-002 | orch (단계 4) | schematic t18z | 캐리어·전면 보드 회로도(KiCad GUI), ERC·netlist | hardware/schematic/carrier/**, hardware/schematic/front/** (*.kicad_sch·*.kicad_pro) | 두 보드 ERC 종료 코드, netlist, 핀↔계약 대조표, 스크린샷 목록, 레인·커밋 | running |
+| C-002 | orch (단계 4) | schematic t18z | 캐리어·전면 보드 회로도(KiCad GUI), ERC·netlist | hardware/schematic/carrier/**, hardware/schematic/front/** (*.kicad_sch·*.kicad_pro) | 두 보드 ERC 종료 코드, netlist, 핀↔계약 대조표, 스크린샷 목록, 레인·커밋 | completed — 레인 t-20261126-165741-b193 커밋 5a5cf5c·276fc89, orch 재실행 ERC carrier 0·front 0, netlist 91/78 부품, 계약 불일치 0, ILIM 8.06k(1.49A), 계약 v1.2 fd12ba4 |
 | M-001c | orch | mechanical t18x | 적층 갱신: CIL093·센서 블록 받침·CLA216 전면 고정·IR LED 4위치·광차단·창 거리 | mechanical/** (M-001 레인) | z표·IR 좌표·광차단 안·간섭, 커밋 | completed — 커밋 4dc801d. 전체 43.1mm, IR LED A1/A2 실장·B1/B2 DNP 좌표, 광차단 링, 충돌 후보 FPC↔홀더 벽 1건(K12 홈/스페이서), 렌즈 치수 미확인 |
 | R-007 | orch | research t18s | 기구 도면 수치: CIL093 외형, CLA216 공동·구멍, VSMA1085400 패키지, DF30 결합 높이, BXF4677 블록 | docs/research/r007-mech-dims.md | 5항목 수치표, 레인·커밋 | completed — 레인 t-20261126-165815-3a00 커밋 4f0a8ab. CIL093·CLA216 공동 14.1□ 깊이 약 1.2·VSMA1085400 높이 2.445·DF30 0.9 |
 | V-003 | orch (단계 4 독립 검토) | review t191 | L-001 라이브러리 핀·패드 데이터시트 원문 대조 | validation/review-V003-L001.md | 부품별 판정표, 영향, kicad-cli 결과, 레인·커밋 | running |
-| M-001d | orch | mechanical t18x | R-007 수치 반영, 받침+블록 2.03 > CLA216 공동 약 1.2 간섭 해소(스페이서/컷아웃/재배치 비교), 초점 BFL 재계산 | mechanical/** (M-001 레인) | z표·충돌 0 목표·선택 근거, 커밋 | running |
+| M-001d | orch | mechanical t18x | R-007 수치 반영, 받침+블록 2.03 > CLA216 공동 약 1.2 간섭 해소(스페이서/컷아웃/재배치 비교), 초점 BFL 재계산 | mechanical/** (M-001 레인) | z표·충돌 0 목표·선택 근거, 커밋 | completed — 커밋 c05bb28. K15 받침 0.75+스페이서 1.5, 실제 충돌 0, 전체 53.3mm, 칼라 광차단, PCB 허용 높이표 §3.6 |
+| P-003 | orch (단계 5) | pcb t190 | 캐리어·전면 보드 배치·배선·DRC·STEP (GUI 소유권 schematic→pcb, 창 닫힘 확인 후) | hardware/schematic/<보드>/*.kicad_pcb, hardware/pcb/** | DRC 종료 코드·미연결, 차동 길이표, STEP sha256, 스크린샷, 레인·커밋 | running |
+| R-008 | orch | research t18s | 회로도 BOM 내보내기 → 견적용 전체 BOM + R-004와 차이표 | docs/research/bom-full.csv, r008-bom-diff.md | 21열·행 수, 차이표, 미확정 MPN, 레인·커밋 | running |
+| V-004 | orch (단계 4 독립 검토) | review t191 | C-002 회로 독립 검토(전원·보호·구동·I2C·PHY·USB·BTB·FPC) | validation/review-V004-C002.md | 판정표·수정안, ERC 재실행, 레인·커밋 | queued (V-003 뒤) |
 
 ## 운영 변경 (2026-11-26, 사용자 지시 · lead 전달)
 - 의견 묻지 않고 진행: 사람 쪽 미정값은 D-003(lead 레인 t-20261126-144135-5470 docs/decisions/D-003-working-defaults.md, 커밋 8ac5ce5) 값으로 확정 취급. 새 갈림길은 기본값 선택 → 아래 「분기 기록」에 분기점·선택·이유·차선책 → lead 요약 보고. 문제 시 해당 행으로 돌아가 차선책.
@@ -65,3 +68,4 @@
 | O-25 | IR LED 조사각·개수 (O-14·D-003 #4 10m) | VSMA1085400 ±40°, 4자리 2직렬×2스트링, AL8860 ×2 1.0A, 스트링 B DNP 시작, 실측으로 개수 확정 | 계산(AN095)만으로 확정 불가 → 자리 확보 후 실측 | SFH 4715AS A01 / L1I0-0850 |
 | O-26 | GC2053 모듈 + ICR 실장 (O-18) | 모듈 홀더 제거 → 센서 블록 받침 접착, CLA216-ICR 전면 보드 고정 / 게이트 G2: 발주 전 S401 1장 홀더 분리·높이 실측(구매는 사용자 지시) | ICR 공간 확보 유일안, 계산상 MBFL 충족 | ICR 일체형 모듈(판매자 문의 필요) → 모듈 홀더에 렌즈만(ICR 없음, 요구 미충족) |
 | G1/G2 | 발주 전 게이트 | G1 짝 BTB 실물 결합(1번 핀·VIN 정격) · G2 센서 홀더 분리·높이 실측 | 둘 다 실물 필요 → 사용자 구매 지시 전엔 PCB 발주 불가 | — |
+| O-27 | KiCad GUI 소유권 (G-001: schematic 단독) | 회로도 완료 → schematic이 창을 모두 닫고 보고한 뒤 pcb로 이전, pcb도 G-001 방식(스크린샷·창 제목 확인) | 단일 작성자 유지하며 PCB 단계도 사용자에게 보이게 | pcb는 pcbnew Python/파일만, GUI는 확인용 |
