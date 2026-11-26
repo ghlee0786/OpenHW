@@ -13,23 +13,23 @@
       "L2",
       "C14",
       "C16",
-      "U2·R6 6.98k(carrier TPS26600)"
+      "U2·R6 6.04k(carrier TPS26600)"
     ],
-    "schematic_commit": "f0745ed"
+    "schematic_commit": "7760f38"
   },
   "model": {
     "source": "데이터시트 동작 모델 (AL8860 히스테리시스·소프트스타트·CTRL)",
     "url": "https://www.diodes.com/assets/Datasheets/AL8860.pdf",
     "license": "—",
     "behavioral": true,
-    "basis": "AL8860 DS39014 Rev.8-2 p.2·4·11–13; VSMA1085400 80294 p.3; SS24S 89008 p.2; TPS26600 ILIM R6 6.98k ≈ 1.72A (계약 v1.13 3.1절, C-017)"
+    "basis": "AL8860 DS39014 Rev.8-2 p.2·4·11–13; VSMA1085400 80294 p.3; SS24S 89008 p.2; TPS26600 R6 6.04k I(OL) 최소 1.86A·대표 1.99A (계약 v1.14 3.1절, C-018)"
   },
   "criteria_commit": "7cab389",
   "checks": [
     {
       "name": "12V_IR 입력 평균 전류 (최대 모서리) ≤ ILIM",
       "op": "<=",
-      "limit": 1.72,
+      "limit": 1.86,
       "unit": "A",
       "value": 1.425,
       "corner": "104mV, Rs 0.099, VF 최대, 11.4V · 옛 1.49A 대비 ok",
@@ -38,7 +38,7 @@
     {
       "name": "12V_IR 입력 20µs 이동 평균 최댓값 ≤ ILIM",
       "op": "<=",
-      "limit": 1.72,
+      "limit": 1.86,
       "unit": "A",
       "value": 1.58487,
       "corner": "같은 모서리 (소프트스타트 뒤 0.3 ms~) · 옛 1.49A 대비 초과",

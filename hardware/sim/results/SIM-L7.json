@@ -11,7 +11,7 @@
       "J3",
       "SoC IIC2"
     ],
-    "schematic_commit": "f0745ed"
+    "schematic_commit": "7760f38"
   },
   "model": {
     "source": "RC (버스 용량 추정 + 풀업)",

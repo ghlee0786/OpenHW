@@ -10,7 +10,7 @@
       "J2",
       "CLA216"
     ],
-    "schematic_commit": "f0745ed"
+    "schematic_commit": "7760f38"
   },
   "model": {
     "source": "데이터시트 동작 모델 (H-브리지 스위치 + 진리표)",

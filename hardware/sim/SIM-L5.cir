@@ -11,12 +11,12 @@ Rg6 g6 g6i 15.2
 Cgs6 g6i c18 731p
 Cgd6 g6i cam 77p
 Db6 cam c18 dsi
-R17 c18 g6 10k
+R17 c18 g6 4.7k
 R18 g7 g6 1k
 M7 g7 en 0 0 nq7
 Cg7 en 0 55p
 Cd7 en g7 5.4p
-C19 g6 cam 10n
+C19 g6 cam 4.7n
 C18 cam c18e 1u
 R18e c18e 0 5m
 C11 cam 0 100n
