@@ -371,3 +371,6 @@ A만 시험했을 때의 상한(계산값 × 1.25): 방열판(내부) 21.3 K · 
   - 다른 프로젝트도 함께 쓰는 환경이라, 이 칸이 켜지 않고 orch에 보고했다.
   - 이 시험은 컨테이너 안의 apt ffmpeg를 쓰므로 F-008 설치와는 무관하다. `rtsp_check.py` 변경(`--ffmpeg-dir`)만 다시 확인하면 된다.
   - 마지막 통과 기록: F-007, 20/20, 종료 0.
+- **재실행 완료 (2026-11-27 04:19~04:21):** lead 결정(Docker 켠 상태 유지, OpenHW 컨테이너만)에 따라 `docker run --rm --memory 4g recamera-os-builder bash /fw/tools/host/test_host_tools.sh`를 돌렸다. F-008 레인 firmware를 읽기 전용으로 붙였다.
+  - 결과: **20/20 기대 일치, 종료 0** (`recamera-sdk/f007-test-5.log`). `--ffmpeg-dir` 변경을 포함한 판이다.
+  - 컨테이너는 `--rm`으로 정리했고, 다른 프로젝트 컨테이너는 건드리지 않았다.
