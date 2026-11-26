@@ -74,6 +74,9 @@
 | R-018 | orch (O-75) | research t18s | CLA216-ICR 렌즈 홀더 판정(M12 나사 유무·홀더 필요 시 품번·광학 적층·보드 구멍 영향), R-017 비용 스크립트 커밋 | docs/research/ (새 레인) | 원문 근거·결론 (a)/(b), 커밋 | completed — 레인 t-20261127-032020-1c02 0cbe807: (a) CLA216-ICR만으로 충분 — 공식 도면 단면 A-A에 M12x0.5 안쪽 나사·최소 MBFL 2.85·높이 7.6, 조립 사진에 홀더 없음. FAQ의 CLA019/024 문구는 간격 18/22mm라 맞지 않음(다른 제품 문구 추정, 제조사 확인 질문 후보). 기구 적층·보드 구멍·BOM 변화 0, R-017 홀더 누락은 정정. R-017 스크립트는 R-017 레인 217dd43에 커밋 — orch 재실행 종료 0·CSV cmp 동일 |
 | M-005 | orch (O-76) | mechanical t18x | H3 방열판 → 기성 압출 방열판 2차가공: 후보 3+·같은 식으로 열 재판정(≤8 K/W·≤25K)·2차가공 도면·모델 갱신 | mechanical/** (M-003 레인) | 계산 종료 0·목표 여부·공개 가격, 커밋 | completed — 9f2bf6c: 후보 6(공개 카탈로그), analysis_m005.py가 analysis2 함수 재사용(H3 5.6·19.8 재현) — orch 재실행 rc 0. Fischer SK 444 75 SA 71mm: 같은 식 R 8.4 K/W(목표 ≤8 미달 +4%), 데이터시트 보정 7.3, 안 공기 21.8K(≤25 충족). 외형 X 71.75. 2차가공 탭 6·받침대 판, 도면·DXF·모델·간섭(외함 충돌 0). 단가 US$4.29(5개 최소) → O-78. f1a53e4: 51mm 작업 되돌림(미커밋 restore·Fusion 부품 삭제 후 03_check 결과 커밋본과 같음), 문서 O-77b·O-78 반영 |
 | R-017b | orch (O-76) | research t18s | GH 하니스 기성 압착 리드/케이블 조립품(26AWG·0.61A/접점 조건), 비용표 재합계(M-005·R-018 반영) | docs/research/ (R-018 레인 가능) | 품번·근거, 재합계 스크립트 종료 0, 커밋 | completed(방열판 M-005 대기) — R-017 레인 d9f6f05: 5대 2,031/2,977/5,480(대당 406/595/1,096), orch 재실행 종료 0·CSV 동일. 하니스 JST AGHGH28K51(28AWG 51mm 양끝 압착)+GHR-06V-S, 6개분 약 USD 14~20(첫 판 249). M12 홀더 행 삭제. 26AWG 압착 리드 표준품 없음 → O-77. R-017c 3b0239e: JST eGH 원문은 1.0A(AWG#26)만, 28AWG 리드 도면에 정격 없음, GAM-322는 자동 접근 차단 → 28AWG 미확인 → O-77 차선. R-017d 15bd9bb: 5대 2,031.84/3,075.69/7,222.97(대당 406/615/1,445), orch 재실행 종료 0·CSV 동일. 방열판 기준 SK 444+받침대(미확인 범위), 하니스 기준 26AWG 자가 압착+PA-09. 최대는 정품 압착기·CNC H3 정의 때문(빼면 약 4,023) |
+| F-008 | 사용자 허가 → orch (O-79) | firmware t18w | ffmpeg/ffprobe 사용자 홈 격리 설치(공식 링크 빌드·sha256), F-007 시험 재실행 | firmware/docs (새 레인) + C:/Users/gh/tools/ffmpeg | 설치 기록, 시험 종료 0, 커밋 | running |
+| R-019 | 사용자 결정 → orch | research t18s | G1·G2 문서 게이트: 짝 BTB 3자 대조(1번 핀·핀 배정·결합 높이·VIN 정격)·S401 홀더 제거 높이·광학 중심·CLA216 리드 커넥터 | docs/research/r019-doc-gates.* (새 레인) | 항목별 일치/불일치/미확인·근거, 커밋 | running |
+| M-006 | 사용자 결정 → orch | mechanical t18x | G1·G2 STEP 결합 교차 확인(코어 STEP↔보드 STEP, 센서 블록·초점) | mechanical/** (새 레인) | R-019와 같은 항목 표, 커밋 | running |
 
 ## 운영 변경 (2026-11-26, 사용자 지시 · lead 전달)
 - 의견 묻지 않고 진행: 사람 쪽 미정값은 D-003(lead 레인 t-20261126-144135-5470 docs/decisions/D-003-working-defaults.md, 커밋 8ac5ce5) 값으로 확정 취급. 새 갈림길은 기본값 선택 → 아래 「분기 기록」에 분기점·선택·이유·차선책 → lead 요약 보고. 문제 시 해당 행으로 돌아가 차선책.
@@ -168,34 +171,37 @@
 | O-77 | R-017b: JST 기성 압착 리드는 28AWG뿐(26AWG 없음), 정격 1.0A는 검색 요약만(원문 미열람), 표준 최단 51mm(35mm 아님) — lead 조건 'R-012 26AWG 유지'와 다름 | 28AWG 기성 리드 채택 조건부: ① research가 GH 28AWG 리드/단자 정격 원문 확인(≥0.61A/접점 + 6극 동시 감액) ② mechanical이 51mm 남는 약 16mm 둘 자리 확인. 둘 다 통과하면 bom-full CBL1 행 갱신 | 51mm 28AWG 전압강하 약 7mV(0.213Ω/m 계산)·발열 작음, 비용 약 1/15 | 26AWG 자가 압착(Alpha Wire+압착기 51.95~) → 국내 업체(사용자 지시) |
 | O-77b | R-017c: 28AWG 기성 리드 정격 원문 미확인(JST eGH 1.0A는 AWG#26만) | O-77 차선: 26AWG 자가 압착 35mm 유지(R-012 구성), 비용 기준값은 범용 압착기(51.95 수준)로 — 정품 압착기는 최대값만. bom-full CBL1 그대로, mechanical 51mm 확인 취소 | 조건(정격 원문) 미충족 | 사람이 브라우저로 GAM-322 정격 확인 → 28AWG 기성 리드(대기 목록) |
 | O-78 | M-005: 기성 압출 SK 444 71mm는 같은 식 R 8.4 K/W(목표 ≤8 미달 +4%), 안 공기 21.8K(≤25 충족), 데이터시트 보정 R 7.3 | PoC 기본값 SK 444(목표 R는 '미달'로 기록, 통과 주장 안 함) — 상위 목표(안 공기 ≤25K)는 같은 식으로 충족, bring-up 열 실측(F-006 8절 판정)으로 확정, 넘으면 CNC H3(설계 완료) | 비용 US$1,884(미확인)→약 US$21+판, 차선이 이미 준비됨 | CNC H3 |
+| O-79 | 사용자 설치 허가(F-007 목록 ffmpeg·mosquitto-clients·OpenSSH) | ffmpeg/ffprobe만 설치. OpenSSH는 Windows 내장 있음, mosquitto-clients는 장치 1883 루프백 전용(#30)이라 ssh 파이프로 충분 → 설치 안 함 | 필요한 것만 설치(되돌리기 쉬움) | 필요해지면 mosquitto 격리 설치 |
+| G1/G2' | 사용자 결정 2026-11-27: 실물 구매 안 함(D-003 #24) | G1·G2 실물 게이트를 문서 게이트(R-019)+STEP 교차(M-006)로 대체, R-019 통과가 PCB 발주 조건, 남는 위험은 첫 PCBA bring-up 확인 항목(F-005 절차서) | 사용자 결정 | — |
 
 ## 발주 패키지 직전 정리 목록
 - [ ] 회로도 표시 겹침: 캐리어 J2 옆 12V_IN_RAW 라벨, D3 PWR_LED 라벨, J1 품번 문자 (O-32)
 - [ ] 회로도 표제란 Rev 문자열이 생성기 값 「C-002b」로 남음 → 최종 리비전으로 (schematic 보고)
-- [ ] 발주 게이트 G1 짝 BTB 실물 결합(1번 핀·VIN 정격) · G2 S401 홀더 분리·높이·강판 외곽·공동 깊이·DF30 결합 높이 실측 (O-17·O-26)
-- [ ] CLA216 리드 커넥터 계열 실물 확인(G2와 함께) — PicoBlade/GH (O-34)
+- [~] (사용자 결정: 문서 게이트 R-019·M-006로 대체) 발주 게이트 G1 짝 BTB 실물 결합(1번 핀·VIN 정격) · G2 S401 홀더 분리·높이·강판 외곽·공동 깊이·DF30 결합 높이 실측 (O-17·O-26)
+- [~] (R-019 문서 판정으로 대체) CLA216 리드 커넥터 계열 실물 확인(G2와 함께) — PicoBlade/GH (O-34)
 - [ ] 회로도 표제란 Rev가 C-005로 남음(C-006 값 변경 반영) — 최종 리비전 표기로 통일
 - [ ] GH 6P 하니스: 자가 크림프(GHR-06V-S + SSHL-002T-P0.2), 전선 Alpha Wire 422607 — 받은 롤 OD 실측(단자 허용 0.76~1.0)·크림프 시험 (R-012)
-- [ ] G2 추가: 센서 광학 중심의 블록 대비 XY 어긋남 실측 (M-001e)
+- [~] (R-019·M-006로 대체) G2 추가: 센서 광학 중심의 블록 대비 XY 어긋남 실측 (M-001e)
 - [ ] PCBWay 미확인: 좌표 회전 보정 정책·PCBA 등급·X-ray 비용·0.4/0.5mm 커넥터 명시 — 확인 회신은 외부 연락이라 사용자 지시 필요 (R-010)
 - [ ] 두 보드 모두 50×100 미만 → 패널 설계 필요 (R-010)
 - [ ] PCBWay BOM Type 값 Hybrid·Manual 수용 여부 미확인 (R-011)
 - [ ] bring-up 확인: cvi_pwm duty==period가 period−1로 깎임(스코프), pwmchip0·portc 416 추론, ICR 극성, ISP bin 실행 중 교체 효과 (F-003)
 - [ ] orch 셸의 Pilot guard 훅이 PC 부하 때 10초 시간 초과로 명령을 막음(2026-11-26 여러 번, 재시도로 통과) — 하네스 동작 기록(bug_report off)
-- [ ] 절연 패드 두께(P330/340/350)는 G2 실측 후 선택 (M-002b K24)
+- [~] (R-019 근거로 선택) 절연 패드 두께(P330/340/350)는 G2 실측 후 선택 (M-002b K24)
 - [ ] IR LED via-in-pad(수지 충전·도금 덮개) 옵션 여부 — 견적 금액 보고 후 결정 (O-44)
 - [ ] 사람 감지 모델 경로 사용자 결정 대기: (A) 원인 J 회피 재변환(같은 원인 4번째라 허가 필요) / (B) Seeed YOLO11n AGPL / (C) Sophgo 라이선스 문의 — 현재 (D) 모델 없이 마감 (F-004)
 - [x] F-004 사람 감지 모델 — F-004c 합격(YOLOX-Nano BF16, Apache-2.0). 대체 경로 B/C 불필요
-- [ ] (사용자 지시 대기) push — main 병합은 1a6147a로 끝남, 남은 3레인(orch·pcb·firmware)은 완료 시 lead가 batch
+- [x] (사용자 지시로 push 완료 — GitHub 비공개 저장소, main 0c2ec91, 이후 push는 지시마다) push — main 병합은 1a6147a로 끝남, 남은 3레인(orch·pcb·firmware)은 완료 시 lead가 batch
 - [ ] (사용자 진행) PCBWay 가입·문의 — lead 초안 t-20261127-013043-46d1 docs/manufacturing/pcbway-inquiry-draft.md
 - [x] KiCad API 켜기 — lead 처리(D-003 #33, 백업 .bak-20261127-lead) → G-002
-- [ ] (사용자 확인 대기) Fusion 라이선스 종류·만료(R-015: 개인용은 company environments 금지, tool-status.md에 만료 안내 기록)
+- [x] (사용자: 개인 라이선스로 계속) Fusion 라이선스 종류·만료(R-015: 개인용은 company environments 금지, tool-status.md에 만료 안내 기록)
 - [ ] bring-up: BF16 cvimodel 보드 로드·실검출·FPS(BF16은 INT8보다 느림 — 부족하면 O-62 차선), sscma-node 프레임 행 정렬
 - [ ] V-005 사람 확인(verifiable 아니오) H1 1번 핀·극성 표시, H4 개구 둘레 깎인 표시, H5 보드 끝 커넥터 실크 — 최종 커밋 HTML로 사용자 확인
 - [ ] D-003 #31 문구 'ESD→RJ45 약 5mm' → RX 약 8.4·TX 약 5mm(V-005 A11) — lead
 - [ ] bring-up: 12V 입력 전류 실측(IR A+B 듀티 25%+NPU+이더넷) — 평균 1.9A 넘으면 12V 3A급 어댑터 교체(구매는 사용자 지시, lead D-003 #10)
-- [ ] (사람 확인) C-013 회로도 겹침 앞뒤 PNG validation/runtime/kicad-gui/C-013/index.html — verifiable 아니오
-- [ ] (사람 확인) JST GAM-322(28AWG GH 리드) 정격 — 브라우저로 열어 ≥0.61A/접점 확인되면 하니스를 기성 리드(AGHGH28K51)로(O-77)
+- [x] (사용자 확인 완료 — 통과) C-013 회로도 겹침 앞뒤 PNG validation/runtime/kicad-gui/C-013/index.html — verifiable 아니오
+- [x] (사용자: lead 추천 26AWG 자가 압착 확정 — 삭제) JST GAM-322(28AWG GH 리드) 정격 — 브라우저로 열어 ≥0.61A/접점 확인되면 하니스를 기성 리드(AGHGH28K51)로(O-77)
 - [ ] bring-up 열 실측: 방열판 SK 444(R 계산 8.4 > 목표 8) — F-006 8절 판정 넘으면 CNC H3(O-78)
-- [ ] (사용자 결정 — 설치) F-007 bring-up PC 도구 실행에 필요: ffmpeg/ffprobe(이 PC엔 다른 프로젝트 경로에만), mosquitto-clients(직접 구독 시), OpenSSH 클라이언트 — 설치는 사용자 결정
+- [x] (사용자 허가 → F-008, O-79) F-007 bring-up PC 도구 실행에 필요: ffmpeg/ffprobe(이 PC엔 다른 프로젝트 경로에만), mosquitto-clients(직접 구독 시), OpenSSH 클라이언트 — 설치는 사용자 결정
 - [x] 병합 main 0c2ec91 (batch b-20261127-035125-1201: V-005 7699·R-017 aefa·R-018 1c02·F-007 7bdb·lead e5ac). b74e cancel(태그 보존). 남은 레인 orch 727e·pcb 251f·mechanical 8089. V-005 최종은 main에서 새 레인
+- [ ] (사용자 진행) PCBWay 문의 전송 — 사용자 로그인 완료, 초안 붙여 넣기(lead 안내), 회신 반영처는 초안 표
