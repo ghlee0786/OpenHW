@@ -127,7 +127,85 @@
   - `sunxi-ircut.c`: `ircut_pin_a/b`, `hold_time` 기본 100ms. V821 BSP의 **제3자 미러**에서만 확인했다.
   - TinyVision `sensor_set_ir()`: 200ms. (부분 확인)
 
-## 3. IR LED와 센서 NIR 감도 — **조사 결과 대기 중**
+## 3. IR LED와 센서 NIR 감도
+
+### 3.1 센서 NIR 감도
+
+| 센서 | 850 / 940nm | 기술 표기 | 확인 | 근거 |
+|---|---|---|---|---|
+| OS04A10 | **QE 60% / 40%** | Nyxel | 확인됨 (공식) | https://www.ovt.com/products/os04a10/ |
+| OS04C10 | 수치 없음 (「850·940nm 모두 높은 QE」 문구만) | Nyxel, PureCel Plus | 표기만 | https://www.ovt.com/wp-content/uploads/2026/05/OS04C10-PB-v1.2-WEB.pdf |
+| SC4336(H) (V851) | 절대값 없음. SC4336H는 전작 대비 850nm +21%, 940nm +15% | SFCPixel | 상대값만 | https://www.smartsenstech.com/en/page?id=323 |
+| SC2336 | NIR 언급 없음 | SFCPixel | 미확인 | https://www.smartsenstech.com/en/page?id=163 |
+| IMX307 | 수치 없음 (STARVIS 제품군 일반 설명만) | STARVIS | 표기만 | https://www.sony-semicon.com/en/technology/security/index.html |
+| GC4653 · GC2083 · GC2053 · GC4663 | 없음 | 없음 | 미확인 (GalaxyCore 사이트 점검 중) | — |
+
+→ 850/940 선택 근거가 되는 공식 수치는 OS04A10 하나뿐이다. 나머지 센서는 **실측(같은 LED·거리에서 영상 밝기 비교)이 필요**하다.
+
+### 3.2 IR LED 후보 (데이터시트 값, 1A 기준)
+
+| 파장 | 품번 | 방사 강도 | 방사속 | 연속 / 펄스 | Vf | 반치각 | 패키지 / Rth(실측) | 데이터시트 |
+|---|---|---|---|---|---|---|---|---|
+| 850 | ams OSRAM SFH 4715AS A01 | 일반 770 mW/sr | 1360 mW | 1.5A / 5A | 2.95V | ±40° | OSLON Black 3.75mm / 5.5 K/W | v1.5 2024-03-14 https://look.ams-osram.com/m/597061415877617c/original/SFH-4715AS-A01.pdf |
+| 850 | Vishay VSMA1085600 | 490 mW/sr | 1425 mW | 1.5A / 5A | 3.1V | ±60° | 3.4mm / 6~9 K/W | Rev 1.4 2022-07-08 https://www.vishay.com/docs/80298/vsma1085600.pdf |
+| 850 | Vishay VSMA1085250 (좁은 각) | 1350 mW/sr | 1425 mW | 1.5A / 5A | 3.1V | ±28° | 3.4mm / 6~9 K/W | Rev 1.4 https://www.vishay.com/docs/80297/vsma1085250.pdf |
+| 850 | ams OSRAM SFH 4170S (넓은 각) | 280 mW/sr | 1250 mW | 1A / 2A | 3.25V | ±65° | P1616 / 11 K/W | v1.7 2025-03-27 https://look.ams-osram.com/m/6e65e7d69e599e4b/original/SFH-4170S.pdf |
+| 850 | JNJ LTJI0112W120 (중국) | 220 mW/sr | 520 mW | 최대 1A | 1.5V | 시야각 120° | 3535 세라믹 | A3 2025/05 (LCSC 사본) |
+| 940 | ams OSRAM SFH 4725AS A01 | 일반 760 mW/sr | 1340 mW | 1.5A / 5A | 2.65V | ±40° | OSLON Black / 5.5 K/W | v1.10 2025-10-16 https://look.ams-osram.com/m/5c2c1ba34b2984b8/original/SFH-4725AS-A01.pdf |
+| 940 | Vishay VSMA1094751 | 320 mW/sr | 1250 mW | 1.5A / 5A | 2.8V | ±75° | 3.4mm / 7 K/W 미만 | Rev 1.1 2025-03-24 https://www.vishay.com/docs/80554/vsma1094751.pdf |
+| 940 | ams OSRAM SFH 4180BS | 325 mW/sr | 1485 mW | 1A / 2A | 2.8V | ±65° | P1616 / 6.2 K/W | v1.0 2024-08-13 https://look.ams-osram.com/m/639d5b4ecc74cc99/original/SFH-4180BS.pdf |
+| 940 | Silverlight M3535O1IRS9G06-940 (중국) | 표기 없음 | 400 mW (700mA) | 700mA / 최대 1A | 1.4~2.0V | 시야각 60° | 3535 / 4.5 °C/W | LCSC 사본 |
+
+- **신규 설계에 쓰지 않을 품번:**
+  - 「Not planned for new design」: SFH 4715AS(A01이 붙지 않은 기본형), SFH 4716AS
+  - Obsolete: SFH 4180S A01, LTE-R38381S-S-U, EAIST3535A1
+  - 위 표의 품번은 이것들을 뺀 것이다.
+
+### 3.3 850nm vs 940nm
+
+| 항목 | 850nm | 940nm | 근거 |
+|---|---|---|---|
+| 붉은 잔광 | 고출력에서 붉게 보임 | 850nm보다 50~100배 낮음 | OSRAM AN095 (2018-11-09, 제3자 사본 https://orwintech.com/static/pdf/SFH%204711A.pdf) |
+| 센서 감도 | OS04A10 QE 60% | 40% | OVT 공식 |
+| LED 출력 (같은 계열, 1A) | 1360~1425 mW | 1250~1340 mW | 각 데이터시트 |
+| ICR 선택 | 850nm 대역통과 ICR(CLA216-ICR-850BP) 사용 가능 | 850BP ICR은 쓸 수 없음 → 일반 전대역 ICR | 2.1절 |
+| 눈 안전 | 단품은 IEC 62471 Exempt. 고출력 어레이를 연속 구동하면 한계를 넘을 수 있음 | 같음 | 각 데이터시트 Notes · Vishay https://www.vishay.com/docs/81935/eyesafe.pdf · OSRAM AN002 https://look.ams-osram.com/m/1d720a7b18ab3fce/original/Details-on-photobiological-safety-of-LED-light-sources.pdf |
+
+### 3.4 구동·방열·방사각
+
+| 드라이버 IC | 방식 | 입력 | 출력 | 밝기 조절 | 패키지 | LCSC 1개 / 10개 USD | 재고 |
+|---|---|---|---|---|---|---|---|
+| Diodes AL8860MP-13 (C500782) | 히스테리시스 벅 | 4.5~40V | 1.5A | CTRL 핀 DC/PWM | MSOP-8EP | 1.2867 / 1.0868 | 2,126 |
+| TI TPS92515DGQR (C2678910) | 벅 | 5.5~42V | 2A | 아날로그·PWM·shunt PWM | HVSSOP-10 | 2.1088 / 1.8227 | 195 |
+| UMW PT4115 (C347356) | 벅 | 6~30V | 1.2A | DIM 아날로그/PWM | SOT-89-5 | 5개 이상 0.1098 | 143,400 |
+
+- **입력 전압 주의:** 세 IC 모두 벅 방식이다. 입력이 LED Vf보다 충분히 높아야 하므로(예: 12V DC나 PoE 이후 레일), 전원 방식이 정해진 뒤에 고른다. 5V USB 입력이면 부스트형을 따로 조사해야 하는데, 이번에는 조사하지 않았다.
+- **구동 방식 (Vishay AN 80327, 개정 2025-11-26):** 저전류는 저항이나 LDO, 고출력은 스위칭을 권장한다. 저항으로 병렬 구동하면 열폭주 위험이 있다. https://www.vishay.com/docs/80327/designing_vsma_highpower_ireds.pdf
+- **방열:** 같은 앱노트 Table 5의 접합-주변 열저항(RthJA,real)은 다음과 같다.
+  - IMS + 방열판: 16 K/W
+  - IMS: 30 K/W
+  - FR4 + thermal via: 80 K/W
+  - 일반 FR4: 150 K/W
+  - 동박 면적과 열저항을 연결한 정량 자료는 찾지 못했다.
+- **방사각과 조사 거리 (AN095):** LED 방사각을 렌즈 FOV에 맞추고, 맞는 부품이 없으면 2차 렌즈를 쓴다. 조사 거리는 다음 식을 차례로 적용해 추정한다(이번에는 계산하지 않음).
+  1. 피사체 조도 E = Ie/d²
+  2. 피사체 휘도 L = E·R/π
+  3. 센서 조도 E_sensor = L·T·π/(4·f#²·(m+1)²)
+
+### 3.5 IR LED 조달 (2026-11-26, USD)
+
+| 품번 | 판매처 | 1개 / 10개 | 재고 | 확인 |
+|---|---|---|---|---|
+| SFH 4715AS A01 | Digi-Key | 4.00 / 2.942 | 4,874 | 확인됨 (Active) |
+| SFH 4725AS A01 | Digi-Key / LCSC C2900419 | 4.00 / 2.942 · 2.4723 / 2.4161 | 7,959 · 80 | 확인됨 |
+| VSMA1085600 | Digi-Key | 3.40 / 2.481 | 3,003 | 확인됨 |
+| VSMA1094751 | Digi-Key | 3.15 / 2.294 | 596 | 확인됨 |
+| SFH 4170S | Digi-Key | 2.43 / 1.745 | 13,674 | 확인됨 |
+| SFH 4180BS-FA2FB2-13 | Digi-Key | 2.24 / 1.606 | 3,972 | 확인됨 |
+| JNJ LTJI0112W120 | LCSC C19185834 | 0.455 / 0.3548 | 412 | 확인됨 |
+| Silverlight M3535O1IRS9G06-940 | LCSC C2833581 | 0.7981 / 0.649 | 106 | 확인됨 |
+
+Mouser는 접속 시간 초과로 확인하지 못했다.
 
 ## 4. 주야 판별 방식
 
