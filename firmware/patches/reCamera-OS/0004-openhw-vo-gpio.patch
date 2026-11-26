@@ -1,0 +1,17 @@
+--- a/external/build/boards/cv181x/sg2002_recamera_emmc/dts_riscv/sg2002_recamera_emmc.dts
++++ b/external/build/boards/cv181x/sg2002_recamera_emmc/dts_riscv/sg2002_recamera_emmc.dts
+@@ -29,6 +29,14 @@
+ 	/delete-property/ power-ct-gpio;
+ };
+ 
++/* OpenHW F-010 (O-89): vo 노드의 원본 패널 gpio 속성 삭제 — porte 0 = gpio352 = ICR IN2(WH_PWM),
++ * porte 1/2 = PWR_GPIO1/2 = IIC2 SCL/SDA 패드. 디스플레이가 없으므로 잡지 않게 한다 */
++&vo {
++	/delete-property/ reset-gpio;
++	/delete-property/ pwm-gpio;
++	/delete-property/ power-ct-gpio;
++};
++
+ &dac{
+ 	/delete-property/ mute-gpio-r;
+ };

@@ -28,7 +28,7 @@
 | VSMA1085400 | Vishay 데이터시트 Document Number 80294 Rev. 1.4 (08-Jul-2022), https://www.vishay.com/docs/80294/vsma1085400.pdf (sha256 `642c5635c26b48e48d4f095e0907963a4e54c5f9936d3810f06d6aa0798692b3`, 2026-11-27 읽음) | — |
 | SG2002 | `hardware/datasheets/sophgo/01_SG2002_Datasheet_V1.0_EN.docx` (Preliminary 1.0-alpha, 온도 표) | `hardware/datasheets/INDEX.md` |
 | 원장 | `orchestration/request-ledger.md` (orch 레인 `harness/t-20261126-144334-727e`) | `2151f63` (main의 원장은 빈 틀) |
-| 이미지 | `C:/Users/gh/.local/share/openhw-tools/recamera-sdk/out-f006/` (저장소 밖) — F-004c 이미지 + `ethtool` | F-006 (`0003-openhw-ethtool.patch`) |
+| 이미지 | `C:/Users/gh/.local/share/openhw-tools/recamera-sdk/out-f010/` (저장소 밖) — F-006 이미지(ethtool) + vo 노드 gpio 속성 삭제 | F-010 (`0004-openhw-vo-gpio.patch`) |
 
 시험점 번호는 `boards.py` 시험점 목록 순서다(캐리어 L135–138, 전면 L237–239). 위치(좌표)는 PCB 배치가 main에 없어 **미기재**이므로, 실물 실크로 찾는다.
 - **캐리어:** TP1 12V_IN · TP2 5V_SYS · TP3 12V_IR · TP4 CORE_3V3 · TP5 SD_PWR_3V3 · TP6/7 GND · TP8/9 USB_DP/DN · TP10 USB_DET · TP11 nRESET · TP12 UPGRAD_KEY · TP13 STATUS_LED · TP14 IR_LED_EN · TP15 SPARE1 · TP16/17 I2C1 SDA/SCL · TP18/19 RESERVE1/2 · TP20–23 UART1 RX/TX/CTS/RTS · TP24/25 DEBUG_UART0 TX/RX · TP26 ALS_INT_RSV
@@ -110,7 +110,7 @@
 
 | # | 목적 | 준비물 | 절차 · 명령 | 기대값 | 판정 | 불합격 시 차선 | verifiable |
 |---|---|---|---|---|---|---|---|
-| 2-1 | 이미지 무결성 | 호스트 | `sha256sum out-f006/*.zip` | `sg2002_reCamera_0.2.4_emmc.zip`(= `upgrade.zip`) **`1553210f338a0d1c0934605acac29c651c812f7b1c6eb3da2f2ef142a502b168`** · recovery `2408d6257431fb51d44be1ce2de9e001cd16f5b22865cad63264f86e508131bc` · sd_compat `15bd3e5747fe89780880bd329d27441ac72e3a0f43e262838bd4c8394838cd39` (F-006 = F-004c 이미지 `00b685a0…` + ethtool) | 일치하면 합격 | 다르면 쓰지 않고 다시 collect한다 | 예 |
+| 2-1 | 이미지 무결성 | 호스트 | `sha256sum out-f010/*.zip` | `sg2002_reCamera_0.2.4_emmc.zip`(= `upgrade.zip`) **`a275afb12988a2185640ccf0417983a67e11925fafc3ce7ad598e48e59bda134`** · recovery `3dd2d5c66da10e764e0213460de76305590a124b34d2a6730f0eb7076d9e1df7` · sd_compat `38d71b1cb275a437e2ceabf3e4e554eee18cf1b36369da7a396545bac0322b48` (F-010 = F-006 이미지 `1553210f…` + vo gpio 속성 삭제, 14절) | 일치하면 합격 | 다르면 쓰지 않고 다시 collect한다 | 예 |
 | 2-2 | 콘솔 연결 | 3.3V USB-UART | 캐리어 **J6 JST SH 3P**: 1 = GND, 2 = DEBUG_UART0_TX, 3 = DEBUG_UART0_RX (`boards.py` L116–117). 어댑터 RX ← J6-2, TX → J6-3. 호스트에서 `115200 8N1` | 보드율 근거: 이미지 `/etc/inittab` `ttyS0::respawn:/sbin/getty -L ttyS0 115200 vt100` (out-f004c rootfs 확인). 계약 11절은 "실물로 확인" | 부트로그(fsbl → OpenSBI → u-boot → Linux)가 깨지지 않고 나오면 합격 | 글자가 깨지면 보드율을 바꿔 본다. 아무것도 나오지 않으면 TP24/TP25 파형 확인. **TX에 풀다운·LED를 달지 않는다**(부트 스트랩, 계약 10절) | 예 |
 | 2-3 | 공장 이미지 부팅 확인 | 콘솔 | 받은 그대로 부팅한다(굽기 전) | `login:` 프롬프트 | 프롬프트가 나오면 합격 | 코어 불량 또는 BTB 결합 문제 → 1-5 다시 | 예 |
 | 2-4 | **우리 이미지 기록** | microSD, 콘솔 | 1안 SD 복구: `*_emmc_recovery.zip`을 SD에 준비하고 꽂은 채 전원을 넣으면 eMMC에 굽는다(F-001 L63, RC README §2.4). SD에 쓰는 정확한 형식(압축 풀기·파티션)은 RC README §2.4 원문을 따른다 — **이 레인에서 원문 형식은 다시 확인하지 않았다**. 부트 순서는 SD가 먼저다(`run sdboot \|\| cvi_update …`, F-001 L61). 2안 USB: `usb_dl.exe -c cv181x -s linux -i <압축 푼 폴더>`, 캐리어 USB-C(J3) 디바이스 모드. 버튼 절차는 미확인(계약 14절 실물 3) | 콘솔에 굽기 진행이 보이고, SD를 빼고 재부팅하면 eMMC로 부팅된다 | `cat /etc/openhw/persond.conf`가 있고 P1(모델 sha256)이 PASS면 합격 | USB 굽기 모드 진입 절차는 UPGRAD_KEY(SW2)를 누른 채 전원/RESET으로 시험해 기록한다(F-001 L65 "절차 미확인"). 3회 실패하면 멈추고 보고 | 예 |
@@ -376,3 +376,29 @@ A만 시험했을 때의 상한(계산값 × 1.25): 방열판(내부) 21.3 K · 
 - **재실행 완료 (2026-11-27 04:19~04:21):** lead 결정(Docker 켠 상태 유지, OpenHW 컨테이너만)에 따라 `docker run --rm --memory 4g recamera-os-builder bash /fw/tools/host/test_host_tools.sh`를 돌렸다. F-008 레인 firmware를 읽기 전용으로 붙였다.
   - 결과: **20/20 기대 일치, 종료 0** (`recamera-sdk/f007-test-5.log`). `--ffmpeg-dir` 변경을 포함한 판이다.
   - 컨테이너는 `--rm`으로 정리했고, 다른 프로젝트 컨테이너는 건드리지 않았다.
+
+
+## 14. F-010 이미지 빌드 기록 (O-89 — vo 노드 gpio 속성 삭제)
+
+- **변경:** 새 패치 `firmware/patches/reCamera-OS/0004-openhw-vo-gpio.patch`가 보드 DTS `sg2002_recamera_emmc.dts`에 `&vo { /delete-property/ reset-gpio; pwm-gpio; power-ct-gpio; }`를 넣는다.
+  - 원본 `cv181x_base.dtsi` L758–760의 `vo` 노드는 porte 0/1/2를 참조한다. porte 0 = gpio352 = ICR IN2, porte 1/2 = IIC2 SCL/SDA 패드다.
+  - 보드 DTS는 원래 `&mipi_tx`의 같은 세 속성만 지우고 있었다.
+  - **분기점:** orch는 "패치 0001에서 삭제"라고 지시했다. 그러나 `apply-f003.sh`는 적용한 패치를 이름 표시 파일로 건너뛴다. 0001을 고치면 빌드 볼륨에 다시 적용되지 않는다(F-004c 원인 M). 그래서 새 패치 0004로 했다. 새 볼륨에서도 0001 → 0004 순서로 적용된다.
+
+| 단계 | 명령 | 종료 코드 | 결과 |
+|---|---|---|---|
+| 적용 | `bash firmware/scripts/apply-f004.sh` (0001~0003 건너뜀, 0004 적용) | 0 | `apply-f010-1.log` |
+| 빌드 | hc 칸 `openhw-fw-build`, `CPUSET=0-3 MEM=16g JLEVEL=4 slot --label F-010 --timeout-min 240 -- build-baseline.sh build` | **0** | 504초, 05:33:08 KST 종료 · `f010-build-1.log` |
+| collect | `OUT_DIR=…/out-f010 build-baseline.sh collect` | 0 | 아래 해시 |
+| dtb 역컴파일 (커널·u-boot dtb 둘 다, `dtc -I dtb`) | `vo`·`mipi_tx` 노드의 reset/pwm/power-ct-gpio 개수, porte(phandle 0x0f) 참조 | — | **vo 0 · mipi_tx 0 · porte 참조 0** |
+| 호스트 시험 (`run-hosttest-f010.sh`, 컨테이너 `--memory 2g`) | daynight · persond 단위 · 통합 · `test-bringup-check.sh` | 0 · 0 · 0 · 0 | 40/0 · 33/0 · 16/0 · 불일치 0 |
+
+| 파일 (`out-f010/`) | sha256 |
+|---|---|
+| `sg2002_reCamera_0.2.4_emmc.zip` (= `upgrade.zip`) | `a275afb12988a2185640ccf0417983a67e11925fafc3ce7ad598e48e59bda134` |
+| `sg2002_reCamera_0.2.4_emmc_ota.zip` | `2856fe4087182861cb3c0db57dc10b7c4bb14a8d36aa18b3385663c217eeba25` |
+| `sg2002_reCamera_0.2.4_emmc_recovery.zip` | `3dd2d5c66da10e764e0213460de76305590a124b34d2a6730f0eb7076d9e1df7` |
+| `sg2002_reCamera_0.2.4_emmc_sd_compat.zip` | `38d71b1cb275a437e2ceabf3e4e554eee18cf1b36369da7a396545bac0322b48` |
+| `sg2002_reCamera_0.2.4_emmc_swu.zip` | `abd49e85c5b5aef2c90355c67a4349766a70abb15ab542befa4bba838bc723f5` |
+
+- **HIL 미확인:** 보드에서 `cat /sys/kernel/debug/gpio`로 gpio352~354를 아무 드라이버도 잡지 않는지 본다. 이것은 bring-up 2-5 때 함께 본다.
