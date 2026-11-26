@@ -17,7 +17,7 @@
 | L-001 | orch (단계 4 준비) | schematic t18z | KiCad 라이브러리: AP1511B·AL8860·VSMA1085600·LTR-329·M12/ICR 홀더·FPC 10P (BTB·벅·RJ45·SD·센서는 의존 대기) | hardware/libraries/** | 핀↔패드 대조표, kicad-cli 결과, 레인·커밋 | queued (C-001b 뒤) |
 | F-002 | orch | firmware t18w | reCamera-OS 0.2.4 원본 Docker 기준 빌드(slot 경유, 산출물은 저장소 밖) | firmware/docs/build-baseline.md, firmware/scripts/** | 종료 코드 0+해시 또는 실패 원인 판정, 레인·커밋 | running |
 | R-006 | orch (V-001 ④⑥ 분기 복귀, O-8) | research t18s | 렌즈 재선정(GC2053 HFOV 85~95°, 왜곡 모델·BFL·IR 보정) + IR LED 조사각·개수(1.0A, 직렬 ≤2) | docs/research/optics-ir-r006.md (+csv) | 렌즈 1안·차선 계산 근거, LED 결론, 레인·커밋 | queued (R-004 뒤, R-005보다 먼저) |
-| M-001 | orch | mechanical t18x | 공개 STEP 측정 → 3층 적층·광축·IR LED·창·체결 기준안 (외함 아님) | mechanical/** | 측정표·기준안·Fusion MCP 결과, 레인·커밋 | running |
+| M-001 | orch | mechanical t18x | 공개 STEP 측정 → 3층 적층·광축·IR LED·창·체결 기준안 (외함 아님) | mechanical/** | 측정표·기준안·Fusion MCP 결과, 레인·커밋 | completed — 레인 t-20261126-161155-50dc 커밋 ad23d15. Fusion MCP read·execute 성공, J1 윗면/J2 아랫면 독립 확인, 적층안 z·M1.6 나사·IR 후보 영역, 분기 K1~K8 |
 
 ## 운영 변경 (2026-11-26, 사용자 지시 · lead 전달)
 - 의견 묻지 않고 진행: 사람 쪽 미정값은 D-003(lead 레인 t-20261126-144135-5470 docs/decisions/D-003-working-defaults.md, 커밋 8ac5ce5) 값으로 확정 취급. 새 갈림길은 기본값 선택 → 아래 「분기 기록」에 분기점·선택·이유·차선책 → lead 요약 보고. 문제 시 해당 행으로 돌아가 차선책.
