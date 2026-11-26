@@ -134,6 +134,7 @@
 | O-57 | lead 정정: O-53의 원인 K 후속을 사용자 대기로 올린 것 | 바로 진행 — 원인 K는 새 원인(0회부터 3회 상한), 사용자는 멈춤 없는 진행 지시. K-1 진단 → K-2 혼합정밀도 → K-3 후처리 분리, 기준 2da6706 그대로 | AGENTS 실패 횟수 규칙(원인별), O-54 | K 3회 불합격 시 D 유지 |
 | O-58 | R-015: Fusion Electronics의 KiCad 10 가져오기·규칙 이전 근거 없음, Fusion 개인용 라이선스는 company environments 금지 | 전기 교차 검토는 Fusion 안 쓰고 kicad-cli DRC/ERC + V-005로 판정. M-003은 Fusion으로 계속하되 단계마다 F3D·STEP·STL과 매개변수 표를 커밋(라이선스·만료로 Fusion이 막혀도 결과 보존). 라이선스 종류 확인은 사용자 대기 목록 | 근거 없는 도구로 판정하지 않음, 케이스 설계는 멈추지 않음 | Fusion이 막히면 FreeCAD/CadQuery로 STEP 기반 외함(D-003 #34, 설치 필요하면 목록만) |
 | O-59 | lead 결정 D-003 #33: KiCad API 켬(R-014 C1), 사용자 실시간 MCP 작업 요구 | pcb에 G-002 — 스크립트 저장·정지 후 GUI가 한 보드 파일씩 소유, IPC 편집·단계별 스크린샷, 판정은 kicad-cli DRC, 라우터는 GUI 저장·닫기 후 | 같은 파일 동시 쓰기 방지, 판정은 종료 코드 | MCP가 IPC 연결 못 하면 스크립트·kicad-cli 계속, 칸 재시작은 lead |
+| O-60 | lead 사전 결정: G-002에서 kicad MCP가 칸 시작 때 IPC 없음으로 굳어 있으면 | 보고 기다리지 않고 orch가 pcb 칸 재시작 — 진행분 커밋 확인 → hc kill → 같은 sessionId 95e7dda5 --resume·같은 레인·같은 MCP 설정 → hc get 실행 확인 | 새 세션 중복 시작 방지, 멈추지 않음 | 재시작 뒤에도 IPC 실패면 원인 기록·스크립트 헤드리스 편집+스크린샷(#33 차선) |
 
 ## 발주 패키지 직전 정리 목록
 - [ ] 회로도 표시 겹침: 캐리어 J2 옆 12V_IN_RAW 라벨, D3 PWR_LED 라벨, J1 품번 문자 (O-32)
