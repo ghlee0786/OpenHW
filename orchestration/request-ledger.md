@@ -51,7 +51,7 @@
 | R-012 | orch | research t18s | GH 6P 하니스 AWG26 전선 MPN(SSHL 허용 외경 안) | bom-full.csv·manufacturing/bom | 품번·차선·재고, 커밋 | completed — 9a5fbfb·dce3c91, orch 생성기 재실행 0. 1안 Alpha Wire 422607 UL1061 26AWG(OD 공차 상한 1.04 > 단자 1.0 → 조건부), 차선 Remington 26UL1061STR |
 | F-004 | orch | firmware t18w | 사람 감지(tdl_models) → 이벤트 전송·RTSP, 이벤트 로직 시험, 패치 빌드 | firmware/** | 모델 출처·라이선스·해시, 시험·빌드 결과, 레인·커밋 | completed(모델 제외, lead 결정 D) — 레인 t-20261126-210506-1e37 c4a6334. 모델 경로 A/B/C는 사용자 답 대기(D-003 #19). persond 33/0·daynight 40/0(orch 재실행), 모델 없는 이미지 빌드 0. 모델: tdl 라이선스 미확인·Seeed AGPL 미사용, YOLOX-Nano 변환 검증 원인 J 3회 중단 → 사용자 결정(A 회피 재변환/B AGPL/C 문의/D 연기) |
 | M-002b | orch (O-43) | mechanical t18x | IR LED 열 경로 전기 절연: 절연 갭 패드 품번·수치, 기둥 접촉면, ΔT 재계산 | mechanical/** (M-001 레인) | 품번·열 저항·간섭, 커밋 | completed — e33bdde. Laird Tflex P340 1겹(>5kV)+방열판 일체 GND 기둥, 금속 접촉 0, ΔT A 9.5K·B 7.0K(추정), 차선 Fujipoly GR25B |
-| C-010 | orch (O-46) | schematic t18z | 캐리어 RJ45 쪽 MDI P/N 맞바꿈(ESD 뒤 넷), 계약 v1.9 | hardware/schematic/carrier (C-002 레인) | 의도 차이, ERC 0, 커밋 | running |
+| C-010 | orch (O-46) | schematic t18z | 캐리어 RJ45 쪽 MDI P/N 맞바꿈(ESD 뒤 넷), 계약 v1.9 | hardware/schematic/carrier (C-002 레인) | 의도 차이, ERC 0, 커밋 | completed — 21175f3 (계약 v1.9 f6d188e), J5 핀 1·2·3·6 = TXN·TXP·RXN·RXP, orch 재실행 carrier ERC 0. 회로도 배선 기준 21175f3 |
 | R-013 | orch (O-46) | research t18s | SG2002 EPHY 10BASE-T 자동 극성·Auto MDI-X 근거 | docs/research/r013-ephy-polarity.md | 근거(쪽/줄), 커밋 | running |
 
 ## 운영 변경 (2026-11-26, 사용자 지시 · lead 전달)
