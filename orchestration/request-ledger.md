@@ -57,8 +57,8 @@
 | F-004b | orch (O-50) | firmware t18w | 원인 J 회피 재변환·호스트 모의 검증 1회(같은 원인 4회째, 사용자 허가) — 합격 기준 먼저 기록 | firmware/** (F-004 레인) | 기준 커밋, 합격 시 해시·시험·빌드 / 불합격 시 D 마감 근거 | completed(불합격 → D 마감, O-53) — 기준 2da6706(K0~K5 변환 전) → 그래프 7b6f254(K0 등가 최대차 0) → cvimodel f9920f9e… verify rc=1 → f855b4a. K1 11/21·K2 0.842·K3 0.000·K4 11/21 실패, K5 ok. 하강 비교: Slice는 맞음(cos 0.999), 헤드 1158_Reshape obj 채널 0 → 원인 J 판정 정정, 실제 원인 K(헤드 출력 하강) 후보. 모델 출하 안 함(models-candidate만), 이미지 out-f004 그대로 |
 | P-004 | orch (O-54) | pcb t190 | P-003 계속(DRC 0·미연결 0) → 제조 산출물(R-010 16항, 업로드 없음), 배치 고정 STEP 먼저 | hardware/pcb/** (P-003 레인) | DRC 종료 0, 차동 길이표, 산출물·sha256, 커밋 | running — STEP 1차 aebd293(carrier 28bc7f39…·front 4e9b783b…, orch 해시 일치, 6ecfa85 배치) → M-003 전달. 3D 모델 없음: J3·J5·L1·Q3/Q4(캐리어), X1·Q3/Q5/Q7(전면) — mechanical 대체 블록 |
 | V-005 | orch (O-55) | review t191 | PCB 독립 감수: DRC·D-003 #21/#28/#29/#31·절연 패드 + 실크스크린(양면) + 사람 확인 HTML | docs/review/, validation/runtime/v005 (새 레인) | 항목·verifiable·근거·수정 요청, 커밋 | running |
-| R-014 | orch | research t18s | KiCad 10 IPC API·실시간 MCP 조사(설치 목록만) | docs/research/r014-kicad-live-mcp.md (새 레인) | 근거·결론, 커밋 | running |
-| R-015 | orch | research t18s | Fusion Electronics KiCad 가져오기·DRC 교차 검토 가능 여부 | docs/research/r015-fusion-electronics.md (새 레인) | 근거·결론, 커밋 | running |
+| R-014 | orch | research t18s | KiCad 10 IPC API·실시간 MCP 조사(설치 목록만) | docs/research/r014-kicad-live-mcp.md (새 레인) | 근거·결론, 커밋 | completed — 레인 t-20261127-013426-192c 955edcd. 원인 = kicad_common.json api.enable_server=false(orch 확인), 설치된 iQreu/kicad-mcp(kipy 0.9.0)로 실시간 PCB 편집 가능 — 새 MCP 불필요. 필요: C1 KiCad API 켜기+재시작(설정 변경 → 사용자 결정), C2 pcb가 자기 레인 보드를 열기. 한계: 회로도·DRC·라우터는 IPC 없음(KiCad 11) |
+| R-015 | orch | research t18s | Fusion Electronics KiCad 가져오기·DRC 교차 검토 가능 여부 | docs/research/r015-fusion-electronics.md (새 레인) | 근거·결론, 커밋 | completed — 같은 레인 9af8aba. KiCad 가져오기는 v7+ 표기뿐(10 미확인)·규칙/차동 손실 미확인 → 전기 교차 검토에 안 씀(O-58), 기구는 STEP. 라이선스: 개인용은 company environments 금지 → 사용자 확인 필요 |
 | M-003 | orch (O-56) | mechanical t18x | 외함 설계: KiCad STEP 기준, #25 벽·#26 방열·PMMA 창+흑색 폼, 3D 프린트 시제품 | mechanical/** (새 레인) | F3D·STEP·STL·도면·렌더·간섭 수치, 커밋 | running |
 | F-004c | orch (O-57) | firmware t18w | 원인 K 후속: K-1 층별 compare 첫 오차 층 → K-2 헤드 혼합정밀도 → K-3 sigmoid 그래프 밖, 기준 2da6706 그대로 | firmware/** (F-004 레인) | 단계별 커밋, 합격 시 해시·시험·빌드 / K 3회째 불합격 시 D 근거 | running |
 
@@ -131,6 +131,7 @@
 | O-55 | V-005를 PCB 완성 전에 시작할지 | 지금 6ecfa85로 감수 스크립트·1차 실행, pcb 완료 커밋에서 최종 재실행 | 감수 준비 시간을 배선과 겹쳐 줄임, 판정은 최종 커밋 기준 | 완성 뒤 한 번에 |
 | O-56 | M-003 시작 시점(보드 미완성) | pcb 레인 최신 커밋에서 STEP 직접 내보내 시작, 외곽·구멍·커넥터를 매개변수로, 배치 고정 STEP 오면 교체. R-015 기다리지 않음 | 배치는 거의 고정, 배선은 외함에 영향 없음 | 배치 고정 STEP 뒤 시작 |
 | O-57 | lead 정정: O-53의 원인 K 후속을 사용자 대기로 올린 것 | 바로 진행 — 원인 K는 새 원인(0회부터 3회 상한), 사용자는 멈춤 없는 진행 지시. K-1 진단 → K-2 혼합정밀도 → K-3 후처리 분리, 기준 2da6706 그대로 | AGENTS 실패 횟수 규칙(원인별), O-54 | K 3회 불합격 시 D 유지 |
+| O-58 | R-015: Fusion Electronics의 KiCad 10 가져오기·규칙 이전 근거 없음, Fusion 개인용 라이선스는 company environments 금지 | 전기 교차 검토는 Fusion 안 쓰고 kicad-cli DRC/ERC + V-005로 판정. M-003은 Fusion으로 계속하되 단계마다 F3D·STEP·STL과 매개변수 표를 커밋(라이선스·만료로 Fusion이 막혀도 결과 보존). 라이선스 종류 확인은 사용자 대기 목록 | 근거 없는 도구로 판정하지 않음, 케이스 설계는 멈추지 않음 | Fusion이 막히면 STEP 기반 다른 CAD(설치는 사용자 결정) |
 
 ## 발주 패키지 직전 정리 목록
 - [ ] 회로도 표시 겹침: 캐리어 J2 옆 12V_IN_RAW 라벨, D3 PWR_LED 라벨, J1 품번 문자 (O-32)
@@ -151,3 +152,5 @@
 - [ ] (사용자 결정 대기) F-004 대체 모델 경로 — AGPL YOLO11n(B) / Sophgo 문의(C) (원인 K 후속은 O-57로 진행)
 - [ ] (사용자 지시 대기) push — main 병합은 1a6147a로 끝남, 남은 3레인(orch·pcb·firmware)은 완료 시 lead가 batch
 - [ ] (사용자 진행) PCBWay 가입·문의 — lead 초안 t-20261127-013043-46d1 docs/manufacturing/pcbway-inquiry-draft.md
+- [ ] (사용자 결정 대기) KiCad API 켜기(Preferences→Plugins→Enable KiCad API, 재시작) — R-014 C1, 켜면 pcb가 자기 보드를 열어 실시간 MCP 편집 가능
+- [ ] (사용자 확인 대기) Fusion 라이선스 종류·만료(R-015: 개인용은 company environments 금지, tool-status.md에 만료 안내 기록)
