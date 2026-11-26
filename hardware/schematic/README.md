@@ -350,7 +350,7 @@
 |---|---|---|---|---|
 | C2-1 | microSD 커넥터 | Hirose DM3AT (공식 라이브러리) | 검증된 풋프린트로 ERC·PCB 위험이 낮다 | R-004 대표 SHOU HAN TF PUSH (풋프린트 새로 작성) |
 | C2-2 | 회로도 작성 방식 | 생성기 + 넷 라벨 (선 없음) + GUI 확인 | 120핀 BTB와 계약 표를 기계로 맞추고 사람 실수를 없앤다 | GUI에서 직접 배선 |
-| C2-3 | FPC 핀배치 | **대칭**: 1 GND · 2·3 12V_IR · 4 GND · 5 SPARE1 · 6 ALS_INT_RSV · 7 GND · 8·9 12V_IR · 10 GND | FFC 방향(같은 면/반대 면)이 바뀌어도 전원·GND가 맞는다. 12V_IR이 4접점이 되어 2스트링 1.22A를 견딘다(TE 접점 1A). 뒤집히면 5↔6만 바뀌고 둘 다 1.8V 예비선이다 | 계약 v1.1의 비대칭 1~3 12V_IR |
+| C2-3 | FPC 핀배치 (**C-003에서 JST GH 6P로 대체됨, 15절**) | **대칭**: 1 GND · 2·3 12V_IR · 4 GND · 5 SPARE1 · 6 ALS_INT_RSV · 7 GND · 8·9 12V_IR · 10 GND | FFC 방향(같은 면/반대 면)이 바뀌어도 전원·GND가 맞는다. 12V_IR이 4접점이 되어 2스트링 1.22A를 견딘다(TE 접점 1A). 뒤집히면 5↔6만 바뀌고 둘 다 1.8V 예비선이다 | 계약 v1.1의 비대칭 1~3 12V_IR |
 | C2-4 | 12V_IR ILIM | **8.06kΩ ≈ 1.49A** (V-002의 1.2A에서 바꿈) | 2스트링 최악: LED Vf max 3.3V×2×1.0A×2 / 0.9 효율 / 12V ≈ 1.22A. 1.2A 한도로는 부족하다. 합계 12V 최악 ≈ 0.62(5V측) + 1.22 = 1.84A < 어댑터 2.08A | 10kΩ(1.2A) — 스트링 B를 실장하지 않으면 그대로 써도 된다 |
 | C2-5 | AL8860 CTRL | 두 스트링이 IR_PWM 하나를 공유한다 (Q5 오픈드레인 하나, CTRL 직결) | GPIO가 하나뿐이다(IR_PWM). 스트링 B는 DNP로 시작한다 | 스트링 B CTRL을 SPARE1(FPC 5)로 따로 구동 |
 | C2-6 | I2C2 풀업 (O-22) | 4.7k를 **CORE_1V8(상시)**에. 모듈 쪽 풀업 레일은 없음 | LTR-329 폴링이 CAM_EN과 무관해진다 | **역급전 근거:** CAM_EN=0이면 모듈 IOVDD(3.3V)가 꺼진다. 이때 1.8V 풀업이 꺼진 모듈 I/O 보호다이오드로 흐를 수 있는 전류는 최대 1.8V/4.7k ≈ 0.38mA/선(두 선 0.77mA)이다. 모듈 내부 회로는 미공개라 이 전류가 레일을 들어 올리는지는 **실물 측정 대상**이다. FW 기본은 CAM_EN 상시 1(S70hardware)이다. 차선: CAM_EN=1일 때만 폴링하는 FW 규칙 |
@@ -441,3 +441,111 @@
   3. 인접 접점 동시 통전 감액 자료 없음
   4. CLA216 나사 규격(실물)
   5. DF30 풋프린트 간격 규칙(라이브러리 README)
+
+## 16. C-004 — V-004 부적합 수정 (2026-11-26)
+
+- **입력:** V-004 `validation/review-V004-C002.md` (레인 `t-20261126-172041-ddef`, 커밋 `26b46b3`) R1~R13 · 권고, orch O-33(O-22 → 차선 복귀).
+- **방식:** 파일 생성기와 kicad-cli만 썼다. GUI는 쓰지 않았다(O-27).
+- **바꾸지 않은 것:** `.kicad_pro`·`fp-lib-table`(pcb 소유, O-30), 기존 참조 지정자.
+- **표제란:** Rev 「C-004」.
+
+### 16.1 수정 대응
+
+| V-004 | 수정 | 보드 |
+|---|---|---|
+| **R1** (O-33) | I2C2 풀업 R9·R10 → **CAM_1V8**(스위칭). 새 Q6 **DMG2305UX**(G = CAM_PG, S = CORE_1V8, D = CAM_1V8), C18 1µF.<br>근거: Diodes DS36196 Rev 8-2 「RDS(on) … 200 mΩ VGS = −1.8V, ID = −2A」, VGS(th) −0.5~−0.9V. AO3401A는 부적합(V-004).<br>LTR-329는 CAM_EN=1일 때만 폴링(계약 6절 FW 규칙) | 전면 |
+| **R2** | X1 VDD(4)와 C11 → CAM_1V8 (계약 9절과 같음) | 전면 |
+| **R3** | C10 100nF 실장. 새 D3 BAT54WS(K = CAM_EN, A = CAM_RESET, R7과 병렬). 새 R16 10k CAM_RESET→GND **DNP** | 전면 |
+| **R4** | 새 C19 75pF C0G (5V_SYS–BUCK_FB). C7·C8 → 22µF/25V X7R 1210, 새 C20 22µF/25V X7R 1210 (3개, DC 바이어스 뒤 실효 ≥44µF 목표 — 곡선 확인은 R-004) | 캐리어 |
+| **R5** | 새 D7 SMBJ5.0A (5V_SYS–GND, 단방향) | 캐리어 |
+| **R6** | J2 → `openhw:BarrelJack_XKB_DC-005-5A-2.0_Horizontal` (라이브러리 README C-004) | 캐리어 |
+| **R7** | D2 심벌 `Device:D_TVS`(양방향) → `Device:D_Zener`(K = 1, A = 2, 단방향 TVS 표기). 극성과 패드는 그대로 | 캐리어 |
+| **R8** | Q3 드레인과 Q2 게이트 사이에 새 R22 47k(넷 SD_PWR_GD), 새 C21 100nF Q2 G–S. C13 10µF → **1µF**, 새 R23 100k 방전(SD_PWR_3V3–GND) | 캐리어 |
+| **R9** | 전면 LDO U1 → **RT9013-28GB (2.8V)**, 넷 이름 FRONT_3V3 → **FRONT_2V8**. DRV8837 VIH max 0.5×2.8 = 1.4V → 1.8V GPIO 여유 0.4V. LTR-329 VDD 2.4~3.6V 안. 재고는 확인 필요 | 전면 |
+| **R10** | L1·L2 → 47µH Irms ≥ 1.3A · Isat ≥ 2A (SRN6045TA-470M, 풋프린트 같음). D1·D2 → SS24 SMA (Vishay SS24-E3/61T 후보). C14·C16 → 10µF/50V X7R | 전면 |
+| **R11** | USB_DET 분압 R9/R10 → **200k/100k** (12V 없이 USB만 꽂았을 때 역급전 약 0.017mA). 분압비는 같아 검출 전압 1.67V 그대로 | 캐리어 |
+| **R12** | 노트 정정: U1(전면) pin4 = NC, D1 VGS ±25V, VSMA1085400 패키지 도면 6.550-5367.01-4, 캐리어 L1 Isat ≥ 6A.<br>F1 = 3A 지연형 ≥32V (후보 Littelfuse 0437003.WR, 정격 확인 필요).<br>C1 = 47µF/35V (리플 정격 MPN은 R-004) | 두 보드 |
+| **R13** | C6은 **DNP 유지**(실장하면 GC2053 9.3절 전원 끄는 순서 위반). 센서 블록 주석에 적음 | 전면 |
+| 권고 MODE | U2(TPS26600) MODE 핀을 RTN(GND)에서 **개방**으로 (circuit breaker + auto-retry, 분기 C4-6) | 캐리어 |
+| K1 (하드웨어 쪽) | R12 100k를 IR_PWM 풀다운에서 **CORE_1V8 풀업**으로 → 기본(High) = Q5 on = CTRL Low = **IR 끔** | 전면 |
+| 그 밖 | 새 TP23 CAM_1V8 (계약 11절 전면 시험점). J7·J4 케이블 필드: JST GHR-06V-S + SSHL-002T-P0.2 AWG26 1:1 (V-004 C1 권고) | 두 보드 |
+
+### 16.2 넷리스트 차이 (C-003 `7f69f63` → C-004, `tools/netcompare.py`) — 의도한 것만
+
+- **캐리어 (부품 91 → 97, 넷 93 → 95, 차이 29):**
+  - 새 부품: C19 · C20 · C21 · D7 · R22 · R23
+  - 값/풋프린트 변경: C1 · C7 · C8 · C13 · F1 · J2 · L1 · R9 · R10
+  - 넷 변경:
+    - BUCK_FB(+C19)
+    - 5V_SYS(+C19 · C20 · D7)
+    - SD_PWR_G(Q3 빠짐, +R22 · C21)
+    - 새 SD_PWR_GD(Q3 · R22)
+    - CORE_3V3(+C21)
+    - SD_PWR_3V3(+R23)
+    - GND(+C20 · D7 · R23 등)
+    - U2 MODE(6)가 개방(unconnected 넷)
+  - D2는 심벌만 바뀌어 넷리스트 차이에는 나오지 않는다(값·풋프린트·핀 연결 같음).
+- **전면 (부품 78 → 83, 넷 64 → 65, 차이 27):**
+  - 새 부품: C18 · D3 · Q6 · R16 · TP23
+  - 값 변경: C14 · C16 · D1 · D2 · L1 · L2 · U1 · TP2
+  - 넷 변경:
+    - 새 CAM_1V8(Q6 · R9 · R10 · X1 · C11 · C18 · TP23)
+    - CORE_1V8(+Q6 · R12, −R9 · R10 · X1 · C11)
+    - CAM_PG(+Q6)
+    - CAM_EN(+D3. X1 OE는 그대로 CAM_EN)
+    - CAM_RESET(+D3 · R16)
+    - IR_PWM(R12 핀 2쪽으로)
+    - 이름 변경 FRONT_3V3 → FRONT_2V8
+  - C10은 DNP → 실장(넷리스트에는 나오지 않음, 회로도 `dnp` 속성).
+- 차이 전체 출력은 `netcompare.py` 결과 그대로다(보고에 첨부).
+
+### 16.3 검사 (verifiable 예)
+
+| 명령 | 캐리어 | 전면 |
+|---|---|---|
+| `kicad-cli sch erc --severity-all --exit-code-violations` | **종료 0 · 위반 0** | **종료 0 · 위반 0** |
+| `kicad-cli sch export netlist --format kicadsexpr` | 종료 0 | 종료 0 |
+| `kicad-cli sch export svg` → `validation/runtime/kicad-gui/C-004/` | 종료 0, 파일 확인 | 종료 0, 파일 확인 |
+
+### 16.4 pcb용 변경 부품표 (P-003 재연결)
+
+| 보드 | 참조 | 상태 | 풋프린트 | 위치 힌트 |
+|---|---|---|---|---|
+| 캐리어 | J2 | **풋프린트 교체** | `openhw:BarrelJack_XKB_DC-005-5A-2.0_Horizontal` | 기존 J2 자리 (핀 2가 −5.9로 0.1 안쪽, 핀 3은 같음) |
+| 캐리어 | C7 · C8 | **풋프린트 교체** 1206 → `Capacitor_SMD:C_1210_3225Metric` | 1210 | U1·L1 출력, 기존 자리 |
+| 캐리어 | C20 | 새로 | `Capacitor_SMD:C_1210_3225Metric` | C7·C8 옆 5V_SYS 출력 |
+| 캐리어 | C19 | 새로 | `Capacitor_SMD:C_0402_1005Metric` | R2 병렬, U1 FB 핀 가까이 |
+| 캐리어 | D7 | 새로 | `Diode_SMD:D_SMB` | 5V_SYS, BTB VIN 핀 근처 |
+| 캐리어 | R22 · C21 | 새로 | `R_0402` · `C_0402` | Q2 게이트 옆 |
+| 캐리어 | R23 | 새로 | `Resistor_SMD:R_0402_1005Metric` | microSD 전원(SD_PWR_3V3) 옆 |
+| 캐리어 | U2 핀 6 | 연결 해제 | — | MODE 패드를 GND에서 떼어 개방 |
+| 전면 | Q6 | 새로 | `Package_TO_SOT_SMD:SOT-23` | BTB CORE_1V8 핀(49·51)과 X1·R9/R10 사이 |
+| 전면 | C18 | 새로 | `Capacitor_SMD:C_0402_1005Metric` | Q6 드레인(CAM_1V8) |
+| 전면 | D3 | 새로 | `Diode_SMD:D_SOD-323` | R7 병렬, DF30 J3-24 가까이 |
+| 전면 | R16 | 새로 (DNP) | `Resistor_SMD:R_0402_1005Metric` | CAM_RESET–GND, C10 옆 |
+| 전면 | C10 | **DNP → 실장** | 그대로 | — |
+| 전면 | TP23 | 새로 | `TestPoint:TestPoint_Pad_D1.0mm` | CAM_1V8 |
+| 전면 | R12 | 연결 변경 (GND → CORE_1V8 풀업) | 그대로 | Q5 게이트 옆 |
+| 전면 | U1 · L1 · L2 · D1 · D2 · C14 · C16 | 값만 변경 | 그대로 | — |
+
+- **넷클래스(pcb 소유 .kicad_pro):** FRONT_2V8은 `*3V3`·`*1V8` 패턴에 걸리지 않아 Default(0.2mm)다. 부하는 3mA 미만이라 문제는 없다. 원하면 pcb가 `*2V8` 패턴을 PWR_LOGIC에 더한다. CAM_1V8은 `*1V8`에 걸린다.
+
+### 16.5 분기
+
+| # | 분기점 | 선택 | 이유 | 차선책 |
+|---|---|---|---|---|
+| C4-1 | R9 IN2 여유 | 전면 LDO를 2.8V로 (RT9013-28GB) | 전면 J1에 남은 3.3V GPIO가 없다(WH_PWM·SPARE1은 1.8V). LDO 값만 바꾸면 된다 | IN2를 3.3V GPIO로 옮김 (핀 재배정 필요) |
+| C4-2 | 단방향 TVS 심벌 | `Device:D_Zener` (K/A) | 공식 단방향 TVS 심벌(SMAJ 계열)도 핀 이름이 A1/A2라 극성이 드러나지 않는다 | `Diode:SMAJ5.0A` (SMA로 바뀜) |
+| C4-3 | R11 USB_DET | 200k/100k (VBUS 기준 유지) | USB 연결을 검출하는 기능이 남는다. 역급전은 1/10로 준다 | 5V_SYS 기준(항상 Device) |
+| C4-4 | R8 SD 전원 | 소프트스타트(47k + 100nF) + C13 1µF + 방전 100k | B101 패턴과 같고, 공유 1A CORE_3V3 레일의 돌입을 줄인다 | C13 10µF 유지 + 소프트스타트 |
+| C4-5 | K1 IR 기본 상태 | 하드웨어 풀업(R12 → CORE_1V8)으로 기본 끔 + FW 규칙 | PAD_ZQ의 리셋 풀 상태가 미확인이라 하드웨어로 보장한다 | 풀다운 유지 + FW만 |
+| C4-6 | TPS26600 MODE | 개방 = 회로차단기 + 자동 재시도 | IR 쪽 과부하에서 전류 제한이 계속되면 합계가 어댑터 2.08A를 넘을 수 있다(V-004 권고) | RTN = 전류 제한 + 자동 재시도 |
+| C4-7 | 캐리어 출력 C | 22µF/25V X7R 1210 × 3 | 데이터시트 예와 같은 25V로 하고, DC 바이어스 여유를 위해 하나 더 둔다 | 1206 × 2 + 실측 |
+
+- **남은 확인:**
+  - RT9013-28GB 재고
+  - F1·C1·L1(Isat ≥ 6A) MPN 확정 (R-004)
+  - SS24-E3/61T 데이터시트
+  - C7·C8·C20 DC 바이어스 곡선
+  - XKB 도면과 몸체 외곽 대조
+  - DMG2305UX 게이트가 CORE_3V3 풀업이라 꺼짐 때 VGS +1.5V (±8V 안, 정상)

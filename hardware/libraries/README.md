@@ -206,3 +206,12 @@ C-002 회로도·PCB 프로젝트에서는 이 폴더의 `openhw.kicad_sym`과 `
 | `kicad-cli pcb drc --severity-all --format json` — 시험판: openhw 풋프린트 8개를 한 판에 배치 (scratchpad, 저장소에 넣지 않음) | 종료 0. **BTB A/B·AL8860·DRV8837·M12·VSMA·LTR-329: 위반 0** (BTB silk_over_copper 120 → 0)<br>남은 46건은 모두 **DF30**(S401 파생, 0.4mm 피치): clearance 22(패드 간격 0.17 < 기본 0.2) · silk_over_copper 24. 그 밖에 시험판 외곽 없음 1건 |
 
 - **DF30 → pcb(P-003)로 넘김:** 0.4mm 피치에는 풋프린트 로컬 간격이나 넷클래스 규칙이 필요하다. 실크는 이번 범위 밖이라 고치지 않았다.
+
+## C-004 추가 (V-004 R6)
+
+| 풋프린트 | 내용 | 근거 |
+|---|---|---|
+| `BarrelJack_XKB_DC-005-5A-2.0_Horizontal` (**새로 만듦**) | KiCad `Connector_BarrelJack:BarrelJack_Horizontal`에서 파생. 핀 1 (0,0) · 핀 2 (−5.9, 0) · 핀 3 (−3.0, 4.7). 슬롯 1.0×3.5(핀 3은 3.5×1.0). 패드 3.5×4.2 / 3.0×4.2 / 4.2×3.5(환형 링 ≥0.35). 몸체 외곽선과 3D는 원본 그대로 → XKB 도면과 대조 필요 | V-004 R6 (XKB 도면 Rev A1, LCSC C381116: 1–2 5.90, 3은 3.0·4.70, 슬롯 1.0×3.5) |
+
+- 스크립트 `tools/c004_libfix.py`.
+- `kicad-cli fp export svg --footprint BarrelJack_XKB_DC-005-5A-2.0_Horizontal -o <먼저 만든 폴더>` → 종료 0, SVG 생성 확인.
