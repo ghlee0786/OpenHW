@@ -8,7 +8,7 @@ diff -ruN a/components/sophgo/video/src/isp.c b/components/sophgo/video/src/isp.
  #include <sys/prctl.h>
  #include <unistd.h>
  
-@@ -503,6 +505,42 @@
+@@ -503,6 +505,41 @@
      return CVI_NULL;
  }
  
@@ -34,8 +34,7 @@ diff -ruN a/components/sophgo/video/src/isp.c b/components/sophgo/video/src/isp.
 +                if (night != cur) {
 +                    const char *bin = night ? OPENHW_GC2053_IR_BIN : PQ_BIN_SDR;
 +                    CVI_S32 ret = app_ipcam_PQBin_Load(bin);
-+                    APP_PROF_LOG_PRINT(LEVEL_INFO, "openhw daynight: %s -> %s (%#x)
-+", buf, bin, ret);
++                    APP_PROF_LOG_PRINT(LEVEL_INFO, "openhw daynight: %.5s -> %s (%#x)\n", buf, bin, ret);
 +                    if (ret == CVI_SUCCESS) {
 +                        cur = night;
 +                    }

@@ -2,6 +2,8 @@
 # openhw-daynight — S70hardware(CAM_EN) 뒤에 시작한다
 case "$1" in
   start)
+    # loadsystemko.sh 는 PWM 모듈을 올리지 않는다 → IR_PWM(PWM_2) 용으로 직접 올린다
+    [ -d /sys/class/pwm/pwmchip0 ] || insmod /mnt/system/ko/cv181x_pwm.ko
     start-stop-daemon -S -b -m -p /var/run/daynight.pid -x /usr/bin/daynight -- /etc/openhw/daynight.conf
     ;;
   stop)
