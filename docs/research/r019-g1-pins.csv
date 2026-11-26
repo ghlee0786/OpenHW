@@ -1,0 +1,121 @@
+﻿보드,짝 핀,코어 커넥터,코어 핀(n±1),코어 SCH 07 넷(판독),Seeed 짝 보드 넷(KiCad),우리 PCB 넷,계약 v1.11 넷,계약 용도,계약 줄,Seeed짝=코어,판정
+carrier,1,J2,2,USB_DN,USB_DN,USB_DN,USB_DN,USB-C 디바이스 D−,143,예,일치
+carrier,2,J2,1,EPHY_TXP,EPHY_TXP,EPHY_TXP,EPHY_TXP,MDI → 마그네틱/RJ45,144,예,일치
+carrier,3,J2,4,USB_DP,USB_DP,USB_DP,USB_DP,USB-C 디바이스 D+,145,예,일치
+carrier,4,J2,3,EPHY_TXN,EPHY_TXN,EPHY_TXN,EPHY_TXN,MDI → 마그네틱/RJ45,146,예,일치
+carrier,5,J2,6,GND,GND,GND,GND,GND,147,예,일치
+carrier,6,J2,5,GND,GND,GND,GND,GND,148,예,일치
+carrier,7,J2,8,RESERVE1,RESERVE1,RESERVE1,RESERVE1,"미사용 (NC, 시험점)",149,예,일치
+carrier,8,J2,7,EPHY_RXP,EPHY_RXP,EPHY_RXP,EPHY_RXP,MDI → 마그네틱/RJ45,150,예,일치
+carrier,9,J2,10,RESERVE2,RESERVE2,RESERVE2,RESERVE2,"미사용 (NC, 시험점)",151,예,일치
+carrier,10,J2,9,EPHY_RXN,EPHY_RXN,EPHY_RXN,EPHY_RXN,MDI → 마그네틱/RJ45,152,예,일치
+carrier,11,J2,12,SD1_CLK (R48 DNP 표시),SD1_CLK,unconnected-(J1-Pin_11-Pad11),SD1_CLK,미사용 (NC),153,예,의도된 미사용(NC)
+carrier,12,J2,11,GND,GND,GND,GND,GND,154,예,일치
+carrier,13,J2,14,GND,GND,GND,GND,GND,155,예,일치
+carrier,14,J2,13,USB_DET,USB_DET,USB_DET,USB_DET,"USB-C VBUS **200k/100k** 분압 + C22 10nF 필터 (v1.4·v1.5, V-004 R11·V-004b 권고)",156,예,일치
+carrier,15,J2,16,SD1_CMD (R49 DNP 표시),SD1_CMD,unconnected-(J1-Pin_15-Pad15),SD1_CMD,미사용 (NC),157,예,의도된 미사용(NC)
+carrier,16,J2,15,MIPI_TXM2/IIC1_SDA/PWM,MIPI_TXM2/IIC1_SDA/PWM,I2C1_SDA,MIPI_TXM2/IIC1_SDA/PWM,IIC1_SDA → 캐리어 예비 I2C 패드,158,예,재배정(계약)
+carrier,17,J2,18,SD1_D0 (R50 DNP 표시),SD1_D0,unconnected-(J1-Pin_17-Pad17),SD1_D0,미사용 (NC),159,예,의도된 미사용(NC)
+carrier,18,J2,17,MIPI_TXP2/IIC1_SCL/PWM,MIPI_TXP2/IIC1_SCL/PWM,I2C1_SCL,MIPI_TXP2/IIC1_SCL/PWM,IIC1_SCL → 캐리어 예비 I2C 패드,160,예,재배정(계약)
+carrier,19,J2,20,SD1_D1 (R51 DNP 표시),SD1_D1,unconnected-(J1-Pin_19-Pad19),SD1_D1,미사용 (NC),161,예,의도된 미사용(NC)
+carrier,20,J2,19,MIPI_TXM1/IIC2_SDA/PWM,MIPI_TXM1/IIC2_SDA/PWM,SPARE1,MIPI_TXM1/IIC2_SDA/PWM,SPARE1 → FPC 8,162,예,재배정(계약)
+carrier,21,J2,22,SD1_D2 (R52 DNP 표시),SD1_D2,unconnected-(J1-Pin_21-Pad21),SD1_D2,미사용 (NC),163,예,의도된 미사용(NC)
+carrier,22,J2,21,MIPI_TXP1/IIC2_SCL/PWM,MIPI_TXP1/IIC2_SCL/PWM,IR_LED_EN,MIPI_TXP1/IIC2_SCL/PWM,IR_LED_EN → 12V_IR 부하 스위치,164,예,재배정(계약)
+carrier,23,J2,24,SD1_D3 (R53 DNP 표시),SD1_D3,unconnected-(J1-Pin_23-Pad23),SD1_D3,미사용 (NC),165,예,의도된 미사용(NC)
+carrier,24,J2,23,MIPI_TXM0/GPIO12/PWM,MIPI_TXM0/GPIO12/PWM,STATUS_LED,MIPI_TXM0/GPIO12/PWM,STATUS_LED (N-MOSFET),166,예,재배정(계약)
+carrier,25,J2,26,GND,GND,GND,GND,GND,167,예,일치
+carrier,26,J2,25,MIPI_TXM0/WL_BT_EN/GPIOC13 (R14 DNP 표시),MIPI_TXM0/WL_BT_EN/GPIO13,unconnected-(J1-Pin_26-Pad26),MIPI_TXM0/WL_BT_EN/GPIO13,미사용 (2002 R14 실장 미확인),168,아니오,의도된 미사용(NC)
+carrier,27,J2,28,+3V3,+3V3,CORE_3V3,+3V3,microSD 전원 스위치 입력 (B101 방식),169,예,일치(전원 이름만 다름)
+carrier,28,J2,27,GND,GND,GND,GND,GND,170,예,일치
+carrier,29,J2,30,VIN,VIN,5V_SYS,VIN,5V_SYS 공급,171,예,일치(전원 이름만 다름)
+carrier,30,J2,29,GND,GND,GND,GND,GND,172,예,일치
+carrier,31,J2,32,VIN,VIN,5V_SYS,VIN,5V_SYS 공급,173,예,일치(전원 이름만 다름)
+carrier,32,J2,31,PWR_WAKEUP1,PWR_WAKEUP1,ALS_INT_RSV,PWR_WAKEUP1,ALS_INT_RSV → FPC 7,174,예,재배정(계약)
+carrier,33,J2,34,VIN,VIN,5V_SYS,VIN,5V_SYS 공급,175,예,일치(전원 이름만 다름)
+carrier,34,J2,33,nRESET,nRESET,nRESET,nRESET,리셋 버튼 (GND로),176,예,일치
+carrier,35,J2,36,VIN,VIN,5V_SYS,VIN,5V_SYS 공급,177,예,일치(전원 이름만 다름)
+carrier,36,J2,35,UPGRAD_KEY,UPGRAD_KEY,UPGRAD_KEY,UPGRAD_KEY,업그레이드 버튼 → 직렬 1kΩ → GND,178,예,일치
+carrier,37,J2,38,NC,unconnected-(J1-Pad37),unconnected-(J1-Pin_37-Pad37),NC,NC,179,예,일치
+carrier,38,J2,37,SD0_PWR_EN,SD0_PWR_EN,SD0_PWR_EN,SD0_PWR_EN,"microSD 전원 스위치 (High = 켬, B101 방식)",180,예,일치
+carrier,39,J2,40,NC,unconnected-(J1-Pad39),unconnected-(J1-Pin_39-Pad39),NC,NC,181,예,일치
+carrier,40,J2,39,SDIO0_D3,SDIO_D3/3V3,SDIO_D3,SDIO_D3/3V3,microSD,182,예,일치
+carrier,41,J2,42,NC,unconnected-(J1-Pad41),unconnected-(J1-Pin_41-Pad41),NC,NC,183,예,일치
+carrier,42,J2,41,SDIO0_D2,SDIO_D2/3V3,SDIO_D2,SDIO_D2/3V3,microSD,184,예,일치
+carrier,43,J2,44,NC,unconnected-(J1-Pad43),unconnected-(J1-Pin_43-Pad43),NC,NC,185,예,일치
+carrier,44,J2,43,SDIO0_D1,SDIO_D1/3V3,SDIO_D1,SDIO_D1/3V3,microSD,186,예,일치
+carrier,45,J2,46,NC,unconnected-(J1-Pad45),unconnected-(J1-Pin_45-Pad45),NC,NC,187,예,일치
+carrier,46,J2,45,SDIO0_D0,SDIO_D0/3V3,SDIO_D0,SDIO_D0/3V3,microSD,188,예,일치
+carrier,47,J2,48,NC,unconnected-(J1-Pad47),unconnected-(J1-Pin_47-Pad47),NC,NC,189,예,일치
+carrier,48,J2,47,SDIO0_CMD,SDIO_CMD/3V3,SDIO_CMD,SDIO_CMD/3V3,microSD,190,예,일치
+carrier,49,J2,50,NC,unconnected-(J1-Pad49),unconnected-(J1-Pin_49-Pad49),NC,NC,191,예,일치
+carrier,50,J2,49,GND,GND,GND,GND,GND,192,예,일치
+carrier,51,J2,52,NC,unconnected-(J1-Pad51),unconnected-(J1-Pin_51-Pad51),NC,NC,193,예,일치
+carrier,52,J2,51,SDIO0_CLK,SDIO_CLK/3V3,SDIO_CLK,SDIO_CLK/3V3,microSD,194,예,일치
+carrier,53,J2,54,BT_UART1_RX (R68 DNP 표시),BT_UART1_RX,UART1_RX,BT_UART1_RX,예비 패드 (NC 허용),195,예,일치(이름만 다름)
+carrier,54,J2,53,GND,GND,GND,GND,GND,196,예,일치
+carrier,55,J2,56,BT_UART1_TX (R67 DNP 표시),BT_UART1_TX,UART1_TX,BT_UART1_TX,예비 패드,197,예,일치(이름만 다름)
+carrier,56,J2,55,SDIO0_CD,SDIO_CD/3V3,SDIO_CD,SDIO_CD/3V3,microSD 카드 감지 (GND로),198,예,일치
+carrier,57,J2,58,BT_UART1_CTS (R70 DNP 표시),BT_UART1_CTS,UART1_CTS,BT_UART1_CTS,예비 패드,199,예,일치(이름만 다름)
+carrier,58,J2,57,DEBUG_UART0_TX,DEBUG_UART0_TX,DEBUG_UART0_TX,DEBUG_UART0_TX,디버그 헤더 TX (부하·풀다운 금지),200,예,일치
+carrier,59,J2,60,BT_UART1_RTS (R69 DNP 표시),BT_UART1_RTS,UART1_RTS,BT_UART1_RTS,예비 패드,201,예,일치(이름만 다름)
+carrier,60,J2,59,DEBUG_UART0_RX,DEBUG_UART0_RX,DEBUG_UART0_RX,DEBUG_UART0_RX,디버그 헤더 RX,202,예,일치
+front,1,J1,2,RESERVE2,RESERVE2,unconnected-(J1-Pin_1-Pad1),RESERVE2,미사용 (NC),213,예,의도된 미사용(NC)
+front,2,J1,1,GND,GND,GND,GND,GND,214,예,일치
+front,3,J1,4,RESERVE1,RESERVE1,unconnected-(J1-Pin_3-Pad3),RESERVE1,미사용 (NC),215,예,의도된 미사용(NC)
+front,4,J1,3,CAM_RX0_4N,CAM_RX0_4N,unconnected-(J1-Pin_4-Pad4),CAM_RX0_4N,미사용,216,예,의도된 미사용(NC)
+front,5,J1,6,WH_PWM,WH_PWM,WH_PWM,WH_PWM,ICR IN2 (DRV8837),217,예,일치
+front,6,J1,5,CAM_RX0_4P,CAM_RX0_4P,unconnected-(J1-Pin_6-Pad6),CAM_RX0_4P,미사용,218,예,의도된 미사용(NC)
+front,7,J1,8,GND,GND,GND,GND,GND,219,예,일치
+front,8,J1,7,GND,GND,GND,GND,GND,220,예,일치
+front,9,J1,10,CAM_I2C2_SCL,CAM_I2C2_SCL,CAM_I2C2_SCL,CAM_I2C2_SCL,센서 + LTR-329 SCL,221,예,일치
+front,10,J1,9,CAM_RX0_CLKN,CAM_RX0_CLKN,CAM_RX0_CLKN,CAM_RX0_CLKN,센서 CLK− (DF30-9),222,예,일치
+front,11,J1,12,CAM_I2C2_SDA,CAM_I2C2_SDA,CAM_I2C2_SDA,CAM_I2C2_SDA,센서 + LTR-329 SDA,223,예,일치
+front,12,J1,11,CAM_RX0_CLKP,CAM_RX0_CLKP,CAM_RX0_CLKP,CAM_RX0_CLKP,센서 CLK+ (DF30-11),224,예,일치
+front,13,J1,14,GND,GND,GND,GND,GND,225,예,일치
+front,14,J1,13,GND,GND,GND,GND,GND,226,예,일치
+front,15,J1,16,IR_PWM,IR_PWM,IR_PWM,IR_PWM,IR_LED_PWM → N-MOSFET → AL8860 CTRL,227,예,일치
+front,16,J1,15,CAM_RX0_0N,CAM_RX0_0N,CAM_RX0_0N,CAM_RX0_0N,센서 D0− (DF30-5),228,예,일치
+front,17,J1,18,LIGHT_SENSE,LIGHT_SENSE,LIGHT_SENSE,LIGHT_SENSE,예비 (아날로그 조도 차선용 패드),229,예,일치
+front,18,J1,17,CAM_RX0_0P,CAM_RX0_0P,CAM_RX0_0P,CAM_RX0_0P,센서 D0+ (DF30-7),230,예,일치
+front,19,J1,20,NC,unconnected-(J1-Pad19),unconnected-(J1-Pin_19-Pad19),NC,NC,231,예,일치
+front,20,J1,19,GND,GND,GND,GND,GND,232,예,일치
+front,21,J1,22,NC,unconnected-(J1-Pad21),unconnected-(J1-Pin_21-Pad21),NC,NC,233,예,일치
+front,22,J1,21,CAM_RX0_1N,CAM_RX0_1N,CAM_RX0_1N,CAM_RX0_1N,센서 D1− (DF30-13),234,예,일치
+front,23,J1,24,NC,unconnected-(J1-Pad23),unconnected-(J1-Pin_23-Pad23),NC,NC,235,예,일치
+front,24,J1,23,CAM_RX0_1P,CAM_RX0_1P,CAM_RX0_1P,CAM_RX0_1P,센서 D1+ (DF30-15),236,예,일치
+front,25,J1,26,NC,unconnected-(J1-Pad25),unconnected-(J1-Pin_25-Pad25),NC,NC,237,예,일치
+front,26,J1,25,GND,GND,GND,GND,GND,238,예,일치
+front,27,J1,28,NC,unconnected-(J1-Pad27),unconnected-(J1-Pin_27-Pad27),NC,NC,239,예,일치
+front,28,J1,27,CAM_RX0_3N,CAM_RX0_3N,unconnected-(J1-Pin_28-Pad28),CAM_RX0_3N,미사용 (GC2053 2레인),240,예,의도된 미사용(NC)
+front,29,J1,30,NC,unconnected-(J1-Pad29),unconnected-(J1-Pin_29-Pad29),NC,NC,241,예,일치
+front,30,J1,29,CAM_RX0_3P,CAM_RX0_3P,unconnected-(J1-Pin_30-Pad30),CAM_RX0_3P,미사용,242,예,의도된 미사용(NC)
+front,31,J1,32,NC,unconnected-(J1-Pad31),unconnected-(J1-Pin_31-Pad31),NC,NC,243,예,일치
+front,32,J1,31,GND,GND,GND,GND,GND,244,예,일치
+front,33,J1,34,GND,GND,GND,GND,GND,245,예,일치
+front,34,J1,33,GPIO15/IR_CUT,GPIO15/IR_CUT,IR_CUT,GPIO15/IR_CUT,ICR IN1 (DRV8837),246,예,일치(이름만 다름)
+front,35,J1,36,GND,GND,GND,GND,GND,247,예,일치
+front,36,J1,35,GND,GND,GND,GND,GND,248,예,일치
+front,37,J1,38,VIN,VIN,VIN,VIN,DRV8837 VM(5V) · 전면 2.8V LDO 입력,249,예,일치
+front,38,J1,37,GND,GND,GND,GND,GND,250,예,일치
+front,39,J1,40,VIN,VIN,VIN,VIN,DRV8837 VM(5V) · 전면 2.8V LDO 입력,251,예,일치
+front,40,J1,39,AUD_MIC,AUD_MIC,unconnected-(J1-Pin_40-Pad40),AUD_MIC,미사용 (NC),252,예,의도된 미사용(NC)
+front,41,J1,42,VIN,VIN,VIN,VIN,DRV8837 VM(5V) · 전면 2.8V LDO 입력,253,예,일치
+front,42,J1,41,GND,GND,GND,GND,GND,254,예,일치
+front,43,J1,44,VIN,VIN,VIN,VIN,DRV8837 VM(5V) · 전면 2.8V LDO 입력,255,예,일치
+front,44,J1,43,AUD_AOUTR,AUD_AOUTR,unconnected-(J1-Pin_44-Pad44),AUD_AOUTR,미사용 (NC),256,예,의도된 미사용(NC)
+front,45,J1,46,GND,GND,GND,GND,GND,257,예,일치
+front,46,J1,45,GND,GND,GND,GND,GND,258,예,일치
+front,47,J1,48,GND,GND,GND,GND,GND,259,예,일치
+front,48,J1,47,CAM_EN,CAM_EN,CAM_EN,CAM_EN,센서 전원 스위치·CAM_1V8 스위치(Q7)·센서 리셋 (발진기 OE는 v1.5부터 CAM_1V8),260,예,일치
+front,49,J1,50,+1V8,1V8,CORE_1V8,1V8,센서 1.8V·I2C 풀업,261,예,일치(전원 이름만 다름)
+front,50,J1,49,NC,unconnected-(J1-Pad50),unconnected-(J1-Pin_50-Pad50),NC,NC,262,예,일치
+front,51,J1,52,+1V8,1V8,CORE_1V8,1V8,센서 1.8V·I2C 풀업,263,예,일치(전원 이름만 다름)
+front,52,J1,51,NC,unconnected-(J1-Pad52),unconnected-(J1-Pin_52-Pad52),NC,NC,264,예,일치
+front,53,J1,54,GND,GND,GND,GND,GND,265,예,일치
+front,54,J1,53,NC,unconnected-(J1-Pad54),unconnected-(J1-Pin_54-Pad54),NC,NC,266,예,일치
+front,55,J1,56,GND,GND,GND,GND,GND,267,예,일치
+front,56,J1,55,NC,unconnected-(J1-Pad56),unconnected-(J1-Pin_56-Pad56),NC,NC,268,예,일치
+front,57,J1,58,+3V3,3V3,CORE_3V3,3V3,센서 AVDD/IOVDD 스위치 입력 (S401 방식),269,예,일치(전원 이름만 다름)
+front,58,J1,57,NC,unconnected-(J1-Pad58),unconnected-(J1-Pin_58-Pad58),NC,NC,270,예,일치
+front,59,J1,60,+3V3,3V3,CORE_3V3,3V3,센서 AVDD/IOVDD 스위치 입력 (S401 방식),271,예,일치(전원 이름만 다름)
+front,60,J1,59,NC,unconnected-(J1-Pad60),unconnected-(J1-Pin_60-Pad60),NC,NC,272,예,일치
