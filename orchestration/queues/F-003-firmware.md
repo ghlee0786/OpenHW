@@ -13,3 +13,5 @@
 ■ 추가(V-004 K1·O-33): IR_PWM 극성은 「High=끔, Low/Hi-Z=켬」 — IR_LED_EN을 켜기 전에 IR_PWM을 High로 두는 순서를 강제. LTR-329는 CAM_EN=1(카메라 전원 켜짐)일 때만 폴링. 호스트 시험에 두 규칙 포함.
 ■ 추가(V-004b R2): 센서 전원(CAM_EN) 켠 뒤 첫 I2C 접근까지 ≥5ms 대기.
 ■ 추가(pcb P-003 9355bd1): 전면 DF30이 180° 배치라 영상이 S401 대비 180° 회전 → ISP mirror+flip(또는 센서 레지스터 상하·좌우 반전) 기본 켬, 설정 파일로 끌 수 있게. 근거·실물 확인은 bring-up.
+■ 정정·최신 입력(배정 시점 2026-11-26, 위 줄보다 우선): 계약 = v1.8 C:/workspace_python/OpenHW/.harness-worktrees/t-20261126-155208-d030 커밋 2dde4a2 (GPIO·DTS 절은 v1.8 기준으로 다시 읽을 것), 회로도 기준 c653eac (C-002 레인 t-20261126-165741-b193). IR_PWM 극성은 계약 v1.5 이후 「High = 끔 · Hi-Z = 끔(R12 풀업) · Low = 켬」, 켬 비율 = IR_PWM Low 비율 ≤25% — 13번째 줄의 「Low/Hi-Z=켬」은 폐기. CAM_1V8은 Q7(CAM_EN)로 켜지고 X1 OE도 CAM_1V8.
+■ 레인: F-002 레인에서 이어서 — node harness/cli.js start --from t-20261126-161240-92e6 "F-003 BSP·주야 전환" (build-baseline.sh 재사용). 빌드 방식은 F-002에서 검증된 대로: hc 칸 1개(일반 프로그램, 이 업무에 한해 허용)·slot 240분·MEM=16g·BR2_JLEVEL=4·볼륨 이어 빌드, 끝나면 칸 닫음.
