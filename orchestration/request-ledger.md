@@ -13,12 +13,13 @@
 | F-001 | orch (단계 3) | firmware t18w | reCamera SDK 사실: 빌드 호스트·부트·DT/핀먹스·센서 IQ·I2C/GPIO·ICR·조도·EPHY·SD·tpu-mlir | firmware/docs/sdk-facts.md | 표·핀 요약 절, 레인·커밋 | completed — 레인 t-20261126-155208-b6b4 커밋 e23e9ec. GC2053 IQ 있음, IR-cut·주야 전환 구현 없음, LTR-329 드라이버 없음 |
 | P-001 | orch (단계 5 준비) | pcb t190 | PCBWay 공정 규칙·스택업·임피던스, 0.5mm 커넥터 조립 조건 → KiCad 규칙 제안 | hardware/pcb/fab-rules-pcbway.md | 규칙표 출처·확인일, 스택업 안, 레인·커밋 | running (2026-11-26 접수 확인) |
 | V-001 | orch | review t191 | R-002·R-003 핵심 6주장 독립 재확인 | validation/review-V001-R002-R003.md | 판정표·영향, 레인·커밋 | completed — 레인 t-20261126-155240-aa11 커밋 2a7bf47. ①②③ 일치(보완 있음) ④ 불일치(CIL327 HFOV 약 121°) ⑤⑥ 조건부 |
-| C-001b | orch | schematic t18z | 계약의 FW 확인 대기 열을 sdk-facts와 대조·확정 → 계약 v1 | hardware/schematic/hw-fw-contract.md (C-001 레인) | FW 대기 0 또는 사유, 커밋 | running (L-001보다 먼저) |
-| L-001 | orch (단계 4 준비) | schematic t18z | KiCad 라이브러리: AP1511B·AL8860·VSMA1085600·LTR-329·M12/ICR 홀더·FPC 10P (BTB·벅·RJ45·SD·센서는 의존 대기) | hardware/libraries/** | 핀↔패드 대조표, kicad-cli 결과, 레인·커밋 | queued (C-001b 뒤) |
+| C-001b | orch | schematic t18z | 계약의 FW 확인 대기 열을 sdk-facts와 대조·확정 → 계약 v1 | hardware/schematic/hw-fw-contract.md (C-001 레인) | FW 대기 0 또는 사유, 커밋 | completed — 커밋 8613910 계약 v1(FW 대기 0, C-002 전 필요 6·실물 확인 6). ICR 1안 DRV8837(C13), IR 1.0A·직렬≤2(C17), 12V 최악 약 14.7W |
+| L-001 | orch (단계 4 준비) | schematic t18z | KiCad 라이브러리: AP1511B·AL8860·VSMA1085600·LTR-329·M12/ICR 홀더·FPC 10P (BTB·벅·RJ45·SD·센서는 의존 대기) | hardware/libraries/** | 핀↔패드 대조표, kicad-cli 결과, 레인·커밋 | running (G-001 KiCad GUI, 레인 t-20261126-161205-dcb9) |
 | F-002 | orch | firmware t18w | reCamera-OS 0.2.4 원본 Docker 기준 빌드(slot 경유, 산출물은 저장소 밖) | firmware/docs/build-baseline.md, firmware/scripts/** | 종료 코드 0+해시 또는 실패 원인 판정, 레인·커밋 | running |
 | R-006 | orch (V-001 ④⑥ 분기 복귀, O-8) | research t18s | 렌즈 재선정(GC2053 HFOV 85~95°, 왜곡 모델·BFL·IR 보정) + IR LED 조사각·개수(1.0A, 직렬 ≤2) | docs/research/optics-ir-r006.md (+csv) | 렌즈 1안·차선 계산 근거, LED 결론, 레인·커밋 | queued (R-004 뒤, R-005보다 먼저) |
 | M-001 | orch | mechanical t18x | 공개 STEP 측정 → 3층 적층·광축·IR LED·창·체결 기준안 (외함 아님) | mechanical/** | 측정표·기준안·Fusion MCP 결과, 레인·커밋 | completed — 레인 t-20261126-161155-50dc 커밋 ad23d15. Fusion MCP read·execute 성공, J1 윗면/J2 아랫면 독립 확인, 적층안 z·M1.6 나사·IR 후보 영역, 분기 K1~K8 |
 | G-001 | lead t18q (사용자 요청 2026-11-26) | schematic t18z | L-001·C-002를 KiCad 10 GUI로 보이게 진행, 단계별 스크린샷, GUI 단일 소유(pcb 금지 통지) | 스크린샷 C:/workspace_python/OpenHW/validation/runtime/kicad-gui/** (gitignore) | 창 뜸 즉시 보고 → lead 전달, ERC는 kicad-cli 종료 코드 | running (C-001b 뒤 L-001부터) |
+| F-003 | orch | firmware t18w | 계약 v1 DTS 패치 + 주야 전환 데몬(LTR-329 i2c-dev → ICR·IR LED·ISP IR 모드) + 패치 빌드·호스트 시험 | firmware/** | 빌드 종료 코드·해시, 호스트 시험 결과, 레인·커밋 | queued (F-002 기준 빌드 성공 뒤) |
 
 ## 운영 변경 (2026-11-26, 사용자 지시 · lead 전달)
 - 의견 묻지 않고 진행: 사람 쪽 미정값은 D-003(lead 레인 t-20261126-144135-5470 docs/decisions/D-003-working-defaults.md, 커밋 8ac5ce5) 값으로 확정 취급. 새 갈림길은 기본값 선택 → 아래 「분기 기록」에 분기점·선택·이유·차선책 → lead 요약 보고. 문제 시 해당 행으로 돌아가 차선책.
