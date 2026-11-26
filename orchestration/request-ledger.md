@@ -207,7 +207,7 @@
 | O-91 | lead 대조: 정상 최악 1.84A는 12V 입력 전체(벅 포함), eFuse는 12V_IR만 — SIM B2 12V_IR 피크 1.585A vs ILIM 1.72A 여유 약 8.5% < lead 조건 15% | SIM-001a에 전류 순서 표·판정 조건(12V_IR 피크×1.15 ≤ eFuse 최소 < eFuse 최대+벅 < 어댑터 OLP 최소) → R6 재계산을 C-018에 S5·U2 풋프린트·.net 재생성과 묶음 | pcb 반영을 한 번으로 | 두 스트링 PWM 위상 엇갈림(FW)으로 피크 낮춤 |
 | O-92 | SIM 결과 파일 이름 충돌: SIM-001a(schematic)와 SIM-001b(firmware)가 둘 다 SIM-B1~B6 json·cir를 다른 내용으로 씀 — orch 형식에 ID 규칙이 없었던 탓 | schematic A/B/C/D 유지, firmware를 SIM-L1~L8로 이름 바꿈, 형식 문서에 ID 규칙 추가 | 병합 충돌·판정 혼동 방지 | — |
 | O-93 | SIM-001a fail 2: 5V_SYS 최악 5.298V(R3 13.5k E192 제안), CAM_EN 때 CORE_3V3 강하 0.23V | P1은 1% E96·재고 있는 값만으로 분압 재선정(0.5% 부품 피함), P2 Q1 1k+4.7nF 밀러 채택, 같은 기준으로 재시뮬 | 조달 쉬움, 같은 방식 이미 검증 | R2 97.6k / bring-up 실측 |
-| O-94 | REN-001: V4(B 창 가운데 연장)를 M-007 조립에서 덧씌움 — M-003 원본 params/geom은 8089 레인, 30c6은 그 사본 | V4를 30c6 레인의 params.py/geom.py에 옮겨 외함 STEP/STL/도면 재생성, O-61 재검사는 30c6 run_all.py가 맡음 → M-003 레인 8089는 할 일 없음 → lead batch(8089 먼저, 그다음 30c6) | 같은 파일 두 레인 수정 충돌 방지 | 30c6에서만 계속, 8089 cancel |
+| O-94 | REN-001: V4(B 창 가운데 연장)를 M-007 조립에서 덧씌움 — M-003 원본 params/geom은 8089 레인, 30c6은 그 사본 | V4를 30c6 레인의 params.py/geom.py에 옮겨 외함 STEP/STL/도면 재생성, O-61 재검사는 30c6 run_all.py가 맡음 → (정정) 8089는 이미 main 45fa2be로 병합됨 — 30c6만 남음, main M-003 파일 위에 들어감 | 같은 파일 두 레인 수정 충돌 방지 | 30c6에서만 계속, 8089 cancel |
 
 ## 발주 패키지 직전 정리 목록
 - [ ] 회로도 표시 겹침: 캐리어 J2 옆 12V_IN_RAW 라벨, D3 PWR_LED 라벨, J1 품번 문자 (O-32)
