@@ -1,6 +1,6 @@
 {
- "head": "48042d5",
- "base": "656b50a",
+ "head": "ea1336b",
+ "base": "ea1336b",
  "checks": [
   {
    "sec": "4절",
@@ -509,8 +509,8 @@
   {
    "sec": "4절",
    "item": "carrier J1-32 (PWR_WAKEUP1)",
-   "expected": "ALS_INT_RSV",
-   "actual": "ALS_INT_RSV",
+   "expected": "NC",
+   "actual": "NC",
    "ok": true,
    "info": false
   },
@@ -2324,7 +2324,7 @@
   },
   {
    "sec": "7절",
-   "item": "조도 INT 예비: 코어 J2-31 ↔ carrier 32 짝",
+   "item": "조도 INT 예비 — **철회 (v1.12 O-83)**: 코어 J2-31 ↔ carrier 32 짝",
    "expected": "31",
    "actual": "31",
    "ok": true,
@@ -2332,25 +2332,17 @@
   },
   {
    "sec": "7절",
-   "item": "조도 INT 예비: carrier J1-32 넷",
-   "expected": "ALS_INT_RSV",
-   "actual": "ALS_INT_RSV",
+   "item": "조도 INT 예비 — **철회 (v1.12 O-83)**: carrier J1-32 넷",
+   "expected": "NC",
+   "actual": "NC",
    "ok": true,
    "info": false
   },
   {
    "sec": "7절",
-   "item": "조도 INT 예비: 4·5절 표의 같은 핀 넷과 같음",
-   "expected": "ALS_INT_RSV",
-   "actual": "ALS_INT_RSV",
-   "ok": true,
-   "info": false
-  },
-  {
-   "sec": "7절",
-   "item": "조도 INT 예비: 「→ 4」 = 캐리어 J7-4",
-   "expected": "ALS_INT_RSV",
-   "actual": "ALS_INT_RSV",
+   "item": "조도 INT 예비 — **철회 (v1.12 O-83)**: 4·5절 표의 같은 핀 넷과 같음",
+   "expected": "NC",
+   "actual": "NC",
    "ok": true,
    "info": false
   },
@@ -2483,14 +2475,6 @@
    "info": false
   },
   {
-   "sec": "4절",
-   "item": "용도 「ALS_INT_RSV → 4」 = 캐리어 J7-4",
-   "expected": "ALS_INT_RSV",
-   "actual": "ALS_INT_RSV",
-   "ok": true,
-   "info": false
-  },
-  {
    "sec": "12A",
    "item": "J7-1 넷",
    "expected": "GND",
@@ -2591,14 +2575,6 @@
    "item": "J7-4 ↔ J4-(7−n)",
    "expected": "3",
    "actual": "3",
-   "ok": true,
-   "info": false
-  },
-  {
-   "sec": "12A",
-   "item": "J7-4 캐리어 쪽 「캐리어 32」",
-   "expected": "ALS_INT_RSV",
-   "actual": "ALS_INT_RSV",
    "ok": true,
    "info": false
   },
