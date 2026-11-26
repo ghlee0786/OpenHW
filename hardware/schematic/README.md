@@ -386,3 +386,58 @@
 4. CLA216 ICR 케이블 헤더 계열과 코일 극성
 5. OT7EL89 랜드(지금은 SiT 2.0×1.6 풋프린트)
 6. TE 84952 정격(R-004는 1A로 기록)
+
+## 15. C-003 — V-003 지적 반영 (2026-11-26)
+
+- **방식:** 파일 편집과 kicad-cli만 썼다. GUI는 쓰지 않았다(O-27).
+- **커밋 구분:** C-002b(`4dc59dc`, 넷 동일)와 C-003(이 커밋, 의도한 변경만)을 나눴다.
+
+### 15.1 바뀐 것
+
+| 항목 | 내용 |
+|---|---|
+| 라이브러리 | `hardware/libraries/README.md` 「C-003 수정」 — BTB courtyard·실크, AL8860 Diodes 권장 랜드(새 풋프린트), DRV8837 3D 경로(새 풋프린트), M12 홀더 속성·구멍 |
+| 회로도 (전면) | U4·U5 → `openhw:Diodes_MSOP-8EP_3x3mm_P0.65mm_EP1.7x2.0mm_AL8860` · U2 → `openhw:Texas_DSG0008A_WSON-8-1EP_2x2mm_P0.5mm_EP0.9x1.6mm` |
+| 회로도 (두 보드) | 보드 간 연결을 FFC 10P(TE 1-84952-0)에서 **JST GH 6P (SM06B-GHS-TB)** 로 바꿈 (캐리어 J7, 전면 J4, 기호 `Conn_01x06_MountingPin`). 대칭 핀: 1 GND · 2 12V_IR · 3 SPARE1 · 4 ALS_INT_RSV · 5 12V_IR · 6 GND · MP GND |
+| 프로젝트 (O-30) | 두 보드 `.kicad_pro`의 `net_settings`에 P-002 넷클래스와 패턴을 넣음 (원본 `t-20261126-171922-251f/hardware/pcb/rules/netclasses.json`, sha256 c6c272f9…441b).<br>`fp-lib-table`에 `OpenHW_Mech` (`${KIPRJMOD}/../../pcb/lib/OpenHW_Mech.pretty`) 추가.<br>**이 커밋 뒤로 `.kicad_pro`·`fp-lib-table`은 pcb 소유** |
+| 주석 | 전면 IR 블록에 O-31 열 상한(스트링 평균 ≤1.6W = IR_PWM 듀티 ≤25%, FW가 강제)을 적음. 회로는 바꾸지 않음(Rs 0.1Ω 유지) |
+
+### 15.2 넷리스트 차이 (C-002b `4dc59dc` → C-003, `tools/netcompare.py`) — 의도한 변경만
+
+- **캐리어 (차이 9):**
+  - J7 값·풋프린트 교체
+  - 넷 4개의 J7 핀 번호가 바뀜:
+    - GND: J7 1·4·7·10 → 1·6
+    - 12V_IR: J7 2·3·8·9 → 2·5
+    - SPARE1: J7 5 → 3
+    - ALS_INT_RSV: J7 6 → 4
+  - 그 밖의 부품·핀은 그대로다.
+- **전면 (차이 12):**
+  - J4 교체, 넷 4개는 캐리어와 같은 방식으로 바뀜
+  - U2·U4·U5 풋프린트 교체(값과 핀 연결은 그대로)
+- 부품 수(91/78)와 넷 수(93/64)는 그대로다.
+
+### 15.3 검사 (verifiable 예)
+
+| 명령 | 캐리어 | 전면 |
+|---|---|---|
+| `kicad-cli sch erc --severity-all --exit-code-violations` | 종료 0 · 위반 0 | 종료 0 · 위반 0 |
+| `kicad-cli sch export netlist --format kicadsexpr` | 종료 0 | 종료 0 |
+| `kicad-cli sch export svg` → `validation/runtime/kicad-gui/C-003/` | 종료 0 · `carrier.svg` 생성 확인 | 종료 0 · `front.svg` 생성 확인 |
+
+### 15.4 분기
+
+| # | 분기점 | 선택 | 이유 | 차선책 |
+|---|---|---|---|---|
+| C3-1 | 12V_IR 보드 간 전원 (TE 84953/84952 사양: 「Signal application only, 1 ampere maximum for single circuit」 — V-003 ⑥) | **FFC를 없애고 JST GH 6P 하나로 전원·신호를 함께 보냄.** 12V_IR 2접점, GND 2접점, 대칭 배치 | JST GH 데이터시트(eGH, sha256 b1dcb317…b722) 「Current rating: 1.0 A AC/DC (AWG #26)」, 50V. 2스트링 최악 1.22A → 접점당 0.61A(61%). 스트링 B DNP면 0.31A. 커넥터·케이블 하나. 가로형 SMD로 높이가 낮다(부품 높이는 pcb가 M-001b와 대조) | **② FFC 10P는 신호용으로 두고 12V_IR만 JST PH 2P(S2B-PH-SM4-TB) 전원 커넥터로 분리:** 「Current rating: 2 A AC/DC (AWG #24)」, 100V (ePH, sha256 447624f4…0b96). 1.22A/2A = 61%. 커넥터·케이블이 2개가 된다. ③ 전원 정격이 있는 FFC/FPC 커넥터 — 정격 자료를 찾지 못해 보류 |
+| C3-2 | GH 6P 핀 배치 | 대칭(1↔6 GND, 2↔5 12V_IR, 3↔4 예비 신호) | 케이블 방향(1:1 또는 뒤집힘)과 상관없이 전원과 GND가 바뀌지 않는다. 뒤집히면 1.8V 예비선 둘만 서로 바뀐다 | 비대칭 + 케이블 방향 고정 |
+| C3-3 | M12 홀더 PCB 구멍 | NPTH Ø1.8, 간격 20.0 | 홀더 쪽 구멍 Ø1.7(R-007 참고값)에 M1.6 셀프태핑 나사를 PCB 뒤에서 넣는다고 보고, ISO 273 medium 여유 1.8을 씀 | Ø1.7 (ISO 273 fine) · Ø2.0 (coarse) — 실물 조립 뒤 |
+| C3-4 | AL8860 랜드 | 공식 풋프린트에서 파생해 Diodes 권장 랜드로 (공식 파일은 그대로) | V-003 ② 권고 | 공식 EP1.5x1.8 그대로 |
+| C3-5 | DRV8837 3D | 공식 랜드를 복사하고 3D 경로만 바꿈 | 공식 STEP 파일이 설치본에 없다 | 공식 풋프린트 + PCB에서 3D 경로 직접 지정 |
+
+- **남은 확인 (pcb·실물):**
+  1. GH 6P 위치와 높이(M-001b 제한)
+  2. 케이블 길이와 AWG26 전압강하(1.22A × 왕복 약 0.2m)
+  3. 인접 접점 동시 통전 감액 자료 없음
+  4. CLA216 나사 규격(실물)
+  5. DF30 풋프린트 간격 규칙(라이브러리 README)

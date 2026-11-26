@@ -183,3 +183,26 @@ C-002 회로도·PCB 프로젝트에서는 이 폴더의 `openhw.kicad_sym`과 `
 2. CLA216-ICR 도면: 구멍 지름·나사, ICR 케이블 헤더 계열
 3. TE 84953 정격 전류/핀 (12V_IR 1A를 3핀으로 나누는 조건)
 4. VSMA1085600·LTR-329 3D 모델
+
+## C-003 수정 (V-003 지적 반영, 2026-11-26)
+
+- **수정 방식:** 스크립트 `tools/c003_libfix.py`로 `.kicad_mod` 텍스트를 S-expression 단위로 고친다(다시 돌려도 결과가 같다). KiCad GUI는 쓰지 않았다(O-27).
+
+| 풋프린트 | 바뀐 것 | 근거 |
+|---|---|---|
+| `BTB_ST-BTB-058060-A/B_2x30_P0.5mm` | courtyard를 패드(y ±2.9)·위치결정 구멍(x ±8.5) 포함 **18.3 × 6.4**로 바꿈. 패드를 가로지르던 실크 ±2.2 선을 지우고, 양 끝 세로선(x ±8.9)과 1번 점(−8.1, −2.6)으로 바꿈. 레퍼런스 `REF**`. 패드 폭 0.25는 원품 기준 그대로 둠(O-23) | V-003 ⑦ (권장 18.2×6.3 이상, silk_over_copper 120건) |
+| `Diodes_MSOP-8EP_3x3mm_P0.65mm_EP1.7x2.0mm_AL8860` (**새로 만듦**) | KiCad 공식 `MSOP-8-1EP_3x3mm_P0.65mm_EP1.5x1.8mm`에서 파생. 공식 파일은 덮어쓰지 않음.<br>· 신호 패드 0.45 × 1.35, 중심 x ±1.975(Y2 5.3)<br>· EP 1.7 × 2.0<br>· EP 페이스트 4조각(약 66%) | Diodes DS39014 Rev 8-2 p.17 Suggested Pad Layout (V-003 ②) |
+| `Texas_DSG0008A_WSON-8-1EP_2x2mm_P0.5mm_EP0.9x1.6mm` (**새로 만듦**) | 공식 풋프린트를 그대로 복사하고 3D 경로만 바꿈: 설치본에 있는 `${KICAD10_3DMODEL_DIR}/Package_SON.3dshapes/WSON-8-1EP_2x2mm_P0.5mm_EP0.9x1.6mm.step` | V-003 ① (공식 STEP 파일 없음) |
+| `M12_Holder_20mm_CLA216-ICR` | 속성 정정: MPN `CLA216-ICR`, Manufacturer `Commonlands`, Datasheet Commonlands 제품 페이지, Description. 구멍을 NPTH **Ø1.8**, 간격 **20.0**(±10.0)으로 바꿈 | V-003 ⑧ · R-007 (간격 20.0, 홀더 구멍 참고 Ø1.7) · M1.6 나사 ISO 273 medium 여유 1.8 |
+
+- **회로도 연결:** U4·U5(AL8860)과 U2(DRV8837)가 위 새 풋프린트를 가리키도록 바꿨다(C-003 커밋).
+- **라이선스:** AL8860·DRV8837 파생은 KiCad 공식 라이브러리(CC-BY-SA 4.0 + 예외 조항)에서 나왔다. KiCad 라이브러리 예외 조항에 따라 설계 산출물에는 고지 의무가 없지만, 출처는 각 풋프린트 설명(descr)에 적었다.
+
+### 검사 (verifiable 예)
+
+| 명령 | 결과 |
+|---|---|
+| `kicad-cli fp export svg -o <먼저 만든 폴더> hardware/libraries/openhw.pretty` | 종료 0, SVG 8개 생성 확인(V-003: 폴더가 없으면 0을 돌려주고 파일이 없음) |
+| `kicad-cli pcb drc --severity-all --format json` — 시험판: openhw 풋프린트 8개를 한 판에 배치 (scratchpad, 저장소에 넣지 않음) | 종료 0. **BTB A/B·AL8860·DRV8837·M12·VSMA·LTR-329: 위반 0** (BTB silk_over_copper 120 → 0)<br>남은 46건은 모두 **DF30**(S401 파생, 0.4mm 피치): clearance 22(패드 간격 0.17 < 기본 0.2) · silk_over_copper 24. 그 밖에 시험판 외곽 없음 1건 |
+
+- **DF30 → pcb(P-003)로 넘김:** 0.4mm 피치에는 풋프린트 로컬 간격이나 넷클래스 규칙이 필요하다. 실크는 이번 범위 밖이라 고치지 않았다.

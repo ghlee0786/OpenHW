@@ -103,7 +103,7 @@ s.add('D4', 'Device:D_TVS', 'UDD32C03L01', 'Diode_SMD:D_SOD-323', {'1': 'EPHY_TX
 s.add('D5', 'Device:D_TVS', 'UDD32C03L01', 'Diode_SMD:D_SOD-323', {'1': 'EPHY_RXP', '2': 'EPHY_RXN'})
 R(s, 'R18', '1M', 'CHASSIS', 'GND', 'Resistor_SMD:R_0603_1608Metric')
 C(s, 'C17', '1nF/2kV', 'CHASSIS', 'GND', 'Capacitor_SMD:C_1206_3216Metric')
-s.block('MISC','FPC · 디버그 UART · 버튼 · 상태 LED',['FPC 10P 대칭 (계약 12A절) - C-003에서 전원 커넥터 재검토','디버그 TX = 부트 스트랩 (풀다운·LED 금지) · UPGRAD_KEY 직렬 1k (C16)'],cols=4)
+s.block('MISC','보드 간 커넥터 · 디버그 UART · 버튼 · 상태 LED',['보드 간 JST GH 6P 대칭 (계약 12A절 v1.3): 1/6 GND · 2/5 12V_IR · 3 SPARE1 · 4 ALS_INT_RSV','디버그 TX = 부트 스트랩 (풀다운·LED 금지) · UPGRAD_KEY 직렬 1k (C16)'],cols=4)
 # --- debug UART header (JST SH 3P, height < 6.2)
 s.add('J6', 'Connector_Generic_MountingPin:Conn_01x03_MountingPin', 'DEBUG UART', 'Connector_JST:JST_SH_SM03B-SRSS-TB_1x03-1MP_P1.00mm_Horizontal',
       {'1': 'GND', '2': 'DEBUG_UART0_TX', '3': 'DEBUG_UART0_RX', 'MP': 'GND'}, fields={'Note': 'no pull-down/LED on TX (boot strap)'})
@@ -118,9 +118,9 @@ R(s, 'R20', '100k', 'STATUS_LED', 'GND')
 s.add('D6', 'Device:LED', 'STATUS blue', 'LED_SMD:LED_0603_1608Metric', {'2': 'STAT_LED_A', '1': 'STAT_LED_K'})
 R(s, 'R21', '1.5k', '5V_SYS', 'STAT_LED_A')
 # --- FPC 10P to front board (symmetric pinout, contract v1.2 12)
-fpc = {'1': 'GND', '2': '12V_IR', '3': '12V_IR', '4': 'GND', '5': 'SPARE1', '6': 'ALS_INT_RSV', '7': 'GND', '8': '12V_IR', '9': '12V_IR', '10': 'GND', 'MP': 'GND'}
-s.add('J7', 'Connector_Generic_MountingPin:Conn_01x10_MountingPin', 'FPC 10P 1.0mm', 'Connector_FFC-FPC:TE_1-84952-0_1x10-1MP_P1.0mm_Horizontal', fpc,
-      fields={'MPN': 'TE 1-84952-0 (LCSC C590890), contact 1A (R-004 P3)'})
+fpc = {'1': 'GND', '2': '12V_IR', '3': 'SPARE1', '4': 'ALS_INT_RSV', '5': '12V_IR', '6': 'GND', 'MP': 'GND'}
+s.add('J7', 'Connector_Generic_MountingPin:Conn_01x06_MountingPin', 'JST GH 6P (board link)', 'Connector_JST:JST_GH_SM06B-GHS-TB_1x06-1MP_P1.25mm_Horizontal', fpc,
+      fields={'MPN': 'JST SM06B-GHS-TB', 'Note': 'C-003 C3-1: 1.0A/contact AWG26 (JST eGH); 12V_IR on 2 contacts, symmetric pinout'})
 report['fpc'] = fpc
 s.block('TP','시험점 (계약 11절)',cols=9)
 # --- test points
@@ -151,9 +151,9 @@ f.add('U1', 'Regulator_Linear:AP2112K-3.3', 'RT9013-33GB', 'Package_TO_SOT_SMD:S
 C(f, 'C1', '1uF', 'VIN', 'GND'); C(f, 'C2', '1uF', 'FRONT_3V3', 'GND')
 f.block('ICR','ICR 구동 DRV8837 + CLA216-ICR',['VM = VIN 5V · VCC = 3.3V · IN1 = IR_CUT (gpio495) · IN2 = WH_PWM (gpio352)','코일 20R 약 0.245A, 펄스 100~500ms (FW) · 기본 IN1 = IN2 = 0 (계약 C13)'],cols=4)
 # --- ICR driver DRV8837 (C13): VM=VIN 5V, VCC=FRONT_3V3, IN1=IR_CUT, IN2=WH_PWM
-f.add('U2', 'Driver_Motor:DRV8837', 'DRV8837DSGR', 'Package_SON:Texas_DSG0008A_WSON-8-1EP_2x2mm_P0.5mm_EP0.9x1.6mm',
+f.add('U2', 'Driver_Motor:DRV8837', 'DRV8837DSGR', 'openhw:Texas_DSG0008A_WSON-8-1EP_2x2mm_P0.5mm_EP0.9x1.6mm',
       {'1': 'VIN', '2': 'ICR_A', '3': 'ICR_B', '4': 'GND', '5': 'WH_PWM', '6': 'IR_CUT', '7': 'ICR_NSLEEP', '8': 'FRONT_3V3', '9': 'GND'},
-      fields={'MPN': 'TI DRV8837DSGR (LCSC C39159)', 'Note': '3D: use Package_SON.3dshapes/WSON-8-1EP_2x2mm_P0.5mm_EP0.9x1.6mm.step (L-001)'})
+      fields={'MPN': 'TI DRV8837DSGR (LCSC C39159)', 'Note': 'openhw copy of official land with installed WSON-8 STEP (C-003)'})
 R(f, 'R1', '10k', 'FRONT_3V3', 'ICR_NSLEEP')
 C(f, 'C3', '10uF', 'VIN', 'GND', 'Capacitor_SMD:C_0603_1608Metric'); C(f, 'C4', '100nF', 'VIN', 'GND'); C(f, 'C5', '100nF', 'FRONT_3V3', 'GND')
 R(f, 'R2', '100k', 'IR_CUT', 'GND'); R(f, 'R3', '100k', 'WH_PWM', 'GND')
@@ -193,14 +193,14 @@ C(f, 'C12', '1uF', 'FRONT_3V3', 'GND'); C(f, 'C13', '100nF', 'FRONT_3V3', 'GND')
 f.add('Q4', 'Device:Q_Photo_NPN', 'ALS-PT19 (alt)', 'LED_SMD:LED_0805_2012Metric', {'1': 'CORE_1V8', '2': 'LIGHT_SENSE'}, dnp=True,
       fields={'Note': 'alternative analog ALS (contract C15); footprint placeholder - ALS-PT19 land to be drawn if used'})
 R(f, 'R11', '10k', 'LIGHT_SENSE', 'GND', dnp=True)
-f.block('IR','IR LED 2스트링 · AL8860 x2 (B 스트링 DNP)',['12V_IR → Rs 0.1R → VSMA1085400 x2 직렬 → L 68uH → SW · 스트링당 1.0A (O-25, V-001 6)','CTRL = IR_PWM 오픈드레인 공통 (분기 C2-5) · 기본 12V_IR 꺼짐 (eFuse SHDN)'],cols=6)
+f.block('IR','IR LED 2스트링 · AL8860 x2 (B 스트링 DNP)',['12V_IR → Rs 0.1R → VSMA1085400 x2 직렬 → L 68uH → SW · 스트링당 1.0A (O-25, V-001 6)','CTRL = IR_PWM 오픈드레인 공통 (분기 C2-5) · 기본 12V_IR 꺼짐 (eFuse SHDN) · 열: 스트링 평균 ≤1.6W = IR_PWM 듀티 ≤25% (O-31, FW 강제)'],cols=6)
 # IR PWM -> CTRL (open drain, both strings share CTRL - branch C18)
 f.add('Q5', 'Transistor_FET:DMG1012T', 'DMG1012T', 'Package_TO_SOT_SMD:SOT-523', {'1': 'IR_PWM', '2': 'GND', '3': 'IR_CTRL'})
 R(f, 'R12', '100k', 'IR_PWM', 'GND')
 # IR strings A (populated) / B (DNP); AL8860 1.0A (Rs 0.1R), 2x VSMA1085400 each
 for k, dn in (('A', False), ('B', True)):
     u = 'U4' if k == 'A' else 'U5'; base = 0 if k == 'A' else 10
-    f.add(u, 'Driver_LED:AL8860MP', 'AL8860MP-13', 'Package_SO:MSOP-8-1EP_3x3mm_P0.65mm_EP1.5x1.8mm',
+    f.add(u, 'Driver_LED:AL8860MP', 'AL8860MP-13', 'openhw:Diodes_MSOP-8EP_3x3mm_P0.65mm_EP1.7x2.0mm_AL8860',
           {'1': f'IR{k}_SET', '2': 'GND', '3': 'GND', '4': 'IR_CTRL', '5': f'IR{k}_SW', '6': f'IR{k}_SW', '8': '12V_IR', '9': 'GND'}, dnp=dn,
           fields={'MPN': 'Diodes AL8860MP-13 (LCSC C500782)', 'Note': f'string {k}' + (' DNP (R-006 O-25)' if dn else '')})
     R(f, f'R{13+base//10}', '0.1R 1% 0.25W', '12V_IR', f'IR{k}_SET', 'Resistor_SMD:R_1206_3216Metric', dnp=dn)
@@ -213,10 +213,10 @@ for k, dn in (('A', False), ('B', True)):
     f.add(f'D{1 if k=="A" else 2}', 'Device:D_Schottky', 'SS24 (40V 2A)', 'Diode_SMD:D_SMA', {'1': '12V_IR', '2': f'IR{k}_SW'}, dnp=dn)
     C(f, f'C{14 if k=="A" else 16}', '10uF/25V', '12V_IR', 'GND', 'Capacitor_SMD:C_1206_3216Metric', dnp=dn)
     C(f, f'C{15 if k=="A" else 17}', '100nF/50V', '12V_IR', 'GND', dnp=dn)
-f.block('FPC','FPC 10P (캐리어와 같은 대칭 배치)',['계약 12A절 · C-003에서 전원 커넥터 재검토'],cols=3)
+f.block('FPC','보드 간 JST GH 6P (캐리어와 같은 대칭 배치)',['계약 12A절 v1.3 · 12V_IR 2접점 x 1.0A (최악 0.61A/접점)'],cols=3)
 # FPC 10P (symmetric, mirror of carrier J7)
-f.add('J4', 'Connector_Generic_MountingPin:Conn_01x10_MountingPin', 'FPC 10P 1.0mm', 'Connector_FFC-FPC:TE_1-84952-0_1x10-1MP_P1.0mm_Horizontal', fpc,
-      fields={'MPN': 'TE 1-84952-0 (LCSC C590890)'})
+f.add('J4', 'Connector_Generic_MountingPin:Conn_01x06_MountingPin', 'JST GH 6P (board link)', 'Connector_JST:JST_GH_SM06B-GHS-TB_1x06-1MP_P1.25mm_Horizontal', fpc,
+      fields={'MPN': 'JST SM06B-GHS-TB', 'Note': 'C-003 C3-1, same symmetric pinout as carrier J7'})
 R(f, 'R15', '10k', 'CORE_1V8', 'ALS_INT_RSV')
 f.block('TP','시험점 (계약 11절)',cols=9)
 # test points

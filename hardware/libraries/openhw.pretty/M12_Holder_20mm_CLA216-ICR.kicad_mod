@@ -3,7 +3,7 @@
 	(generator "pcbnew")
 	(generator_version "10.0")
 	(layer "F.Cu")
-	(descr "M12 lens holder, 2x NPTH 1.5mm at 20mm spacing. Derived from Antmicro ov9281-camera-board footprint antmicro-footprints:Camera_Lens_20mm (commit ea69666, Apache-2.0); decorative User.9 artwork removed. Hole dia to be checked vs Commonlands CLA216-ICR drawing (not yet read).")
+	(descr "Commonlands CLA216-ICR M12 holder: 2x NPTH 1.8 at 20.0 spacing (R-007: spacing 20.0, hole ref 1.7; screw M1.6, ISO 273 medium clearance 1.8). Derived from Antmicro ov9281-camera-board antmicro-footprints:Camera_Lens_20mm (ea69666, Apache-2.0); artwork removed; Arducam properties replaced (V-003 8).")
 	(tags "M12 S-mount lens holder ICR CLA216 20mm")
 	(property "Reference" "REF**"
 		(at -1.2475 8.836 0)
@@ -30,7 +30,7 @@
 			(justify left bottom)
 		)
 	)
-	(property "Datasheet" "https://www.arducam.com/doc/m12_lens_kit_2.pdf"
+	(property "Datasheet" "https://commonlands.com/products/ir-cut-off-filter-switcher-m12-cla216"
 		(at 0 0 180)
 		(layer "B.Fab")
 		(hide yes)
@@ -43,7 +43,7 @@
 			(justify mirror)
 		)
 	)
-	(property "Description" "Low Distortion 1/2.7″ 2.8 mm M12 Mount Lens"
+	(property "Description" "Commonlands CLA216-ICR M12 holder with IR-cut switcher; mounting holes 20.0 apart (R-007, holder hole ref dia 1.7); PCB NPTH 1.8 = ISO 273 medium clearance for M1.6"
 		(at 0 0 180)
 		(layer "B.Fab")
 		(hide yes)
@@ -80,7 +80,7 @@
 			)
 		)
 	)
-	(property "MPN" "U0756M10"
+	(property "MPN" "CLA216-ICR"
 		(at 0 0 180)
 		(layer "F.Fab")
 		(hide yes)
@@ -92,7 +92,7 @@
 			)
 		)
 	)
-	(property "Manufacturer" "Arducam"
+	(property "Manufacturer" "Commonlands"
 		(at 0 0 180)
 		(layer "F.Fab")
 		(hide yes)
@@ -312,16 +312,16 @@
 		)
 	)
 	(pad "" np_thru_hole circle
-		(at -10 0)
-		(size 1.5 1.5)
-		(drill 1.5)
+		(at -10.0 0)
+		(size 1.8 1.8)
+		(drill 1.8)
 		(layers "*.Cu" "*.Mask")
 		(uuid "63d254a3-b35c-4f32-a596-5344a5cf0738")
 	)
 	(pad "" np_thru_hole circle
-		(at 10 0)
-		(size 1.5 1.5)
-		(drill 1.5)
+		(at 10.0 0)
+		(size 1.8 1.8)
+		(drill 1.8)
 		(layers "*.Cu" "*.Mask")
 		(uuid "42d1fde1-ff3b-4d94-8377-5be65f882c43")
 	)
