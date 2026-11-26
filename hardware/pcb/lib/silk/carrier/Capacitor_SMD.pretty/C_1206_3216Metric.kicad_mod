@@ -45,7 +45,7 @@
 			(type solid)
 		)
 		(layer "F.SilkS")
-		(uuid "266ec8fb-1dfc-451d-b2d3-ee5d9f510687")
+		(uuid "5d7f2a73-96be-456d-91b3-1efed36a2f94")
 	)
 	(fp_line
 		(start -0.671181 0.91)
@@ -55,7 +55,7 @@
 			(type solid)
 		)
 		(layer "F.SilkS")
-		(uuid "d885b872-4307-47fd-aa00-9d07ccaa42e1")
+		(uuid "582be0a7-170b-4388-b757-af3b4919519d")
 	)
 	(fp_rect
 		(start -2.3 -1.15)
