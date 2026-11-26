@@ -66,6 +66,7 @@
 | R-016 | orch (O-69) | research t18s | IR 스트링 B 실장 BOM 갱신(B 경로 부품 특정·bom-full·PCBWay BOM 재생성), 회로도 DNP 변경 목록 | docs/research/ (새 레인) | 바뀐 행·근거·커밋 | completed — 레인 t-20261127-021842-688a 2463aad. B 경로 전면 8개(U5 AL8860·R14 0.1R·D_IR_B1/B2·L2·D2·C16·C17, 넷 IRB_*), bom-full 17행 갱신, PCBWay front 실장 50→58·DNS 12→4, 추가 부품값 5대 약 USD 31.45. 회로도 변경 목록 → C-012. make_pcbway_bom 현 회로도로는 종료 1(예정된 DNP 8 차이), 예상 입력으로 종료 0 |
 | C-012 | orch (O-69) | schematic t18z | IR 스트링 B 실장: boards.py B DNP 해제·생성기 재실행·계약 v1.11 | hardware/schematic/** (새 레인) | ERC 0, 넷 차이 0(DNP 8만), make_pcbway_bom 0, 커밋 | running |
 | F-006 | orch (O-70·O-71) | firmware t18w | ethtool 패키지 추가·이미지 빌드, 절차서 열 판정 수치(M-003 2차) | firmware/** (F-005 레인) | 빌드 종료 0·해시, 사전 시험 rc 0, 커밋 | running |
+| M-003c | lead → orch | mechanical t18x | 제작 준비: PETG 공차·출력 방향·인서트 표, PMMA·폼·갭 패드·H3 방열판 가공 도면(PDF+DXF), 조립 절차서(토크·렌더) — O-61 STEP 오면 간섭 재검사 우선 | mechanical/** (M-003 레인) | 표·도면·절차서 커밋 | running |
 
 ## 운영 변경 (2026-11-26, 사용자 지시 · lead 전달)
 - 의견 묻지 않고 진행: 사람 쪽 미정값은 D-003(lead 레인 t-20261126-144135-5470 docs/decisions/D-003-working-defaults.md, 커밋 8ac5ce5) 값으로 확정 취급. 새 갈림길은 기본값 선택 → 아래 「분기 기록」에 분기점·선택·이유·차선책 → lead 요약 보고. 문제 시 해당 행으로 돌아가 차선책.
