@@ -2,7 +2,7 @@
 	(version "E")
 	(design
 		(source "C:\\workspace_python\\OpenHW\\.harness-worktrees\\t-20261127-041255-b9cd\\hardware\\schematic\\carrier\\carrier.kicad_sch")
-		(date "2026-11-27T05:28:13")
+		(date "2026-11-27T05:37:22")
 		(tool "Eeschema 10.0.8")
 		(sheet
 			(number "1")
@@ -11,7 +11,7 @@
 			(title_block
 				(title "OpenHW carrier board (rear) - reCamera Core 2002 J2 mate")
 				(company "OpenHW PoC")
-				(rev "C-018")
+				(rev "C-019")
 				(date "2026-11-27")
 				(source "carrier.kicad_sch")
 				(comment
@@ -2912,7 +2912,7 @@
 		)
 		(comp
 			(ref "R2")
-			(value "100k 1%")
+			(value "78.7k 1%")
 			(footprint "Resistor_SMD:R_0402_1005Metric")
 			(fields
 				(field
@@ -2966,7 +2966,7 @@
 		)
 		(comp
 			(ref "R3")
-			(value "13.3k 1%")
+			(value "10.7k 1%")
 			(footprint "Resistor_SMD:R_0402_1005Metric")
 			(fields
 				(field

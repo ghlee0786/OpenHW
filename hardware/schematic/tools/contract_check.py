@@ -189,6 +189,13 @@ def check(t, N):
         r2 = [r for r in r2 if C.comps[r].split()[0].endswith('k')]
         vout = 0.596 * (1 + rv(r2[0]) / rv(r3[0]))  # TPS54302 VREF 0.596V (SLVSDC9 7.3.x 표)
         add('3.1', f'5V 벅 출력 (R {C.comps[r2[0]]}/{C.comps[r3[0]]}, VREF 0.596V) ±{pct}% 안', True, abs(vout - 5) <= 5 * int(pct) / 100)
+    for a, b in find(t, r'FB R2 ([\d.]+k) / R3 ([\d.]+k)'):
+        add('3.1', 'TPS54302 FB 분압 R2(5V_SYS–FB) / R3(FB–GND)', f'{a}/{b}',
+            '/'.join(','.join(C.comps[r].split()[0] for r in C.two_pin(*n) if r.startswith('R')) for n in (('5V_SYS', 'BUCK_FB'), ('BUCK_FB', 'GND'))))
+    for ref, val in find(t, r'Q1 게이트 (R\d+) ([\d.]+k) 직렬'):
+        add('3.1', f'전면 Q1 게이트 직렬 {ref}', f'{ref} {val}', ' '.join(f'{r} {F.comps[r]}' for r in F.two_pin('CAM_PG', F.fn('Q1', 'G'))) or '없음')
+    for q, ref, val in find(t, r'Q(\d) 게이트–드레인 (C\d+) ([\d.]+nF)'):
+        add('3.1', f'전면 Q{q} 게이트–드레인 {ref}', f'{ref} {val}', ' '.join(f'{r} {F.comps[r]}' for r in F.two_pin(F.fn(f'Q{q}', 'G'), F.fn(f'Q{q}', 'D'))) or '없음')
     for g, val in find(t, r'게이트 (CAM_1V8_G) = R17 ([\d.]+k)'):
         add('3.1', 'R17 값·넷', f'{val} ' + '-'.join(sorted(('CORE_1V8', g))), f'{F.comps.get("R17")} {"-".join(sorted({F.at("R17", 1), F.at("R17", 2)}))}')
     if find(t, r'전면 Q6 DMG2305UX'):
@@ -347,6 +354,8 @@ FAULTS = [
     ('12B DNP 목록 carrier R17 행 빠짐', '| carrier | R17 | 47k | SD D3 풀업 옵션 | 위와 같음 |\n', ''),
     ('5.1 MCLK 문구 R8 22Ω → R18 0Ω', 'X1 → R8 22Ω', 'X1 → R18 0Ω'),
     ('「스트링 A·B 실장」 문구 모두 삭제', '스트링 A·B 실장', '스트링 A 실장'),
+    ('3.1 FB R3 10.7k → 13.3k', 'FB R2 78.7k / R3 10.7k', 'FB R2 78.7k / R3 13.3k'),
+    ('3.1 Q2 게이트–드레인 C21 → C22', 'Q2 게이트–드레인 C21', 'Q2 게이트–드레인 C22'),
     ('7절 SPARE1 → J7-3 → J7-4', '캐리어 20 → J7-3', '캐리어 20 → J7-4'),
 ]
 
