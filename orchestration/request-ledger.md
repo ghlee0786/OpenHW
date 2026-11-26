@@ -101,6 +101,7 @@
 | C-020 | orch (O-97) | schematic t18z | 카메라 레일 순서 S6: Q1 게이트 100k∥(1k+BAT54), Q2 게이트 100k∥BAT54, 계약 v1.16 | hardware/schematic (새 레인) | ERC 0·contract_check 0, 커밋 | completed — 레인 t-20261127-055630-c14c a2d878c(+3c0b0bd): R20 100k·R21 1k·D4 BAT54WS(Q1), R5 100k·D5 BAT54WS(Q2), 극성 재확인, 계약 v1.16. orch 재실행 contract_check 0·selftest 0(24, 극성 고장 포함) |
 | SIM-001d | orch (O-97) | firmware t18w + schematic t18z | C-020 a2d878c로 재시뮬: firmware L5·L9·L10(+전체 L), schematic SIM-001a C3(CORE_3V3 강하) | hardware/sim (각 새 레인) | 같은 기준, 종료 코드, 커밋 | completed — schematic c14c 939d2f0 15/15 / firmware 레인 t-20261127-060029-2377(start --from bf55) 942c7e5: 종료 1(pass 9, L3 S3만 — 기준대로 불합격 기록), L9 IOVDD 마지막 1.105ms·L10 AVDD 180µs 뒤·돌입 310mA. 참고: 리셋 해제 여유 최악 0.37ms(bring-up 1-7) |
 | R-023 | orch | research t18s | BOM 갱신 C-020: D4·D5 BAT54WS, R21 1k, R5·R20 100k | bom-full·PCBWay BOM (새 레인) | make_pcbway_bom 0, 커밋 | completed — 레인 t-20261127-060023-2ca0 6ae4eed: D3–D5 BAT54WS C124205, 10k×3·100k×7·1k×2 갱신, make_pcbway_bom 종료 0(orch 재실행 0) |
+| SIM-001e | lead → orch (O-98) | firmware t18w | L3 IR 끔 구간 링잉 개선 1회: 원인 노드 → (a) LED 병렬 C (b) SW RC 스너버 (c) 끔 처리 비교, 기존 통과 항목 악화 0인 안 → C-021 | hardware/sim (새 레인) | 기준 먼저 커밋, 종료 코드, 변경 표 | running |
 
 ## 운영 변경 (2026-11-26, 사용자 지시 · lead 전달)
 - 의견 묻지 않고 진행: 사람 쪽 미정값은 D-003(lead 레인 t-20261126-144135-5470 docs/decisions/D-003-working-defaults.md, 커밋 8ac5ce5) 값으로 확정 취급. 새 갈림길은 기본값 선택 → 아래 「분기 기록」에 분기점·선택·이유·차선책 → lead 요약 보고. 문제 시 해당 행으로 돌아가 차선책.
