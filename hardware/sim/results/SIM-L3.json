@@ -1,5 +1,5 @@
 {
-  "id": "SIM-B3",
+  "id": "SIM-L3",
   "title": "IR PWM 25 % 디밍 (IR_PWM → Q5 → IR_CTRL)",
   "owner": "firmware",
   "circuit": {
@@ -60,9 +60,9 @@
   ],
   "verdict": "fail",
   "waveforms": [
-    "hardware/sim/png/SIM-B3-pwm25.png"
+    "hardware/sim/png/SIM-L3-pwm25.png"
   ],
-  "netlist": "hardware/sim/SIM-B3.cir",
+  "netlist": "hardware/sim/SIM-L3.cir",
   "tool": {
     "name": "ngspice",
     "version": "47",

@@ -1,5 +1,5 @@
 {
-  "id": "SIM-B7",
+  "id": "SIM-L7",
   "title": "I2C2 풀업 상승 시간 (100/400 kHz)",
   "owner": "firmware",
   "circuit": {
@@ -61,9 +61,9 @@
   ],
   "verdict": "pass",
   "waveforms": [
-    "hardware/sim/png/SIM-B7-i2c-rise.png"
+    "hardware/sim/png/SIM-L7-i2c-rise.png"
   ],
-  "netlist": "hardware/sim/SIM-B7.cir",
+  "netlist": "hardware/sim/SIM-L7.cir",
   "tool": {
     "name": "ngspice",
     "version": "47",

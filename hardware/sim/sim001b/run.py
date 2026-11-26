@@ -245,12 +245,12 @@ def fsw_stats(t, isw_on, t0):
 
 # ---------------------------------------------------------------- 시험
 def b1():
-    checks, notes, png = [], [], os.path.join(SIM, "png", "SIM-B1-al8860.png")
+    checks, notes, png = [], [], os.path.join(SIM, "png", "SIM-L1-al8860.png")
     res = {}
     for c in ("typ", "imin", "imax", "fmax", "dmax", "dmin"):
         body = ir_body(c)
         vecs = ["v(v12)-v(setA)", "i(VilA)", "v(XA.g)"]
-        d, h = run_tran(body, vecs, "0.6m", "5n", "20n", save_as=os.path.join(SIM, "SIM-B1.cir") if c == "imax" else None)
+        d, h = run_tran(body, vecs, "0.6m", "5n", "20n", save_as=os.path.join(SIM, "SIM-L1.cir") if c == "imax" else None)
         t = d["time"]
         rs = CORNERS[c][1]
         iled = col(d, h, 1) / rs
@@ -280,22 +280,22 @@ def b1():
         ax[1].plot(r["t"][m] * 1e6, r["il"][m], label=c)
     ax[0].set_ylabel("LED 전류 [A]"); ax[0].legend(); ax[0].grid(alpha=.3)
     ax[1].axhline(1.6, color="r", ls="--", lw=.8, label="기준 1.6 A"); ax[1].set_ylabel("인덕터 전류 [A]"); ax[1].set_xlabel("시간 [µs]"); ax[1].legend(); ax[1].grid(alpha=.3)
-    ax[0].set_title("SIM-B1 AL8860 한 스트링 정상 상태 (마지막 50 µs)")
+    ax[0].set_title("SIM-L1 AL8860 한 스트링 정상 상태 (마지막 50 µs)")
     fig.tight_layout(); fig.savefig(png, dpi=110); plt.close(fig)
-    return dict(id="SIM-B1", title="AL8860 한 스트링 LED 전류·리플·주파수", refs=["U4", "R13", "L1", "D1", "D_IR_A1", "D_IR_A2", "C14", "C15"],
-                checks=checks, png=[png], net="SIM-B1.cir", notes=notes,
+    return dict(id="SIM-L1", title="AL8860 한 스트링 LED 전류·리플·주파수", refs=["U4", "R13", "L1", "D1", "D_IR_A1", "D_IR_A2", "C14", "C15"],
+                checks=checks, png=[png], net="SIM-L1.cir", notes=notes,
                 model=dict(source="데이터시트 동작 모델 (AL8860 히스테리시스·소프트스타트·CTRL, VSMA·SS24 다이오드 맞춤)",
                            url="https://www.diodes.com/assets/Datasheets/AL8860.pdf", license="—", behavioral=True,
                            basis="AL8860 DS39014 Rev.8-2 p.2·4·11–13; VSMA1085400 80294 p.3; SS24S 89008 p.2; SRN6045TA REV.06/24 p.1"))
 
 
 def b2():
-    checks, notes, png = [], [], os.path.join(SIM, "png", "SIM-B2-ab-input.png")
+    checks, notes, png = [], [], os.path.join(SIM, "png", "SIM-L2-ab-input.png")
     out = {}
     for c in ("worst_in", "typ"):
         body = ir_body(c, ("A", "B"))
         d, h = run_tran(body, ["i(Vin)", "i(VilA)", "i(VilB)"], "0.6m", "5n", "20n",
-                        save_as=os.path.join(SIM, "SIM-B2.cir") if c == "worst_in" else None)
+                        save_as=os.path.join(SIM, "SIM-L2.cir") if c == "worst_in" else None)
         t = d["time"]
         iin = -col(d, h, 1)
         out[c] = dict(t=t, iin=iin, mean=win_mean(t, iin, 0.4e-3, t[-1]), mov=moving_max(t, iin, 20e-6, 0.3e-3))
@@ -313,10 +313,10 @@ def b2():
         ax.plot(r["t"] * 1e3, r["iin"], lw=.6, label=f"{c} 평균 {r['mean']:.3f} A")
     ax.axhline(ILIM, color="r", ls="--", label=f"ILIM {ILIM} A (R6 6.98k)"); ax.axhline(ILIM_OLD, color="gray", ls=":", label="옛 ILIM 1.49 A")
     ax.set_xlabel("시간 [ms]"); ax.set_ylabel("12V_IR 입력 전류 [A]"); ax.legend(); ax.grid(alpha=.3)
-    ax.set_title("SIM-B2 스트링 A+B 동시 100 % — 12V_IR 입력 전류 (입력 캡 C14·C16 포함)")
+    ax.set_title("SIM-L2 스트링 A+B 동시 100 % — 12V_IR 입력 전류 (입력 캡 C14·C16 포함)")
     fig.tight_layout(); fig.savefig(png, dpi=110); plt.close(fig)
-    return dict(id="SIM-B2", title="스트링 A+B 동시 — 12V_IR eFuse 입력 전류 합", refs=["U4", "U5", "R13", "R14", "L1", "L2", "C14", "C16", "U2·R6 6.98k(carrier TPS26600)"],
-                checks=checks, png=[png], net="SIM-B2.cir", notes=notes, out=out,
+    return dict(id="SIM-L2", title="스트링 A+B 동시 — 12V_IR eFuse 입력 전류 합", refs=["U4", "U5", "R13", "R14", "L1", "L2", "C14", "C16", "U2·R6 6.98k(carrier TPS26600)"],
+                checks=checks, png=[png], net="SIM-L2.cir", notes=notes, out=out,
                 model=b1_model())
 
 
@@ -329,12 +329,12 @@ GPIO = "93.75"   # SoC 1.8V IO 출력 저항 ≈ (1.8-1.35)/4.8mA (Table 2-8, DS
 
 
 def b3(b2res):
-    checks, notes, png = [], [], os.path.join(SIM, "png", "SIM-B3-pwm25.png")
+    checks, notes, png = [], [], os.path.join(SIM, "png", "SIM-L3-pwm25.png")
     ctrl = (f"Vpw pw0 0 PULSE(1.71 0 1.875m 1u 1u 0.625m 2.5m)\nRpw pw0 irpwm {GPIO}\nR12 core irpwm 100k\nVcore core 0 1.8\n"
             "M5 ctrl irpwm 0 0 nq7\n.model nq7 nmos level=1 vto=1.0 kp=1.79\nCg5 irpwm 0 61p\n")
     body = ir_body("worst_in", ("A", "B"), ctrl)
     d, h = run_tran(body, ["i(Vin)", "i(VilA)", "i(VilB)", "v(ctrl)", "v(irpwm)", "(v(v12)-v(setA))/0.099", "(v(v12)-v(setB))/0.099"],
-                    "7.5m", "10n", "50n", save_as=os.path.join(SIM, "SIM-B3.cir"))
+                    "7.5m", "10n", "50n", save_as=os.path.join(SIM, "SIM-L3.cir"))
     t = d["time"]
     iin = -col(d, h, 1)
     ileds = col(d, h, 6) + col(d, h, 7)
@@ -365,10 +365,10 @@ def b3(b2res):
     ax[2].plot(t * 1e3, iin, lw=.5); ax[2].axhline(ILIM, color="r", ls="--", lw=.8); ax[2].set_ylabel("12V_IR 입력 [A]"); ax[2].set_xlabel("시간 [ms]"); ax[2].set_ylim(0, 3)
     for a in ax:
         a.grid(alpha=.3)
-    ax[0].set_title(f"SIM-B3 PWM 25 % (400 Hz) — 실효 켬 비율 {ratio:.3f}")
+    ax[0].set_title(f"SIM-L3 PWM 25 % (400 Hz) — 실효 켬 비율 {ratio:.3f}")
     fig.tight_layout(); fig.savefig(png, dpi=110); plt.close(fig)
-    return dict(id="SIM-B3", title="IR PWM 25 % 디밍 (IR_PWM → Q5 → IR_CTRL)", refs=["Q5", "R12", "U4", "U5"], checks=checks, png=[png],
-                net="SIM-B3.cir", notes=notes, model=b1_model())
+    return dict(id="SIM-L3", title="IR PWM 25 % 디밍 (IR_PWM → Q5 → IR_CTRL)", refs=["Q5", "R12", "U4", "U5"], checks=checks, png=[png],
+                net="SIM-L3.cir", notes=notes, model=b1_model())
 
 
 def drv_sub(rh, rl):
@@ -397,7 +397,7 @@ D4 gnd out2 dsi
 
 
 def b4():
-    checks, notes, png = [], [], os.path.join(SIM, "png", "SIM-B4-drv8837.png")
+    checks, notes, png = [], [], os.path.join(SIM, "png", "SIM-L4-drv8837.png")
     res = {}
     for c, vm, rc, rh in (("max", 5.25, 18.0, 0.14), ("min", 4.75, 22.0, 0.165)):
         body = (GEN_D + drv_sub(rh, rh) + f"Vm vm 0 {vm}\nVcc vcc 0 2.744\n"
@@ -405,7 +405,7 @@ def b4():
                 f"Vi2 i2 0 PWL(0 0 500m 0 500.001m 1.71 700m 1.71 700.001m 0)\nR2g i2 in2 {GPIO}\n"
                 f"X2 vm icra icrb in1 in2 vcc 0 drv\nVsc icra c1 0\nRcoil c1 icrb {rc}\n")
         d, h = run_tran(body, ["i(Vsc)", "v(icra)-v(icrb)", "v(in2)", "v(in1)"], "800m", "10u", "100u",
-                        save_as=os.path.join(SIM, "SIM-B4.cir") if c == "max" else None)
+                        save_as=os.path.join(SIM, "SIM-L4.cir") if c == "max" else None)
         res[c] = (d, h)
     d, h = res["max"]
     t, i = d["time"], col(d, h, 1)
@@ -431,10 +431,10 @@ def b4():
     ax[0].plot(tm * 1e3, imn * 1e3, label="min"); ax[0].plot(t * 1e3, i * 1e3, label="max", alpha=.7)
     ax[0].set_ylabel("코일 전류 [mA]"); ax[0].legend(); ax[0].grid(alpha=.3)
     ax[1].plot(tm * 1e3, vdm); ax[1].set_ylabel("V(ICR_A)−V(ICR_B) [V]"); ax[1].set_xlabel("시간 [ms]"); ax[1].grid(alpha=.3)
-    ax[0].set_title("SIM-B4 DRV8837 ICR 펄스 200 ms — 밤(IN1) 10 ms · 낮(IN2) 500 ms")
+    ax[0].set_title("SIM-L4 DRV8837 ICR 펄스 200 ms — 밤(IN1) 10 ms · 낮(IN2) 500 ms")
     fig.tight_layout(); fig.savefig(png, dpi=110); plt.close(fig)
-    return dict(id="SIM-B4", title="DRV8837 ICR 펄스 — 코일 전류·시간·극성", refs=["U2(front DRV8837)", "R1", "J2", "CLA216"], checks=checks, png=[png],
-                net="SIM-B4.cir", notes=notes,
+    return dict(id="SIM-L4", title="DRV8837 ICR 펄스 — 코일 전류·시간·극성", refs=["U2(front DRV8837)", "R1", "J2", "CLA216"], checks=checks, png=[png],
+                net="SIM-L4.cir", notes=notes,
                 model=dict(source="데이터시트 동작 모델 (H-브리지 스위치 + 진리표)", url="https://www.ti.com/lit/ds/symlink/drv8837.pdf", license="—",
                            behavioral=True, basis="TI SLVSBA4F p.8–9 §6.5–6.6, p.13 Table 7-1; 코일 20Ω ±10% 가정(계약 3.2절), 인덕턴스 미확인"))
 
@@ -452,10 +452,10 @@ def cam_sw(vcore, q):
 
 
 def b5():
-    checks, notes, png = [], [], os.path.join(SIM, "png", "SIM-B5-cam1v8.png")
+    checks, notes, png = [], [], os.path.join(SIM, "png", "SIM-L5-cam1v8.png")
     # 돌입 최악: Q6 강함(vto -0.5, kp 13.4 = RDS 68mΩ@-1.8V 대표), Q7 강함, CORE_1V8 1.89
     di, hi = run_tran(cam_sw(1.89, q_models(-0.5, 13.4, 0.5, 4.0)), ["-i(Vcore)", "v(cam)", "v(en)", "v(g6)-v(c18)"], "8m", "1n", "20n",
-                      save_as=os.path.join(SIM, "SIM-B5.cir"))
+                      save_as=os.path.join(SIM, "SIM-L5.cir"))
     # 켜짐·꺼짐 최악: Q6 약함(vto -0.9, kp 5.56 = 0.2Ω@-1.8V), Q7 약함(vto 1.0, kp 1.79), CORE_1V8 1.8 (기준 1.71V = 95 %)
     ds, hs = run_tran(cam_sw(1.8, q_models(-0.9, 5.56, 1.0, 1.79)), ["-i(Vcore)", "v(cam)", "v(en)", "v(g6)-v(c18)"], "8m", "1n", "20n")
     ti, ii = di["time"], col(di, hi, 1)
@@ -490,10 +490,10 @@ def b5():
     m = (ti > 0.999e-3) & (ti < 1.02e-3)
     ax[0].plot((ti[m] - 1e-3) * 1e6, ii[m]); ax[0].axhline(0.3, color="r", ls="--", lw=.8); ax[0].set_ylabel("CORE_1V8 전류 [A]"); ax[0].set_xlabel("CAM_EN 상승 뒤 [µs]"); ax[0].grid(alpha=.3)
     ax[1].plot(ts * 1e3, vcam, label="CAM_1V8"); ax[1].plot(ts * 1e3, ven, label="CAM_EN"); ax[1].legend(); ax[1].set_xlabel("시간 [ms]"); ax[1].set_ylabel("[V]"); ax[1].grid(alpha=.3)
-    ax[0].set_title("SIM-B5 CAM_1V8 스위치 Q6/Q7 — 돌입(위, 강한 모서리) · 켜짐/꺼짐(아래, 약한 모서리)")
+    ax[0].set_title("SIM-L5 CAM_1V8 스위치 Q6/Q7 — 돌입(위, 강한 모서리) · 켜짐/꺼짐(아래, 약한 모서리)")
     fig.tight_layout(); fig.savefig(png, dpi=110); plt.close(fig)
-    return dict(id="SIM-B5", title="CAM_1V8 스위치 Q6/Q7 켜짐·꺼짐·돌입", refs=["Q6", "Q7", "R17", "R18", "C19", "R19", "C18", "C11", "X1"], checks=checks, png=[png],
-                net="SIM-B5.cir", notes=notes,
+    return dict(id="SIM-L5", title="CAM_1V8 스위치 Q6/Q7 켜짐·꺼짐·돌입", refs=["Q6", "Q7", "R17", "R18", "C19", "R19", "C18", "C11", "X1"], checks=checks, png=[png],
+                net="SIM-L5.cir", notes=notes,
                 model=dict(source="레벨 1 MOSFET 맞춤 (데이터시트 VGS(th)·RDS(on)·Ciss·Rg)", url="https://www.diodes.com/assets/Datasheets/DMG2305UX.pdf",
                            license="—", behavioral=True, basis="DMG2305UX DS36196 Rev.8-2 p.2; DMG1012T DS31783 Rev.8-2 p.2; SG2002 Table 2-8 VOH; CORE_1V8 경로 0.1Ω·X1 450Ω 가정"))
 
@@ -510,7 +510,7 @@ def backfeed_body(soc_pu):
 def b6():
     checks, notes = [], []
     pr = ["v(sda)", "v(scl)", "v(cam)", "v(mclk)", "i(vsd)", "i(vsc)"]
-    v = run_op(backfeed_body(False), pr, save_as=os.path.join(SIM, "SIM-B6.cir"))
+    v = run_op(backfeed_body(False), pr, save_as=os.path.join(SIM, "SIM-L6.cir"))
     vs = run_op(backfeed_body(True), pr)
     checks.append(check("센서 SDA → 꺼진 레일 전류", "<=", 1e-6, "A", abs(v.get("i(vsd)", float("nan"))), "PD 51k, 누설 +10µA, VCORE 1.89"))
     checks.append(check("센서 SCL → 꺼진 레일 전류", "<=", 1e-6, "A", abs(v.get("i(vsc)", float("nan"))), "같음"))
@@ -520,14 +520,14 @@ def b6():
     notes.append(f"기록만(민감도 — SW가 IIC2 내부 풀업 55k 를 켠 경우): SDA {vs.get('v(sda)', float('nan')):.3f} V, 센서로 {abs(vs.get('i(vsd)', float('nan'))) * 1e6:.2f} µA, CAM_1V8 {vs.get('v(cam)', float('nan')):.3f} V")
     notes.append("가정: 센서 핀 ESD 다이오드 IS 1e-14, 꺼진 센서 레일 부하 10k, LTR-329 핀 누설 0(데이터시트 미확인)")
     notes.append("C-017 회로(f0745ed): CAM_1V8–GND R19 10 kΩ 블리더 포함. 이전 회로 결과는 a3b988c")
-    return dict(id="SIM-B6", title="꺼진 센서 역급전 (CAM_EN=0, O-33)", refs=["R9", "R10", "R19", "Q6", "X1", "R8", "J3(DF30)", "U3(LTR-329)"], checks=checks, png=[],
-                net="SIM-B6.cir", notes=notes,
+    return dict(id="SIM-L6", title="꺼진 센서 역급전 (CAM_EN=0, O-33)", refs=["R9", "R10", "R19", "Q6", "X1", "R8", "J3(DF30)", "U3(LTR-329)"], checks=checks, png=[],
+                net="SIM-L6.cir", notes=notes,
                 model=dict(source="DC 동작점 (저항·다이오드·전류원)", url="", license="—", behavioral=True,
                            basis="SG2002 Table 2-8 RPD 51k(최소)·누설 ±10µA, PINOUT 시트 IIC2 패드 기본 PD, SDK cvi_board_init.c L12–13; DMG2305UX IDSS"))
 
 
 def b7():
-    checks, notes, png = [], [], os.path.join(SIM, "png", "SIM-B7-i2c-rise.png")
+    checks, notes, png = [], [], os.path.join(SIM, "png", "SIM-L7-i2c-rise.png")
     sys.path.insert(0, os.path.join(REPO, "hardware", "pcb", "calc"))
     import microstrip_fd as ms
     Z, e = ms.solve(0.152, 0, 0.1855, 0.035, 4.74, mask_t=0.015, diff=False)
@@ -537,7 +537,7 @@ def b7():
     cbw = cb * 1.5
     rp = 4.7e3 * 1.05
     body = (f"Vdd vdd 0 1.71\nRp vdd bus {rp}\nCb bus 0 {cbw}\nVd d 0 PULSE(1 0 1u 1n 1n 10u 20u)\nSd bus 0 d 0 sod\n.model sod sw vt=0.5 vh=0.01 ron=50 roff=1g\n")
-    d, h = run_tran(body, ["v(bus)"], "12u", "1n", "2n", save_as=os.path.join(SIM, "SIM-B7.cir"))
+    d, h = run_tran(body, ["v(bus)"], "12u", "1n", "2n", save_as=os.path.join(SIM, "SIM-L7.cir"))
     t, vb = d["time"], col(d, h, 1)
     t30 = cross(t, vb, 0.3 * 1.71, True, 1e-6)
     t70 = cross(t, vb, 0.7 * 1.71, True, 1e-6)
@@ -551,22 +551,22 @@ def b7():
     fig, ax = plt.subplots(figsize=(8, 4))
     ax.plot((t - 1e-6) * 1e9, vb); ax.axhline(0.3 * 1.71, ls=":", c="k"); ax.axhline(0.7 * 1.71, ls=":", c="k")
     ax.set_xlim(-50, 1200); ax.set_xlabel("해제 뒤 [ns]"); ax.set_ylabel("SDA/SCL [V]"); ax.grid(alpha=.3)
-    ax.set_title(f"SIM-B7 I2C2 상승 (Rp 4.935k, Cb {cbw * 1e12:.1f} pF) tr = {tr * 1e9 if tr else float('nan'):.0f} ns")
+    ax.set_title(f"SIM-L7 I2C2 상승 (Rp 4.935k, Cb {cbw * 1e12:.1f} pF) tr = {tr * 1e9 if tr else float('nan'):.0f} ns")
     fig.tight_layout(); fig.savefig(png, dpi=110); plt.close(fig)
-    return dict(id="SIM-B7", title="I2C2 풀업 상승 시간 (100/400 kHz)", refs=["R9", "R10", "U3", "J3", "SoC IIC2"], checks=checks, png=[png], net="SIM-B7.cir",
+    return dict(id="SIM-L7", title="I2C2 풀업 상승 시간 (100/400 kHz)", refs=["R9", "R10", "U3", "J3", "SoC IIC2"], checks=checks, png=[png], net="SIM-L7.cir",
                 notes=notes, model=dict(source="RC (버스 용량 추정 + 풀업)", url="https://www.nxp.com/docs/en/user-guide/UM10204.pdf", license="—",
                                         behavioral=True, basis="UM10204 Rev.7 Table 10·11, §7.1; hardware/pcb/calc/microstrip_fd.py; fab-rules-pcbway.md §2.1"))
 
 
 def b8():
-    checks, notes, png = [], [], os.path.join(SIM, "png", "SIM-B8-reset.png")
+    checks, notes, png = [], [], os.path.join(SIM, "png", "SIM-L8-reset.png")
     body = (GEN_D + BAT54 + ".model nq nmos level=1 vto=1.0 kp=1.79\n.model pa pmos level=1 vto=-0.9 kp=5.5\n"
             f"V33 v33 0 3.3\nVen e0 0 PWL(0 0 1m 0 1.001m 1.71 20m 1.71 20.001m 0)\nRen e0 en {GPIO}\nR6 en 0 100k\n"
             "R7 en rst 10k\nC10 rst 0 100n\nD3 rst en bat54\n"
             "M3 pg en 0 0 nq\nCg3 en 0 61p\nR4 v33 pg 100k\nM1 iov pg v33 v33 pa\nCg1 pg v33 645p\n"
             "R5 pg pgav 10k\nM2 avd pgav v33 v33 pa\nCg2 pgav v33 645p\n"
             "C7 iov 0 1u\nRli iov 0 110\nC8 avd 0 1u\nC9 avd 0 100n\nRla avd 0 110\n")
-    d, h = run_tran(body, ["v(en)", "v(rst)", "v(iov)", "v(avd)"], "25m", "100n", "2u", save_as=os.path.join(SIM, "SIM-B8.cir"))
+    d, h = run_tran(body, ["v(en)", "v(rst)", "v(iov)", "v(avd)"], "25m", "100n", "2u", save_as=os.path.join(SIM, "SIM-L8.cir"))
     t, ven, vr, vi, va = d["time"], col(d, h, 1), col(d, h, 2), col(d, h, 3), col(d, h, 4)
     t_rel = cross(t, vr, 0.7 * 1.8, True, 1e-3)
     t_pw = max(cross(t, vi, 0.9 * 3.3, True, 1e-3) or 1, cross(t, va, 0.9 * 3.3, True, 1e-3) or 1)
@@ -582,10 +582,10 @@ def b8():
     for y, lb in ((ven, "CAM_EN"), (vr, "CAM_RESET"), (vi, "CAM_IOVDD"), (va, "CAM_AVDD")):
         ax.plot(t * 1e3, y, label=lb)
     ax.legend(); ax.set_xlabel("시간 [ms]"); ax.set_ylabel("[V]"); ax.grid(alpha=.3)
-    ax.set_title("SIM-B8 센서 리셋 RC (R7 10k · C10 100 nF · D3) 와 센서 전원")
+    ax.set_title("SIM-L8 센서 리셋 RC (R7 10k · C10 100 nF · D3) 와 센서 전원")
     fig.tight_layout(); fig.savefig(png, dpi=110); plt.close(fig)
-    return dict(id="SIM-B8", title="센서 리셋 RC 시간과 전원 순서", refs=["R7", "C10", "D3", "Q1", "Q2", "Q3", "R4", "R5", "R6", "C7", "C8", "C9"],
-                checks=checks, png=[png], net="SIM-B8.cir", notes=notes,
+    return dict(id="SIM-L8", title="센서 리셋 RC 시간과 전원 순서", refs=["R7", "C10", "D3", "Q1", "Q2", "Q3", "R4", "R5", "R6", "C7", "C8", "C9"],
+                checks=checks, png=[png], net="SIM-L8.cir", notes=notes,
                 model=dict(source="RC + 레벨 1 MOSFET 근사", url="", license="—", behavioral=True,
                            basis="회로 값 boards.py L180–190; DMG1012T DS31783; GC2053 사본 V1.1 VIH 0.7·VIF; X1 기동 최대 3 ms (YXC 사본)"))
 
@@ -596,12 +596,12 @@ def main():
     os.makedirs(os.path.join(SIM, "png"), exist_ok=True)
     tool = dict(name="ngspice", version=ng_version(), sha256=sha256(NG))
     bad = 0
-    order = [("SIM-B1", b1), ("SIM-B2", b2), ("SIM-B3", None), ("SIM-B4", b4), ("SIM-B5", b5), ("SIM-B6", b6), ("SIM-B7", b7), ("SIM-B8", b8)]
+    order = [("SIM-L1", b1), ("SIM-L2", b2), ("SIM-L3", None), ("SIM-L4", b4), ("SIM-L5", b5), ("SIM-L6", b6), ("SIM-L7", b7), ("SIM-L8", b8)]
     b2res = None
     for tid, fn in order:
         try:
-            r = b3(b2res) if tid == "SIM-B3" else fn()
-            if tid == "SIM-B2":
+            r = b3(b2res) if tid == "SIM-L3" else fn()
+            if tid == "SIM-L2":
                 b2res = r
             verdict = "pass" if all(c["pass"] for c in r["checks"]) else "fail"
             js = {"id": r["id"], "title": r["title"], "owner": "firmware",

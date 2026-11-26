@@ -1,5 +1,5 @@
 {
-  "id": "SIM-B6",
+  "id": "SIM-L6",
   "title": "꺼진 센서 역급전 (CAM_EN=0, O-33)",
   "owner": "firmware",
   "circuit": {
@@ -73,7 +73,7 @@
   ],
   "verdict": "pass",
   "waveforms": [],
-  "netlist": "hardware/sim/SIM-B6.cir",
+  "netlist": "hardware/sim/SIM-L6.cir",
   "tool": {
     "name": "ngspice",
     "version": "47",

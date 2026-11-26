@@ -1,5 +1,5 @@
 {
-  "id": "SIM-B1",
+  "id": "SIM-L1",
   "title": "AL8860 한 스트링 LED 전류·리플·주파수",
   "owner": "firmware",
   "circuit": {
@@ -115,9 +115,9 @@
   ],
   "verdict": "pass",
   "waveforms": [
-    "hardware/sim/png/SIM-B1-al8860.png"
+    "hardware/sim/png/SIM-L1-al8860.png"
   ],
-  "netlist": "hardware/sim/SIM-B1.cir",
+  "netlist": "hardware/sim/SIM-L1.cir",
   "tool": {
     "name": "ngspice",
     "version": "47",

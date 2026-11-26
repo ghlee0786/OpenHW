@@ -1,5 +1,5 @@
 {
-  "id": "SIM-B8",
+  "id": "SIM-L8",
   "title": "센서 리셋 RC 시간과 전원 순서",
   "owner": "firmware",
   "circuit": {
@@ -59,9 +59,9 @@
   ],
   "verdict": "pass",
   "waveforms": [
-    "hardware/sim/png/SIM-B8-reset.png"
+    "hardware/sim/png/SIM-L8-reset.png"
   ],
-  "netlist": "hardware/sim/SIM-B8.cir",
+  "netlist": "hardware/sim/SIM-L8.cir",
   "tool": {
     "name": "ngspice",
     "version": "47",

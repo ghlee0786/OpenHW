@@ -1,25 +1,27 @@
-# SIM-001b 결과 — 부하·제어 회로 (B1~B8)
+# SIM-001b 결과 — 부하·제어 회로 (L1~L8)
+
+- **ID 변경 (O-92):** 이 묶음의 시험 ID를 SIM-B1~B8 → **SIM-L1~L8**로 바꿨다. schematic SIM-001a의 SIM-A·B·C·D와 겹치지 않게 하려는 것이다(orch 형식 문서 ID 규칙). 기준 문서 `SIM-001b-criteria.md`(`7cab389`)·`SIM-001b-criteria-c017.md`의 B*n*은 L*n*과 같다(번호 대응 그대로, 기준 변경 없음).
 
 - 기준: `SIM-001b-criteria.md` (`7cab389`, 실행 전 커밋)
 - 실행: `python hardware/sim/sim001b/run.py` → **종료 코드 4** (pass 4 · fail 4 · error 0)
 - 도구: ngspice-47 (`C:/Users/gh/tools/ngspice/47/Spice64/bin/ngspice_con.exe`)
-- 결과 JSON: `hardware/sim/results/SIM-B1~B8.json` (orch O-81 형식)
+- 결과 JSON: `hardware/sim/results/SIM-L1~B8.json` (orch O-81 형식)
 - 파형: `hardware/sim/png/`
-- 넷리스트: `hardware/sim/SIM-B*.cir`
+- 넷리스트: `hardware/sim/SIM-L*.cir`
 - **판정 범위:** 데이터시트 수치로 만든 동작 모델의 가상 검증이다(제조사 SPICE 모델이 아니다). 실물(HIL) 판정이 아니다.
 
 ## 요약
 
 | 시험 | 판정 | 핵심 수치 |
 |---|---|---|
-| SIM-B1 AL8860 한 스트링 | **pass** | LED 평균 0.985 A(최소 모서리) ~ 1.086 A(최대 모서리), 피크 1.305 A, 인덕터 피크 1.305 A < 1.6, f ≤ 214 kHz, tON ≥ 2.33 µs, D 0.50~0.64, 리플 0.40 |
-| SIM-B2 A+B 동시 — 12V_IR 입력 | **fail** | 평균 1.425 A ≤ 1.49 (ok) · **20 µs 이동 평균 최댓값 1.585 A > 1.49** · 대표 평균 1.187 A ≤ 1.30 (ok) |
-| SIM-B3 PWM 25 % (400 Hz) | **fail** | 실효 켬 비율 0.230 ≤ 0.255 (ok, O-31 지킴) · **끔 구간 \|I\| 6.08 mA > 1 mA** · **켬 순간 20 µs 이동 평균 최댓값 1.585 A > 1.49** · IR_CTRL 끔 0.16 mV (ok) |
-| SIM-B4 DRV8837 ICR | **pass** | 코일 0.213~0.287 A, 펄스 0.200 s, 밤 +4.68 V / 낮 −4.68 V(계약 극성과 같음), 코스트 0, IN2 여유 0.28 V |
-| SIM-B5 CAM_1V8 Q6/Q7 | **fail** | 켜짐 1.8 µs (ok) · **돌입 5.11 A > 0.3 A** · 꺼짐 14.6 µs (ok) |
-| SIM-B6 꺼진 센서 역급전 | **fail** | 센서 핀 전류 0.12 µA ≤ 1 µA (ok — O-33 본질) · **SDA 0.42 V · CAM_1V8 0.42 V > 0.3 V** · MCLK 0 (ok) |
-| SIM-B7 I2C2 상승 | **pass** | Cb 최악 65.5 pF, tr 274 ns ≤ 300 (Fm 400 kHz, 여유 9 %), Sm ok, Rp ok |
-| SIM-B8 리셋 RC | **pass** | 해제는 전원 90 % 뒤 1.34 ms, 하강 11.4 µs, 전원보다 0.15 ms 먼저 |
+| SIM-L1 AL8860 한 스트링 | **pass** | LED 평균 0.985 A(최소 모서리) ~ 1.086 A(최대 모서리), 피크 1.305 A, 인덕터 피크 1.305 A < 1.6, f ≤ 214 kHz, tON ≥ 2.33 µs, D 0.50~0.64, 리플 0.40 |
+| SIM-L2 A+B 동시 — 12V_IR 입력 | **fail** | 평균 1.425 A ≤ 1.49 (ok) · **20 µs 이동 평균 최댓값 1.585 A > 1.49** · 대표 평균 1.187 A ≤ 1.30 (ok) |
+| SIM-L3 PWM 25 % (400 Hz) | **fail** | 실효 켬 비율 0.230 ≤ 0.255 (ok, O-31 지킴) · **끔 구간 \|I\| 6.08 mA > 1 mA** · **켬 순간 20 µs 이동 평균 최댓값 1.585 A > 1.49** · IR_CTRL 끔 0.16 mV (ok) |
+| SIM-L4 DRV8837 ICR | **pass** | 코일 0.213~0.287 A, 펄스 0.200 s, 밤 +4.68 V / 낮 −4.68 V(계약 극성과 같음), 코스트 0, IN2 여유 0.28 V |
+| SIM-L5 CAM_1V8 Q6/Q7 | **fail** | 켜짐 1.8 µs (ok) · **돌입 5.11 A > 0.3 A** · 꺼짐 14.6 µs (ok) |
+| SIM-L6 꺼진 센서 역급전 | **fail** | 센서 핀 전류 0.12 µA ≤ 1 µA (ok — O-33 본질) · **SDA 0.42 V · CAM_1V8 0.42 V > 0.3 V** · MCLK 0 (ok) |
+| SIM-L7 I2C2 상승 | **pass** | Cb 최악 65.5 pF, tr 274 ns ≤ 300 (Fm 400 kHz, 여유 9 %), Sm ok, Rp ok |
+| SIM-L8 리셋 RC | **pass** | 해제는 전원 90 % 뒤 1.34 ms, 하강 11.4 µs, 전원보다 0.15 ms 먼저 |
 
 ## 결과를 본 뒤 고친 것 (기준 변경 아님 — 모두 run.py 주석과 JSON notes에 남김)
 

@@ -1,5 +1,5 @@
 {
-  "id": "SIM-B2",
+  "id": "SIM-L2",
   "title": "스트링 A+B 동시 — 12V_IR eFuse 입력 전류 합",
   "owner": "firmware",
   "circuit": {
@@ -56,9 +56,9 @@
   ],
   "verdict": "pass",
   "waveforms": [
-    "hardware/sim/png/SIM-B2-ab-input.png"
+    "hardware/sim/png/SIM-L2-ab-input.png"
   ],
-  "netlist": "hardware/sim/SIM-B2.cir",
+  "netlist": "hardware/sim/SIM-L2.cir",
   "tool": {
     "name": "ngspice",
     "version": "47",

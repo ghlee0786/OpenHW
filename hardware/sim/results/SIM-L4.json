@@ -1,5 +1,5 @@
 {
-  "id": "SIM-B4",
+  "id": "SIM-L4",
   "title": "DRV8837 ICR 펄스 — 코일 전류·시간·극성",
   "owner": "firmware",
   "circuit": {
@@ -90,9 +90,9 @@
   ],
   "verdict": "pass",
   "waveforms": [
-    "hardware/sim/png/SIM-B4-drv8837.png"
+    "hardware/sim/png/SIM-L4-drv8837.png"
   ],
-  "netlist": "hardware/sim/SIM-B4.cir",
+  "netlist": "hardware/sim/SIM-L4.cir",
   "tool": {
     "name": "ngspice",
     "version": "47",

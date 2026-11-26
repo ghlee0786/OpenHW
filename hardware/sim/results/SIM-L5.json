@@ -1,5 +1,5 @@
 {
-  "id": "SIM-B5",
+  "id": "SIM-L5",
   "title": "CAM_1V8 스위치 Q6/Q7 켜짐·꺼짐·돌입",
   "owner": "firmware",
   "circuit": {
@@ -56,9 +56,9 @@
   ],
   "verdict": "fail",
   "waveforms": [
-    "hardware/sim/png/SIM-B5-cam1v8.png"
+    "hardware/sim/png/SIM-L5-cam1v8.png"
   ],
-  "netlist": "hardware/sim/SIM-B5.cir",
+  "netlist": "hardware/sim/SIM-L5.cir",
   "tool": {
     "name": "ngspice",
     "version": "47",
