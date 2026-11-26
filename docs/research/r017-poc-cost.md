@@ -51,6 +51,26 @@
 | 차선 (합계 제외) | ① 국내 하니스 업체 소량 제작: 외부 연락이 필요해 사용자 지시 사항이다. ② 자가 압착 Alpha Wire 3릴 197.28 + 압착기(범용 PA-09 51.95 ~ JST WC-GH2630 1,564.89). ③ 제3자 완성 케이블(Adafruit 5754, 약 100mm, $0.95): AWG·핀 순서·정격 근거가 없어 쓰지 않음 | R-017 첫 판, Adafruit |
 | 후속 | `bom-full.csv`의 CBL1 3행(하우징 LCSC·단자·전선)은 아직 자가 압착 기준이다. 기성 리드로 바꾸려면 R-008 레인 갱신을 따로 배정해야 한다(이 배정 범위 밖) | — |
 
+### 1.2 R-017c: 28AWG 리드 정격 원문 확인 (O-77) — **원문으로는 확인되지 않음**
+
+| 원문 | 받은 파일 | 해당 부분 (쪽·줄 인용) | 28AWG ≥0.61A 근거? |
+|---|---|---|---|
+| JST eGH 카탈로그 `https://www.jst-mfg.com/product/pdf/eng/eGH.pdf` (6쪽, InDesign 생성 2026-04-10, sha256 b1dcb317…b722) | 열람함 | **1쪽 ■Specifications**: 「Current rating: 1.0 A AC/DC（AWG #26）」 · 「Voltage rating: 50 V AC/DC」 · 「Temperature range: -40 ℃ to +105 ℃ (including temperature rise in applying electrical current)」 · 「Applicable wire range: Conductor size/ AWG #30 to AWG #26 · Insulation O.D./ φ0.76 mm to φ1.0 mm」.<br>**2쪽 Contact 표**: SSHL-002T-P0.2 「#30 to #26（0.05 to 0.13）」 0.76 to 1.0 | **아니오.** 1.0A는 AWG #26 조건으로만 적혀 있다. 28AWG 값이나 극수별(6극 동시 통전) 감액 표는 카탈로그에 없다 |
+| JST AGHGH28K51 도면 `https://www.farnell.com/datasheets/4803928.pdf` (2쪽, sha256 b9ed2372…) | 열람함 | 1쪽: 「Terminal: SSHL-002T-P0.2」 · 「Cable Type: UL1571」 · 「Cable Size: 28AWG」 · 「Cable length (inside dimension) – 51mm」, 도면 치수 「51mm ± 3mm」 · 적용 하우징 GHR-02V-S~GHR-15V-S. 2쪽: 품번 체계 A/GH/GH/28/K/51 | **아니오.** 전류 정격 항목이 없다 |
+| JST 28AWG GH 리드 도면 GAM-322(AGHGH28K102, 4") `https://www.mouser.com/datasheet/2/564/GAM_322-3477604.pdf` | **못 염** (Mouser가 자동 접근에 HTML 13,897B 차단 페이지를 돌려줌, WebFetch 60s 시간 초과, 지역 미러 3곳도 같음) | 검색 요약에만 「1.0A AC/DC」 | 원문 미확인 |
+| datasheets.com AGHGH28K51 | 못 염 (403) | 검색 요약에만 「1.0A, 50V, 28AWG」 | 원문 미확인 |
+
+- **판정:** 「28AWG 기성 리드에서 ≥0.61A」는 **원문으로 확인되지 않았다.**
+  - JST가 직접 낸 카탈로그의 정격 1.0A는 AWG #26 조건이다.
+  - 28AWG 값이 있다는 도면(GAM-322)은 열지 못했다.
+  - 6극 동시 통전 감액 조건은 어느 원문에도 없다.
+- **조치 (O-77 지시대로):** `bom-full.csv` CBL1 3행은 **바꾸지 않았다.**
+  - 차선은 **26AWG 자가 압착**(R-012: Alpha Wire 422607 + SSHL-002T-P0.2 + GHR-06V-S + 압착기)이다. 이 경우 카탈로그 1.0A(AWG #26)가 그대로 근거가 된다.
+  - 비용표는 R-017b의 lead 기본값(기성 리드)을 그대로 두었다. 차선으로 가면 하니스 기준 19.50 → 249.23(공구 PA-09 포함)이고, 정품 압착기를 쓰면 최대 +1,513이다.
+- **사람이 확인하면 풀리는 것:**
+  - GAM-322 PDF를 브라우저로 열어 정격 항목을 확인한다(자동 접근만 막혔다).
+  - 또는 JST에 28AWG 정격과 6극 감액을 문의한다(외부 연락이라 사용자 지시가 필요).
+
 ## 2. 전장 세부 (조건)
 
 | 항목 | 조건 | 최소 / 기준 / 최대 | 근거 |
