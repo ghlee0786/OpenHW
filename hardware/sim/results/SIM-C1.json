@@ -9,7 +9,7 @@
    "C1",
    "C2"
   ],
-  "schematic_commit": "7760f38"
+  "schematic_commit": "a2d878c"
  },
  "model": {
   "source": "데이터시트 동작 모델 (LDO 정확도 + 드롭아웃 등가 저항)",

@@ -11,8 +11,12 @@ C18p c18 0 8.5u
 Ven en 0 PULSE(0 1 1m 1u 1u 1 2)
 R4 c33 pg 100k
 Sq3 pg 0 en 0 SQ
-R5 pg pgav 10k
-Rf20 pg pgio 1k
+* C-020 S6: Q1 게이트 R20 100k ∥ (R21 1k + D4 BAT54, 애노드 pgiod → 캐소드 pg), Q2 게이트 R5 100k ∥ D5 BAT54 (애노드 pg → 캐소드 pgav)
+R5 pg pgav 100k
+Df5 pg pgav DBAT
+Rf20 pg pgio 100k
+Rf21 pgio pgiod 1k
+Df4 pgiod pg DBAT
 Cf20 pgio iov 4.7n
 Mq1 iov pgio c33 c33 PAO
 Cg1 pgio c33 645p
@@ -45,6 +49,8 @@ Csd sdv 0 11.1u
 Rsd sdv 0 16.5
 R23 sdv 0 100k
 .model SQ SW(Ron=1 Roff=1e9 Vt=0.5)
+* BAT54WS: VF 0.32 V @ 10 mA (최대값에 맞춘 근사 — Diodes BAT54WS 데이터시트), CJ 10 pF
+.model DBAT D(IS=4e-8 N=1 RS=2 CJO=10p BV=30)
 .options method=gear
 .control
 set wr_singlescale

@@ -11,7 +11,7 @@
    "U1(carrier)",
    "U1(front)"
   ],
-  "schematic_commit": "7760f38"
+  "schematic_commit": "a2d878c"
  },
  "model": {
   "source": "데이터시트 동작 모델 조합 (어댑터·TPS26600·TPS54302·RT9013) + 코어 레일 가정 모델",

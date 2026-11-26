@@ -16,7 +16,7 @@
    "R22",
    "C21"
   ],
-  "schematic_commit": "7760f38"
+  "schematic_commit": "a2d878c"
  },
  "model": {
   "source": "레벨 1 MOSFET(전형) + 코어 레일 등가(가정)",
@@ -32,8 +32,8 @@
    "op": "<=",
    "limit": 0.166,
    "unit": "V",
-   "value": 0.046189,
-   "corner": "C-019: Q1 게이트 R20 1k + C20 4.7 nF, Q2 R5 10k + C21 4.7 nF (밀러)",
+   "value": 0.041308,
+   "corner": "C-020 S6: Q1 R20 100k ∥ (R21 1k + D4), Q2 R5 100k ∥ D5, C20·C21 4.7 nF (밀러)",
    "pass": true
   },
   {
@@ -41,7 +41,7 @@
    "op": "<=",
    "limit": 0.09,
    "unit": "V",
-   "value": 0.017634,
+   "value": 0.017635,
    "corner": "",
    "pass": true
   },
