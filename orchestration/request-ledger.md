@@ -107,6 +107,7 @@
 | SIM-001f | orch (O-99) | firmware t18w | C-021 613cf14로 SIM-L 전체 정식 재실행(schematic_commit 613cf14) | hardware/sim (새 레인) | 종료 0, 커밋 | completed — 레인 t-20261127-063202-6080(start --from 2cf0) e4e1a87: SIM-L1~L10 전부 pass, L3 끔 1.44µA, SIM_IR_BLEEDER 변수 제거. orch 전체 저장소 사본 재실행 종료 0 → VD-001 7) 회로 시뮬 불합격 0(SIM-001a 15/15 + SIM-L 10/10) |
 | M-009 | orch | mechanical t18x | pcb 전면 DRC 기구 판단: J2 납땜 패드 courtyard↔H1, MH1 courtyard↔뒷면 BTB 고정 핀 NPTH(핀 돌출 vs 스페이서 틈) | mechanical/** (새 레인) | 좌표/외형 표, 커밋 | completed — 레인 t-20261127-080335-344a f7fd41e: ① J2 헤더 몸체 없는 2패드 풋프린트(H1 여유 0.337) ② 홀더가 BTB 고정 핀 위에 앉아도 됨(HCTL 보스 돌출 ≤0.80 < 판 1.6) → MH1 courtyard 노치 16점. orch 사본 재실행 f5f6_drc.py 종료 0(pcb 작업 사본 보드 기준 — 커밋된 4aedc71 보드는 옛 J2라 KeyError) |
 | C-022 | orch (O-101) | schematic t18z | openhw 라이브러리: J2 2패드 풋프린트 추가·변경, MH1 courtyard 노치 | hardware/libraries/openhw.pretty, boards.py (새 레인) | ERC 0·contract_check 0, 커밋 | completed — 레인 t-20261127-081137-acef f92c07d(+8a5ae9a): openhw J2 2패드 풋프린트 추가·boards.py 변경, MH1 courtyard 16점(노치). ERC 0, netcompare J2 풋프린트 이름만, orch 재실행 contract_check 0(레인 안, 변경 0 — 사본에선 KiCad 라이브러리 표 경로 때문에 회로도 로드 실패) |
+| M-010 | 사용자 지시 → lead → orch (O-102) | mechanical t18x | 최종 케이스 경로 고정: KiCad STEP(모델 포함) → Fusion M003 문서 가져오기 → 재판정 → 필요 시 수정 → Fusion STEP/STL/f3d → Blender. LANE 경로 수정, 중간 커밋 보드로 사전 1회 | mechanical/** (새 레인), validation/runtime/vd001/boards | 경로 종료 코드·판정, 커밋 | running |
 
 ## 운영 변경 (2026-11-26, 사용자 지시 · lead 전달)
 - 의견 묻지 않고 진행: 사람 쪽 미정값은 D-003(lead 레인 t-20261126-144135-5470 docs/decisions/D-003-working-defaults.md, 커밋 8ac5ce5) 값으로 확정 취급. 새 갈림길은 기본값 선택 → 아래 「분기 기록」에 분기점·선택·이유·차선책 → lead 요약 보고. 문제 시 해당 행으로 돌아가 차선책.
@@ -225,6 +226,7 @@
 | O-99 | SIM-001e: IR 끔 구간 링잉은 순방향 꼬리(발광 가능) — 001b의 '발광 아님' 판단 틀림 | c1 LED 양단 10k 블리더 채택(같은 모델로 기존 항목 악화 0), C-021 → 재시뮬 L 전체 | 유일하게 악화 없이 해결 | 불합격 기록 유지 |
 | O-100 | lead: validation/runtime은 gitignore라 레인 worktree 안 렌더가 accept 때 지워짐(main에 vd001 없음) | 최종 렌더·manifest·VD-001 HTML은 main 체크아웃 C:/workspace_python/OpenHW/validation/runtime/vd001/에 두고, 대표 PNG(제품 10·PCB 앞뒤 4)·MP4는 docs/renders/에 커밋(개당 <20MB) — mechanical·review에 전달 | 최종 결과물 보존 | — |
 | O-101 | M-009 결과의 두 수정은 풋프린트 원본(courtyard·풋프린트 이름) 변경 — O-74b 사본은 실크만 달라야 함(E4) | openhw 원본 라이브러리 소유자 schematic이 C-022로 반영, pcb는 그 라이브러리·회로도를 가져와 parity 0 | 사본 규칙 위반 방지 | pcb가 사본에서 courtyard 수정(E4 불합격 — 불채택) |
+| O-102 | 사용자: KiCad 3D → 내보내기 → Fusion360에서 케이스 — 최종 케이스 경로 고정 | M-010로 경로 고정·스크립트 LANE 경로 수정·pcb 중간 커밋으로 사전 실행 | 사용자 지시 | — |
 
 ## 발주 패키지 직전 정리 목록
 - [ ] 회로도 표시 겹침: 캐리어 J2 옆 12V_IN_RAW 라벨, D3 PWR_LED 라벨, J1 품번 문자 (O-32)
