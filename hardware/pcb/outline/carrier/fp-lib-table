@@ -1,0 +1,4 @@
+(fp_lib_table
+	(version 7)
+	(lib (name "OpenHW_Mech") (type "KiCad") (uri "${KIPRJMOD}/../OpenHW_Mech.pretty") (options "") (descr "OpenHW mechanical (P-002)"))
+)
