@@ -10,7 +10,7 @@ Item #,*Designator,*Qty,Manufacturer,*Mfg Part #,Description / Value,*Package/Fo
 9,C13,1,Samsung,CL10A105KB8NNNC,1uF,C_0603_1608Metric,SMD,Turnkey; Source: C15849
 10,"C15,C16",2,Samsung,CL05B104KO5NNNC,100nF,C_0402_1005Metric,DNS,DNS - do not purchase/place; Turnkey; Source: C1525
 11,C17,1,FH,1206B102K202NT,1nF/2kV,C_1206_3216Metric,SMD,Turnkey; Source: C9196
-12,"C18,C22",2,Samsung,CL05B103KB5NNNC,10nF,C_0402_1005Metric,SMD,Turnkey; Source: C15195
+12,"C18,C22",2,FH,0402B103K500NT,10nF,C_0402_1005Metric,SMD,Turnkey; Source: C1524
 13,C19,1,YAGEO,CC0402JRNPO9BN750,75pF C0G 50V,C_0402_1005Metric,SMD,Turnkey; Source: C107010
 14,D1,1,MDD,BZT52C12,BZT52C12,D_SOD-123,SMD,Turnkey; Source: C173429
 15,D2,1,Littelfuse,SMBJ15A,SMBJ15A,D_SMB,SMD,Turnkey; Source: C83846
