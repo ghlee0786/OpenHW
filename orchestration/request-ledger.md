@@ -30,12 +30,14 @@
 | M-001d | orch | mechanical t18x | R-007 수치 반영, 받침+블록 2.03 > CLA216 공동 약 1.2 간섭 해소(스페이서/컷아웃/재배치 비교), 초점 BFL 재계산 | mechanical/** (M-001 레인) | z표·충돌 0 목표·선택 근거, 커밋 | completed — 커밋 c05bb28. K15 받침 0.75+스페이서 1.5, 실제 충돌 0, 전체 53.3mm, 칼라 광차단, PCB 허용 높이표 §3.6 |
 | P-003 | orch (단계 5) | pcb t190 | 캐리어·전면 보드 배치·배선·DRC·STEP (GUI 소유권 schematic→pcb, 창 닫힘 확인 후) | hardware/schematic/<보드>/*.kicad_pcb, hardware/pcb/** | DRC 종료 코드·미연결, 차동 길이표, STEP sha256, 스크린샷, 레인·커밋 | running — 레인 t-20261126-171922-251f 계획 단계 99790d9: BTB 면 판정 60/60(캐리어 -A F.Cu −90°, 전면 -B B.Cu 180°), 캐리어 40×40 뒷면 커넥터 불가 → 외형 M-002 대기, 회로도 가져오기 C-003/C-002b 대기 |
 | R-008 | orch | research t18s | 회로도 BOM 내보내기 → 견적용 전체 BOM + R-004와 차이표 | docs/research/bom-full.csv, r008-bom-diff.md | 21열·행 수, 차이표, 미확정 MPN, 레인·커밋 | completed — 레인 t-20261126-171912-e7d2 커밋 dbafdc8, 92행·21열(orch 확인), kicad-cli bom 0/0, 미확정 10건 |
-| V-004 | orch (단계 4 독립 검토) | review t191 | C-002 회로 독립 검토(전원·보호·구동·I2C·PHY·USB·BTB·FPC) | validation/review-V004-C002.md | 판정표·수정안, ERC 재실행, 레인·커밋 | running (기준 276fc89, C-003 변경분은 나중에 추가 절) |
+| V-004 | orch (단계 4 독립 검토) | review t191 | C-002 회로 독립 검토(전원·보호·구동·I2C·PHY·USB·BTB·FPC) | validation/review-V004-C002.md | 판정표·수정안, ERC 재실행, 레인·커밋 | completed — 레인 t-20261126-172041-ddef 커밋 26b46b3. ERC 4회 0, 부적합 R1~R8·조건부 R9~R13·계약 K1~K4, C-003 변경 적합 |
 | V-003 결과 | — | review t191 | (완료) L-001 독립 대조 | validation/review-V003-L001.md | — | completed — 레인 t-20261126-165808-da7a 커밋 e0cbdea. 전면 -B는 B.Cu 뒤집기+180°만 맞음, AL8860 EP 랜드·BTB courtyard·M12 홀더 속성/구멍·DRV8837 3D·FFC 1A 신호 전용 지적 |
 | C-003 | orch (V-003 반영) | schematic t18z | 라이브러리 수정(BTB courtyard·실크, AL8860 파생 랜드, M12 홀더 Ø1.7·속성, DRV8837 3D) + 12V_IR 커넥터 정격 재검토 | hardware/libraries/**, hardware/schematic/** (C-002 레인) | ERC 0 유지, 의도 변경만 차이, 커밋 | completed — 08d0a3e·7f69f63(최종). 보드 간 FFC→JST GH 6P(C3-1), AL8860·DRV8837 파생, M12 Ø1.8, orch ERC 재실행 0/0 |
 | C-002b | lead O-28 | schematic t18z | 회로도 가독성 정리(기능 블록 계층 시트·주석), 참조 지정자 불변 | hardware/schematic/** (C-002 레인) | 넷리스트 동일 증명, ERC 0, SVG 경로, 커밋 | completed — 4dc59dc, orch netcompare 재실행 차이 0(91/93·78/64). SVG는 C-003 기준 재출력 요청 |
 | R-009 | orch | research t18s | BOM 미확정·재고 위험 해소(AC 코드·CLA216 짝 커넥터·SRN6045·C15849·VSMA 재고·풋프린트 치수 대조) | docs/research/r009-bom-risks.md (+bom-full.csv 비고) | 6항목 결론, 21열 유지, 커밋 | running (C-003/C-002b 뒤 R-008b BOM 재내보내기 예정) |
 | M-002 | orch (P-003 Q3·Q4·Q5) | mechanical t18x | 캐리어 외형(40×54 vs 45×45)·FFC −X 경로·IR LED 열 접촉 자리 | mechanical/** (M-001 레인) | 외형·좌표·FFC 길이·열 자리, 커밋 | completed — 커밋 3f7ceee. 캐리어 40×54·전면 40×40, (+17,−17) 구멍 삭제, GH 6P 하니스 35mm, LED 열 경로 패드→Al 기둥→방열판→외함 (실측 판정) |
+| C-004 | orch (V-004 반영) | schematic t18z | R1~R13·K1~K4 수정: I2C2 풀업·X1 → CAM_1V8 스위칭(O-33), RESET 보호, TPS54302 Cff·출력 C, 5V_SYS TVS, DC 잭 풋프린트, microSD 소프트스타트, AL8860 L·D·C, USB_DET, DRV8837 IN 레벨, 계약 v1.4 | hardware/schematic/**, hardware/libraries/** (C-002 레인), 계약(C-001 레인) | 최종 커밋, 의도 차이 목록, ERC 0, pcb용 변경 부품표 | running |
+| V-004b | orch | review t191 | C-004 수정분 재검토 | validation/review-V004b-C004.md | 판정표, 레인·커밋 | queued (C-004 뒤) |
 
 ## 운영 변경 (2026-11-26, 사용자 지시 · lead 전달)
 - 의견 묻지 않고 진행: 사람 쪽 미정값은 D-003(lead 레인 t-20261126-144135-5470 docs/decisions/D-003-working-defaults.md, 커밋 8ac5ce5) 값으로 확정 취급. 새 갈림길은 기본값 선택 → 아래 「분기 기록」에 분기점·선택·이유·차선책 → lead 요약 보고. 문제 시 해당 행으로 돌아가 차선책.
@@ -80,6 +82,7 @@
 | O-30 | KiCad 프로젝트 공용 파일(.kicad_pro·fp-lib-table) 작성자 | schematic이 C-003/C-002b 마지막 커밋에 넷클래스·OpenHW_Mech 줄을 넣고, 그 뒤 소유를 pcb로 이전 | 같은 파일 동시 편집 방지, 회로도 단계 끝에서 한 번 넘김 | pcb가 가져온 뒤 직접 편집 |
 | O-31 | IR LED 열 (1A 연속 6.2W → ΔT≈130K 불가) | 스트링당 평균 ≤1.6W: 1.0A 피크·듀티 ≤25%(FW 강제), PCB 열 비아·구리 확산, 외함 열 접촉 자리 | 10m 조사 위해 피크 전류 유지, 평균 열은 듀티로 제한 | 정전류 0.3A 연속 / MCPCB LED 서브보드 |
 | O-32 | 회로도 가독성 추가 작업 (lead 분기) | 추가 작업 없이 진행(넷 동일·ERC 0). 표시 겹침(캐리어 J2 옆 12V_IN_RAW 라벨, D3 PWR_LED 라벨, J1 품번 문자)은 「발주 패키지 직전 정리」 항목 | 기능 무관 | bring-up 전 전체 정리 |
+| O-33 | I2C2 풀업 전원 (V-004 R1: 상시 CORE_1V8 → 꺼진 센서로 역급전·버스 클램프, O-8 복귀) | O-22 차선 채택: 풀업·X1 VDD를 스위칭 CAM_1V8로(VGS −1.8V 규정 P-FET), LTR-329는 CAM_EN=1일 때만 폴링(FW 규칙) | GC2053 역급전 허용 근거 없음 | LIGHT_SENSE ADC 차선(D-003 #7 차선 경로) |
 
 ## 발주 패키지 직전 정리 목록
 - [ ] 회로도 표시 겹침: 캐리어 J2 옆 12V_IN_RAW 라벨, D3 PWR_LED 라벨, J1 품번 문자 (O-32)
