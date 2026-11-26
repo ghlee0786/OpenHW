@@ -91,7 +91,7 @@
 | M-008 | orch (O-85) | mechanical t18x | G2 수정값: CLA216 방향 정정 후 전면 부품 간섭·리드 경로, DF30 11.55 반영 J3 새 좌표 — PCB용 좌표 표 | mechanical/m008 (M-006 레인) | 좌표 표·간섭 결과, 커밋 | completed — 969d169: CLA216 코일 +Y·리드 +X, DF30 (0,−11.55) KiCad (100,111.55), 전면 F1–F6·금지 영역 표, 재검사 남은 겹침 3(R9–R11, F1–F3로 해소) |
 | P-004c | orch (O-86) | pcb t190 | C-016 반영·M-008 배치(F1–F6·금지 영역)·O-61·3D 모델 연결·규칙 완화 정리(ignore 4 해제·0.14→0.15·u2 0.20→0.30·DP_BRK/TUNE 기록)·CPL 원점/회전 | hardware/pcb/** (P-003 레인) | DRC 0·parity 0·V-006 relax 0, 커밋 | running |
 | C-017 | orch (O-87) | schematic t18z | SIM-001b 수정: CAM_1V8 돌입(1k+10nF)·ILIM R6 6.98k·CAM_1V8 블리더 10k, 계약 v1.13(IIC2 내부 풀업 금지) | hardware/schematic/** (b9cd) | ERC 0·contract_check 0, 커밋 | completed — b9cd f0745ed(+5cbd1f3): 전면 R18 1k·C19 10nF(CAM_1V8 밀러 소프트스타트)·R19 10k 블리더, 캐리어 R6 6.98k, 계약 v1.13(IIC2 내부 풀업 금지). orch 재실행 contract_check 0·selftest 0(20). 충돌 발견: 과부하 중 12V 합계 ≈2.44A > 어댑터 2.08A(8.06k로도 2.20A) → O-88 |
-| R-021 | orch | research t18s | bom-full·PCBWay BOM 갱신: C-016(J2 제외·R15 삭제·TP24) + C-017(R6 6.98k·R18·R19·C19) + O-88 12V 3A 어댑터 선정 | docs/research/bom-full.csv, manufacturing/bom (새 레인) | make_pcbway_bom 종료 0, 커밋 | queued(C-017 뒤) |
+| R-021 | orch | research t18s | bom-full·PCBWay BOM 갱신: C-016(J2 제외·R15 삭제·TP24) + C-017(R6 6.98k·R18·R19·C19) + O-88 12V 3A 어댑터 선정 | docs/research/bom-full.csv, manufacturing/bom (새 레인) | make_pcbway_bom 종료 0, 커밋 | completed — 레인 t-20261127-051043-fac0 19a69d0: bom-full 100행(R6 6.98k C47500, J2·R15 삭제, R18·R19·C19 추가, TP24), make_pcbway_bom 종료 0(orch 재실행, 출력 변화 없음). 어댑터 GST40A12-P1J(3.34A, hiccup OLP 3.51~5.01A, 같은 플러그), 차선 GST60A12. 발견 C18·C22 재고 0 → O-90 |
 | F-010 | orch (O-89) | firmware t18w | 패치 0001에서 dtb vo 노드 reset-gpio·pwm-gpio·power-ct-gpio 삭제, 이미지 빌드(slot, --memory 상한)·해시, 호스트 시험 | firmware/** (새 레인) | 빌드 종료 0, dtb에 속성 0, 시험 0, 커밋 | queued(SIM-001b′ 뒤) |
 
 ## 운영 변경 (2026-11-26, 사용자 지시 · lead 전달)
@@ -200,6 +200,7 @@
 | O-87 | SIM-001b fail 4 | S1 CAM_1V8 1k+10nF, S2 ILIM R6 6.98k(≈1.72A), S4 CAM_1V8 10k 블리더 → C-017 후 firmware 재시뮬. S3 끔 구간 링잉은 기준을 바꾸지 않고 '불합격·발광 아님 근거'로 남김 → bring-up 확인 | 결과 본 뒤 기준 변경 금지, 같은 모델로 검증된 수정 채택 | S2 차선: 12V_IR +22µF / 그대로 실측 |
 | O-88 | C-017/SIM-001a: 12V_IR 과부하(eFuse 제한) + 벅 입력이면 12V 합계 ≈2.44A(R6 8.06k여도 2.20A) > 어댑터 GST25A12 2.08A — 계약 12절 '과부하 때 합계 ≤ 어댑터 정격'과 충돌, 정상 최악도 여유 12%뿐(#10) | 가상 설계 기본값을 12V 3A급 어댑터로(같은 DC 잭 규격, 공개 데이터시트 있는 무료 확인 가능 품번 — research가 고름), 계약·BOM 갱신, SIM-001a는 3A 어댑터 기준 판정 + 2.08A 결과도 기록. ILIM은 6.98k 유지 | ILIM을 낮추면 정상 동작(맥놀이 평균 96%)이 끊김, 어댑터 교체는 보드 변경 없음 | 2.08A 유지 + 펌웨어로 두 스트링 위상 엇갈림(피크 감소) |
 | O-89 | F-009: 이미지 dtb vo 노드에 원본 reset/pwm/power-ct gpio 속성 잔존 — 우리 ICR IN2·IIC2 패드와 겹침(지금은 읽는 모듈이 안 붙어 무해) | 패치 0001에서 세 속성 삭제(FW만), 재빌드 | 나중에 mipi_tx 모듈이 로드되면 ICR·I2C 핀을 건드릴 위험 제거, 되돌리기 쉬움 | 그대로 두고 loadsystemko 주석 유지 확인만 |
+| O-90 | R-021: 캐리어 C18·C22 CL05B103KB5NNNC LCSC 재고 0 | 같은 값·패키지 FH 0402B103K500NT(C1524, 재고 290만)로 BOM만 교체 | 회로·풋프린트 변화 없음 | YAGEO 등 다른 동등품 |
 
 ## 발주 패키지 직전 정리 목록
 - [ ] 회로도 표시 겹침: 캐리어 J2 옆 12V_IN_RAW 라벨, D3 PWR_LED 라벨, J1 품번 문자 (O-32)
