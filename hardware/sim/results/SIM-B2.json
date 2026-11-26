@@ -13,36 +13,36 @@
       "L2",
       "C14",
       "C16",
-      "U2(carrier TPS26600)"
+      "U2·R6 6.98k(carrier TPS26600)"
     ],
-    "schematic_commit": "656b50a"
+    "schematic_commit": "f0745ed"
   },
   "model": {
     "source": "데이터시트 동작 모델 (AL8860 히스테리시스·소프트스타트·CTRL)",
     "url": "https://www.diodes.com/assets/Datasheets/AL8860.pdf",
     "license": "—",
     "behavioral": true,
-    "basis": "AL8860 DS39014 Rev.8-2 p.2·4·11–13; VSMA1085400 80294 p.3; SS24S 89008 p.2; TPS26600 ILIM 8.06k ≈ 1.49A (계약 3.1절)"
+    "basis": "AL8860 DS39014 Rev.8-2 p.2·4·11–13; VSMA1085400 80294 p.3; SS24S 89008 p.2; TPS26600 ILIM R6 6.98k ≈ 1.72A (계약 v1.13 3.1절, C-017)"
   },
   "criteria_commit": "7cab389",
   "checks": [
     {
-      "name": "12V_IR 입력 평균 전류 (최대 모서리)",
+      "name": "12V_IR 입력 평균 전류 (최대 모서리) ≤ ILIM",
       "op": "<=",
-      "limit": 1.49,
+      "limit": 1.72,
       "unit": "A",
       "value": 1.425,
-      "corner": "104mV, Rs 0.099, VF 최대, 11.4V",
+      "corner": "104mV, Rs 0.099, VF 최대, 11.4V · 옛 1.49A 대비 ok",
       "pass": true
     },
     {
-      "name": "12V_IR 입력 20µs 이동 평균 최댓값",
+      "name": "12V_IR 입력 20µs 이동 평균 최댓값 ≤ ILIM",
       "op": "<=",
-      "limit": 1.49,
+      "limit": 1.72,
       "unit": "A",
       "value": 1.58487,
-      "corner": "같은 모서리 (소프트스타트 뒤 0.3 ms~)",
-      "pass": false
+      "corner": "같은 모서리 (소프트스타트 뒤 0.3 ms~) · 옛 1.49A 대비 초과",
+      "pass": true
     },
     {
       "name": "12V_IR 입력 평균 전류 (대표)",
@@ -54,7 +54,7 @@
       "pass": true
     }
   ],
-  "verdict": "fail",
+  "verdict": "pass",
   "waveforms": [
     "hardware/sim/png/SIM-B2-ab-input.png"
   ],

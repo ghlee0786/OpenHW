@@ -18,7 +18,7 @@
       "C8",
       "C9"
     ],
-    "schematic_commit": "656b50a"
+    "schematic_commit": "f0745ed"
   },
   "model": {
     "source": "RC + 레벨 1 MOSFET 근사",

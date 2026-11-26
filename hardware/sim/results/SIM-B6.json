@@ -7,13 +7,14 @@
     "refs": [
       "R9",
       "R10",
+      "R19",
       "Q6",
       "X1",
       "R8",
       "J3(DF30)",
       "U3(LTR-329)"
     ],
-    "schematic_commit": "656b50a"
+    "schematic_commit": "f0745ed"
   },
   "model": {
     "source": "DC 동작점 (저항·다이오드·전류원)",
@@ -29,7 +30,7 @@
       "op": "<=",
       "limit": 1e-06,
       "unit": "A",
-      "value": 1.17546e-07,
+      "value": 5.87566e-12,
       "corner": "PD 51k, 누설 +10µA, VCORE 1.89",
       "pass": true
     },
@@ -38,7 +39,7 @@
       "op": "<=",
       "limit": 1e-06,
       "unit": "A",
-      "value": 1.17546e-07,
+      "value": 5.87566e-12,
       "corner": "같음",
       "pass": true
     },
@@ -47,30 +48,30 @@
       "op": "<=",
       "limit": 0.3,
       "unit": "V",
-      "value": 0.423425,
+      "value": 0.164227,
       "corner": "같음",
-      "pass": false
+      "pass": true
     },
     {
       "name": "CAM_1V8 넷 전압 (꺼짐)",
       "op": "<=",
       "limit": 0.3,
       "unit": "V",
-      "value": 0.415999,
+      "value": 0.132361,
       "corner": "Q6 IDSS 1µA, X1 꺼짐 100k(가정)",
-      "pass": false
+      "pass": true
     },
     {
       "name": "CAM_MCLK 전압 (X1 꺼짐)",
       "op": "<=",
       "limit": 0.3,
       "unit": "V",
-      "value": 3.21983e-09,
+      "value": 1.6295e-13,
       "corner": "X1 출력 1M(가정)",
       "pass": true
     }
   ],
-  "verdict": "fail",
+  "verdict": "pass",
   "waveforms": [],
   "netlist": "hardware/sim/SIM-B6.cir",
   "tool": {
@@ -78,5 +79,5 @@
     "version": "47",
     "sha256": "22d5cae2bd32b2e39157a8d27bf457122f68285b72a9ebefdf41551b628233ab"
   },
-  "notes": "기록만(민감도 — SW가 IIC2 내부 풀업 55k 를 켠 경우): SDA 0.775 V, 센서로 11.76 µA, CAM_1V8 0.760 V | 가정: 센서 핀 ESD 다이오드 IS 1e-14, 꺼진 센서 레일 부하 10k, LTR-329 핀 누설 0(데이터시트 미확인) | 수정 제안 검증(판정 밖): CAM_1V8–GND 블리더 10 kΩ → SDA 0.164 V, CAM_1V8 0.132 V, 센서로 0.006 nA (켜졌을 때 180 µA 소모)"
+  "notes": "기록만(민감도 — SW가 IIC2 내부 풀업 55k 를 켠 경우): SDA 0.527 V, 센서로 1.79 µA, CAM_1V8 0.421 V | 가정: 센서 핀 ESD 다이오드 IS 1e-14, 꺼진 센서 레일 부하 10k, LTR-329 핀 누설 0(데이터시트 미확인) | C-017 회로(f0745ed): CAM_1V8–GND R19 10 kΩ 블리더 포함. 이전 회로 결과는 a3b988c"
 }

@@ -4,6 +4,7 @@ Vcore core 0 1.89
 Iq6 core cam 1u
 Db6 cam core dsi
 Rx1 cam 0 100k
+R19 cam 0 10k
 R9 cam sda 4.7k
 R10 cam scl 4.7k
 Rpd_d sda 0 51k

@@ -25,7 +25,9 @@ SIM = os.path.dirname(HERE)
 REPO = os.path.dirname(os.path.dirname(SIM))
 NG = os.environ.get("NGSPICE", "C:/Users/gh/tools/ngspice/47/Spice64/bin/ngspice_con.exe")
 CRITERIA_COMMIT = "7cab389"
-SCH_COMMIT = "656b50a"
+SCH_COMMIT = "f0745ed"   # C-017 (계약 v1.13): R6 6.98k, 전면 R18 1k·C19 10nF·R19 10k
+ILIM = 1.72   # TPS26600 ILIM, R6 6.98 kΩ (계약 v1.13 3.1절) — 기준 7cab389 의 "ILIM" 한계 (SIM-001b-criteria-c017.md)
+ILIM_OLD = 1.49   # 7cab389 작성 때 회로(R6 8.06 kΩ)의 숫자 — 비교로만 적는다
 plt.rcParams["font.family"] = ["Malgun Gothic", "DejaVu Sans"]
 plt.rcParams["axes.unicode_minus"] = False
 
@@ -297,8 +299,8 @@ def b2():
         t = d["time"]
         iin = -col(d, h, 1)
         out[c] = dict(t=t, iin=iin, mean=win_mean(t, iin, 0.4e-3, t[-1]), mov=moving_max(t, iin, 20e-6, 0.3e-3))
-    checks.append(check("12V_IR 입력 평균 전류 (최대 모서리)", "<=", 1.49, "A", out["worst_in"]["mean"], "104mV, Rs 0.099, VF 최대, 11.4V"))
-    checks.append(check("12V_IR 입력 20µs 이동 평균 최댓값", "<=", 1.49, "A", out["worst_in"]["mov"], "같은 모서리 (소프트스타트 뒤 0.3 ms~)"))
+    checks.append(check("12V_IR 입력 평균 전류 (최대 모서리) ≤ ILIM", "<=", ILIM, "A", out["worst_in"]["mean"], f"104mV, Rs 0.099, VF 최대, 11.4V · 옛 1.49A 대비 {'ok' if out['worst_in']['mean'] <= ILIM_OLD else '초과'}"))
+    checks.append(check("12V_IR 입력 20µs 이동 평균 최댓값 ≤ ILIM", "<=", ILIM, "A", out["worst_in"]["mov"], f"같은 모서리 (소프트스타트 뒤 0.3 ms~) · 옛 1.49A 대비 {'ok' if out['worst_in']['mov'] <= ILIM_OLD else '초과'}"))
     checks.append(check("12V_IR 입력 평균 전류 (대표)", "<=", 1.30, "A", out["typ"]["mean"], "typ"))
     # 민감도(판정 밖): 전원 임피던스를 10 mΩ → 케이블·eFuse 근사 0.1 Ω + 30 nH 로 바꾸면 리플을 입력 캡이 더 맡는다
     ds, hs = run_tran(ir_body("worst_in", ("A", "B")).replace("Rsrc vs v12 10m", "Rsrc vs vx 0.1\nLsrc vx v12 30n"),
@@ -309,18 +311,18 @@ def b2():
     fig, ax = plt.subplots(figsize=(9, 4))
     for c, r in out.items():
         ax.plot(r["t"] * 1e3, r["iin"], lw=.6, label=f"{c} 평균 {r['mean']:.3f} A")
-    ax.axhline(1.49, color="r", ls="--", label="ILIM 1.49 A")
+    ax.axhline(ILIM, color="r", ls="--", label=f"ILIM {ILIM} A (R6 6.98k)"); ax.axhline(ILIM_OLD, color="gray", ls=":", label="옛 ILIM 1.49 A")
     ax.set_xlabel("시간 [ms]"); ax.set_ylabel("12V_IR 입력 전류 [A]"); ax.legend(); ax.grid(alpha=.3)
     ax.set_title("SIM-B2 스트링 A+B 동시 100 % — 12V_IR 입력 전류 (입력 캡 C14·C16 포함)")
     fig.tight_layout(); fig.savefig(png, dpi=110); plt.close(fig)
-    return dict(id="SIM-B2", title="스트링 A+B 동시 — 12V_IR eFuse 입력 전류 합", refs=["U4", "U5", "R13", "R14", "L1", "L2", "C14", "C16", "U2(carrier TPS26600)"],
+    return dict(id="SIM-B2", title="스트링 A+B 동시 — 12V_IR eFuse 입력 전류 합", refs=["U4", "U5", "R13", "R14", "L1", "L2", "C14", "C16", "U2·R6 6.98k(carrier TPS26600)"],
                 checks=checks, png=[png], net="SIM-B2.cir", notes=notes, out=out,
                 model=b1_model())
 
 
 def b1_model():
     return dict(source="데이터시트 동작 모델 (AL8860 히스테리시스·소프트스타트·CTRL)", url="https://www.diodes.com/assets/Datasheets/AL8860.pdf",
-                license="—", behavioral=True, basis="AL8860 DS39014 Rev.8-2 p.2·4·11–13; VSMA1085400 80294 p.3; SS24S 89008 p.2; TPS26600 ILIM 8.06k ≈ 1.49A (계약 3.1절)")
+                license="—", behavioral=True, basis="AL8860 DS39014 Rev.8-2 p.2·4·11–13; VSMA1085400 80294 p.3; SS24S 89008 p.2; TPS26600 ILIM R6 6.98k ≈ 1.72A (계약 v1.13 3.1절, C-017)")
 
 
 GPIO = "93.75"   # SoC 1.8V IO 출력 저항 ≈ (1.8-1.35)/4.8mA (Table 2-8, DS=00)
@@ -350,7 +352,8 @@ def b3(b2res):
     off = (t > 2.5e-3 + 0.1e-3) & (t < 2.5e-3 + 1.875e-3)
     checks.append(check("A+B LED 평균 ÷ 100 % 평균 (최대 모서리)", "<=", 0.255, "-", ratio, "worst_in, 400Hz, 켬 625µs"))
     checks.append(check("끔 구간 LED 전류 (끌어내림 100µs 뒤)", "<=", 1e-3, "A", float(np.abs(ileds[off]).max()), "worst_in"))
-    checks.append(check("켬 순간 12V_IR 20µs 이동 평균 최댓값", "<=", 1.49, "A", moving_max(t, iin, 20e-6, 1.0e-3), "worst_in, A+B 동시, 1 ms 이후(uic 초기 충전 제외 — 켬 가장자리 1.875·4.375·6.875 ms 포함)"))
+    mv3 = moving_max(t, iin, 20e-6, 1.0e-3)
+    checks.append(check("켬 순간 12V_IR 20µs 이동 평균 최댓값 ≤ ILIM", "<=", ILIM, "A", mv3, f"worst_in, A+B 동시, 1 ms 이후(uic 초기 충전 제외) · 옛 1.49A 대비 {'ok' if mv3 <= ILIM_OLD else '초과'}"))
     checks.append(check("IR_CTRL 끔 레벨", "<=", 0.2, "V", float(vctrl[off].max()), "IR_PWM = 1.71V − 93.75Ω, Q5 vto 1.0V kp 최소"))
     notes.append(f"기록만: 100 % 평균 {cont:.3f} A, PWM 평균 {avg:.3f} A, 켬 비율 실효 {ratio:.3f} (소프트스타트 0.1 ms 손실 포함 — 조사량 하한)")
     offm = (t > 2.6e-3) & (t < 2.7e-3)
@@ -359,7 +362,7 @@ def b3(b2res):
     fig, ax = plt.subplots(3, 1, figsize=(9, 7), sharex=True)
     ax[0].plot(t * 1e3, col(d, h, 5)); ax[0].set_ylabel("IR_PWM [V]")
     ax[1].plot(t * 1e3, ileds, lw=.5); ax[1].set_ylabel("LED A+B [A]")
-    ax[2].plot(t * 1e3, iin, lw=.5); ax[2].axhline(1.49, color="r", ls="--", lw=.8); ax[2].set_ylabel("12V_IR 입력 [A]"); ax[2].set_xlabel("시간 [ms]"); ax[2].set_ylim(0, 3)
+    ax[2].plot(t * 1e3, iin, lw=.5); ax[2].axhline(ILIM, color="r", ls="--", lw=.8); ax[2].set_ylabel("12V_IR 입력 [A]"); ax[2].set_xlabel("시간 [ms]"); ax[2].set_ylim(0, 3)
     for a in ax:
         a.grid(alpha=.3)
     ax[0].set_title(f"SIM-B3 PWM 25 % (400 Hz) — 실효 켬 비율 {ratio:.3f}")
@@ -444,8 +447,8 @@ def cam_sw(vcore, q):
     return (q + f"Vcore core 0 {vcore}\nRcore core c18 0.1\n"
             f"Ven e0 0 PWL(0 0 1m 0 1.001m 1.71 6m 1.71 6.001m 0)\nRen e0 en {GPIO}\n"
             "M6 cam g6i c18 c18 pq6\nRg6 g6 g6i 15.2\nCgs6 g6i c18 731p\nCgd6 g6i cam 77p\nDb6 cam c18 dsi\n"
-            "R17 c18 g6 10k\nM7 g6 en 0 0 nq7\nCg7 en 0 55p\nCd7 en g6 5.4p\n"
-            "C18 cam c18e 1u\nR18e c18e 0 5m\nC11 cam 0 100n\nRx1 cam 0 450\n")
+            "R17 c18 g6 10k\nR18 g7 g6 1k\nM7 g7 en 0 0 nq7\nCg7 en 0 55p\nCd7 en g7 5.4p\nC19 g6 cam 10n\n"
+            "C18 cam c18e 1u\nR18e c18e 0 5m\nC11 cam 0 100n\nRx1 cam 0 450\nR19 cam 0 10k\n")   # C-017: R18 1k · C19 10nF · R19 10k
 
 
 def b5():
@@ -463,31 +466,33 @@ def b5():
     after = ti > 0.9e-3   # uic 초기 충전 제외 — CAM_EN 상승(1 ms) 돌입만
     checks.append(check("CORE_1V8 돌입 피크 전류", "<=", 0.3, "A", float(ii[after].max()), "Q6·Q7 강함, CORE_1V8 1.89V, 경로 0.1Ω(가정), CAM_EN 상승 뒤"))
     ii = np.where(after, ii, 0.0)
-    # 수정 제안 검증(판정 밖): Q7 드레인–Q6 게이트 직렬 1 kΩ + Q6 게이트–드레인 10 nF (밀러 소프트스타트)
-    prop = []
-    for strong in (True, False):
-        q = q_models(-0.5, 13.4, 0.5, 4.0) if strong else q_models(-0.9, 5.56, 1.0, 1.79)
-        bp = cam_sw(1.89 if strong else 1.8, q).replace("M7 g6 en 0 0 nq7", "Rser g6 g7 1k\nM7 g7 en 0 0 nq7\nCm g6 cam 10n")
-        dp, hp = run_tran(bp, ["-i(Vcore)", "v(cam)", "v(en)"], "3m", "1n", "50n")
-        tp = dp["time"]
-        te = cross(tp, col(dp, hp, 3), 0.855, True)
-        to = cross(tp, col(dp, hp, 2), 1.71, True, te or 0)
-        prop.append((float(col(dp, hp, 1)[tp > 0.9e-3].max()), (to - te) if (to and te) else float("nan")))
-    notes.append(f"수정 제안 검증(판정 밖): 1 kΩ 직렬 + 10 nF 게이트–드레인 → 돌입 피크 {prop[0][0]:.3f} A(강함), 켜짐 {prop[1][1] * 1e6:.0f} µs(약함), 최종 VGS −1.64 V")
     notes.append("분석 창 수정(결과 본 뒤, 기준 변경 아님): 돌입을 CAM_EN 상승 뒤(t > 0.9 ms)로 — 첫 실행은 t = 0 의 uic 초기 충전(7.8 A)을 넣었다")
     t_dn = cross(ts, ven, 0.855, False, 5e-3)
     t_off = cross(ts, vgs, -0.3, True, t_dn or 0)
     checks.append(check("꺼짐: CAM_EN 하강 → Q6 VGS > −0.3 V", "<=", 100e-6, "s", (t_off - t_dn) if (t_off and t_dn) else None, "Q6·Q7 약함"))
     t_low = cross(ts, vcam, 0.3, False, t_dn or 0)
     notes.append(f"기록만: 꺼진 뒤 CAM_1V8 < 0.3V 까지 {((t_low - t_dn) * 1e3) if (t_low and t_dn) else float('nan'):.2f} ms (X1 부하 450Ω 가정)")
-    notes.append(f"돌입 최악 모서리 피크 {ii.max():.2f} A — Q7 이 게이트를 약 15 Ω·808 pF 로 바로 끌어내려 Q6 가 수십 ns 안에 완전히 켜진다(경로 저항 0.1 Ω 가정이 피크를 정한다)")
+    notes.append("C-017 회로(f0745ed): Q7 드레인 → R18 1 kΩ → Q6 게이트, C19 10 nF 게이트–CAM_1V8(밀러 소프트스타트), R19 10 kΩ 블리더. 이전 회로(656b50a) 돌입 5.11 A는 a3b988c 결과")
+    # 수정 제안 검증(판정 밖, S5): 꺼짐이 C19 충전(R17 10k × 10 nF)으로 느려짐 → R17 4.7 kΩ · C19 4.7 nF
+    pv = []
+    for strong in (True, False):
+        q = q_models(-0.5, 13.4, 0.5, 4.0) if strong else q_models(-0.9, 5.56, 1.0, 1.79)
+        bp = cam_sw(1.89 if strong else 1.8, q).replace("C19 g6 cam 10n", "C19 g6 cam 4.7n").replace("R17 c18 g6 10k", "R17 c18 g6 4.7k")
+        dp, hp = run_tran(bp, ["-i(Vcore)", "v(cam)", "v(en)", "v(g6)-v(c18)"], "8m", "1n", "50n")
+        tp = dp["time"]
+        te = cross(tp, col(dp, hp, 3), 0.855, True)
+        to = cross(tp, col(dp, hp, 2), 1.71, True, te or 0)
+        td = cross(tp, col(dp, hp, 3), 0.855, False, 5e-3)
+        tf = cross(tp, col(dp, hp, 4), -0.3, True, td or 0)
+        pv.append((float(col(dp, hp, 1)[tp > 0.9e-3].max()), (to - te) if (to and te) else float("nan"), (tf - td) if (tf and td) else float("nan")))
+    notes.append(f"수정 제안 검증(판정 밖, S5): R17 4.7 kΩ · C19 4.7 nF → 돌입 {pv[0][0]:.3f} A(강함), 켜짐 {pv[1][1] * 1e6:.1f} µs · 꺼짐 {pv[1][2] * 1e6:.1f} µs(약함), 최종 VGS −1.48 V, 켬 때 Q7 전류 0.32 mA")
     fig, ax = plt.subplots(2, 1, figsize=(9, 5))
     m = (ti > 0.999e-3) & (ti < 1.02e-3)
     ax[0].plot((ti[m] - 1e-3) * 1e6, ii[m]); ax[0].axhline(0.3, color="r", ls="--", lw=.8); ax[0].set_ylabel("CORE_1V8 전류 [A]"); ax[0].set_xlabel("CAM_EN 상승 뒤 [µs]"); ax[0].grid(alpha=.3)
     ax[1].plot(ts * 1e3, vcam, label="CAM_1V8"); ax[1].plot(ts * 1e3, ven, label="CAM_EN"); ax[1].legend(); ax[1].set_xlabel("시간 [ms]"); ax[1].set_ylabel("[V]"); ax[1].grid(alpha=.3)
     ax[0].set_title("SIM-B5 CAM_1V8 스위치 Q6/Q7 — 돌입(위, 강한 모서리) · 켜짐/꺼짐(아래, 약한 모서리)")
     fig.tight_layout(); fig.savefig(png, dpi=110); plt.close(fig)
-    return dict(id="SIM-B5", title="CAM_1V8 스위치 Q6/Q7 켜짐·꺼짐·돌입", refs=["Q6", "Q7", "R17", "C18", "C11", "X1"], checks=checks, png=[png],
+    return dict(id="SIM-B5", title="CAM_1V8 스위치 Q6/Q7 켜짐·꺼짐·돌입", refs=["Q6", "Q7", "R17", "R18", "C19", "R19", "C18", "C11", "X1"], checks=checks, png=[png],
                 net="SIM-B5.cir", notes=notes,
                 model=dict(source="레벨 1 MOSFET 맞춤 (데이터시트 VGS(th)·RDS(on)·Ciss·Rg)", url="https://www.diodes.com/assets/Datasheets/DMG2305UX.pdf",
                            license="—", behavioral=True, basis="DMG2305UX DS36196 Rev.8-2 p.2; DMG1012T DS31783 Rev.8-2 p.2; SG2002 Table 2-8 VOH; CORE_1V8 경로 0.1Ω·X1 450Ω 가정"))
@@ -495,7 +500,7 @@ def b5():
 
 def backfeed_body(soc_pu):
     pu = "Rpu_d sda core 55k\nRpu_c scl core 55k\n" if soc_pu else ""
-    return (GEN_D + "Vcore core 0 1.89\nIq6 core cam 1u\nDb6 cam core dsi\nRx1 cam 0 100k\n"
+    return (GEN_D + "Vcore core 0 1.89\nIq6 core cam 1u\nDb6 cam core dsi\nRx1 cam 0 100k\nR19 cam 0 10k\n"
             "R9 cam sda 4.7k\nR10 cam scl 4.7k\n"
             "Rpd_d sda 0 51k\nRpd_c scl 0 51k\nIlk_d 0 sda 10u\nIlk_c 0 scl 10u\n" + pu +
             "Vsd sda sd 0\nDs_d sd srail dsi\nVsc scl scx 0\nDs_c scx srail dsi\nRsr srail 0 10k\n"
@@ -514,9 +519,8 @@ def b6():
     checks.append(check("CAM_MCLK 전압 (X1 꺼짐)", "<=", 0.3, "V", v.get("v(mclk)", float("nan")), "X1 출력 1M(가정)"))
     notes.append(f"기록만(민감도 — SW가 IIC2 내부 풀업 55k 를 켠 경우): SDA {vs.get('v(sda)', float('nan')):.3f} V, 센서로 {abs(vs.get('i(vsd)', float('nan'))) * 1e6:.2f} µA, CAM_1V8 {vs.get('v(cam)', float('nan')):.3f} V")
     notes.append("가정: 센서 핀 ESD 다이오드 IS 1e-14, 꺼진 센서 레일 부하 10k, LTR-329 핀 누설 0(데이터시트 미확인)")
-    vb = run_op(backfeed_body(False) + "Rbl cam 0 10k\n", pr)
-    notes.append(f"수정 제안 검증(판정 밖): CAM_1V8–GND 블리더 10 kΩ → SDA {vb.get('v(sda)', float('nan')):.3f} V, CAM_1V8 {vb.get('v(cam)', float('nan')):.3f} V, 센서로 {abs(vb.get('i(vsd)', float('nan'))) * 1e9:.3f} nA (켜졌을 때 180 µA 소모)")
-    return dict(id="SIM-B6", title="꺼진 센서 역급전 (CAM_EN=0, O-33)", refs=["R9", "R10", "Q6", "X1", "R8", "J3(DF30)", "U3(LTR-329)"], checks=checks, png=[],
+    notes.append("C-017 회로(f0745ed): CAM_1V8–GND R19 10 kΩ 블리더 포함. 이전 회로 결과는 a3b988c")
+    return dict(id="SIM-B6", title="꺼진 센서 역급전 (CAM_EN=0, O-33)", refs=["R9", "R10", "R19", "Q6", "X1", "R8", "J3(DF30)", "U3(LTR-329)"], checks=checks, png=[],
                 net="SIM-B6.cir", notes=notes,
                 model=dict(source="DC 동작점 (저항·다이오드·전류원)", url="", license="—", behavioral=True,
                            basis="SG2002 Table 2-8 RPD 51k(최소)·누설 ±10µA, PINOUT 시트 IIC2 패드 기본 PD, SDK cvi_board_init.c L12–13; DMG2305UX IDSS"))
