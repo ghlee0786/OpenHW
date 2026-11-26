@@ -97,10 +97,11 @@ def run(_c):
     for name, node in parts.items():
         occ = root.occurrences.addNewComponent(adsk.core.Matrix3D.create())
         occ.component.name = name
-        b = add_part(occ.component, name, node)
-        if name in COLORS:
-            color(b, COLORS[name])
-        out.append((name, round(b.volume * 1000, 1)))
+        for bname, bnode in (node if isinstance(node, list) else [(name, node)]):
+            b = add_part(occ.component, bname, bnode)
+            if name in COLORS:
+                color(b, COLORS[name])
+            out.append((bname, round(b.volume * 1000, 1)))
     occ = root.occurrences.addNewComponent(adsk.core.Matrix3D.create())
     occ.component.name = 'ENC_BLOCKS'
     for name, node in blocks.items():

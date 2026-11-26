@@ -23,6 +23,13 @@ def ycyl(x, z, y0, y1, r):
     return ('cyl', (x, y0, z), (x, y1, z), r, r)
 
 
+def rbox_z(x0, x1, y0, y1, z0, z1, r):
+    if r <= 0:
+        return box(x0, x1, y0, y1, z0, z1)
+    return ('u', box(x0 + r, x1 - r, y0, y1, z0, z1), box(x0, x1, y0 + r, y1 - r, z0, z1),
+            *[zcyl(x, y, z0, z1, r) for x in (x0 + r, x1 - r) for y in (y0 + r, y1 - r)])
+
+
 def parts(d):
     P = {}
     BIG = 200.0
@@ -87,6 +94,11 @@ def parts(d):
     for (y, z) in d['al_holes']:
         cuts.append(xcyl(y, z, d['x_in_max'] - 1, xo1 + 1, 1.4))
     P['HOUSING'] = ('d', ('u', ('d', outer, cavity), *adds), *cuts)
+    if d['print_tab_w'] > 0:   # 같은 부품 안 두 번째 바디 — STL 에는 들어가고 간섭 검사에서는 뺀다 (이름 PRINT_TAB_*)
+        yc = (d['al_win_y'][0] + d['al_win_y'][1]) / 2
+        P['HOUSING'] = [('HOUSING', P['HOUSING']),
+                        ('PRINT_TAB_PX_WIN', box(d['x_in_max'], xo1, yc - d['print_tab_w'] / 2, yc + d['print_tab_w'] / 2,
+                                                 d['al_win_z'][0] - 0.01, d['al_win_z'][1] + 0.01))]
 
     # ---------- 바깥 방열판 (+X, 흑색 아노다이즈 Al): 바닥판 + 창을 지나는 받침대 + 세로 핀 ----------
     (hb0, hb1), (hy0, hy1), (hz0, hz1) = d['x_hs_base'], d['hs_y'], d['hs_z']
@@ -125,9 +137,10 @@ def parts(d):
 
     # ---------- 창 (PMMA, 투명) ----------
     P['LENS_WIN_PMMA'] = zcyl(0, 0, zw, zo, d['lens_win_d'] / 2)
-    P['WIN_A_PMMA'] = box(xi0 + 0.2, xi1 - 0.2, ry + 0.2, d['y_in_hi'] + 0.8, zw, zo)
-    P['WIN_B_PMMA'] = box(xi0 + 0.2, xi1 - 0.2, d['b_pocket_y0'] + 0.2, -ry - 0.2, zw, zo)
-    P['ALS_WIN_PMMA'] = box(ax0 - 0.9, ax1 + 0.9, ay0 - 0.9, ay1 + 1.4, zo - 1.5, zo)
+    wr = d['win_r']
+    P['WIN_A_PMMA'] = rbox_z(xi0 + 0.2, xi1 - 0.2, ry + 0.2, d['y_in_hi'] + 0.8, zw, zo, wr)
+    P['WIN_B_PMMA'] = rbox_z(xi0 + 0.2, xi1 - 0.2, d['b_pocket_y0'] + 0.2, -ry - 0.2, zw, zo, wr)
+    P['ALS_WIN_PMMA'] = rbox_z(ax0 - 0.9, ax1 + 0.9, ay0 - 0.9, ay1 + 1.4, zo - 1.5, zo, wr)
     # ---------- 흑색 폼 ----------
     fi, fo, ft = d['lens_foam']
     zh = d['z_win_in'] - 0.5 - 1.4   # 렌즈 머리 앞면 = 돔 바닥 (M001: 38.785)

@@ -74,6 +74,8 @@ hs_n,input,9,analysis2.py H3 (방열판→공기 5.6 K/W @25°C)
 hs_H,input,20.0,analysis2.py H3 (방열판→공기 5.6 K/W @25°C)
 hs_t,input,1.5,analysis2.py H3 (방열판→공기 5.6 K/W @25°C)
 hs_ped_clr,input,0.3,받침대 ↔ 벽 창 틈
+print_tab_w,input,1.0,"[M-003c] +X 창 가운데 출력용 희생 기둥 폭 (브리지 42 → 20.5 ×2), 조립 ② 전에 잘라냄. 0 이면 없음"
+win_r,input,0.5,[M-003c] PMMA 사각 창 모서리 R (주머니 모서리는 직각 — 출력 모서리 R≈0.2 보다 큼)
 al_win_y,input,"(-28.0, 14.0)",+X 벽 창
 al_win_z,input,"(-19.0, 24.0)",+X 벽 창
 al_holes_y,input,"(-31.0, 17.0)",M2.5 관통 + 안쪽 너트 — z 는 가장 가까운 핀 사이 중심으로 맞춤

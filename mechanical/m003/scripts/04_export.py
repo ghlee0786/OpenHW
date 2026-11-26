@@ -18,12 +18,28 @@ def run(_c):
     res = []
     res.append(em.execute(em.createFusionArchiveExportOptions(OUT + r"\M003_enclosure.f3d")))
     # 외함 조립 STEP (기준 STEP 은 빼고 생성물만): 기준 부품을 잠시 숨기지 않고, 생성 부품만 하나씩 STEP
-    for o in root.occurrences:
+    tb = adsk.fusion.TemporaryBRepManager.get()
+    for o in list(root.occurrences):
         n = o.component.name
         if n in STL:
-            so = em.createSTLExportOptions(o, OUT + r"\stl\%s.stl" % n)
+            bodies = [b for b in o.component.bRepBodies]
+            tmp_occ = None
+            target = o
+            if len(bodies) > 1:   # 출력용 희생 기둥 등 → 한 셸로 합쳐서 STL
+                acc = tb.copy(bodies[0])
+                for b in bodies[1:]:
+                    tb.booleanOperation(acc, tb.copy(b), adsk.fusion.BooleanTypes.UnionBooleanType)
+                tmp_occ = root.occurrences.addNewComponent(adsk.core.Matrix3D.create())
+                bf = tmp_occ.component.features.baseFeatures.add()
+                bf.startEdit()
+                tmp_occ.component.bRepBodies.add(acc, bf)
+                bf.finishEdit()
+                target = tmp_occ.component.bRepBodies.item(0)
+            so = em.createSTLExportOptions(target, OUT + r"\stl\%s.stl" % n)
             so.meshRefinement = adsk.fusion.MeshRefinementSettings.MeshRefinementHigh
             res.append(em.execute(so))
+            if tmp_occ:
+                tmp_occ.deleteMe()
         if n in STEP:
             res.append(em.execute(em.createSTEPExportOptions(OUT + r"\step\%s.step" % n, o.component)))
     # 전체 조립 (기준 보드 포함) STEP
