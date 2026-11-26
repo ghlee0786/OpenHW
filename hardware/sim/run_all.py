@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 HERE = os.path.dirname(os.path.abspath(__file__))
 NG = os.environ.get('NGSPICE', r'C:\Users\gh\tools\ngspice\47\Spice64\bin\ngspice_con.exe')
 CRITERIA_COMMIT = '64bde61'  # d00a3ac + A4(781961b) + 개정 1 ef3c0d0 + 개정 2 (R-021 GST40A12-P1J)
-SCH_COMMIT = 'f0745ed'  # C-017 (R6 6.98k)
+SCH_COMMIT = 'a61dc63'  # C-018 (R6 6.04k, R17 4.7k, C19 4.7nF)
 TOOL = {'name': 'ngspice', 'version': 'ngspice-47 (공식 SourceForge ng-spice-rework/47/ngspice-47_64.7z)',
         'sha256': '59225971… (7z, firmware 설치·검증 — orch O-81)', 'path': NG.replace('\\', '/')}
 for d in ('results', 'png'): os.makedirs(os.path.join(HERE, d), exist_ok=True)
@@ -47,7 +47,7 @@ GST = dict(rated=2.08, ocp=2.29)   # 참고: GST25A-SPEC OVERLOAD 110~150%
 GST60 = dict(ocp=5.25)            # 참고: GST60A12 OLP 5.25~7.5 A (R-021)
 LOAD12_IR = 1.22   # 계약 3.2 AL8860 ×2 입력 최악
 BUCK_IN = 0.62     # 계약 3.2 5V 벅 입력 (5V 1.3A 피크, 88%)
-R6 = 6.98e3        # 캐리어 TPS26600 ILIM (C-017 f0745ed, 이전 8.06k)
+R6 = 6.04e3        # 캐리어 TPS26600 ILIM (C-018 a61dc63; C-017 6.98k, 그 전 8.06k)
 
 def run(cir_name, netlist, wr):
     """netlist 를 <ID>.cir 로 저장하고 ngspice -b 로 돌려 wrdata 파일(들)을 numpy 로 돌려준다."""
@@ -234,7 +234,7 @@ quit
     avg_ir = float(np.trapezoid(iir[win], t[win]) / (t[win][-1] - t[win][0]))
     pngs = [fig('SIM-A3-overload.png', [(t * 1e3, [(vo, 'V(12V_IR)')], 'V'), (t * 1e3, [(iin, 'I 12V input total'), (iir, 'I 12V_IR')], 'A')],
                 'SIM-A3 TPS26600 overload, circuit breaker auto-retry (ILIM max corner) — time ms')]
-    out.append(save('SIM-A3', 'TPS26600 전류 제한 (ILIM R6 6.98k)·회로차단기', 'carrier', ['U2', 'R6'],
+    out.append(save('SIM-A3', f'TPS26600 전류 제한 (ILIM R6 {R6 / 1e3:.2f}k)·회로차단기', 'carrier', ['U2', 'R6'],
         {'source': '데이터시트 동작 모델 (TPS26600 평균)', 'url': DS['TPS2660'], 'license': '이 저장소 작성', 'behavioral': True,
          'basis': 'SLVSDG2G 7.5 I(OL): 12k 1.0 A / 8k 1.5 A / 5.36k 2.23 A → I(OL) ≈ 12/R(kΩ), ±5%; 7.6 tCB(dly) 4 ms, tCBretry(dly) 540 ms; Table 1 MODE 개방 = 회로차단기 자동 재시도'},
         [chk('I(OL) 최소 ≥ 2스트링 최악 부하', '>=', LOAD12_IR, round(iol_min, 4), 'A', 'R6 +1%, I(OL) −5%'),
@@ -618,8 +618,8 @@ Isd sd 0 0.2
 * CAM_IOVDD·CAM_AVDD: AO3401A, 게이트 0 V, 0.1 A 씩
 Mio io 0 c3 c3 PAO
 Iio io 0 0.1
-* CAM_1V8: Q6 DMG2305UX, 게이트 = R17 10k / (R18 1k + Q7 2 Ω) 분압 → 1.764·1.002/11.002, 부하 20 mA + R19 블리더
-Rg17 c18 g18 10k
+* CAM_1V8: Q6 DMG2305UX, 게이트 = R17 4.7k / (R18 1k + Q7 2 Ω) 분압 (C-018), 부하 20 mA + R19 블리더
+Rg17 c18 g18 4.7k
 Rg18 g18 0 1.002k
 Mc18 v18 g18 c18 c18 PDM
 Ic18 v18 0 20m
@@ -643,7 +643,7 @@ quit
          'basis': f'AO3401A RDS(on) 최대 85 mΩ @ −2.5 V, VGS(th) −1.3 V 최악 / DMG2305UX 200 mΩ @ −1.8 V, VGS(th) −0.9 V 최악'},
         [chk('SD_PWR_3V3 강하 (0.2 A)', '<=', 0.099, dsd, 'V', 'VGS −3.3 V'),
          chk('CAM_IOVDD·AVDD 강하 (0.1 A)', '<=', 0.099, dio, 'V', 'VGS −3.3 V'),
-         chk('CAM_1V8 (CORE_1V8 1.764 V, 20 mA)', '>=', 1.71, v18, 'V', f'VGS {vg:.3f} V (R17/R18 분압, C-017)')],
+         chk('CAM_1V8 (CORE_1V8 1.764 V, 20 mA)', '>=', 1.71, v18, 'V', f'VGS {vg:.3f} V (R17 4.7k/R18 1k 분압, C-018)')],
         [], 'SIM-C2.cir', 'CORE_1V8 최소 1.764 V(−2 %)는 가정(코어 SGM2036 정확도 미조사).'))
     # C3 켜질 때 코어 레일 순간 강하
     mA, *_ = pmos_model('PAO', 'AO3401A', False)
@@ -670,11 +670,11 @@ C7 iov 0 1u
 C8 avd 0 1.1u
 Ri iov 0 110
 Ra avd 0 110
-* CAM_1V8 (C-017): R17 10k 풀업, Q7 → R18 1k, C19 10 nF 게이트–드레인
-R17 c18 g6 10k
+* CAM_1V8 (C-018): R17 4.7k 풀업, Q7 → R18 1k, C19 4.7 nF 게이트–드레인
+R17 c18 g6 4.7k
 Sq7 pd 0 en 0 SQ
 R18 pd g6 1k
-C19 g6 v18 10n
+C19 g6 v18 4.7n
 Mq6 v18 g6 c18 c18 PDM
 Cg6 g6 c18 808p
 C11 v18 0 1.1u
@@ -716,7 +716,7 @@ quit
         {'source': '레벨 1 MOSFET(전형) + 코어 레일 등가(가정)', 'url': DS['AO3401A'] + ' · ' + DS['DMG2305UX'] + ' · ' + DS['CORE'], 'license': '이 저장소 작성', 'behavioral': True,
          'basis': '코어 레일: 이상 전원 + 0.1 Ω(SIM-001b 와 같은 가정) + 로컬 C (코어 SCH 03 출력 C, DC 바이어스 감액 가정). 센서 레일 부하 30 mA, X1 450 Ω, SD 카드 10 µF·0.2 A (가정)'},
         [chk('CAM_EN 켬: CORE_3V3 강하', '<=', 0.166, d33c, 'V', 'Q1 게이트 직접(R4 100k / Q3), Q2 게이트 R5 10k'),
-         chk('CAM_EN 켬: CORE_1V8 강하 (C-017 R18·C19)', '<=', 0.09, d18, 'V', ''),
+         chk('CAM_EN 켬: CORE_1V8 강하 (C-018 R17 4.7k·R18·C19 4.7n)', '<=', 0.09, d18, 'V', ''),
          chk('SD0_PWR_EN 켬: CORE_3V3 강하', '<=', 0.166, d33s, 'V', 'R22 47k / C21 100 nF')],
         pngs, 'SIM-C3.cir', f'기준선 CORE_3V3 {b33:.3f} V, CORE_1V8 {b18:.3f} V (0.1 Ω 경로 강하 포함). 코어 쪽 실제 디커플링(SoC 주변 C)은 더 크므로 강하는 이보다 작을 수 있다.'))
     return out

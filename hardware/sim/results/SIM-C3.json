@@ -1,0 +1,71 @@
+{
+ "id": "SIM-C3",
+ "title": "스위치 켬 순간 코어 레일 강하 (CAM_EN · SD0_PWR_EN)",
+ "owner": "schematic",
+ "circuit": {
+  "board": "carrier+front",
+  "refs": [
+   "front Q1",
+   "Q2",
+   "Q3",
+   "Q6",
+   "Q7",
+   "R18",
+   "C19",
+   "carrier Q2",
+   "R22",
+   "C21"
+  ],
+  "schematic_commit": "a61dc63"
+ },
+ "model": {
+  "source": "레벨 1 MOSFET(전형) + 코어 레일 등가(가정)",
+  "url": "AOS AO3401A Rev 3.1 (2023-12) aosmd.com/res/datasheets/AO3401A.pdf sha256 0d8e3261…a785c · Diodes DMG2305UX DS36196 Rev 8-2 (2021-07) sha256 7421a751…eb2d · reCamera Core 2002w SCH v1.2 시트 03 Power IN (저장소 hardware/datasheets/seeed, CC BY-SA 4.0)",
+  "license": "이 저장소 작성",
+  "behavioral": true,
+  "basis": "코어 레일: 이상 전원 + 0.1 Ω(SIM-001b 와 같은 가정) + 로컬 C (코어 SCH 03 출력 C, DC 바이어스 감액 가정). 센서 레일 부하 30 mA, X1 450 Ω, SD 카드 10 µF·0.2 A (가정)"
+ },
+ "criteria_commit": "64bde61",
+ "checks": [
+  {
+   "name": "CAM_EN 켬: CORE_3V3 강하",
+   "op": "<=",
+   "limit": 0.166,
+   "unit": "V",
+   "value": 0.229876,
+   "corner": "Q1 게이트 직접(R4 100k / Q3), Q2 게이트 R5 10k",
+   "pass": false
+  },
+  {
+   "name": "CAM_EN 켬: CORE_1V8 강하 (C-018 R17 4.7k·R18·C19 4.7n)",
+   "op": "<=",
+   "limit": 0.09,
+   "unit": "V",
+   "value": 0.017633,
+   "corner": "",
+   "pass": true
+  },
+  {
+   "name": "SD0_PWR_EN 켬: CORE_3V3 강하",
+   "op": "<=",
+   "limit": 0.166,
+   "unit": "V",
+   "value": 0.033592,
+   "corner": "R22 47k / C21 100 nF",
+   "pass": true
+  }
+ ],
+ "verdict": "fail",
+ "waveforms": [
+  "hardware/sim/png/SIM-C3-cam.png",
+  "hardware/sim/png/SIM-C3-sd.png"
+ ],
+ "netlist": "hardware/sim/SIM-C3.cir",
+ "tool": {
+  "name": "ngspice",
+  "version": "ngspice-47 (공식 SourceForge ng-spice-rework/47/ngspice-47_64.7z)",
+  "sha256": "59225971… (7z, firmware 설치·검증 — orch O-81)",
+  "path": "C:/Users/gh/tools/ngspice/47/Spice64/bin/ngspice_con.exe"
+ },
+ "notes": "기준선 CORE_3V3 3.320 V, CORE_1V8 1.800 V (0.1 Ω 경로 강하 포함). 코어 쪽 실제 디커플링(SoC 주변 C)은 더 크므로 강하는 이보다 작을 수 있다."
+}

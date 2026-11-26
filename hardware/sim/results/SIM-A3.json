@@ -1,0 +1,71 @@
+{
+ "id": "SIM-A3",
+ "title": "TPS26600 전류 제한 (ILIM R6 6.04k)·회로차단기",
+ "owner": "schematic",
+ "circuit": {
+  "board": "carrier",
+  "refs": [
+   "U2",
+   "R6"
+  ],
+  "schematic_commit": "a61dc63"
+ },
+ "model": {
+  "source": "데이터시트 동작 모델 (TPS26600 평균)",
+  "url": "TI SLVSDG2G (Dec 2019) https://www.ti.com/lit/ds/symlink/tps2660.pdf sha256 b781cbce…e1de",
+  "license": "이 저장소 작성",
+  "behavioral": true,
+  "basis": "SLVSDG2G 7.5 I(OL): 12k 1.0 A / 8k 1.5 A / 5.36k 2.23 A → I(OL) ≈ 12/R(kΩ), ±5%; 7.6 tCB(dly) 4 ms, tCBretry(dly) 540 ms; Table 1 MODE 개방 = 회로차단기 자동 재시도"
+ },
+ "criteria_commit": "64bde61",
+ "checks": [
+  {
+   "name": "I(OL) 최소 ≥ 2스트링 최악 부하",
+   "op": ">=",
+   "limit": 1.22,
+   "unit": "A",
+   "value": 1.8609,
+   "corner": "R6 +1%, I(OL) −5%",
+   "pass": true
+  },
+  {
+   "name": "과부하 중 12V 입력 피크 (I(OL) 최대 + 벅 0.62 A)",
+   "op": "<=",
+   "limit": 3.34,
+   "unit": "A",
+   "value": 2.73519,
+   "corner": "R6 −1%, I(OL) +5% (시뮬), 3A급 어댑터 (O-88)",
+   "pass": true
+  },
+  {
+   "name": "[참고 GST25A12] 과부하 중 12V 입력 피크 ≤ 2.08 A",
+   "op": "<=",
+   "limit": 2.08,
+   "unit": "A",
+   "value": 2.73519,
+   "corner": "판정 제외",
+   "pass": false
+  },
+  {
+   "name": "과부하 지속 시 12V_IR 평균 (재시도 주기)",
+   "op": "<=",
+   "limit": 1.22,
+   "unit": "A",
+   "value": 0.016783,
+   "corner": "2 Ω 과부하 1.1 s",
+   "pass": true
+  }
+ ],
+ "verdict": "pass",
+ "waveforms": [
+  "hardware/sim/png/SIM-A3-overload.png"
+ ],
+ "netlist": "hardware/sim/SIM-A3.cir",
+ "tool": {
+  "name": "ngspice",
+  "version": "ngspice-47 (공식 SourceForge ng-spice-rework/47/ngspice-47_64.7z)",
+  "sha256": "59225971… (7z, firmware 설치·검증 — orch O-81)",
+  "path": "C:/Users/gh/tools/ngspice/47/Spice64/bin/ngspice_con.exe"
+ },
+ "notes": "회로도 R6 = 6.98k (C-017, ≈1.72 A typ; 이전 8.06k ≈1.49 A). lead 문구의 10k(1.2 A)와 다름 — 10k 이면 I(OL) 최소 1.13 A < 1.22 A 부하라 2스트링이 제한에 걸린다. I(OL) 최대 2.115 A. 빠른 차단(1.87×I(OL)) 은 모델에 없음."
+}

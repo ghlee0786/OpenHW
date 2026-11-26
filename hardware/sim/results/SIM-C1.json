@@ -1,0 +1,52 @@
+{
+ "id": "SIM-C1",
+ "title": "FRONT_2V8 RT9013-28 드롭아웃·부하",
+ "owner": "schematic",
+ "circuit": {
+  "board": "front",
+  "refs": [
+   "U1",
+   "C1",
+   "C2"
+  ],
+  "schematic_commit": "a61dc63"
+ },
+ "model": {
+  "source": "데이터시트 동작 모델 (LDO 정확도 + 드롭아웃 등가 저항)",
+  "url": "Richtek DS9013-09 (2010-10, LCSC 사본 C58464) sha256 15023cfb…1ac8",
+  "license": "이 저장소 작성",
+  "behavioral": true,
+  "basis": "DS9013-09 3쪽: 정확도 ±2 % (10 mA), 드롭아웃 250/400 mV @ 500 mA (VIN ≥ 2.7 V), 전류 제한 0.5 A 최소"
+ },
+ "criteria_commit": "64bde61",
+ "checks": [
+  {
+   "name": "FRONT_2V8 최소 (VIN 4.75 V, 0~50 mA)",
+   "op": ">=",
+   "limit": 2.744,
+   "unit": "V",
+   "value": 2.744,
+   "corner": "정확도 −2 %",
+   "pass": true
+  },
+  {
+   "name": "입력−출력 여유 − 드롭아웃(50 mA)",
+   "op": ">=",
+   "limit": 0.0,
+   "unit": "V",
+   "value": 1.966,
+   "corner": "드롭아웃 최대 등가 0.8 Ω",
+   "pass": true
+  }
+ ],
+ "verdict": "pass",
+ "waveforms": [],
+ "netlist": "hardware/sim/SIM-C1.cir",
+ "tool": {
+  "name": "ngspice",
+  "version": "ngspice-47 (공식 SourceForge ng-spice-rework/47/ngspice-47_64.7z)",
+  "sha256": "59225971… (7z, firmware 설치·검증 — orch O-81)",
+  "path": "C:/Users/gh/tools/ngspice/47/Spice64/bin/ngspice_con.exe"
+ },
+ "notes": "2010년 판 데이터시트(LCSC 사본). 5V_SYS 최소는 SIM-B1 의 4.863 V 이지만 계약 하한 4.75 V 로 판정."
+}

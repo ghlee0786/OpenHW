@@ -1,0 +1,28 @@
+* SIM-B2 TPS54302 출력 리플 — 이상 스위치(HS 85 mΩ / LS 40 mΩ) 고정 듀티, VIN 12.6 V, L −20% (8 µH, DCR 85 mΩ), fsw 최소 290 kHz, C 유효 최소
+Vin vin 0 12.6
+Vg g 0 PULSE(0 1 0 1n 1n 1.41943e-06 3.44828e-06)
+Shs vin sw g 0 SHS
+Sls sw 0 0 g SLS
+.model SHS SW(Ron=0.085 Roff=1e6 Vt=0.5)
+.model SLS SW(Ron=0.04 Roff=1e6 Vt=-0.5)
+L1 sw l2 8e-06 ic=1.3
+Rdcr l2 out 0.085
+C1 out c1 1.574e-05 ic=5
+Resr1 c1 0 8m
+C2 out c2 1.574e-05 ic=5
+Resr2 c2 0 8m
+C3 out c3 1.574e-05 ic=5
+Resr3 c3 0 8m
+C4 out c4 1.574e-05 ic=5
+Resr4 c4 0 8m
+Rl out 0 3.846
+.options method=gear
+.control
+set wr_singlescale
+set wr_vecnames
+tran 5n 1.5m uic
+linearize
+wrdata b2.dat v(out) i(L1)
+quit
+.endc
+.end
