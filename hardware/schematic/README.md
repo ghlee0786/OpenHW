@@ -667,3 +667,14 @@
 - **넷리스트 차이 (C-007 `f651dfe` → C-009):** 전면 넷 2개만 바뀌었다(SPARE1: J4-3 → J4-4, ALS_INT_RSV: J4-4 → J4-3). 도구 출력으로는 before/after 4줄이다. 캐리어 차이 0.
 - **ERC:** 두 보드 종료 0·위반 0. SVG는 `validation/runtime/kicad-gui/C-009/`에 있다. 표제란 Rev 「C-009」.
 - **pcb:** 전면 J4 핀 3·4의 넷이 맞바뀐다(풋프린트 그대로).
+
+## 22. C-011 — C-010 되돌림 (orch O-47 · R-013)
+
+- **근거 (R-013, research `5e456c5`):**
+  - SG2002 EPHY의 10BASE-T 자동 극성 보정은 문서와 드라이버 어디에도 없다. Auto MDI-X는 쌍을 맞바꾸는 기능일 뿐이다.
+  - 자동 협상 FLP가 극성에 기대므로, RJ45 쪽 P/N을 반전하면 100M 자동 협상까지 실패할 위험이 있다.
+- **수정:** `git revert 21175f3` (C-010).
+  - J5 핀 1·2·3·6이 원래대로 EPHY_TXP·TXN·RXP·RXN이 되었다(RJ45 극성 표준 배정).
+  - 물리적 P/N 꼬임은 PCB에서 처리한다(O-47).
+- **넷리스트:** C-010 이전(`c653eac`)과 비교한 차이는 두 보드 모두 **0**이다(`tools/netcompare.py` 종료 0).
+- **ERC:** 두 보드 종료 0·위반 0. SVG는 `validation/runtime/kicad-gui/C-011/`에 있다. 표제란 Rev 「C-011」.
