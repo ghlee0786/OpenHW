@@ -188,8 +188,8 @@
 | O-81 | SIM 결과 형식 없음·ngspice 미설치로 SIM-001b 대기, 사용자 지시 '허들은 모두 허용(설치·설정·재시작), 결제 금지, 범위는 가상 설계까지' | 결과 JSON 공통 형식을 orch가 정함(queues/SIM-result-format.md). ngspice 설치는 준비된 firmware가 먼저(사용자 홈 격리·공식·sha256), schematic은 그 경로 사용. Docker Desktop 시작은 lead 정정(D-003 #41)으로 취소 — 켜지 않음 | 대기 제거, 설치 1회 | — |
 | O-81 사고 | orch O-81 ②가 firmware에 Docker Desktop 시작을 지시 → lead 정정(#41) 전달 직전 04:16:24 무렵 firmware가 시작 → 다른 프로젝트 컨테이너(lab904·sso·pids-api 등 20개+)가 재시작 정책으로 올라옴(orch 읽기 확인) | orch 잘못: '허들 허용'을 공용 자원(다른 프로젝트에 영향)까지 넓혀 lead 확인 없이 지시. 끌지·둘지는 lead 결정, OpenHW 칸은 끄거나 컨테이너 조작하지 않음 | 재발 방지: 다른 프로젝트와 공용 자원(Docker Desktop·WSL·공용 포트)은 '허들 허용' 범위 밖 — 먼저 lead(D-003 #41 lead 갱신). lead 결정: Docker 켠 채 유지(두 번째 조작 피함, 끌지는 사용자 결정), OpenHW는 다른 컨테이너 읽기만 | — |
 | O-82 | C-014: 계약 v1.11과 회로도 불일치 8(MCLK R8 22Ω·I2C2 풀업 CAM_1V8·SPARE1/ALS_INT GH J7-3/4 ×4·스트링 B 실장·RESET C10 실장) | 회로도가 맞음(각각 C20·D-003 #25·O-69·C-004 R3·README 120행 근거) → 계약만 v1.12로 고침, DNP 목록 절 신설해 판정 대상으로 | 회로도는 ERC·netcompare·리뷰를 거친 최신, 계약 문구가 뒤처짐 | 회로도를 계약에 맞춤(근거 없음 — 불채택) |
-| O-83 | M-006: 코어 J2-32 = Seeed 보드 PWR_WAKEUP1 ↔ 우리 ALS_INT_RSV | lead 기본값: ALS 인터럽트를 J2-32에서 뗌(미연결, Seeed 처리 확인되면 맞춤), 계약 v1.12, firmware DTS 정리 | ALS는 폴링(#18)이라 인터럽트 불필요, 깨우기 입력에 외부 신호 거는 위험 제거 | Seeed 원 용도 확인 후 재연결 |
-| O-84 | M-006: CLA216 리드 커넥터 — Seeed S401 J3 GH 1.25 2P ↔ 우리 PicoBlade(O-34) | R-019 판정 대기. GH면 전면 J2를 GH 1.25 2P로 교체(심볼·풋프린트→pcb→외함 재검사), 판정 불가면 2핀 0.1in 스루홀 납땜 패드 | lead 기본값 | — |
+| O-83 | M-006: 코어 J2-32 = Seeed 보드 PWR_WAKEUP1 ↔ 우리 ALS_INT_RSV | lead 기본값 + R-019: Seeed B301·B101은 미연결·풀 없음 → 우리 10k CORE_1V8 풀업 제거(꺼질 때 Low로 끌려 PWR_UP bit12 재기동 위험), ALS_INT_RSV는 하니스 예비선만, 전면 LTR-329는 INT 핀 없음, 계약 v1.12, firmware DTS 정리 | ALS는 폴링(#18)이라 인터럽트 불필요, 깨우기 입력에 외부 신호 거는 위험 제거 | Seeed 원 용도 확인 후 재연결 |
+| O-84 | M-006: CLA216 리드 커넥터 — Seeed S401 J3 GH 1.25 2P ↔ 우리 PicoBlade(O-34) | R-019: 공식 자료로 판정 불가(설명은 '2핀 1.25mm JST'뿐, 도면 치수 없음, S401 J3은 스피커 출력이라 근거 아님) → 기본값 확정: 전면 J2를 2핀 2.54mm 스루홀 납땜 패드로(C-016에 포함). GH면 전면 J2를 GH 1.25 2P로 교체(심볼·풋프린트→pcb→외함 재검사), 판정 불가면 2핀 0.1in 스루홀 납땜 패드 | lead 기본값 | — |
 
 ## 발주 패키지 직전 정리 목록
 - [ ] 회로도 표시 겹침: 캐리어 J2 옆 12V_IN_RAW 라벨, D3 PWR_LED 라벨, J1 품번 문자 (O-32)
