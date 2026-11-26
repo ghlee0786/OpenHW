@@ -37,9 +37,9 @@ docker run --rm -v "$VOL":/w -v "$FW":/fw:ro -v "$OUT_DIR":/out "$IMAGE" bash -c
     --input_shapes [[1,3,416,416]] --mean 0,0,0 --scale 1,1,1 --pixel_format bgr --keep_aspect_ratio \
     --test_input $TEST --test_result '"$NAME"'_top.npz --mlir '"$NAME"'.mlir
   run_calibration '"$NAME"'.mlir --dataset $DS --input_num 100 -o '"$NAME"'_cali_table
+  # 시험 모의 실행 옵션(--test_input/--test_reference)은 메시지 없이 rc=1(원인 H) → 빼고, 검증은 verify_cvimodel.py 로 따로
   model_deploy --mlir '"$NAME"'.mlir --quantize INT8 --calibration_table '"$NAME"'_cali_table \
     --processor cv181x --quant_input --customization_format RGB_PACKED --fuse_preprocess --aligned_input \
-    --test_input $TEST --test_reference '"$NAME"'_top.npz \
     --model '"$NAME"'_int8_cv181x.cvimodel
   cp '"$NAME"'_int8_cv181x.cvimodel /out/
   cd /out && ls -l '"$NAME"'_int8_cv181x.cvimodel && sha256sum '"$NAME"'_int8_cv181x.cvimodel
