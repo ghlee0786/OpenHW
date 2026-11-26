@@ -21,3 +21,8 @@
 - verdict = 모든 checks.pass 이면 "pass", 하나라도 false면 "fail", 실행 불가면 "error"(notes에 원인).
 - op: "<=", ">=", "==", "between"(limit=[lo, hi]).
 - 실행 스크립트 하나가 results/*.json 전부를 다시 만들고, 종료 코드 = fail+error 수.
+
+## ID 규칙 (O-92 추가 — 레인 간 파일 이름 충돌 방지)
+- schematic(전원 경로 SIM-001a): SIM-A*(입력 보호)·SIM-B*(5V 벅)·SIM-C*(레일·순서)·SIM-D*
+- firmware(부하·제어 SIM-001b): SIM-L1~L8 (예전 SIM-B1~B8 → L1~L8로 이름 바꿈)
+- 회로 파일(.cir)·PNG도 같은 ID 접두. 새 묶음은 orch가 접두를 정해 준다.
