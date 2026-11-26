@@ -45,9 +45,46 @@ class DXF:
         self.arc((x1 - r, y0 + r), r, 270, 360, layer); self.arc((x1 - r, y1 - r), r, 0, 90, layer)
         self.arc((x0 + r, y1 - r), r, 90, 180, layer); self.arc((x0 + r, y0 + r), r, 180, 270, layer)
 
+    def rpoly(self, pts, r, layer='CUT'):
+        """축 정렬 반시계 다각형, 볼록 모서리만 R (오목은 직각)."""
+        for a, b in rpoly_segs(pts, r):
+            if a == 'arc':
+                self.arc(*b, layer=layer)
+            else:
+                self.line(a, b, layer)
+
     def save(self, name):
         hdr = '0\nSECTION\n2\nHEADER\n9\n$ACADVER\n1\nAC1009\n0\nENDSEC\n0\nSECTION\n2\nENTITIES\n'
         open(os.path.join(OUT, name), 'w', encoding='ascii').write(hdr + ''.join(self.e) + '0\nENDSEC\n0\nEOF\n')
+
+
+def rpoly_segs(pts, r):
+    n = len(pts); segs = []; ends = []
+    for i in range(n):
+        p0, v, p1 = pts[i - 1], pts[i], pts[(i + 1) % n]
+        ui = ((v[0] - p0[0]) / max(abs(v[0] - p0[0]) + abs(v[1] - p0[1]), 1e-9), (v[1] - p0[1]) / max(abs(v[0] - p0[0]) + abs(v[1] - p0[1]), 1e-9))
+        uo = ((p1[0] - v[0]) / max(abs(p1[0] - v[0]) + abs(p1[1] - v[1]), 1e-9), (p1[1] - v[1]) / max(abs(p1[0] - v[0]) + abs(p1[1] - v[1]), 1e-9))
+        convex = ui[0] * uo[1] - ui[1] * uo[0] > 0
+        if convex and r > 0:
+            a = (v[0] - r * ui[0], v[1] - r * ui[1]); b = (v[0] + r * uo[0], v[1] + r * uo[1]); c = (a[0] + r * uo[0], a[1] + r * uo[1])
+            segs.append(('arc', (c, r, math.degrees(math.atan2(a[1] - c[1], a[0] - c[0])) % 360, math.degrees(math.atan2(b[1] - c[1], b[0] - c[0])) % 360)))
+            ends.append((a, b))
+        else:
+            ends.append((v, v))
+    for i in range(n):
+        segs.append((ends[i][1], ends[(i + 1) % n][0]))
+    return segs
+
+
+def draw_rpoly(ax, pts, r, **kw):
+    for a, b in rpoly_segs(pts, r):
+        if a == 'arc':
+            (cx, cy), rr, a0, a1 = b
+            a1 = a1 if a1 > a0 else a1 + 360
+            ts = [math.radians(a0 + (a1 - a0) * k / 8) for k in range(9)]
+            ax.plot([cx + rr * math.cos(t) for t in ts], [cy + rr * math.sin(t) for t in ts], 'k', lw=1.0)
+        else:
+            ax.plot([a[0], b[0]], [a[1], b[1]], 'k', lw=1.0)
 
 
 def draw_rrect(ax, x0, y0, x1, y1, r, **kw):
@@ -79,10 +116,18 @@ W = {
     'WIN_B': ('rrect', (xi1 - xi0) - 2 * d['win_clr'], (-ry - d['b_pocket_y0']) - 2 * d['win_clr'], d['win_t']),
     'WIN_ALS': ('rrect', (ax1 - ax0 + 2.2) - 2 * d['win_clr'], (ay1 - ay0 + 2.7) - 2 * d['win_clr'], 1.5),
 }
+if d.get('b_ext'):   # M-007 J5 V4: T자 B 창 (기구 좌표 → 창 왼쪽 아래 원점)
+    k_, ex0, ex1, ey0, yb = d['win_clr'], *d['b_ext'], d['b_pocket_y0']
+    mx0, mx1, my0, my1, tx0, tx1, ty0 = xi0 + k_, xi1 - k_, yb + k_, -ry - k_, ex0 + k_, ex1 - k_, ey0 + k_
+    T = [(tx0, ty0), (tx1, ty0), (tx1, my0), (mx1, my0), (mx1, my1), (mx0, my1), (mx0, my0), (tx0, my0)]
+    T = [(round(x - mx0, 4), round(y - ty0, 4)) for x, y in T]
+    W['WIN_B'] = ('tee', mx1 - mx0, my1 - ty0, T, d['win_t'])
 for name, spec in W.items():
     dx = DXF()
     if spec[0] == 'circle':
         dx.circle((0, 0), spec[1] / 2)
+    elif spec[0] == 'tee':
+        dx.rpoly(spec[3], wr)
     else:
         dx.rrect(0, 0, spec[1], spec[2], wr)
     dx.save('PMMA_%s_t%.1f.dxf' % (name, spec[-1]))
@@ -154,7 +199,11 @@ for name, spec in W.items():
         dim(ax, -spec[1] / 2, spec[1] / 2, -spec[1] / 2 - 2, txt='Ø%.2f' % spec[1])
         ax.set_xlim(-14, 14); ax.set_ylim(-15, 13)
     else:
-        draw_rrect(ax, 0, 0, spec[1], spec[2], wr, ec='k')
+        if spec[0] == 'tee':
+            draw_rpoly(ax, spec[3], wr)
+            tp = spec[3]; dim(ax, tp[0][0], tp[1][0], -1.0, txt='탭 %.2f' % (tp[1][0] - tp[0][0])); dim(ax, tp[0][1], tp[2][1], tp[0][0] - 1.5, txt='탭 %.2f' % (tp[2][1] - tp[0][1]), horiz=False)
+        else:
+            draw_rrect(ax, 0, 0, spec[1], spec[2], wr, ec='k')
         dim(ax, 0, spec[1], -2.5); dim(ax, 0, spec[2], -2, horiz=False)
         ax.set_xlim(-6, spec[1] + 4); ax.set_ylim(-6, spec[2] + 4)
     frame(ax, 'PMMA %s — t%.1f 투명, 모서리 R%.1f' % (name, spec[-1], wr if spec[0] != 'circle' else 0))

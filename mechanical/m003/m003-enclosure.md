@@ -411,3 +411,56 @@
 - O-78: SK 444가 PoC 기본값이다. R 목표는 미달(+4%)로 기록하고 통과로 주장하지 않는다. 실측으로 확정하고, 넘으면 CNC H3로 간다.
 - O-77b: GH 6P 하니스는 26AWG 자가 압착 35 mm를 유지한다. O-77(JST 28AWG 51 mm 기성 리드)은 취소됐다. 진행 중이던 51 mm 경로 작업은 커밋하지 않고 되돌렸다.
 
+## 17. O-94 LED B 창 가운데 연장 (M-007 J5 V4를 원본 매개변수로, 레인 t-20261127-040816-30c6, 2026-11-27)
+
+- **바꾼 것:** `params.py`에 `b_ext = (-17.3, 14.3, -33.2)`를 넣었다. `geom.py`는 `b_ext`가 있으면 다음을 더한다.
+  - 덮개 B 창 주머니: x −17.3…14.3 · y −33.2…−28.4 (창 안쪽 면 ~ 바깥 면)
+  - 턱 개구: x −16.3…13.3 · y −32.2…−27.4
+  - WIN_B_PMMA: T자(탭 30.90 × 4.80). 볼록 모서리는 R0.5, 탭과 본체가 만나는 오목 모서리는 직각이다.
+  - `b_ext = None`이면 앞 형상으로 돌아간다.
+- **이유:** M-007 J5 광선 추적에서 놓친 방향은 모두 시야 아래 2줄이었다. 원인은 B 창 턱 바깥 끝 y −27.4다.
+  - 안 7개 비교는 `mechanical/m007/led_study.md`에 있다.
+  - 직접광(A+B): **84.6 → 97.6%** (M-007 Fusion 판정·CSG 계산 같음). `analysis2.py`는 97%로 다시 계산된다.
+  - LED B 바깥 각은 30.2°로 VFOV/2 28.5°보다 크다.
+- **유지한 것:**
+  - 가운데 띠 y ±12.2 (렌즈 창 ↔ A/B 창 분리)
+  - 렌즈 폼 링
+  - 턱 두께 1.2 · 턱 내민 폭 1.0
+  - 창 틈 0.35/변
+- **덮개 나사와 거리:**
+  - 보스 r 3.6과 0.5
+  - 구멍 Ø2.8과 2.7
+  - 머리 Ø4.5(가정)와 1.85
+- **함께 고친 도구:** `drawing.py`(앞면도에 연장부) · `fab_drawings.py`(T자 DXF·도면, 모서리 R 일반 다각형) · `assembly.py`(부품표 7번 치수) · `analysis2.py`(B 개구 = 직사각형 둘의 합).
+- **스크립트 경로:** `scripts/01~06`의 경로를 8089 worktree(병합 뒤 없어짐)에서 이 레인으로 바꿨다.
+  - 01은 문서 표식 `openhw/doc = M003_enclosure`를 달지 않는다. 그래서 01 바로 뒤에 새 문서임을 확인하고 표식을 달았다.
+
+### 17.1 다시 만든 것과 결과
+
+| 명령 | 결과 |
+|---|---|
+| `fusion_cli run scripts/01_new_doc_import.py` → 표식 → `02_build.py` | 종료 0. WIN_B_PMMA 2631.8 mm³ (T자) · FRONT_COVER 6796.0 mm³ |
+| `03_check.py` (간섭, 기준 보드 aebd293 STEP 그대로) | 4건. 앞과 같음: USB-C 플러그 블록 ↔ 캐리어 9.719 · ↔ 하니스 통로 0.314 (O-61 대기), 스탠드오프 ↔ 코어 keep-in 2건 (의도). **새 간섭 0** |
+| `04_export.py` | 종료 0. F3D · 조립 STEP · 부품 STEP 13 · STL 3 |
+| `05_render.py` · `06_steps.py` | 종료 0. 렌더 5 · 조립 단계 9 |
+| `export_params.py` · `drawing.py` · `assembly.py` · `fab_drawings.py` · `printcheck.py` · `analysis2.py` · `analysis_m005.py` | 모두 종료 0. 처음 `fab_drawings.py`는 T자 항목 두께 자리 오류로 종료 1 → 항목 순서를 고쳐 0 |
+| `mechanical/m007/run_all.py --pcb 3012bf3` (전체 조립, 최신 보드) | 종료 7 (조건 5 불합격 항목). 03_judge 실패 4는 앞과 같다(O-61 · M-008 R9–R11). J5 97.6%, 새 간섭 0 |
+
+- **출력 검사 (printcheck.md):** 덮개 B 창 턱은 A 창 턱과 같은 고리·테두리(내민 폭 약 0.6)다. 새 오버행은 없다.
+- **STEP 해시:** 내보낼 때마다 시간 정보가 들어가 모든 STEP 해시가 바뀐다. 기하가 바뀐 부품은 FRONT_COVER · WIN_B_PMMA뿐이다(HOUSING.stl 해시는 같음).
+
+### 17.2 해시 (sha256)
+
+| 파일 | 해시 |
+|---|---|
+| out/M003_enclosure.f3d | 8e114c9c6fa5d770ddb33402677a19c14c0ac0e9c8aa2201e1c143f532f21578 |
+| out/M003_assembly_with_refs.step | 492d8ee6d4c129d4dbff60b37da47ce77931d05bfda7b34990d6966a6fabeb68 |
+| out/stl/FRONT_COVER.stl | 98ec5c78024f4be40adcffe2e3369e7370b38c3e889931be4fb027b17a28f5b3 |
+| out/stl/HOUSING.stl (변경 없음) | a4bd9a46875710f6732b193fcac3b2a65afe18a11cf6136504a2e18feb982c70 |
+| out/step/FRONT_COVER.step | 6b6e0561d5c6d90b7d78b3cf4499bccd0b90a19e2dcdda0388276957c73daf63 |
+| out/step/WIN_B_PMMA.step | 765a5afc19807ca9b6c9ff075f4b679f5892fe120dc191d767994b00f920ba7e |
+| fab/PMMA_WIN_B_t3.0.dxf | 8c3e0cb2f736bb1f7e583c340820340192f5a3138f023e186141c02793606e5c |
+| fab/m003-fab-drawings.pdf | dc70961e7199b8557fb3d1fcb750c17b57e3d2247894ad2f56b5075dc575b447 |
+| drawing/m003-drawing.pdf | 97db8b6c6d81e92f96ee543e8ba2fb1731b42b9674bbbaccff39d00151c54b4d |
+
+- 위 §13·§15·§16 해시 표의 F3D · 조립 STEP · 덮개 · WIN_B · 가공 도면 값은 이 표로 바뀐다.

@@ -129,6 +129,10 @@ def parts(d):
     ccuts.append(box(xi0 + 1, xi1 - 1, ry, d['y_in_hi'], zt - 1, zw + 0.01))
     ccuts.append(box(xi0, xi1, d['b_pocket_y0'], -ry, zw, zo + 1))
     ccuts.append(box(xi0 + 1, xi1 - 1, d['b_pocket_y0'] + 1, -ry, zt - 1, zw + 0.01))
+    if d.get('b_ext'):   # B 창 가운데 연장 (M-007 J5 V4)
+        ex0, ex1, ey0 = d['b_ext']
+        ccuts.append(box(ex0, ex1, ey0, d['b_pocket_y0'] + 0.01, zw, zo + 1))
+        ccuts.append(box(ex0 + 1, ex1 - 1, ey0 + 1, d['b_pocket_y0'] + 1.01, zt - 1, zw + 0.01))
     # ALS 창 (1.5 깊이) + 관 안쪽
     (ax0, ax1), (ay0, ay1) = d['als_in']
     ccuts.append(box(ax0 - 1.1, ax1 + 1.1, ay0 - 1.1, ay1 + 1.6, zo - 1.5, zo + 1))   # ALS 주머니 (창은 win_clr 만큼 작게)
@@ -164,6 +168,9 @@ def parts(d):
     k = d['win_clr']
     P['WIN_A_PMMA'] = rbox_z(xi0 + k, xi1 - k, ry + k, d['y_in_hi'] + 1.0 - k, zw, zo, wr)
     P['WIN_B_PMMA'] = rbox_z(xi0 + k, xi1 - k, d['b_pocket_y0'] + k, -ry - k, zw, zo, wr)
+    if d.get('b_ext'):   # T자: 연장부 탭 (안쪽 이음 모서리는 직각)
+        ex0, ex1, ey0 = d['b_ext']
+        P['WIN_B_PMMA'] = ('u', P['WIN_B_PMMA'], rbox_z(ex0 + k, ex1 - k, ey0 + k, d['b_pocket_y0'] + k + 1.0, zw, zo, wr))
     P['ALS_WIN_PMMA'] = rbox_z(ax0 - 1.1 + k, ax1 + 1.1 - k, ay0 - 1.1 + k, ay1 + 1.6 - k, zo - 1.5, zo, wr)
     # ---------- 흑색 폼 ----------
     fi, fo, ft = d['lens_foam']

@@ -217,9 +217,15 @@ apA = ((xi0 + 1, xi1 - 1), (ry, d['y_in_hi']))
 pkA = ((xi0, xi1), (ry, d['y_in_hi'] + 1.0))
 apB = ((xi0 + 1, xi1 - 1), (d['b_pocket_y0'] + 1, -ry))
 pkB = ((xi0, xi1), (d['b_pocket_y0'], -ry))
+if d.get('b_ext'):   # M-007 J5 V4: B 창 가운데 연장 → 개구는 직사각형 둘의 합
+    ex0, ex1, ey0 = d['b_ext']
+    apB = [apB, ((ex0 + 1, ex1 - 1), (ey0 + 1, d['b_pocket_y0'] + 1))]
+    pkB = [pkB, ((ex0, ex1), (ey0, d['b_pocket_y0']))]
 
 
 def inside(p, r):
+    if isinstance(r, list):
+        return any(inside(p, q) for q in r)
     return r[0][0] <= p[0] <= r[0][1] and r[1][0] <= p[1] <= r[1][1]
 
 

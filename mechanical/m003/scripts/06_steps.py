@@ -2,7 +2,7 @@
 끝나면 보이기 상태를 되돌린다."""
 import adsk.core, adsk.fusion, os
 
-OUT = r"C:\workspace_python\OpenHW\.harness-worktrees\t-20261127-013549-8089\mechanical\m003\render\steps"
+OUT = r"C:\workspace_python\OpenHW\.harness-worktrees\t-20261127-040816-30c6\mechanical\m003\render\steps"
 HOUSE = ['HOUSING', 'HS_EXTRUSION', 'HS_PEDESTAL', 'HW_M25_NUTS']
 CORE = ['REF_CARRIER', 'HW_STANDOFFS', 'CORE_ENVELOPE', 'J1_MATED', 'J2_MATED']
 SPR = ['SPREADER_M003', 'INS_PADS_P340', 'GAP_PAD_PX']

@@ -31,7 +31,7 @@ BOM = [
     (4, 'SPREADER_M003 방열판', 1, '판 38 × 39 × 1.0 + 기둥 A/B1/B2 + +X 플랜지 2 × 39 × 7.4, 구멍 Ø4.0 × 4', 'Al 6061 가공', 'M-002b + M-003'),
     (5, 'LENS_WIN_PMMA 렌즈 창', 1, 'Ø%.1f × %.1f' % (d['lens_win_d'], d['win_t']), '투명 PMMA 레이저 컷', ''),
     (6, 'WIN_A_PMMA LED A 창', 1, '%.2f × %.2f × %.1f' % (winA[0], winA[1], d['win_t']), '투명 PMMA', ''),
-    (7, 'WIN_B_PMMA LED B 창', 1, '%.2f × %.2f × %.1f' % (winB[0], winB[1], d['win_t']), '투명 PMMA', ''),
+    (7, 'WIN_B_PMMA LED B 창', 1, ('%.2f × %.2f × %.1f' % (winB[0], winB[1], d['win_t'])) + ((' + 탭 %.2f × %.2f (T자)' % (d['b_ext'][1] - d['b_ext'][0] - 2 * d['win_clr'], d['b_pocket_y0'] - d['b_ext'][2])) if d.get('b_ext') else ''), '투명 PMMA', 'fab/PMMA_WIN_B_t3.0.dxf'),
     (8, 'ALS_WIN_PMMA ALS 창', 1, '%.1f × %.1f × 1.5' % (ax1 - ax0 + 2.2 - 2 * d['win_clr'], ay1 - ay0 + 2.7 - 2 * d['win_clr']), '투명 PMMA', ''),
     (9, 'FOAM_LENS_RING 렌즈 폼 링', 1, 'ID %.1f / OD %.1f × %.1f (0.7로 압축)' % (2 * d['lens_foam'][0], 2 * d['lens_foam'][1], d['lens_foam'][2]), '흑색 셀 폼 (PORON 4701-30 등, 1.0t 가용 미확인)', '30 % 압축 (3M·Rogers 권장 25–35 %)'),
     (10, 'FOAM_ALS_GASKET ALS 개스킷', 1, '바깥 %.1f × %.1f / 안 %.1f × %.1f × %.1f (%.1f로 압축)' % (ax1 - ax0 + 2 * d['als_wall'], ay1 - ay0 + 2 * d['als_wall'], ax1 - ax0, ay1 - ay0, d['als_gasket_t'], d['als_gap']), '흑색 PVC 폼 (3M 4516 1.6t 대표)', '25 % 압축'),

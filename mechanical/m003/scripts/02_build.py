@@ -3,7 +3,7 @@
 활성 문서에 openhw/doc = M003_enclosure 속성이 있어야 한다 (01_new_doc_import.py 가 만든 문서)."""
 import adsk.core, adsk.fusion, math
 
-BASE = r"C:\workspace_python\OpenHW\.harness-worktrees\t-20261127-013549-8089\mechanical\m003"
+BASE = r"C:\workspace_python\OpenHW\.harness-worktrees\t-20261127-040816-30c6\mechanical\m003"
 COLORS = {  # 부품 → (R,G,B,불투명도)
     'HOUSING': (30, 30, 30, 255), 'FRONT_COVER': (45, 45, 45, 255), 'HS_EXTRUSION': (40, 40, 45, 255), 'HS_PEDESTAL': (150, 150, 155, 255),
     'LENS_WIN_PMMA': (200, 230, 255, 90), 'WIN_A_PMMA': (200, 230, 255, 90), 'WIN_B_PMMA': (200, 230, 255, 90),
