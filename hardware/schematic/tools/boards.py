@@ -207,12 +207,12 @@ C(f, 'C12', '1uF', 'FRONT_2V8', 'GND'); C(f, 'C13', '100nF', 'FRONT_2V8', 'GND')
 f.add('Q4', 'Device:Q_Photo_NPN', 'ALS-PT19 (alt)', 'openhw:Everlight_ALS-PT19_1.7x0.8mm', {'1': 'CORE_1V8', '2': 'LIGHT_SENSE'}, dnp=True,
       fields={'Note': 'alternative analog ALS (contract C15); footprint placeholder - ALS-PT19 land to be drawn if used'})
 R(f, 'R11', '10k', 'LIGHT_SENSE', 'GND', dnp=True)
-f.block('IR','IR LED 2스트링 · AL8860 x2 (B 스트링 DNP)',['12V_IR → Rs 0.1R → VSMA1085400 x2 직렬 → L 68uH → SW · 스트링당 1.0A (O-25, V-001 6)','IR_PWM High = 끔 · R12 풀업 → 기본 끔 (K1) · CTRL = IR_PWM 오픈드레인 공통 (분기 C2-5) · 기본 12V_IR 꺼짐 (eFuse SHDN) · 열: 스트링 평균 ≤1.6W = IR_PWM 듀티 ≤25% (O-31, FW 강제)'],cols=6)
+f.block('IR','IR LED 2스트링 · AL8860 x2 (A·B 실장, O-69)',['12V_IR → Rs 0.1R → VSMA1085400 x2 직렬 → L 68uH → SW · 스트링당 1.0A (O-25, V-001 6)','IR_PWM High = 끔 · R12 풀업 → 기본 끔 (K1) · CTRL = IR_PWM 오픈드레인 공통 (분기 C2-5) · 기본 12V_IR 꺼짐 (eFuse SHDN) · 열: 스트링 평균 ≤1.6W = IR_PWM 듀티 ≤25% (O-31, FW 강제)'],cols=6)
 # IR PWM -> CTRL (open drain, both strings share CTRL - branch C18)
 f.add('Q5', 'Transistor_FET:DMG1012T', 'DMG1012T', 'Package_TO_SOT_SMD:SOT-523', {'1': 'IR_PWM', '2': 'GND', '3': 'IR_CTRL'})
 R(f, 'R12', '100k', 'CORE_1V8', 'IR_PWM')
-# IR strings A (populated) / B (DNP); AL8860 1.0A (Rs 0.1R), 2x VSMA1085400 each
-for k, dn in (('A', False), ('B', True)):
+# IR strings A / B both populated (O-69, R-016); AL8860 1.0A (Rs 0.1R), 2x VSMA1085400 each
+for k, dn in (('A', False), ('B', False)):
     u = 'U4' if k == 'A' else 'U5'; base = 0 if k == 'A' else 10
     f.add(u, 'Driver_LED:AL8860MP', 'AL8860MP-13', 'openhw:Diodes_MSOP-8EP_3x3mm_P0.65mm_EP1.7x2.0mm_AL8860',
           {'1': f'IR{k}_SET', '2': 'GND', '3': 'GND', '4': 'IR_CTRL', '5': f'IR{k}_SW', '6': f'IR{k}_SW', '8': '12V_IR', '9': 'GND'}, dnp=dn,
@@ -227,10 +227,10 @@ for k, dn in (('A', False), ('B', True)):
     f.add(f'D{1 if k=="A" else 2}', 'Device:D_Schottky', 'SS24 (40V 2A, SMA)', 'Diode_SMD:D_SMA', {'1': '12V_IR', '2': f'IR{k}_SW'}, dnp=dn, fields={'MPN': 'Vishay SS24S-E3/61T (SMA 40V 2A, LCSC C84317)', 'Note': 'alt Vishay SSA24-M3/61T (O-38: stock 0, 15wk)'})
     C(f, f'C{14 if k=="A" else 16}', '10uF/50V X7R', '12V_IR', 'GND', 'Capacitor_SMD:C_1206_3216Metric', dnp=dn)
     C(f, f'C{15 if k=="A" else 17}', '100nF/50V', '12V_IR', 'GND', dnp=dn)
-f.block('FPC','보드 간 JST GH 6P (캐리어와 같은 대칭 배치)',['계약 12A절 v1.3 · 12V_IR 2접점 x 1.0A (최악 0.61A/접점)'],cols=3)
+f.block('FPC','보드 간 JST GH 6P (직선 케이블 J7-n ↔ J4-(7−n), O-41)',['계약 12A절 v1.8 · 3 ALS_INT_RSV · 4 SPARE1 (캐리어와 3·4 맞바꿈) · 12V_IR 2접점 x 1.0A'],cols=3)
 # FPC 10P (symmetric, mirror of carrier J7)
-f.add('J4', 'Connector_Generic_MountingPin:Conn_01x06_MountingPin', 'JST GH 6P (board link)', 'Connector_JST:JST_GH_SM06B-GHS-TB_1x06-1MP_P1.25mm_Horizontal', fpc,
-      fields={'MPN': 'JST SM06B-GHS-TB', 'Note': 'C-003 C3-1, same symmetric pinout as carrier J7'})
+f.add('J4', 'Connector_Generic_MountingPin:Conn_01x06_MountingPin', 'JST GH 6P (board link)', 'Connector_JST:JST_GH_SM06B-GHS-TB_1x06-1MP_P1.25mm_Horizontal', {**fpc, '3': 'ALS_INT_RSV', '4': 'SPARE1'},
+      fields={'MPN': 'JST SM06B-GHS-TB', 'Note': 'C-009/O-41: straight cable J7-n <-> J4-(7-n) (both -X entry, U-bend); pins 3/4 swapped vs carrier J7'})
 R(f, 'R15', '10k', 'CORE_1V8', 'ALS_INT_RSV')
 f.block('TP','시험점 (계약 11절)',cols=9)
 # test points
