@@ -1,8 +1,8 @@
 (export
 	(version "E")
 	(design
-		(source "C:\\workspace_python\\OpenHW\\.harness-worktrees\\t-20261126-165741-b193\\hardware\\schematic\\front\\front.kicad_sch")
-		(date "2026-11-26T22:34:20")
+		(source "C:\\workspace_python\\OpenHW\\.harness-worktrees\\t-20261127-022827-8d8a\\hardware\\schematic\\front\\front.kicad_sch")
+		(date "2026-11-27T02:31:39")
 		(tool "Eeschema 10.0.8")
 		(sheet
 			(number "1")
@@ -895,9 +895,6 @@
 				(value "front.kicad_sch")
 			)
 			(property
-				(name "dnp")
-			)
-			(property
 				(name "ki_keywords")
 				(value "cap capacitor")
 			)
@@ -950,9 +947,6 @@
 			(property
 				(name "Sheetfile")
 				(value "front.kicad_sch")
-			)
-			(property
-				(name "dnp")
 			)
 			(property
 				(name "ki_keywords")
@@ -1139,9 +1133,6 @@
 			(property
 				(name "Sheetfile")
 				(value "front.kicad_sch")
-			)
-			(property
-				(name "dnp")
 			)
 			(property
 				(name "ki_keywords")
@@ -1384,9 +1375,6 @@
 				(value "front.kicad_sch")
 			)
 			(property
-				(name "dnp")
-			)
-			(property
 				(name "ki_keywords")
 				(value "LED diode")
 			)
@@ -1445,9 +1433,6 @@
 			(property
 				(name "Sheetfile")
 				(value "front.kicad_sch")
-			)
-			(property
-				(name "dnp")
 			)
 			(property
 				(name "ki_keywords")
@@ -2090,9 +2075,6 @@
 			(property
 				(name "Sheetfile")
 				(value "front.kicad_sch")
-			)
-			(property
-				(name "dnp")
 			)
 			(property
 				(name "ki_keywords")
@@ -3320,9 +3302,6 @@
 			(property
 				(name "Sheetfile")
 				(value "front.kicad_sch")
-			)
-			(property
-				(name "dnp")
 			)
 			(property
 				(name "ki_keywords")
@@ -5012,7 +4991,7 @@
 				(field
 					(name "MPN") "Diodes AL8860MP-13 (LCSC C500782)")
 				(field
-					(name "Note") "string B DNP (R-006 O-25)")
+					(name "Note") "string B")
 				(field
 					(name "Footprint") "openhw:Diodes_MSOP-8EP_3x3mm_P0.65mm_EP1.7x2.0mm_AL8860")
 				(field
@@ -5033,7 +5012,7 @@
 			)
 			(property
 				(name "Note")
-				(value "string B DNP (R-006 O-25)")
+				(value "string B")
 			)
 			(property
 				(name "Sheetname")
@@ -5042,9 +5021,6 @@
 			(property
 				(name "Sheetfile")
 				(value "front.kicad_sch")
-			)
-			(property
-				(name "dnp")
 			)
 			(property
 				(name "ki_keywords")
