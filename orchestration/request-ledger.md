@@ -171,3 +171,4 @@
 - [ ] bring-up: BF16 cvimodel 보드 로드·실검출·FPS(BF16은 INT8보다 느림 — 부족하면 O-62 차선), sscma-node 프레임 행 정렬
 - [ ] V-005 사람 확인(verifiable 아니오) H1 1번 핀·극성 표시, H4 개구 둘레 깎인 표시, H5 보드 끝 커넥터 실크 — 최종 커밋 HTML로 사용자 확인
 - [ ] D-003 #31 문구 'ESD→RJ45 약 5mm' → RX 약 8.4·TX 약 5mm(V-005 A11) — lead
+- [ ] bring-up: 12V 입력 전류 실측(IR A+B 듀티 25%+NPU+이더넷) — 평균 1.9A 넘으면 12V 3A급 어댑터 교체(구매는 사용자 지시, lead D-003 #10)
