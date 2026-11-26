@@ -44,6 +44,8 @@
 | C-006 | orch (V-004c 권고) | schematic t18z | 전면 R17 100k → 10k (값만) | hardware/schematic/front (C-002 레인) | netcompare R17 값 1건, ERC 0, 커밋 | completed — 355ab3e (계약 v1.6 fb6629c), orch 재실행 front ERC 0 |
 | C-007 | orch | schematic t18z | 캐리어 5V 출력 22µF 1210 1개 추가, 전면 D1/D2 MPN SS24S-E3/61T | hardware/schematic/** (C-002 레인) | 의도 차이, ERC 0, 커밋 | completed — f651dfe (계약 v1.7 62145e8), orch 재실행 carrier ERC 0. 회로도 배선 기준 고정 |
 | R-010 | orch (단계 6 준비) | research t18s | PCBWay PCBA 제출 요건(BOM·CPL·Gerber·위탁 절차·조립 등급) + KiCad 내보내기 방법 | docs/research/r010-pcbway-submission.md | 항목표·P-004 체크리스트, 레인·커밋 | running |
+| C-008 | orch (P-003 요청) | schematic t18z | 라이브러리만: DC 잭 실크–외곽, MH1 courtyard ±12.45, MH1 받침 13.2□ F.Fab·금지 영역 | hardware/libraries/** (C-002 레인) | 시험판 DRC silk·courtyard, ERC 0, 커밋 | running |
+| M-001e | orch | mechanical t18x | DF30 180°(센서 모듈 회전)·LED B1/B2 (±7.5,−16.5)·GH 6P ±0.3 이동 반영, 간섭 재검사 | mechanical/** (M-001 레인) | 간섭 결과, 커밋 | running |
 
 ## 운영 변경 (2026-11-26, 사용자 지시 · lead 전달)
 - 의견 묻지 않고 진행: 사람 쪽 미정값은 D-003(lead 레인 t-20261126-144135-5470 docs/decisions/D-003-working-defaults.md, 커밋 8ac5ce5) 값으로 확정 취급. 새 갈림길은 기본값 선택 → 아래 「분기 기록」에 분기점·선택·이유·차선책 → lead 요약 보고. 문제 시 해당 행으로 돌아가 차선책.
@@ -94,6 +96,8 @@
 | O-36 | Q6 게이트 풀업 R17 값 (V-004c 선택 권고) | 10k | τ 81µs→8µs로 1V8 빠른 상승 시 순간 켜짐 방지, 값만 바뀌어 배선 영향 없음 | 100k 유지(S401 원값) |
 | O-37 | TPS54302 출력 C 실효 (R-008b: 3개 공칭 52.5µF, 공차·온도 최악 약 40µF < 44µF 추정) | 22µF 1210 1개 추가(4개) | 최악 조건 여유 확보, 부품 하나 | 3개 유지 + bring-up 실측 |
 | O-38 | 전면 D1/D2 품번 (SSA24-M3/61T 재고 0·리드타임 15주) | SS24S-E3/61T (같은 Vishay SMA 40V 2A, 재고 충분) | 조달 가능 | SSA24-M3/61T |
+| O-39 | 센서 받침 자리 표현 (MH1, M-001d K11) | F.Fab 외곽선 + 부품 금지 영역, 동박 없음 | 받침은 접착 부품, 동박은 불필요 | 동박 기준면 |
+| O-40 | 전면 DF30 방향 (pcb 발견: 모듈 FPC −Y → 모듈 180° 회전) | J3 180° 배치(S401 대조 24/24), 영상 180° → FW ISP mirror+flip 기본 | 0°면 핀 n↔25−n 뒤집혀 0/24 | — (물리 제약) |
 
 ## 발주 패키지 직전 정리 목록
 - [ ] 회로도 표시 겹침: 캐리어 J2 옆 12V_IN_RAW 라벨, D3 PWR_LED 라벨, J1 품번 문자 (O-32)
