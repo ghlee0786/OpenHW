@@ -1,0 +1,54 @@
+{
+ "_comment": "R-020 전기 가상 검증 설정. 값마다 근거는 r020-electrical-vv.md 에 있다. 전류는 C-001 계약 v1.11(main f56945b) §3.1·§3.2, 한도는 D-003 #28·#31(main 2d5b5bb) 과 보드 DRU(pcb 3012bf3).",
+ "delta_t_k": 10.0,
+ "hot_copper_c": 50.0,
+ "via_plating_mm": 0.025,
+ "via_parallel_radius_mm": 1.0,
+ "impedance_tolerance": 0.10,
+ "coupled_gap_max_mm": 0.18,
+ "gap_distribution_max_mm": 1.0,
+ "paired_via_max_mm": 1.2,
+ "twist_area_names": ["DP_TWIST"],
+ "mask_correction": {"zdiff_ohm": -8.0, "z0_ohm": -2.0,
+   "source": "PCBWay Impedance Control: 'printing one pass of solder mask reduces single-ended impedance by 2 ohms and differential impedance by 8 ohms' https://www.pcbway.com/pcb_prototype/Impedance_Control.html (2026-11-27 확인)"},
+ "nominal_geometries": [[0.15, 0.16], [0.15, 0.17], [0.20, 0.16], [0.20, 0.17]],
+ "limits": {
+   "intra_pair_mismatch_mm": 0.0,
+   "mismatch_numeric_tol_mm": 0.01,
+   "csi_lane_skew_mm": 1.0,
+   "uncoupled_mm": {"CSI": 4.0, "MDI": 6.0, "MDI_TWIST_TOTAL": 20.0, "USB": 12.0}
+ },
+ "pairs": [
+  {"board": "front", "name": "CSI_L0", "p": "/CAM_RX0_0P", "n": "/CAM_RX0_0N", "target": 100, "class": "CSI"},
+  {"board": "front", "name": "CSI_L1", "p": "/CAM_RX0_1P", "n": "/CAM_RX0_1N", "target": 100, "class": "CSI"},
+  {"board": "front", "name": "CSI_CLK", "p": "/CAM_RX0_CLKP", "n": "/CAM_RX0_CLKN", "target": 100, "class": "CSI"},
+  {"board": "carrier", "name": "MDI_TX", "p": "/EPHY_TXP", "n": "/EPHY_TXN", "target": 100, "class": "MDI"},
+  {"board": "carrier", "name": "MDI_RX", "p": "/EPHY_RXP", "n": "/EPHY_RXN", "target": 100, "class": "MDI"},
+  {"board": "carrier", "name": "USB", "p": "/USB_DP", "n": "/USB_DN", "target": 90, "class": "USB"}
+ ],
+ "skew_groups": [
+  {"board": "front", "clock": "CSI_CLK", "lanes": ["CSI_L0", "CSI_L1"]}
+ ],
+ "power": [
+  {"board": "carrier", "net": "/12V_IN_RAW", "sources": ["J2.1"], "sinks": [["F1.1"]], "i_worst_a": 1.84,
+   "i_source": "C-001 §3.2 12V 입력 합계 ≈1.84A"},
+  {"board": "carrier", "net": "/12V_IN_F", "sources": ["F1.2"], "sinks": [["Q1.5", "Q1.6", "Q1.7", "Q1.8"]], "i_worst_a": 1.84,
+   "i_source": "C-001 §3.2 12V 입력 합계 ≈1.84A"},
+  {"board": "carrier", "net": "/12V_IN", "sources": ["Q1.1", "Q1.2", "Q1.3"], "sinks": [["U2.1", "U2.2", "U2.3"], ["U1.3"]], "sink_currents": [1.22, 0.62], "i_worst_a": 1.84,
+   "i_source": "C-001 §3.2 12V 입력 합계 ≈1.84A = AL8860×2 입력 1.22A(eFuse U2) + 5V 벅 입력 0.62A(U1)"},
+  {"board": "carrier", "net": "/12V_IR", "sources": ["U2.15", "U2.16"], "sinks": [["J7.2", "J7.5"]], "i_worst_a": 1.22,
+   "i_source": "C-001 §3.1 12V_IR 2스트링 최악 1.22A"},
+  {"board": "carrier", "net": "/5V_SYS", "sources": ["L1.2"], "sinks": [["J1.29", "J1.31", "J1.33", "J1.35"]], "i_worst_a": 1.3,
+   "i_source": "C-001 §3.2 5V_SYS 합계(피크) ≈1.3A"},
+  {"board": "carrier", "net": "/CORE_3V3", "sources": ["J1.27"], "sinks": [["Q2.2"]], "i_worst_a": 0.2,
+   "i_source": "C-001 §3.2 microSD ≤0.2A"},
+  {"board": "front", "net": "/12V_IR", "sources": ["J4.2", "J4.5"], "sinks": [["U4.8", "R13.1", "D1.1"], ["U5.8", "R14.1", "D2.1"]], "sink_currents": [0.61, 0.61], "i_worst_a": 1.22,
+   "i_source": "C-001 §3.1 12V_IR 2스트링 최악 1.22A (스트링당 0.61A)"},
+  {"board": "front", "net": "/VIN", "sources": ["J1.37", "J1.39", "J1.41", "J1.43"], "sinks": [["U2.1"], ["U1.1", "U1.3"]], "sink_currents": [0.245, 0.03], "i_worst_a": 0.275,
+   "i_source": "C-001 §3.2 ICR 코일 ≈0.245A + 전면 2V8 LDO 등 <30mA"},
+  {"board": "front", "net": "/CORE_3V3", "sources": ["J1.57", "J1.59"], "sinks": [["Q1.2"], ["Q2.2"]], "i_worst_a": 1.0,
+   "i_source": "C-001 §3.1 코어 +3V3 Imax 1A(공유) — 센서 부하 수치가 계약에 없어 공급 상한 적용"},
+  {"board": "front", "net": "/CAM_1V8", "sources": ["Q6.3"], "sinks": [["X1.4"], ["R9.1"], ["R10.1"]], "i_worst_a": 0.3,
+   "i_source": "C-001 §3.1 코어 +1V8 Imax 300mA(Q6 입력 CORE_1V8) — CAM_1V8 부하 수치가 계약에 없어 공급 상한 적용"}
+ ]
+}

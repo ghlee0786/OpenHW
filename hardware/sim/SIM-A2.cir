@@ -1,0 +1,19 @@
+* SIM-A2 TPS26600 켜짐(POR, UVLO→IN) · OVP(→RTN, 내부 고정) 창 — 최악 문턱
+Vin in 0 PWL(0 0 36m 36 72m 0)
+
+Bpor p0 0 V = v(in) > 4.1 ? 1 : (v(in) < 3.8249999999999997 ? 0 : v(p))
+Rp p0 p 1k
+Cp p 0 1n
+Bovp o0 0 V = v(in) > 31.0 ? 1 : (v(in) < 28.5 ? 0 : v(o))
+Ro o0 o 1k
+Co o 0 1n
+Bon on 0 V = v(p) > 0.5 && v(o) < 0.5 ? 1 : 0
+
+.control
+set wr_singlescale
+set wr_vecnames
+tran 10u 72m
+wrdata a2.dat v(in) v(on)
+quit
+.endc
+.end

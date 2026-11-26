@@ -1,0 +1,52 @@
+{
+ "id": "SIM-A2",
+ "title": "TPS26600 켜짐(UVLO→IN = POR)·OVP 문턱",
+ "owner": "schematic",
+ "circuit": {
+  "board": "carrier",
+  "refs": [
+   "U2"
+  ],
+  "schematic_commit": "a61dc63"
+ },
+ "model": {
+  "source": "데이터시트 동작 모델 (문턱 비교기)",
+  "url": "TI SLVSDG2G (Dec 2019) https://www.ti.com/lit/ds/symlink/tps2660.pdf sha256 b781cbce…e1de",
+  "license": "이 저장소 작성",
+  "behavioral": true,
+  "basis": "SLVSDG2G 7.5: V(PORR) 3.9~4.1 V, 히스테리시스 275 mV; V(IN_OVP) 상승 31~34 V / 하강 28.5~31.5 V (OVP = 0 V → 내부 고정); UVLO 가 IN 에 묶여 UVLO 비교기는 항상 참"
+ },
+ "criteria_commit": "64bde61",
+ "checks": [
+  {
+   "name": "켜짐 문턱 최대 ≤ 입력 최소 − 역접 FET 강하",
+   "op": "<=",
+   "limit": 11.3,
+   "unit": "V",
+   "value": 4.1028,
+   "corner": "POR 4.1 V 최악, AO4407A 강하 0.1 V 가정",
+   "pass": true
+  },
+  {
+   "name": "OVP 상승 문턱 최소 ≥ 입력 최대",
+   "op": ">=",
+   "limit": 12.6,
+   "unit": "V",
+   "value": 30.999529,
+   "corner": "OVP 31 V 최악",
+   "pass": true
+  }
+ ],
+ "verdict": "pass",
+ "waveforms": [
+  "hardware/sim/png/SIM-A2-window.png"
+ ],
+ "netlist": "hardware/sim/SIM-A2.cir",
+ "tool": {
+  "name": "ngspice",
+  "version": "ngspice-47 (공식 SourceForge ng-spice-rework/47/ngspice-47_64.7z)",
+  "sha256": "59225971… (7z, firmware 설치·검증 — orch O-81)",
+  "path": "C:/Users/gh/tools/ngspice/47/Spice64/bin/ngspice_con.exe"
+ },
+ "notes": "「분압 저항 ±1% 최악」은 해당 없음: 회로도는 UVLO→IN, OVP→RTN 이라 분압 저항이 없다(내부 고정 문턱). 입력 쪽 TVS SMBJ15A 가 OVP 보다 먼저 클램프한다."
+}

@@ -1,0 +1,60 @@
+Adding duplicate image handler for 'PNG file'
+Adding duplicate image handler for 'JPEG file'
+Adding duplicate image handler for 'TIFF file'
+Adding duplicate image handler for 'GIF file'
+Adding duplicate image handler for 'PNM file'
+Adding duplicate image handler for 'PCX file'
+Adding duplicate image handler for 'IFF file'
+Adding duplicate image handler for 'Windows icon file'
+Adding duplicate image handler for 'Windows cursor file'
+Adding duplicate image handler for 'Windows animated cursor file'
+Adding duplicate image handler for 'TGA file'
+Adding duplicate image handler for 'XPM file'
+Adding duplicate image handler for 'WebP file'
+R-020 전기 가상 검증 — pcbnew 10.0.8
+보드 carrier sha256 cf5a3e352d976f7992347f01ce2b825708047d684023702dbf099ab271e701ac  미연결(KiCad 전체) 21 · (스크립트, 면 넷 /GND 제외) 17 · 미배선 넷 13
+보드 front sha256 dfa3c9bc65531bd845df83e76836f081baa886acdf6281172b2510d7c57ba6e6  미연결(KiCad 전체) 37 · (스크립트, 면 넷 /GND,/IRA_M,/IRA_SET,/IRB_M,/IRB_SET 제외) 7 · 미배선 넷 7
+[통과] ①임피던스  front:CSI_L0                             Zdiff 최소/평균/최대 Ω (마스크 보정) = 102.6 / 102.6 / 102.6 (±10% 밖 0.000 mm) (한도 100 ±10% (90~110))
+[통과] ②차동    front:CSI_L0                             쌍 안 길이 차 mm (트랙 / +비아) = 0.000 / 0.000 (한도 0 (수치 허용 0.01))
+[통과] ②차동    front:CSI_L0                             비결합 mm (트랙 / +비아) = 3.879 / 3.879 (한도 ≤ 4)
+[통과] ①임피던스  front:CSI_L1                             Zdiff 최소/평균/최대 Ω (마스크 보정) = 102.6 / 102.6 / 102.6 (±10% 밖 0.000 mm) (한도 100 ±10% (90~110))
+[통과] ②차동    front:CSI_L1                             쌍 안 길이 차 mm (트랙 / +비아) = 0.000 / 0.000 (한도 0 (수치 허용 0.01))
+[통과] ②차동    front:CSI_L1                             비결합 mm (트랙 / +비아) = 3.614 / 3.614 (한도 ≤ 4)
+[통과] ①임피던스  front:CSI_CLK                            Zdiff 최소/평균/최대 Ω (마스크 보정) = 102.6 / 102.6 / 102.6 (±10% 밖 0.000 mm) (한도 100 ±10% (90~110))
+[통과] ②차동    front:CSI_CLK                            쌍 안 길이 차 mm (트랙 / +비아) = 0.000 / 0.000 (한도 0 (수치 허용 0.01))
+[통과] ②차동    front:CSI_CLK                            비결합 mm (트랙 / +비아) = 3.084 / 3.084 (한도 ≤ 4)
+[통과] ①임피던스  carrier:MDI_TX                           Zdiff 최소/평균/최대 Ω (마스크 보정) = 102.6 / 102.6 / 102.6 (±10% 밖 0.000 mm) (한도 100 ±10% (90~110))
+[불합격] ②차동    carrier:MDI_TX                           쌍 안 길이 차 mm (트랙 / +비아) = 0.580 / 0.926 (한도 0 (수치 허용 0.01))
+[통과] ②차동    carrier:MDI_TX                           비결합 mm, 꼬임 영역 밖 (트랙 / +비아) = 4.602 / 4.731 (한도 ≤ 6)
+[통과] ②차동    carrier:MDI_TX                           비결합 mm, 꼬임 포함 전체 (트랙 / +비아) = 9.031 / 9.958 (한도 ≤ 20)
+[통과] ①임피던스  carrier:MDI_RX                           Zdiff 최소/평균/최대 Ω (마스크 보정) = 102.6 / 102.6 / 102.6 (±10% 밖 0.000 mm) (한도 100 ±10% (90~110))
+[불합격] ②차동    carrier:MDI_RX                           쌍 안 길이 차 mm (트랙 / +비아) = 7.223 / 10.235 (한도 0 (수치 허용 0.01))
+[통과] ②차동    carrier:MDI_RX                           비결합 mm, 꼬임 영역 밖 (트랙 / +비아) = 2.595 / 5.607 (한도 ≤ 6)
+[통과] ②차동    carrier:MDI_RX                           비결합 mm, 꼬임 포함 전체 (트랙 / +비아) = 11.973 / 14.985 (한도 ≤ 20)
+[통과] ①임피던스  carrier:USB                              Zdiff 최소/평균/최대 Ω (마스크 보정) = 89.7 / 89.7 / 89.7 (±10% 밖 0.000 mm) (한도 90 ±10% (81~99))
+[불합격] ②차동    carrier:USB                              쌍 안 길이 차 mm (트랙 / +비아) = 8.607 / 11.619 (한도 0 (수치 허용 0.01))
+[불합격] ②차동    carrier:USB                              비결합 mm (트랙 / +비아) = 28.800 / 33.318 (한도 ≤ 12)
+[통과] ②차동    front:CSI_L0-CSI_CLK                     레인 skew mm (트랙 / +비아) = 0.000 / 0.000 (한도 ≤ 1)
+[통과] ②차동    front:CSI_L1-CSI_CLK                     레인 skew mm (트랙 / +비아) = 0.000 / 0.000 (한도 ≤ 1)
+[통과] ③전원    carrier:/12V_IN_RAW                      최대 이용률 트랙 (w 1.000 mm F.Cu): 흐르는 A / IPC-2152 허용 A (ΔT10K) = 1.84 / 1.99 (ΔT@I 8.5 K, IPC-2221 2.39) (한도 흐르는 ≤ 허용)
+[통과] ③전원    carrier:/12V_IN_F                        최대 이용률 트랙 (w 1.000 mm B.Cu): 흐르는 A / IPC-2152 허용 A (ΔT10K) = 1.84 / 1.99 (ΔT@I 8.5 K, IPC-2221 2.39) (한도 흐르는 ≤ 허용)
+[불합격] ③전원    carrier:/12V_IN_F                        최대 부하 비아 (드릴 0.40, 도금 25 µm): 흐르는 A / 허용 A = 1.84 / 1.81 (IPC-2221 내층식 1.06) (한도 흐르는 ≤ 허용)
+[미배선] ③전원    carrier:/12V_IN                          최대 이용률 트랙 (w 1.000 mm F.Cu): 흐르는 A / IPC-2152 허용 A (ΔT10K) = 0.62 / 1.99 (ΔT@I 0.8 K, IPC-2221 2.39) (한도 흐르는 ≤ 허용)
+[미배선] ③전원    carrier:/12V_IN                          최대 부하 비아 (드릴 0.40, 도금 25 µm): 흐르는 A / 허용 A = 0.62 / 1.81 (IPC-2221 내층식 1.06) (한도 흐르는 ≤ 허용)
+[미배선] ③전원    carrier:/12V_IN→U2.1+U2.2+U2.3           경로 = 연결 경로 없음 (한도 —)
+[통과] ③전원    carrier:/12V_IR                          최대 이용률 트랙 (w 0.550 mm F.Cu): 흐르는 A / IPC-2152 허용 A (ΔT10K) = 1.22 / 1.43 (ΔT@I 7.1 K, IPC-2221 1.55) (한도 흐르는 ≤ 허용)
+[통과] ③전원    carrier:/12V_IR                          최대 부하 비아 (드릴 0.40, 도금 25 µm): 흐르는 A / 허용 A = 1.22 / 1.81 (IPC-2221 내층식 1.06) (한도 흐르는 ≤ 허용)
+[불합격] ③전원    carrier:/5V_SYS                          최대 이용률 트랙 (w 0.300 mm F.Cu): 흐르는 A / IPC-2152 허용 A (ΔT10K) = 1.30 / 1.03 (ΔT@I 16.6 K, IPC-2221 1.00) (한도 흐르는 ≤ 허용)
+[통과] ③전원    carrier:/5V_SYS                          최대 부하 비아 (드릴 0.40, 도금 25 µm): 흐르는 A / 허용 A = 1.30 / 1.81 (IPC-2221 내층식 1.06) (한도 흐르는 ≤ 허용)
+[미배선] ③전원    carrier:/CORE_3V3                        트랙 전류 = 전류가 흐르는 트랙 없음 (한도 —)
+[미배선] ③전원    carrier:/CORE_3V3→Q2.2                   경로 = 연결 경로 없음 (한도 —)
+[통과] ③전원    front:/12V_IR                            최대 이용률 트랙 (w 0.600 mm B.Cu): 흐르는 A / IPC-2152 허용 A (ΔT10K) = 0.70 / 1.50 (ΔT@I 1.9 K, IPC-2221 1.65) (한도 흐르는 ≤ 허용)
+[통과] ③전원    front:/12V_IR                            최대 부하 비아 (드릴 0.40, 도금 25 µm): 흐르는 A / 허용 A = 0.38 / 1.81 (IPC-2221 내층식 1.06) (한도 흐르는 ≤ 허용)
+[미배선] ③전원    front:/VIN                               최대 이용률 트랙 (w 0.300 mm B.Cu): 흐르는 A / IPC-2152 허용 A (ΔT10K) = 0.03 / 1.03 (ΔT@I 0.5 K, IPC-2221 1.00) (한도 흐르는 ≤ 허용)
+[미배선] ③전원    front:/VIN                               최대 부하 비아 (드릴 0.40, 도금 25 µm): 흐르는 A / 허용 A = 0.03 / 1.81 (IPC-2221 내층식 1.06) (한도 흐르는 ≤ 허용)
+[미배선] ③전원    front:/VIN→U2.1                          경로 = 연결 경로 없음 (한도 —)
+[불합격] ③전원    front:/CORE_3V3                          최대 이용률 트랙 (w 0.150 mm F.Cu): 흐르는 A / IPC-2152 허용 A (ΔT10K) = 1.00 / 0.70 (ΔT@I 22.0 K, IPC-2221 0.60) (한도 흐르는 ≤ 허용)
+[통과] ③전원    front:/CORE_3V3                          최대 부하 비아 (드릴 0.30, 도금 25 µm): 흐르는 A / 허용 A = 1.00 / 1.53 (IPC-2221 내층식 0.84) (한도 흐르는 ≤ 허용)
+[통과] ③전원    front:/CAM_1V8                           최대 이용률 트랙 (w 0.150 mm F.Cu): 흐르는 A / IPC-2152 허용 A (ΔT10K) = 0.30 / 0.70 (ΔT@I 1.4 K, IPC-2221 0.60) (한도 흐르는 ≤ 허용)
+[통과] ③전원    front:/CAM_1V8                           최대 부하 비아 (드릴 0.30, 도금 25 µm): 흐르는 A / 허용 A = 0.30 / 1.53 (IPC-2221 내층식 0.84) (한도 흐르는 ≤ 허용)
+불합격 7 · 미배선(판정 안 함) 8 · 판정 항목 43
