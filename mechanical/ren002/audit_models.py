@@ -2,7 +2,7 @@
 두 보드의 모든 풋프린트에 대해 (model ...) 경로가 실제 파일로 풀리는지 본다. kicad-cli 는 모델 속성이 아예 없는 풋프린트는 경고하지 않으므로 직접 읽는다.
 - ${KICAD10_3DMODEL_DIR} → KiCad 10 설치 share/kicad/3dmodels, ${KIPRJMOD} → 보드 폴더(저장소 루트 위 mechanical/models 는 이 레인 것으로)
 - .wrl 경로는 같은 이름 .step 도 찾는다 (kicad-cli --subst-models 와 같음)
-- 모델이 필요 없는 것: attr board_only, 또는 라이브러리 MountingHole · TestPoint · Fiducial · NetTie · Symbol
+- 모델이 필요 없는 것: attr board_only 또는 exclude_from_bom(실장 부품 없음, 예: 전면 J2 리드 납땜 패드 — M-008 F5), 또는 라이브러리 MountingHole · TestPoint · Fiducial · NetTie · Symbol
 출력: mechanical/ren002/model_audit.md (표), validation/runtime/vd001/ren002/model_audit.json"""
 import argparse, io, json, os, re, subprocess, sys, tarfile
 
@@ -70,7 +70,7 @@ def main():
             side = 'B' if re.search(r'\n\t\t\(layer "B\.Cu"\)', blk) else 'F'
             models = re.findall(r'\(model "([^"]+)"', blk)
             hidden = re.findall(r'\(model "[^"]+"\s*\(hide yes\)', blk)
-            need = not ('board_only' in attr or lib.split(':')[0] in NO_MODEL_LIBS)
+            need = not ('board_only' in attr or 'exclude_from_bom' in attr or lib.split(':')[0] in NO_MODEL_LIBS)
             res = []
             for m in models:
                 f, why = resolve(m, bd, src)

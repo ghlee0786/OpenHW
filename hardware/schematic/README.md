@@ -333,7 +333,7 @@
 | 전면 | C6 | AVDD 켜짐 지연 옵션 — **DNP 유지 필수**(실장하면 GC2053 9.3절 전원 끄는 순서 위반, V-004 R13) |
 | 전면 | R16 | CAM_RESET → GND 10k 자리 (C-004 R3). 실장하려면 ≥100k (V-004b R3) — **C10은 C-004에서 실장으로 바뀌어 이 목록에서 뺌** |
 | 전면 | Q4·R11 | 아날로그 조도 차선 (C15) |
-| 전면 | U5·R14·D_IR_B1·D_IR_B2·L2·D2·C16·C17 | IR 스트링 B (O-25) |
+| ~~전면~~ | ~~U5·R14·D_IR_B1·D_IR_B2·L2·D2·C16·C17~~ | ~~IR 스트링 B (O-25)~~ → **C-012(O-69)에서 실장, 목록에서 뺌.** 최신 DNP 목록은 계약 12B절(v1.12, `contract_check.py`가 넷리스트와 대조) |
 
 ## 11. R-004 BOM과 다른 점 (orch·R-004로 넘김)
 
@@ -654,3 +654,284 @@
 - **ERC:** 캐리어 종료 0·위반 0, 전면 종료 0·위반 0. SVG는 `validation/runtime/kicad-gui/C-007/`에 있다.
 - **표제란 Rev:** 「C-007」.
 - **pcb:** 캐리어 C23 `Capacitor_SMD:C_1210_3225Metric` 새로 — C7·C8·C20 옆, TPS54302 출력 노드. 전면은 바뀌는 것이 없다.
+
+## 20. C-009 — 보드 간 GH 6P 직선 케이블 (orch O-41 · M-001e K23)
+
+- **근거:** 두 커넥터 모두 −X 쪽에서 들어오고 하니스가 U자로 굽는다. 그래서 꼬지 않은 직선 배선이면 핀이 n ↔ 7−n으로 이어진다.
+  - 전원(2/5)과 GND(1/6)는 대칭이라 영향이 없다.
+  - 3(SPARE1)과 4(ALS_INT_RSV)만 뒤바뀐다.
+- **수정:** 전면 J4 핀 3 = **ALS_INT_RSV**, 핀 4 = **SPARE1** (맞바꿈). 캐리어 J7은 그대로다.
+- **케이블:** 직선, J7-n ↔ J4-(7−n).
+  - J7-3 SPARE1 ↔ J4-4 SPARE1
+  - J7-4 ALS_INT_RSV ↔ J4-3 ALS_INT_RSV
+- **넷리스트 차이 (C-007 `f651dfe` → C-009):** 전면 넷 2개만 바뀌었다(SPARE1: J4-3 → J4-4, ALS_INT_RSV: J4-4 → J4-3). 도구 출력으로는 before/after 4줄이다. 캐리어 차이 0.
+- **ERC:** 두 보드 종료 0·위반 0. SVG는 `validation/runtime/kicad-gui/C-009/`에 있다. 표제란 Rev 「C-009」.
+- **pcb:** 전면 J4 핀 3·4의 넷이 맞바뀐다(풋프린트 그대로).
+
+## 22. C-011 — C-010 되돌림 (orch O-47 · R-013)
+
+- **근거 (R-013, research `5e456c5`):**
+  - SG2002 EPHY의 10BASE-T 자동 극성 보정은 문서와 드라이버 어디에도 없다. Auto MDI-X는 쌍을 맞바꾸는 기능일 뿐이다.
+  - 자동 협상 FLP가 극성에 기대므로, RJ45 쪽 P/N을 반전하면 100M 자동 협상까지 실패할 위험이 있다.
+- **수정:** `git revert 21175f3` (C-010).
+  - J5 핀 1·2·3·6이 원래대로 EPHY_TXP·TXN·RXP·RXN이 되었다(RJ45 극성 표준 배정).
+  - 물리적 P/N 꼬임은 PCB에서 처리한다(O-47).
+- **넷리스트:** C-010 이전(`c653eac`)과 비교한 차이는 두 보드 모두 **0**이다(`tools/netcompare.py` 종료 0).
+- **ERC:** 두 보드 종료 0·위반 0. SVG는 `validation/runtime/kicad-gui/C-011/`에 있다. 표제란 Rev 「C-011」.
+
+## 23. C-013 — 라벨·필드 겹침 정리 (O-32 남은 것, 가독성만)
+
+- **원인:** 심벌의 Reference·Value 필드가 맨 위 가로 핀 높이에서 1.27 위에 있었다. 그래서 그 핀의 넷 라벨과 겹쳤다. O-32의 J2 12V_IN_RAW, D3 PWR_LED, J1 부품 번호가 모두 이 경우다.
+- **수정:** 생성기 `tools/schgen.py`에서 필드를 한 격자(1.27) 위로 올렸다(Reference −5.08, Value −2.54). 표제란은 Rev 「C-013」, 날짜 2026-11-27로 바꿨다.
+  - 커밋한 두 회로도는 HEAD 파일의 필드 좌표(캐리어 204개, 전면 178개)와 표제란만 고쳤다. **UUID 목록은 전후가 같다.**
+  - 이렇게 고친 파일은 생성기 출력과 UUID만 빼면 같다(두 보드 모두 True).
+- **겹침 수 (`tools/overlaps.py`):** 글자 경계 상자가 교차하는 쌍을 센다. 라벨·자유 글자·보이는 필드가 대상이다.
+
+| 보드 | 전 (합계 / 서로 다른 글자 / 같은 자리 같은 이름) | 후 |
+|---|---|---|
+| 캐리어 | 37 / **17** / 20 | 20 / **0** / 20 |
+| 전면 | 17 / **9** / 8 | 8 / **0** / 8 |
+
+- **남은 것:** 같은 넷의 겹친 핀(예: USB-C VBUS 4핀, 커넥터 GND)에 같은 이름 라벨이 같은 자리에 겹쳐 그려진 것이다. 화면에서는 라벨 하나로 보인다. 지우면 객체(UUID)가 줄어들어서 그대로 두었다.
+- **판정:**
+  - ERC: 두 보드 종료 0·위반 0
+  - `tools/netcompare.py` C-012 `f56945b` 대비: 두 보드 차이 0 (종료 0)
+  - 부품·DNP·UUID 변경 없음
+- **그림:** `validation/runtime/kicad-gui/C-013/index.html`에 전후 PNG를 모았다(`kicad-cli sch export svg` → PyMuPDF PNG). 사람 눈 확인용이다(verifiable 아니오).
+
+## 24. C-016 — 캐리어 32(PWR_WAKEUP1) 미연결 · 전면 R15 삭제 · J2 납땜 패드 (orch O-83 · O-84, R-019)
+
+- **캐리어 BTB J1-32** (코어 J2 짝 핀, 넷 PWR_WAKEUP1):
+  - ALS_INT_RSV에서 떼어 **no-connect**로 바꿨다. Seeed B301·B101과 같게 미연결이고 풀 저항도 없다(R-019).
+  - 이유: ALS는 i2c-dev 폴링이다(D-003 #18). 또 이 핀은 코어 깨우기 입력이다.
+  - 생성기 `boards.py`에서 `PWR_WAKEUP1`을 NC 목록에 넣었다.
+- **ALS_INT_RSV:** 하니스 예비선으로만 남는다.
+  - 캐리어: J7-4 · TP26
+  - 전면: J4-3 · **TP24(새로)**
+- **전면 R15 10k(ALS_INT_RSV → CORE_1V8) 삭제:**
+  - LTR-329ALS-01에는 INT 핀이 없다. INT 있는 차선은 LTR-303ALS다.
+  - 외부 10k를 CORE_1V8에 두면 셧다운 때 핀을 Low로 끌 위험이 있다(O-83).
+- **전면 J2 (CLA216 ICR 리드):** PicoBlade 53261 → 2핀 2.54mm 스루홀 납땜 패드(O-84).
+  - 풋프린트: `Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical`
+  - 심벌: `Connector_Generic:Conn_01x02`. MP 핀이 없어져 GND 연결도 빠졌다.
+  - 헤더는 실장하지 않는다. `in_bom no` · `in_pos_files no`
+  - 1번 사각 패드 = ICR_A(극성 표시)
+  - 생성기 `schgen.add()`에 `in_bom` 인자를 더했다.
+- **UUID 유지:**
+  - HEAD 파일에 생성기 출력을 줄 단위로 맞췄다. UUID·path를 가린 비교에서 같은 줄은 HEAD 원문을 쓴다.
+  - 결과는 생성기 출력과 UUID만 빼면 같다.
+  - 캐리어: UUID 792개 중 791개 유지, 새로 1개(no-connect)
+  - 전면: 656개 중 653개 유지, 새로 3개(TP24). J2 심벌 UUID도 유지했다.
+- **netcompare (C-015 `0c2e8e7` 대비), 의도한 차이만:**
+  - 캐리어 3:
+    - J1-32 → `unconnected-(J1-Pin_32-Pad32)`
+    - ALS_INT_RSV {J1-32, J7-4, TP26} → {J7-4, TP26}
+  - 전면 9:
+    - COMP J2: 값·풋프린트
+    - COMP R15 삭제
+    - COMP TP24 추가
+    - ALS_INT_RSV {J4-3, R15-2} → {J4-3, TP24-1}
+    - GND에서 J2-MP 빠짐
+    - CORE_1V8에서 R15-1 빠짐
+- **판정:**
+  - ERC 두 보드 종료 0
+  - `contract_check.py` 계약 불일치 0
+  - `--selftest` 18/18
+  - 겹침(`tools/overlaps.py`) 보이는 겹침 0/0
+  - 표제란 Rev 「C-016」
+  - SVG: `validation/runtime/kicad-gui/C-016/`
+- **BOM (넘김):** 전면 BOM을 다시 내보내면 J2·R15가 빠지고 TP24가 생긴다. 그러면 `bom-full.csv`(R-016 소유)에 J2·R15가 남아 `make_pcbway_bom.py`가 종료 1이 된다.
+  - 그래서 이 레인에서는 `inputs/front-kicad-bom.csv`를 고치지 않았다.
+  - bom-full 갱신과 함께 다시 내보내야 한다.
+
+## 25. C-017 — SIM-001b 수정 반영 (orch O-87, firmware `a3b988c` `hardware/sim/SIM-001b-results.md`)
+
+| # | 바꾼 것 | 이유 (SIM-001b) |
+|---|---|---|
+| S1 | 전면 Q7 드레인 → 새 넷 CAM_1V8_PD → **R18 1k** → CAM_1V8_G (Q6 게이트). **C19 10nF**를 Q6 게이트–드레인(CAM_1V8_G–CAM_1V8)에 둠 | 밀러 소프트스타트. CAM_1V8 돌입 5.11A → 0.133A, 켜짐 36µs |
+| S2 | 캐리어 **R6 8.06k → 6.98k 1%** (TPS26600 ILIM ≈ 1.49A → 1.72A) | 두 스트링 켬 구간 맥놀이로 20µs 창 1.585A. 이전 ILIM 1.49A를 넘음 |
+| S4 | 전면 **R19 10k** CAM_1V8 → GND 블리더 | 꺼진 CAM_1V8에서 SDA 0.42V → 0.16V. 켜졌을 때 180µA |
+| S3 | 회로 변경 없음 (끔 구간 링잉 6mA, 기준 불합격 유지·bring-up 확인 항목) | O-87 |
+
+- **계약 v1.13:**
+  - 3.1 12V_IR·CAM_1V8 행, 12절 eFuse 행, 13절 C18 ②를 갱신했다.
+  - FW 규칙 「IIC2 패드 내부 풀업 켜지 않음」을 넣었다(켜면 꺼진 센서로 11.8µA 역급전).
+- **`contract_check.py`:**
+  - Q7 → R18 → Q6 게이트, C19 게이트–드레인, R19 블리더를 대조한다.
+  - 고장 주입은 20건이다.
+- **netcompare (C-016 `1f632b6` 대비), 의도한 차이만:**
+  - 캐리어 1: COMP R6 8.06k → 6.98k
+  - 전면 10:
+    - COMP C19·R18·R19 추가
+    - CAM_1V8_G {Q6-1, Q7-3, R17-2} → {C19-1, Q6-1, R17-2, R18-2}
+    - 새 넷 CAM_1V8_PD {Q7-3, R18-1}
+    - CAM_1V8에 C19-2·R19-1 추가
+    - GND에 R19-2 추가
+- **UUID:**
+  - 캐리어는 792/792 유지했다.
+  - 전면은 653개 유지에 새로 18개(새 부품 3개)다.
+  - SENS 블록에 부품이 늘어 그 블록 뒤 심벌 좌표가 옮겨졌다. UUID는 그대로라 PCB 링크에는 영향이 없다.
+- **판정:**
+  - ERC 두 보드 0
+  - `contract_check.py` 불일치 0
+  - `--selftest` 20/20
+  - 보이는 라벨 겹침 0/0
+  - Rev 「C-017」
+- **주의 (orch로 넘김):** ILIM 6.98k이면 I(OL) 최대는 12/(6.98×0.99)×1.05 ≈ 1.82A다. 벅 입력 0.62A를 더하면 과부하 중 12V 입력 피크가 약 2.44A로, 어댑터 2.08A를 넘는다.
+  - 계약 12절의 「과부하 때 합계가 어댑터 2.08A를 넘지 않게」와 어긋난다.
+  - SIM-001a에서 어댑터 특성 항목(lead 추가 지시)으로 확인한다.
+
+## 26. C-018 — R6 재계산 · S5 · U2 풋프린트 · .net 재생성 (orch O-91, 계약 v1.14)
+
+| 바꾼 것 | 값 | 근거 |
+|---|---|---|
+| 캐리어 R6 (TPS26600 ILIM) | 6.98k → **6.04k 1%** (I(OL) 1.86~2.12A, 전형 1.99A) | SIM-001a A5 전류 순서 표(`hardware/sim/SIM-A5-current-order.md`). 12V_IR 피크 1.585A × 1.15 ≤ I(OL) 최소, I(OL) 최대 + 벅 입력 0.648A < GST40A12 OLP 최소 3.51A. 두 조건을 만족하는 E96 값 중 I(OL)이 가장 낮다 |
+| 전면 R17 | 10k → **4.7k** | S5, SIM-001b′ `55480c0`: 꺼짐 47µs |
+| 전면 C19 | 10nF → **4.7nF** | S5: 돌입 0.242A |
+| 캐리어 U2 풋프린트 | `…_Mask2.66x2.46mm_ThermalVias` → `Package_SO:HTSSOP-16-1EP_4.4x5mm_P0.65mm_EP3.4x5mm_Mask2.66x2.46mm` | O-86 #21. 열 비아(Ø0.3)는 pcb가 배선할 때 넣는다 |
+| `carrier/carrier.net` · `front/front.net` | kicad-cli `sch export netlist --format kicadsexpr`로 다시 내보냄 | f0745ed까지 C-013 상태로 남아 있었다(pcb 발견) |
+
+- **계약 v1.14:**
+  - 3.1 12V_IR 행: ILIM 6.04k, SIM-A5 근거
+  - 3.1 CAM_1V8 행: R17 4.7k · C19 4.7nF
+  - 3.2: 어댑터 GST40A12-P1J 3.34A
+  - 12절: 어댑터 OLP 문구, 플러그 2.1×5.5 센터 +
+- **netcompare (`5cbd1f3` 대비), 의도한 차이만:**
+  - 캐리어: R6 값, U2 풋프린트
+  - 전면: R17 값, C19 값
+  - 넷 변화는 0이다.
+- **UUID:** 두 보드 모두 전부 유지했다(792/792, 671/671).
+- **판정:**
+  - ERC 두 보드 0
+  - `contract_check.py` 불일치 0
+  - `--selftest` 20/20
+  - 보이는 겹침 0/0
+  - Rev 「C-018」
+
+## 27. C-019 — SIM-001a B1·C3 수정 (orch O-93, 계약 v1.15)
+
+| 바꾼 것 | 값 | 근거 |
+|---|---|---|
+| 캐리어 R2 / R3 (TPS54302 FB) | 100k / 13.3k → **78.7k / 10.7k 1%** | 최악 범위 4.770~5.196V, 전형 4.980V (VFB 0.581~0.611V × R ±1%) |
+| 전면 Q1 게이트 | 새 넷 CAM_PG_IO: CAM_PG → **R20 1k** → Q1 게이트 | 밀러 소프트스타트 (C-017 S1과 같은 방식) |
+| 전면 C20 · C21 | **4.7nF** Q1 게이트–드레인(CAM_PG_IO–CAM_IOVDD) · Q2 게이트–드레인(CAM_PG_AV–CAM_AVDD) | SIM-C3: CORE_3V3 강하 0.230V → 0.046V, IOVDD 10µs → AVDD 81µs |
+
+- **R2/R3 고른 방법:**
+  - E96 1% 조합을 모두 계산했다.
+  - 최악 범위가 4.75~5.25V 안에 드는 조합 가운데, 범위의 가운데가 5V에 가장 가까운 것을 골랐다(가운데 4.983V).
+  - 다음 후보:
+    - 75k/10.2k: 4.768~5.194V
+    - 105k/14.3k: 4.763~5.188V
+    - 97.6k/13.3k: 4.760~5.185V
+- **LCSC 재고 (2026-11-27, 공개 detail API):**
+  - 78.7k 0402WGF7872TCE C67239: 2,100개 — 재고가 적은 편이다
+  - 10.7k 0402WGF1072TCE C270654: 167,800개
+  - 1k C11702
+  - 4.7nF CC0402KRX7R9BB472 C106208
+- **코어 VIN 하한:** 계약 3.1 「모듈 VIN」 행(코어 SCH 04 VBAT_DET 30k/15k)에서 VIN < 3.0V면 꺼진다. 최악 4.770V면 여유 1.77V다.
+- **피드포워드:** C19 75pF와 R2가 만드는 영점이 21kHz → 27kHz로 옮겨 간다. SIM-B3에서 루프를 다시 확인한다.
+- **netcompare (`89647b4` 대비), 의도한 차이만:**
+  - 캐리어: R2·R3 값
+  - 전면:
+    - R20·C20·C21 추가
+    - Q1-1이 CAM_PG에서 새 넷 CAM_PG_IO {C20-1, Q1-1, R20-2}로 옮김
+    - CAM_PG {Q3-3, R20-1, R4-2, R5-1}
+    - CAM_PG_AV +C21-1
+    - CAM_IOVDD +C20-2
+    - CAM_AVDD +C21-2
+- **UUID:**
+  - 병합을 객체 단위로 바꿨다. 심벌은 레퍼런스별로 HEAD UUID와 핀 UUID를 그대로 쓴다. 라벨·선은 모양이 같으면 HEAD UUID를 쓴다.
+  - 두 보드 심벌 UUID 변경은 0이고, 새로 생긴 것은 R20·C20·C21뿐이다.
+  - **알림:** C-017(`f0745ed`)의 줄 단위 병합에서 전면 **X1 심벌 UUID가 바뀌었다** (`2a3e25ba…` → `7b69cce2…`). pcb는 X1 링크를 확인해야 한다. 그 뒤 C-018·C-019에서는 바뀌지 않았다.
+- **판정:**
+  - ERC 두 보드 0
+  - `contract_check.py` 불일치 0(388줄)
+  - `--selftest` 22/22
+  - 보이는 겹침 0/0
+  - Rev 「C-019」
+
+## 28. C-020 — 카메라 레일 순서 S6 (orch O-97, SIM-001c ② firmware `43eb4f7`, 계약 v1.16)
+
+- **문제:** Q1(IOVDD)·Q2(AVDD)가 같은 CAM_PG로 거의 동시에 움직인다.
+  - 끌 때 IOVDD가 AVDD보다 2.31ms 먼저 떨어진다. GC2053 §9.3은 IOVDD가 마지막이어야 한다.
+  - 켤 때 AVDD−IOVDD가 최악 1.0µs다. §9.2는 t1 ≥ 50µs다.
+- **바꾼 것 (전면, 게이트 비대칭 RC):**
+
+| 부품 | 값 · 결선 | 동작 |
+|---|---|---|
+| R20 | 1k → **100k** (CAM_PG–CAM_PG_IO) | Q1을 끌 때 천천히 → IOVDD 마지막 |
+| R21 (새) | 1k (CAM_PG_IO–CAM_PG_IOD) | D4와 직렬 |
+| D4 (새) | BAT54WS, 애노드 CAM_PG_IOD → 캐소드 CAM_PG | Q1을 켤 때 게이트를 빨리 끌어내림 → IOVDD 먼저 |
+| R5 | 10k → **100k** (CAM_PG–CAM_PG_AV) | Q2를 켤 때 천천히 → AVDD 나중 |
+| D5 (새) | BAT54WS, 애노드 CAM_PG → 캐소드 CAM_PG_AV | Q2를 끌 때 게이트를 빨리 올림 → AVDD 먼저 꺼짐 |
+
+- **극성 확인:**
+  - P-FET라 게이트 Low일 때 켜진다. Q3가 CAM_PG를 끌어내리면 켜지고, R4 100k가 올리면 꺼진다.
+  - D4는 CAM_PG가 Low일 때 순방향이다(Q1을 빨리 켬). D5는 CAM_PG가 High일 때 순방향이다(Q2를 빨리 끔).
+  - firmware 문서 원문의 방향(「CAM_PG_IO → CAM_PG」 「CAM_PG → CAM_PG_AV」)과 같다.
+  - 검증(firmware, 같은 모델 최악 4경우):
+    - 켤 때 AVDD−IOVDD 180µs
+    - 끌 때 IOVDD−AVDD 1.1ms
+    - CORE_3V3 돌입 310mA, 최저 3.269V
+- **netcompare (`cdabf3c` 대비), 의도한 차이만:**
+  - 캐리어: 0
+  - 전면:
+    - R5·R20 값
+    - R21·D4·D5 추가
+    - CAM_PG +D4-1(K)·D5-2(A)
+    - CAM_PG_IO +R21-1
+    - CAM_PG_AV +D5-1(K)
+    - 새 넷 CAM_PG_IOD {D4-2(A), R21-2}
+- **UUID:** 심벌 UUID 변경 0(객체 단위 병합). 새로 생긴 것은 R21·D4·D5뿐이다.
+- **`contract_check.py`:**
+  - 저항 「Rn 값(넷–넷)」과 다이오드 「Dn BAT54(애노드 → 캐소드)」를 대조하는 항목을 더했다(393줄).
+  - 고장 주입 24건이다(D5 극성 뒤집힘, R20 값).
+- **판정:**
+  - ERC 두 보드 0
+  - contract_check 불일치 0
+  - selftest 24/24
+  - Rev 「C-020」
+- **남은 것:**
+  - 모듈 BXF4677 안 LDO의 지연은 모른다. 실물 순서는 bring-up에서 IOVDD·AVDD를 프로브로 확인한다.
+  - BOM 반영이 필요하다: BAT54WS ×2, 1k, R5·R20 100k.
+
+## 29. C-021 — IR LED 끔 구간 블리더 (orch O-99, SIM-001e firmware `8591271`, 계약 v1.17)
+
+- **바꾼 것 (전면):**
+  - R22 10k 1% 0402 — IRA_SET–IRA_K, 스트링 A LED 2개 양단
+  - R23 10k 1% 0402 — IRB_SET–IRB_K, 스트링 B
+- **근거:**
+  - 끈 뒤 L 47µH와 접합 용량이 2.84MHz로 공진해 LED에 순방향 꼬리 전류가 흐른다(스트링당 평균 0.84mA).
+  - 블리더를 넣으면 끔 구간 |I|가 6.1mA에서 1.4µA로 준다.
+  - 대가: 효율 −0.081%p, LED 전류 −0.1% 이내, 소비 4.4mW. 양단 전압은 최대 약 6.7V다.
+  - 후보 8종 중 이것만 합격했다. FW 변경은 없다.
+- **계약 v1.17:**
+  - 3.2 「IR LED 조건」에 블리더와 근거를 넣었다.
+  - SIM-001b S3 「발광 아님」을 정정했다(실제로는 LED 순방향 꼬리).
+- **netcompare (`491e72a` 대비), 의도한 차이만:**
+  - 캐리어: 0
+  - 전면: R22·R23 추가, IRA_SET·IRA_K·IRB_SET·IRB_K에 각 1핀
+- **UUID:** 심벌 변경 0. 새로 생긴 것은 R22·R23뿐이다.
+- **`contract_check.py`:** 저항 대조에서 값 뒤의 「1%」 꼬리표를 떼도록 고쳤다. 고장 주입은 25건이다(R23 넷 바꿈).
+- **판정:**
+  - ERC 두 보드 0
+  - contract_check 불일치 0(395줄)
+  - selftest 25/25
+  - 보이는 겹침 0
+  - Rev 「C-021」
+
+## 30. C-022 — openhw 라이브러리 2건 (orch O-101, mechanical M-009 `f7fd41e`)
+
+- **바꾼 것:**
+  - 전면 J2 풋프린트 → `openhw:CLA216_ICR_SolderPads_1x02_P2.54mm` (헤더 몸체 없는 2패드, courtyard 패드 + 0.25). 핀 번호·넷(1 □ = ICR_A, 2 = ICR_B)·BOM/CPL 제외는 그대로다.
+  - `openhw:M12_Holder_20mm_CLA216-ICR`(MH1) F.CrtYd → 16점 외형(뒷면 BTB 고정 핀 NPTH 두 곳 노치, 구멍까지 0.100). 자세한 것은 `hardware/libraries/README.md` 「C-022 추가」.
+- **netcompare (`613cf14` 대비), 의도한 차이만:**
+  - 캐리어: 0
+  - 전면: J2 풋프린트 이름 1건
+- **UUID:** 심벌 변경 0.
+- **판정:**
+  - ERC 두 보드 0
+  - contract_check 불일치 0, selftest 25/25
+  - `kicad-cli fp upgrade` 종료 0
+  - `.net` 재생성, 보이는 겹침 0
+  - Rev 「C-022」
