@@ -1,8 +1,8 @@
 # C-001 HW/FW 계약 — reCamera Core 2002 캐리어·전면 보드
 
-- 상태: **계약 v1.9 (FW 대조 완료 · C-010 회로도 반영)** · 2026-11-26
+- 상태: **계약 v1.10 (FW 대조 완료 · C-011 회로도 반영)** · 2026-11-26
 - 배정: orch t18r C-001 → C-001b(FW 대조) · 작성자: schematic (단독) · 레인 `t-20261126-155208-d030`
-- 이력: 초안 `ac12920` → v1 `8613910` → v1.1 `be646c2` → v1.2 `fd12ba4` → v1.3 `e3ccdd0` → v1.4 `d159068` → v1.5 `a2b4945` ( V-004b — IR_PWM Hi-Z 상태 정정·듀티 기준, N1 Q6 게이트, X1 OE, SMBJ6.0A, USB_DET 필터 — C-005 회로도 `b3b376a`와 일치) → v1.6 `fb6629c` (R17 100k → 10k, V-004c/O-36) → v1.7 `62145e8` (5V 출력 22µF×4, O-37) → v1.8 `2dde4a2` (보드 간 GH 6P 직선 케이블, O-41) → v1.9 (이 커밋: RJ45 쪽 MDI P/N 반전, O-46 — C-010 회로도 `21175f3`와 일치)
+- 이력: 초안 `ac12920` → v1 `8613910` → v1.1 `be646c2` → v1.2 `fd12ba4` → v1.3 `e3ccdd0` → v1.4 `d159068` → v1.5 `a2b4945` ( V-004b — IR_PWM Hi-Z 상태 정정·듀티 기준, N1 Q6 게이트, X1 OE, SMBJ6.0A, USB_DET 필터 — C-005 회로도 `b3b376a`와 일치) → v1.6 `fb6629c` (R17 100k → 10k, V-004c/O-36) → v1.7 `62145e8` (5V 출력 22µF×4, O-37) → v1.8 `2dde4a2` (보드 간 GH 6P 직선 케이블, O-41) → v1.9 `f6d188e` (RJ45 쪽 MDI P/N 반전, O-46 — 철회) → v1.10 (이 커밋: v1.9 철회, RJ45 극성 표준 배정, O-47 · R-013 — C-011 회로도 `83728da`와 일치)
 - KiCad 회로도는 C-002에서 그린다. 부품은 「1안」이고 재고·정격 확정은 C-002/R-004에서 한다.
 
 ## 0. 입력과 근거
@@ -396,7 +396,7 @@
 | 5V_SYS | 벅 고장 시 과전압 | **D7 SMBJ6.0A** (VRWM 6.0V > 벅 최대 5.30V, 단방향) — v1.5 V-004b R5 (v1.4의 SMBJ5.0A는 VRWM이 출력보다 낮았음). DRV8837 VM 최대 11V, 코어 상한 미확인 | 3.1절 |
 | USB-C | ESD | D± 저용량 ESD, VBUS TVS, CC 5.1k 풀다운 | B101 패턴 |
 | microSD | ESD | 7선 ESD | B101 패턴 |
-| RJ45 | 서지·ESD · **극성 (v1.9)** | **RJ45 쪽 P/N 반전 — 자동 극성 전제, 미지원 시 100M 고정(FW)** (O-46: J5 1·2·3·6 = EPHY_TXN·TXP·RXN·RXP, 코어·ESD 쪽 넷 이름은 그대로. 100BASE-TX MLT-3는 극성 무관, 10BASE-T는 PHY 자동 극성 보정 필요 — TRM 확인 중) · 칩 쪽 쌍마다 저용량 TVS, 칩 쪽 센터탭 100nF → GND, 라인 쪽 Bob Smith 75Ω + 1nF/2kV → 실드, GNDPWR–GND 1M + 1nF | B101 넷리스트 |
+| RJ45 | 서지·ESD · **극성 (v1.10)** | **RJ45 극성 표준 배정 (J5 1·2·3·6 = EPHY_TXP·TXN·RXP·RXN), 물리 P/N 꼬임은 PCB에서 (O-47).** v1.9의 RJ45 쪽 P/N 반전은 철회: SG2002 EPHY에 10BASE-T 자동 극성 보정 근거가 없고(Auto MDI-X는 쌍 교환뿐), 자동 협상 FLP가 극성에 기대 100M 협상까지 실패할 위험 (R-013) · 칩 쪽 쌍마다 저용량 TVS, 칩 쪽 센터탭 100nF → GND, 라인 쪽 Bob Smith 75Ω + 1nF/2kV → 실드, GNDPWR–GND 1M + 1nF | B101 넷리스트 |
 | 12V_IR | 단락·과전류 | **TPS26600 eFuse**: SHDN ← IR_LED_EN(10k 풀다운, 기본 끔), UVLO → IN(SLVSDG2G: 「must be connected to the IN terminal」), OVP → RTN(내장 33V OVP), **MODE 개방(회로차단기 + 자동 재시도, v1.4 — 과부하 때 합계가 어댑터 2.08A를 넘지 않게)**, RTN = GND(역접은 앞단 P-FET가 맡음), **ILIM 8.06kΩ ≈ 1.49A**(2스트링 1.22A 기준, O-21의 10k/1.2A는 1스트링용), dVdT 22nF | O-21, V-002 ⑥, C-002 C2-4 |
 | ICR | 코일 단락 | DRV8837 과전류 차단 1.9~3.5A, 열 차단 150°C | SLVSBA4F 6.5 |
 | UPGRAD_KEY | 출력과 버튼 충돌 | 직렬 1kΩ | 7절 |
