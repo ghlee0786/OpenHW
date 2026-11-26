@@ -16,7 +16,7 @@
 | C-001b | orch | schematic t18z | 계약의 FW 확인 대기 열을 sdk-facts와 대조·확정 → 계약 v1 | hardware/schematic/hw-fw-contract.md (C-001 레인) | FW 대기 0 또는 사유, 커밋 | completed — 커밋 8613910 계약 v1(FW 대기 0, C-002 전 필요 6·실물 확인 6). ICR 1안 DRV8837(C13), IR 1.0A·직렬≤2(C17), 12V 최악 약 14.7W |
 | L-001 | orch (단계 4 준비) | schematic t18z | KiCad 라이브러리: AP1511B·AL8860·VSMA1085600·LTR-329·M12/ICR 홀더·FPC 10P (BTB·벅·RJ45·SD·센서는 의존 대기) | hardware/libraries/** | 핀↔패드 대조표, kicad-cli 결과, 레인·커밋 | completed — 커밋 90d24bd (계약 v1.1 be646c2). 공식 참조 4·신규 4·파생 3(Apache 고지), orch 재실행 fp export svg 종료 0. GUI 02·03 스크린샷은 화면 잠김으로 보류 → C-002에서 다시 |
 | F-002 | orch | firmware t18w | reCamera-OS 0.2.4 원본 Docker 기준 빌드(slot 경유, 산출물은 저장소 밖) | firmware/docs/build-baseline.md, firmware/scripts/** | 종료 코드 0+해시 또는 실패 원인 판정, 레인·커밋 | running — 중간 bd15815: 원인 A(slot 15분)·B(-j32 경합, -j1 선빌드로 해결)·C(호스트 메모리 부족) 각 1회, O-19로 재시작 |
-| R-006 | orch (V-001 ④⑥ 분기 복귀, O-8) | research t18s | 렌즈 재선정(GC2053 HFOV 85~95°, 왜곡 모델·BFL·IR 보정) + IR LED 조사각·개수(1.0A, 직렬 ≤2) | docs/research/optics-ir-r006.md (+csv) | 렌즈 1안·차선 계산 근거, LED 결론, 레인·커밋 | queued (R-004 뒤, R-005보다 먼저) |
+| R-006 | orch (V-001 ④⑥ 분기 복귀, O-8) | research t18s | 렌즈 재선정(GC2053 HFOV 85~95°, 왜곡 모델·BFL·IR 보정) + IR LED 조사각·개수(1.0A, 직렬 ≤2) | docs/research/optics-ir-r006.md (+csv) | 렌즈 1안·차선 계산 근거, LED 결론, 레인·커밋 | completed — 레인 t-20261126-161427-aecf 커밋 67e9959. 렌즈 CIL093(HFOV 88°), IR LED VSMA1085400 2직렬×2스트링, 센서 실장 M1 ②(홀더 제거) |
 | M-001 | orch | mechanical t18x | 공개 STEP 측정 → 3층 적층·광축·IR LED·창·체결 기준안 (외함 아님) | mechanical/** | 측정표·기준안·Fusion MCP 결과, 레인·커밋 | completed — 레인 t-20261126-161155-50dc 커밋 ad23d15. Fusion MCP read·execute 성공, J1 윗면/J2 아랫면 독립 확인, 적층안 z·M1.6 나사·IR 후보 영역, 분기 K1~K8 |
 | G-001 | lead t18q (사용자 요청 2026-11-26) | schematic t18z | L-001·C-002를 KiCad 10 GUI로 보이게 진행, 단계별 스크린샷, GUI 단일 소유(pcb 금지 통지) | 스크린샷 C:/workspace_python/OpenHW/validation/runtime/kicad-gui/** (gitignore) | 창 뜸 즉시 보고 → lead 전달, ERC는 kicad-cli 종료 코드 | running (C-001b 뒤 L-001부터) |
 | F-003 | orch | firmware t18w | 계약 v1 DTS 패치 + 주야 전환 데몬(LTR-329 i2c-dev → ICR·IR LED·ISP IR 모드) + 패치 빌드·호스트 시험 | firmware/** | 빌드 종료 코드·해시, 호스트 시험 결과, 레인·커밋 | queued (F-002 기준 빌드 성공 뒤) |
@@ -24,6 +24,7 @@
 | P-002 | orch | pcb t190 | KiCad .kicad_dru·넷클래스·캐리어/전면 보드 외형(GUI 없이) | hardware/pcb/rules/**, hardware/pcb/outline/** | 파일·kicad-cli 결과, 레인·커밋 | completed — 레인 t-20261126-163344-acdf 커밋 022c364. 외형 40×40·4층·넷클래스, orch 재실행 kicad-cli pcb drc carrier 0·front 0 |
 | V-002 | orch | review t191 | R-004 핵심 6주장 독립 검증(BTB 원품번·HCTL 치수 대조·짝 높이·DF30 핀·재고·전원 IC 정격) | validation/review-V002-R004.md | 판정표·영향, 레인·커밋 | completed — 레인 t-20261126-163344-e260 커밋 51489c5. ①③④⑤ 일치, ② 부분(패드 0.25 vs 0.30·몸체 폭), ⑥ TPS26600 연결 조건부 → O-21~O-23 |
 | C-002 | orch (단계 4) | schematic t18z | 캐리어·전면 보드 회로도(KiCad GUI), ERC·netlist | hardware/schematic/carrier/**, hardware/schematic/front/** (*.kicad_sch·*.kicad_pro) | 두 보드 ERC 종료 코드, netlist, 핀↔계약 대조표, 스크린샷 목록, 레인·커밋 | running |
+| M-001c | orch | mechanical t18x | 적층 갱신: CIL093·센서 블록 받침·CLA216 전면 고정·IR LED 4위치·광차단·창 거리 | mechanical/** (M-001 레인) | z표·IR 좌표·광차단 안·간섭, 커밋 | running |
 
 ## 운영 변경 (2026-11-26, 사용자 지시 · lead 전달)
 - 의견 묻지 않고 진행: 사람 쪽 미정값은 D-003(lead 레인 t-20261126-144135-5470 docs/decisions/D-003-working-defaults.md, 커밋 8ac5ce5) 값으로 확정 취급. 새 갈림길은 기본값 선택 → 아래 「분기 기록」에 분기점·선택·이유·차선책 → lead 요약 보고. 문제 시 해당 행으로 돌아가 차선책.
@@ -57,3 +58,7 @@
 | O-21 | TPS26600 EN 연결 (V-002 ⑥: UVLO 핀 GPIO 사용은 데이터시트 밖) | GPIO→SHDN+10k 풀다운, UVLO=IN, ILIM 10k(약 1.2A), dVdT 22nF, 계약 v1.2 | 14.25~16.7V 입력에서 의도치 않게 켜지는 위험 제거 | 부하스위치 IC로 교체 |
 | O-22 | 전면 보드 센서 모듈 주변 (V-002 ④) | RESET RC 자리, IOVDD 3.3V 공급, I2C2 상시 1.8V 풀업(역급전 근거 기록), DF30 번호는 실물 도통 확인 | CAM_EN=0에서도 LTR-329 폴링 유지, 전원 순서 위험 완화 | LTR-329는 CAM_EN=1일 때만 폴링(FW 규칙) |
 | O-23 | 짝 BTB 패드 폭 (V-002 ②) | 원품 SUNGTECH(B301 파생) 0.25mm 유지, HCTL 차이는 코트야드 안 허용, O-17 게이트에 1번 핀 방향·VIN 핀 정격 확인 추가 | 코어 원품과 맞는 치수 우선 | HCTL 권장 0.30 |
+| O-24 | 렌즈 (O-13 재선정) | Commonlands CIL093-F2.4-M12ANIR (f2.8 rectilinear, NIR 보정, GC2053 HFOV 88°, BFL 3.2±0.3 ≥ CLA216 MBFL 2.85) | D-003 #4 화각 충족, 공식 계산기 검산(CIL327 121° 재현) | CIL027-F2.8-M12ANIR (91°, IR 보정 표기 없음) |
+| O-25 | IR LED 조사각·개수 (O-14·D-003 #4 10m) | VSMA1085400 ±40°, 4자리 2직렬×2스트링, AL8860 ×2 1.0A, 스트링 B DNP 시작, 실측으로 개수 확정 | 계산(AN095)만으로 확정 불가 → 자리 확보 후 실측 | SFH 4715AS A01 / L1I0-0850 |
+| O-26 | GC2053 모듈 + ICR 실장 (O-18) | 모듈 홀더 제거 → 센서 블록 받침 접착, CLA216-ICR 전면 보드 고정 / 게이트 G2: 발주 전 S401 1장 홀더 분리·높이 실측(구매는 사용자 지시) | ICR 공간 확보 유일안, 계산상 MBFL 충족 | ICR 일체형 모듈(판매자 문의 필요) → 모듈 홀더에 렌즈만(ICR 없음, 요구 미충족) |
+| G1/G2 | 발주 전 게이트 | G1 짝 BTB 실물 결합(1번 핀·VIN 정격) · G2 센서 홀더 분리·높이 실측 | 둘 다 실물 필요 → 사용자 구매 지시 전엔 PCB 발주 불가 | — |
