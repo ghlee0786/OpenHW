@@ -6,7 +6,7 @@ OUT = r"C:\workspace_python\OpenHW\.harness-worktrees\t-20261127-013549-8089\mec
 HIDE = ('CARRIER_40x54', 'FRONT_40x40', 'WINDOW_PMMA', 'LIGHT_COLLAR', 'AL_SPREADER_TAB_PX', 'THERMAL_PILLAR', 'INS_PAD_',
         'KEEPIN', 'HARNESS_CORRIDOR', 'ENVELOPE', 'DF30_SITE', 'J_ICR')
 EXPLODE = {'FRONT_COVER': (0, 0, 45), 'LENS_WIN_PMMA': (0, 0, 70), 'WIN_A_PMMA': (0, 0, 70), 'WIN_B_PMMA': (0, 0, 70),
-           'ALS_WIN_PMMA': (0, 0, 70), 'FOAM_LENS_RING': (0, 0, 22), 'FOAM_ALS_GASKET': (0, 0, 22), 'AL_HEATSINK_PX': (40, 0, 0),
+           'ALS_WIN_PMMA': (0, 0, 70), 'FOAM_LENS_RING': (0, 0, 22), 'FOAM_ALS_GASKET': (0, 0, 22), 'HS_EXTRUSION': (45, 0, 0), 'HS_PEDESTAL': (22, 0, 0),
            'GAP_PAD_PX': (25, 0, 0), 'HOUSING': (0, 0, -55)}
 
 

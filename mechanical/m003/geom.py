@@ -100,14 +100,21 @@ def parts(d):
                         ('PRINT_TAB_PX_WIN', box(d['x_in_max'], xo1, yc - d['print_tab_w'] / 2, yc + d['print_tab_w'] / 2,
                                                  d['al_win_z'][0] - 0.01, d['al_win_z'][1] + 0.01))]
 
-    # ---------- 바깥 방열판 (+X, 흑색 아노다이즈 Al): 바닥판 + 창을 지나는 받침대 + 세로 핀 ----------
+    # ---------- 바깥 방열판 (+X): 압출재(바닥 + 세로 핀) + 창을 지나는 받침대 판 ----------
+    #   압출재: 외함 안쪽에서 M2.5 나사 4개 (벽 Ø2.8 → 바닥 탭 M2.5) / 받침대 판: 접시머리 M2.5 2개 (판 쪽 → 바닥 탭)
     (hb0, hb1), (hy0, hy1), (hz0, hz1) = d['x_hs_base'], d['hs_y'], d['hs_z']
     c = d['hs_ped_clr']
-    hs = [box(hb0, hb1, hy0, hy1, hz0, hz1),
-          box(d['x_al_in'], hb0 + 0.01, d['al_win_y'][0] + c, d['al_win_y'][1] - c, d['al_win_z'][0] + c, d['al_win_z'][1] - c)]
+    hs = [box(hb0, hb1, hy0, hy1, hz0, hz1)]
     for zc_ in d['hs_fin_zc']:
         hs.append(box(hb1 - 0.01, d['x_hs_tip'], hy0, hy1, zc_ - d['hs_t'] / 2, zc_ + d['hs_t'] / 2))
-    P['AL_HEATSINK_PX'] = ('d', ('u', *hs), *[xcyl(y, z, hb0 - 1, hb1 + 1, 1.4) for (y, z) in d['al_holes']])
+    taps = [xcyl(y, z, hb0 - 1, hb1 + 0.01, 1.025) for (y, z) in d['al_holes'] + d['hs_ped_screws']]   # M2.5 탭 밑구멍 Ø2.05 (바닥 관통)
+    P['HS_EXTRUSION'] = ('d', ('u', *hs), *taps)
+    ped = box(d['x_al_in'], hb0, d['al_win_y'][0] + c, d['al_win_y'][1] - c, d['al_win_z'][0] + c, d['al_win_z'][1] - c)
+    csk = []
+    for (y, z) in d['hs_ped_screws']:
+        csk.append(xcyl(y, z, d['x_al_in'] - 1, hb0 + 1, 1.4))                       # Ø2.8 틈새
+        csk.append(('cyl', (d['x_al_in'] - 0.01, y, z), (d['x_al_in'] + 1.6, y, z), 2.45, 1.4))   # 90° 접시 Ø4.9
+    P['HS_PEDESTAL'] = ('d', ped, *csk)
 
     # ---------- 앞 덮개 (창 받침 + 렌즈 관 + ALS 관) ----------
     zw, zo = d['z_win_in'], d['z_bez_out']
@@ -199,7 +206,7 @@ def parts(d):
         heads.append(zcyl(x, y, zc - d['post_cb_top'] - 1.6, zc - d['post_cb_top'], 1.5))  # 뒤 M1.6×8 머리
     P['HW_M16_HEADS'] = ('u', *heads)
     nuts = [box(d['x_in_max'] - 2.0, d['x_in_max'], y - 2.5, y + 2.5, z - 2.5, z + 2.5) for (y, z) in d['al_holes']]   # M2.5 너트 (안쪽)
-    P['HW_M25_NUTS'] = ('u', *nuts)
+    P['HW_M25_NUTS'] = ('u', *nuts)   # M-005: 안쪽 나사 머리 자리 (같은 상자로 보수적 확인)
     # ---------- 3D 모델 없는 부품 대체 블록 (간섭 검사용) ----------
     B = {}
     B['BLK_J5_RJ45'] = box(d['rj_x'][0], d['rj_x'][1], d['rj_y'][0], d['rj_y'][1], zc - d['rj_h'], zc)

@@ -68,12 +68,16 @@ tripod,input,"(0.0, -4.0)","[2차 출처 3DJake 표] CNC Kitchen 1/4""-20 짧은
 tripod_boss_d,input,15.0,"[2차 출처 3DJake 표] CNC Kitchen 1/4""-20 짧은 판 L 6.4, 구멍 8.1, 최소 벽 3.3 → 보스 Ø15 (벽 3.45), 막힌 깊이 8.2 ≥ L+1"
 tripod_boss_h,input,6.7,"[2차 출처 3DJake 표] CNC Kitchen 1/4""-20 짧은 판 L 6.4, 구멍 8.1, 최소 벽 3.3 → 보스 Ø15 (벽 3.45), 막힌 깊이 8.2 ≥ L+1"
 tripod_hole_d,input,8.1,"[2차 출처 3DJake 표] CNC Kitchen 1/4""-20 짧은 판 L 6.4, 구멍 8.1, 최소 벽 3.3 → 보스 Ø15 (벽 3.45), 막힌 깊이 8.2 ≥ L+1"
-hs_y,input,"(-36.0, 22.0)",바닥판·핀 Y 범위 (중력 방향 길이 58)
+hs_type,input,'extrusion',
+hs_y,input,"(-36.5, 34.5)",핀 길이 71 (중력 방향)
+hs_W,input,62.5,"프로파일 폭 (z 방향, 외형 z 가운데에 맞춤). 0 이면 외형 z 전체"
 hs_zpad,input,0.5,바닥판 z = 외형 z 범위 − 0.5
-hs_tb,input,3.0,analysis2.py H3 (방열판→공기 5.6 K/W @25°C)
-hs_n,input,9,analysis2.py H3 (방열판→공기 5.6 K/W @25°C)
-hs_H,input,20.0,analysis2.py H3 (방열판→공기 5.6 K/W @25°C)
-hs_t,input,1.5,analysis2.py H3 (방열판→공기 5.6 K/W @25°C)
+hs_tb,input,3.5,SK 444 (analysis_m005.md) — H3 는 3.0 / 9 / 20 / 1.5
+hs_n,input,12,SK 444 (analysis_m005.md) — H3 는 3.0 / 9 / 20 / 1.5
+hs_H,input,16.5,SK 444 (analysis_m005.md) — H3 는 3.0 / 9 / 20 / 1.5
+hs_t,input,1.4,SK 444 (analysis_m005.md) — H3 는 3.0 / 9 / 20 / 1.5
+hs_ped_t,input,4.0,받침대 판 두께 = 벽 창 통과 (x_al_in … x_out_max)
+hs_ped_screw_z_near,input,"(-8.0, 12.0)","받침대 판 ↔ 압출 바닥 M2.5 접시머리 2개 (y = 받침대 가운데, z = 가까운 핀 사이)"
 hs_ped_clr,input,0.3,받침대 ↔ 벽 창 틈
 print_tab_w,input,1.0,"[M-003c] +X 창 가운데 출력용 희생 기둥 폭 (브리지 42 → 20.5 ×2), 조립 ② 전에 잘라냄. 0 이면 없음"
 win_clr,input,0.35,[M-003c] 창 ↔ 주머니 틈 (한 변) — PMMA 레이저 컷 ±0.23~0.25 (SendCutSend·Xometry) + FDM
@@ -116,8 +120,9 @@ y_in_lo,derived,20.5,params.derive()
 y_out_lo,derived,22.5,params.derive()
 y_in_hi,derived,32.5,params.derive()
 y_out_hi,derived,34.5,params.derive()
-hs_z,derived,"(-25.700000000000003, 43.185)",params.derive()
-hs_fin_zc,derived,"[-24.950000000000003, -16.526875000000004, -8.103750000000002, 0.31937500000000085, 8.7425, 17.165625, 25.588750000000005, 34.011875, 42.435]",params.derive()
-al_holes,derived,"[(-31.0, -20.738437500000003), (17.0, -20.738437500000003), (-31.0, 21.3771875), (17.0, 21.3771875)]",params.derive()
-x_hs_base,derived,"(24.75, 27.75)",params.derive()
-x_hs_tip,derived,47.75,params.derive()
+hs_z,derived,"(-22.5075, 39.9925)",params.derive()
+hs_fin_zc,derived,"[-21.8075, -16.252954545454546, -10.698409090909092, -5.143863636363637, 0.4106818181818177, 5.965227272727272, 11.519772727272727, 17.07431818181818, 22.628863636363636, 28.18340909090909, 33.73795454545454, 39.292500000000004]",params.derive()
+al_holes,derived,"[(-31.0, -19.030227272727274), (17.0, -19.030227272727274), (-31.0, 19.85159090909091), (17.0, 19.85159090909091)]",params.derive()
+x_hs_base,derived,"(24.75, 28.25)",params.derive()
+x_hs_tip,derived,44.75,params.derive()
+hs_ped_screws,derived,"[(-7.0, -7.921136363636364), (-7.0, 14.297045454545454)]",params.derive()

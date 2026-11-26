@@ -21,15 +21,13 @@ xi0, xi1 = d['x_in_min'], d['x_in_max']
 winA = ((xi1 - xi0) - 2 * d['win_clr'], (d['y_in_hi'] + 1.0 - ry) - 2 * d['win_clr'])
 winB = ((xi1 - xi0) - 2 * d['win_clr'], (-ry - d['b_pocket_y0']) - 2 * d['win_clr'])
 (ax0, ax1), (ay0, ay1) = d['als_in']
-hsL = d['hs_y'][1] - d['hs_y'][0]
-hsW = d['hs_z'][1] - d['hs_z'][0]
 BOM = [
     # 번호, 이름, 수량, 사양·치수, 공정/재질, 근거·비고
     (1, 'HOUSING 본체', 1, '%.2f × %.1f × %.1f (X×Y×Z), 벽 %.1f / 뒷벽 %.1f' % (d['x_out_max'] - d['x_out_min'], d['y_out_hi'] - d['y_out_min'], d['z_bez_in'] - d['z_back_out'], d['t_w'], d['t_back']), 'FDM 흑색 PETG (차선 ASA)', 'out/stl/HOUSING.stl'),
     (2, 'FRONT_COVER 앞 덮개', 1, '%.2f × %.1f × %.1f, 렌즈 관·ALS 관 일체' % (d['x_out_max'] - d['x_out_min'], d['y_out_hi'] - d['y_out_min'], d['z_bez_out'] - d['z_bez_in']), 'FDM 흑색 PETG', 'out/stl/FRONT_COVER.stl'),
-    (3, 'AL_HEATSINK_PX 바깥 방열판', 1, '바닥판 %.0f × %.1f × %.0f + 받침대 %.1f × %.1f × %.1f + 세로 핀 %d × %.0f × %.1f' % (
-        hsL, hsW, d['hs_tb'], d['al_win_y'][1] - d['al_win_y'][0] - 2 * d['hs_ped_clr'], d['al_win_z'][1] - d['al_win_z'][0] - 2 * d['hs_ped_clr'],
-        d['x_out_max'] - d['x_al_in'], d['hs_n'], d['hs_H'], d['hs_t']), 'Al 6061 가공 + 흑색 아노다이즈 (차선: 압출 핀 방열판 + 받침 블록 접합)', 'analysis2.md H3, M2.5 관통 구멍 4'),
+    (3, 'HS_EXTRUSION 바깥 방열판 (기성 압출)', 1, 'Fischer SK 444 75 SA (흑색 아노다이즈, 폭 62.5 · 바닥 3.5 · 핀 12 × 16.5) 을 %.0f 로 절단, M2.5 탭 6' % (d['hs_y'][1] - d['hs_y'][0]), '압출 완제품 + 절단·탭 2차가공', 'US$4.29/개 (75 mm, 최소 5개, Digi-Key 마켓플레이스, 확인 2026-11-27) — 차선 CNC H3'),
+    (26, 'HS_PEDESTAL 받침대 판', 1, '%.1f × %.1f × %.1f, 접시 구멍 2' % (d['al_win_y'][1] - d['al_win_y'][0] - 2 * d['hs_ped_clr'], d['al_win_z'][1] - d['al_win_z'][0] - 2 * d['hs_ped_clr'], d['hs_ped_t']), 'Al 6061-T6 판 절단·드릴', '가격 미확인 (판재)'),
+    (27, 'M2.5 × 6 접시머리 (받침대 판)', 2, 'ISO 10642 / A2', '스테인리스', '+ 열 그리스'),
     (4, 'SPREADER_M003 방열판', 1, '판 38 × 39 × 1.0 + 기둥 A/B1/B2 + +X 플랜지 2 × 39 × 7.4, 구멍 Ø4.0 × 4', 'Al 6061 가공', 'M-002b + M-003'),
     (5, 'LENS_WIN_PMMA 렌즈 창', 1, 'Ø%.1f × %.1f' % (d['lens_win_d'], d['win_t']), '투명 PMMA 레이저 컷', ''),
     (6, 'WIN_A_PMMA LED A 창', 1, '%.2f × %.2f × %.1f' % (winA[0], winA[1], d['win_t']), '투명 PMMA', ''),
@@ -43,7 +41,7 @@ BOM = [
     (14, 'M2.5 열압입 인서트', 4, 'CNC Kitchen 표준 M2.5 × 4.0, 바깥 4.6, 구멍 Ø%.1f × 깊이 5.0, 벽 ≥1.6, 인두 245 °C (PETG)' % d['ins_hole_d'], '황동', '덮개 고정 — CNC Kitchen 블로그 표'),
     (15, '1/4"-20 열압입 인서트', 1, 'CNC Kitchen 1/4"-20 짧은 판 L 6.4, 바깥 8.7, 구멍 Ø%.1f, 벽 ≥3.3' % d['tripod_hole_d'], '황동', '삼각대 — 3DJake 표 (2차 출처)'),
     (16, 'M2.5 × 8 나사 (덮개)', 4, '냄비머리 ISO 14583 / A2', '스테인리스', ''),
-    (17, 'M2.5 × 10 나사 + M2.5 나일록 너트 + 와셔 Ø6 (방열판)', 4, '바닥판 3 + 벽 2 + 와셔 0.5 + 너트 2 + 여유, 0.30 N·m', '스테인리스', '너트·와셔는 안쪽 (PETG 쪽), 핀 사이에서 드라이버'),
+    (17, 'M2.5 × 5 냄비머리 (방열판 → 외함, 안쪽에서)', 4, '벽 2 + 바닥 탭 3 물림, 0.30 N·m', '스테인리스', '핀 간격 4.15 < 머리 Ø4.5 → 바깥에서 못 넣음'),
     (18, 'M1.6 × 4 나사 (전면 보드 위)', 4, 'ISO 7045 / A2', '스테인리스', ''),
     (19, 'M1.6 × 8 나사 + 와셔 Ø3.5 (뒤 → 캐리어)', 4, 'ISO 7045 / A2, 카운터보어 Ø%.1f, 0.05 N·m' % d['post_cb_d'], '스테인리스', ''),
     (20, 'M1.6 육각 스탠드오프 M-F 8.0', 3, '전면–코어', '황동', ''),
@@ -118,7 +116,7 @@ for z0, z1 in ((DZ_STACK + zc0 - 2, d['z_car_bot'] + 3), (DZ_COV + zt - 2, zt + 
     ax.add_patch(FancyArrow(-32, z0, 0, z1 - z0, width=0.3, head_width=2, color='#2c7fb8'))
 bx = xo1 + DX + 30
 balloon(bx, d['z_back_in'] + 4, 1, '본체: M2.5 인서트 4·1/4" 인서트 압입 (BOM 14·15)')
-balloon(bx, 20, 2, '바깥 방열판(3)을 +X 창에 끼우고 M2.5×10 + 너트 4 (17)')
+balloon(bx, 20, 2, '받침대 판(26)을 압출재(3)에 접시머리 2 (27) → +X 창에 끼우고 안쪽에서 M2.5×5 ×4 (17)')
 balloon(bx, DZ_STACK + zc0 + 1, 3, '캐리어 + F-F 8.0 ×3 (21) + F-F 17.6 (22), 코어 BTB 꽂기')
 balloon(bx, DZ_STACK + 27, 4, '방열판(4): SoC 패드(13)·절연 패드(11)·옆 갭 패드(12) 붙이고 얹기')
 balloon(bx, DZ_STACK + 47, 5, 'M-F 8.0 ×3 (20) → 전면 BTB 꽂기 → M1.6×4 ×4 (18)')

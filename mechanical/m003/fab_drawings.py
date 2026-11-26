@@ -114,12 +114,18 @@ ped_z = (d['al_win_z'][0] + c, d['al_win_z'][1] - c)
 # 바닥판 정면 (+X 에서 봄: 가로 y, 세로 z) — 외곽·구멍·받침대(참고)
 dx = DXF()
 dx.poly([(hy0, hz0), (hy1, hz0), (hy1, hz1), (hy0, hz1)])
-for (y, z) in d['al_holes']:
-    dx.circle((y, z), 1.4, 'HOLE')
+for (y, z) in d['al_holes'] + d['hs_ped_screws']:
+    dx.circle((y, z), 1.025, 'HOLE')   # M2.5 탭 밑구멍 Ø2.05 (바닥 관통, 핀 사이)
 dx.poly([(ped_y[0], ped_z[0]), (ped_y[1], ped_z[0]), (ped_y[1], ped_z[1]), (ped_y[0], ped_z[1])], 'REF')
 for zc_ in d['hs_fin_zc']:
     dx.line((hy0, zc_ - d['hs_t'] / 2), (hy1, zc_ - d['hs_t'] / 2), 'REF'); dx.line((hy0, zc_ + d['hs_t'] / 2), (hy1, zc_ + d['hs_t'] / 2), 'REF')
-dx.save('AL_HEATSINK_PX_base_face_YZ.dxf')
+dx.save('HS_EXTRUSION_SK444_base_face_YZ.dxf')
+# 받침대 판 (가로 y, 세로 z) — 접시 구멍 2
+dx = DXF()
+dx.poly([(ped_y[0], ped_z[0]), (ped_y[1], ped_z[0]), (ped_y[1], ped_z[1]), (ped_y[0], ped_z[1])])
+for (y, z) in d['hs_ped_screws']:
+    dx.circle((y, z), 1.4, 'HOLE'); dx.circle((y, z), 2.45, 'REF')
+dx.save('HS_PEDESTAL_plate_YZ.dxf')
 # 핀 단면 (Y 방향으로 본 압출 단면: 가로 x, 세로 z) — 받침대 + 바닥판 + 핀
 dx = DXF()
 prof = [(d['x_al_in'], ped_z[0]), (hb0, ped_z[0]), (hb0, hz0), (hb1, hz0)]
@@ -134,7 +140,7 @@ for zc_ in d['hs_fin_zc']:
         prof.append((hb1, z1))
 prof += [(hb1, hz1), (hb0, hz1), (hb0, ped_z[1]), (d['x_al_in'], ped_z[1])]
 dx.poly(prof)
-dx.save('AL_HEATSINK_PX_fin_section_XZ.dxf')
+dx.save('HS_EXTRUSION_SK444_fin_section_XZ.dxf')
 
 # ---------------- PDF ----------------
 pdf = PdfPages(os.path.join(OUT, 'm003-fab-drawings.pdf'))
@@ -182,12 +188,12 @@ ax.add_patch(Rectangle((hy0, hz0), hy1 - hy0, hz1 - hz0, fill=False, lw=1.2))
 ax.add_patch(Rectangle((ped_y[0], ped_z[0]), ped_y[1] - ped_y[0], ped_z[1] - ped_z[0], fill=False, lw=0.8, ls='--', ec='#2c7fb8'))
 for zc_ in d['hs_fin_zc']:
     ax.plot([hy0, hy1], [zc_, zc_], c='#888', lw=0.6)
-for (y, z) in d['al_holes']:
-    ax.add_patch(plt.Circle((y, z), 1.4, fill=False, ec='#c0392b', lw=1))
-    ax.text(y + 1.8, z, '(%.1f, %.2f)' % (y, z), fontsize=6)
+for (y, z) in d['al_holes'] + d['hs_ped_screws']:
+    ax.add_patch(plt.Circle((y, z), 1.025, fill=False, ec='#c0392b', lw=1))
+    ax.text(y + 1.8, z, 'M2.5 탭 (%.1f, %.2f)' % (y, z), fontsize=6)
 dim(ax, hy0, hy1, hz0 - 4); dim(ax, hz0, hz1, hy0 - 4, horiz=False)
 dim(ax, ped_y[0], ped_y[1], ped_z[0] + 2, txt='받침대 %.1f' % (ped_y[1] - ped_y[0])); dim(ax, ped_z[0], ped_z[1], ped_y[1] - 3, horiz=False, txt='%.1f' % (ped_z[1] - ped_z[0]))
-frame(ax, '바닥판 정면 (+X 에서 봄, 가로 y / 세로 z) — 구멍 Ø2.8 관통 4 (M2.5 틈새), 회색 = 핀 위치, 파란 점선 = 받침대')
+frame(ax, '압출재 바닥 (+X 에서 봄, 가로 y / 세로 z) — 75 → %.0f 절단, M2.5 탭 6 (바닥 관통, 핀 사이): 외함 4 + 받침대 2, 파란 점선 = 받침대 판' % (hy1 - hy0))
 ax.set_xlim(hy0 - 10, hy1 + 12); ax.set_ylim(hz0 - 10, hz1 + 6)
 ax = axs[1]
 ax.plot([p[0] for p in prof] + [prof[0][0]], [p[1] for p in prof] + [prof[0][1]], 'k-', lw=1)
@@ -198,12 +204,15 @@ dim(ax, d['hs_fin_zc'][0], d['hs_fin_zc'][1], d['x_hs_tip'] + 3, horiz=False, tx
 dim(ax, hz0, hz1, d['x_hs_tip'] + 8, horiz=False)
 frame(ax, '핀 단면 (가로 x / 세로 z) — 핀 %d × %.1f × t%.1f, 길이(y) %.0f' % (d['hs_n'], d['hs_H'], d['hs_t'], hy1 - hy0))
 ax.set_xlim(d['x_al_in'] - 6, d['x_hs_tip'] + 14); ax.set_ylim(hz0 - 8, hz1 + 4)
-notes = ('재질 Al 6061-T6 · 표면 흑색 아노다이즈 Type II (ε 약 0.85 가정; 받침대 안쪽 접촉면은 아노다이즈 허용 — 절연 갭 패드 접촉)\n'
-         '일반 공차 ISO 2768-m · 받침대 접촉면(x = %.2f) 평면도 0.05 · 핀 두께 %.1f ±0.1 · 날카로운 모서리 C0.2\n'
-         '구멍 Ø2.8 (M2.5 틈새) 4곳 — 좌표는 왼쪽 그림 · 핀 사이 나사·드라이버 통로 확보 · 차선: 압출 핀 방열판 + 받침 블록 접합\n'
-         '좌표계: M-003 원점 O (코어 중심·아랫면), x = +X 바깥 방향. STEP: out/step/AL_HEATSINK_PX.step, DXF: fab/AL_HEATSINK_PX_*.dxf') % (d['x_al_in'], d['hs_t'])
+notes = ('① 압출재: Fischer SK 444 75 SA (흑색 아노다이즈 완제품) 1개를 %.0f mm 로 절단 (한쪽 끝, 절단면 무처리 — 줄로 버 제거). 폭·핀은 가공 없음.\n'
+         '   M2.5 탭 6곳: 밑구멍 Ø2.05, 바닥 %.1f 관통 (핀 사이 간격 약 %.1f), 좌표는 왼쪽 그림 (y = 압출 방향, z = 폭 방향, 원점 O). 탭 깊이 = 바닥 두께.\n'
+         '② 받침대 판: Al 6061-T6 %.1f × %.1f × %.1f (판재 절단, 표면 처리 없음), 접시 구멍 2 (Ø2.8 + 90° 접시 Ø4.9) — 압출 바닥에 M2.5 × 6 접시머리, 사이 열 그리스.\n'
+         '   받침대 안쪽 면 (x = %.2f) = 옆 갭 패드 접촉면: 평면도 0.05, 접시머리는 면보다 0~0.1 낮게. 일반 공차 ISO 2768-m.\n'
+         '③ 외함 고정: 외함 안쪽에서 M2.5 × 5 냄비머리 4 (벽 Ø2.8 → 바닥 탭). 핀 간격이 머리 Ø4.5 보다 좁아 바깥에서 넣지 않는다. 차선: CNC 단품 H3 (M-003 2차).\n'
+         '좌표계 M-003 원점 O. STEP: out/step/HS_EXTRUSION.step · HS_PEDESTAL.step, DXF: fab/HS_*.dxf') % (
+    hy1 - hy0, d['hs_tb'], d['hs_fin_zc'][1] - d['hs_fin_zc'][0] - d['hs_t'], ped_y[1] - ped_y[0], ped_z[1] - ped_z[0], d['hs_ped_t'], d['x_al_in'])
 fig.text(0.03, 0.02, notes, fontsize=7)
-fig.suptitle('M-003c 가공 도면 2/2 — 바깥 방열판 AL_HEATSINK_PX (H3)', fontsize=9)
+fig.suptitle('M-005 가공 도면 2/2 — 바깥 방열판: 기성 압출 SK 444 2차가공 + 받침대 판', fontsize=9)
 fig.tight_layout(rect=(0, 0.08, 1, 0.97)); pdf.savefig(fig); fig.savefig(os.path.join(OUT, 'm003-fab-2.png'), dpi=130); plt.close(fig)
 pdf.close()
 print('ok', sorted(os.listdir(OUT)))

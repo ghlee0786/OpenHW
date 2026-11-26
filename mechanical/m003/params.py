@@ -60,9 +60,15 @@ P['cov_screws'] = [(-21.4, -8.0), (18.4, 8.0), (-21.4, -32.9), (18.4, -32.9)]  #
 P['post_d'] = 4.6; P['post_hole'] = 1.9; P['post_cb_d'] = 3.8; P['post_cb_top'] = 3.0   # 적층 기둥 (M1.6×8 뒤에서)
 P['tripod'] = (0.0, -4.0); P['tripod_boss_d'] = 15.0; P['tripod_boss_h'] = 6.7; P['tripod_hole_d'] = 8.1  # [2차 출처 3DJake 표] CNC Kitchen 1/4"-20 짧은 판 L 6.4, 구멍 8.1, 최소 벽 3.3 → 보스 Ø15 (벽 3.45), 막힌 깊이 8.2 ≥ L+1
 # [M-003 2차 K32] +X 바깥 방열판 (흑색 아노다이즈 Al 6061): 바닥판이 +X 면 바깥을 덮고, 받침대가 창을 지나 안쪽 x_al_in 까지, 세로(Y) 핀
-P['hs_y'] = (-36.0, 22.0)          # 바닥판·핀 Y 범위 (중력 방향 길이 58)
+# [M-005 O-76] 기본값 = 기성 압출 Fischer SK 444 75 SA (흑색 아노다이즈, 폭 62.5·바닥 3.5·핀 12×16.5, 핀 두께 약 1.4 도면 비율 추정)
+#   → 압출 방향(핀 길이)을 Y 로 71 절단 (외함 Y 전체 −36.5…34.5). 차선: CNC H3 (hs_W 0 → 외형 z 전체, 핀 9×20×1.5, 바닥 3, 길이 58)
+P['hs_type'] = 'extrusion'
+P['hs_y'] = (-36.5, 34.5)          # 핀 길이 71 (중력 방향)
+P['hs_W'] = 62.5                   # 프로파일 폭 (z 방향, 외형 z 가운데에 맞춤). 0 이면 외형 z 전체
 P['hs_zpad'] = 0.5                 # 바닥판 z = 외형 z 범위 − 0.5
-P['hs_tb'] = 3.0; P['hs_n'] = 9; P['hs_H'] = 20.0; P['hs_t'] = 1.5   # analysis2.py H3 (방열판→공기 5.6 K/W @25°C)
+P['hs_tb'] = 3.5; P['hs_n'] = 12; P['hs_H'] = 16.5; P['hs_t'] = 1.4  # SK 444 (analysis_m005.md) — H3 는 3.0 / 9 / 20 / 1.5
+P['hs_ped_t'] = 4.0                # 받침대 판 두께 = 벽 창 통과 (x_al_in … x_out_max)
+P['hs_ped_screw_z_near'] = (-8.0, 12.0)   # 받침대 판 ↔ 압출 바닥 M2.5 접시머리 2개 (y = 받침대 가운데, z = 가까운 핀 사이)
 P['hs_ped_clr'] = 0.3              # 받침대 ↔ 벽 창 틈
 P['print_tab_w'] = 1.0             # [M-003c] +X 창 가운데 출력용 희생 기둥 폭 (브리지 42 → 20.5 ×2), 조립 ② 전에 잘라냄. 0 이면 없음
 P['win_clr'] = 0.35                # [M-003c] 창 ↔ 주머니 틈 (한 변) — PMMA 레이저 컷 ±0.23~0.25 (SendCutSend·Xometry) + FDM
@@ -106,6 +112,9 @@ def derive(p=P):
     d['y_out_hi'] = d['y_in_hi'] + p['t_w']
     # 바깥 방열판
     d['hs_z'] = (d['z_back_out'] + p['hs_zpad'], d['z_bez_out'] - p['hs_zpad'])
+    if p.get('hs_W'):
+        zm = (d['hs_z'][0] + d['hs_z'][1]) / 2
+        d['hs_z'] = (zm - p['hs_W'] / 2, zm + p['hs_W'] / 2)
     W = d['hs_z'][1] - d['hs_z'][0]
     pitch = (W - p['hs_t']) / (p['hs_n'] - 1)
     d['hs_fin_zc'] = [d['hs_z'][0] + p['hs_t'] / 2 + k * pitch for k in range(p['hs_n'])]
@@ -113,4 +122,6 @@ def derive(p=P):
     d['al_holes'] = [(y, min(gaps, key=lambda gz: abs(gz - z))) for z in p['al_holes_z_near'] for y in p['al_holes_y']]
     d['x_hs_base'] = (d['x_out_max'], d['x_out_max'] + p['hs_tb'])
     d['x_hs_tip'] = d['x_hs_base'][1] + p['hs_H']
+    ped_yc = (p['al_win_y'][0] + p['al_win_y'][1]) / 2
+    d['hs_ped_screws'] = [(ped_yc, min(gaps, key=lambda gz: abs(gz - z))) for z in p['hs_ped_screw_z_near']]
     return d
