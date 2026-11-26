@@ -11,8 +11,11 @@
       사진 속 시계와 비교한다(사람 눈 — verifiable 아니오).
 근거: 절차서 bringup-checklist.md 3-2(720p 15fps, persond cam_fps=15) · 1-9(RTSP 부하).
 비밀번호가 든 URL 은 출력에서 가린다(D-003 #30 — rtsp_pass 는 시험 동안만).
+ffprobe/ffmpeg 위치: --ffmpeg-dir <bin 폴더> (하위 명령 앞) 또는 환경 변수 OPENHW_FFMPEG_DIR, 없으면 PATH.
+  예) python rtsp_check.py --ffmpeg-dir C:/Users/gh/tools/ffmpeg/9.0.2/ffmpeg-9.0.2-essentials_build/bin probe x.mkv
 """
 import argparse
+import os
 import re
 import shutil
 import subprocess
@@ -25,10 +28,14 @@ def mask(url):
     return re.sub(r"//([^:/@]+):[^@]*@", r"//\1:***@", url)
 
 
+FFMPEG_DIR = os.environ.get("OPENHW_FFMPEG_DIR", "")   # --ffmpeg-dir 가 덮어쓴다
+
+
 def tool(name):
-    p = shutil.which(name)
+    # PATH 를 바꾸지 않고 격리 설치한 ffmpeg 를 쓰도록 폴더를 먼저 본다 (F-008)
+    p = shutil.which(name, path=FFMPEG_DIR) if FFMPEG_DIR else shutil.which(name)
     if not p:
-        sys.exit(f"{name} 없음 — ffmpeg 를 설치하고 PATH 에 넣는다")
+        sys.exit(f"{name} 없음 — --ffmpeg-dir 또는 OPENHW_FFMPEG_DIR 로 ffmpeg bin 폴더를 준다 (지금: {FFMPEG_DIR or 'PATH'})")
     return p
 
 
@@ -106,7 +113,9 @@ def latency(a):
 
 
 def main():
+    global FFMPEG_DIR
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    ap.add_argument("--ffmpeg-dir", default=FFMPEG_DIR, help="ffprobe/ffmpeg 가 든 bin 폴더 (기본: OPENHW_FFMPEG_DIR, 없으면 PATH)")
     sub = ap.add_subparsers(dest="cmd", required=True)
     p = sub.add_parser("probe")
     p.add_argument("src")
@@ -121,6 +130,7 @@ def main():
     p.add_argument("src")
     p.add_argument("out")
     a = ap.parse_args()
+    FFMPEG_DIR = a.ffmpeg_dir
     return {"probe": probe, "record": record, "latency": latency}[a.cmd](a)
 
 
