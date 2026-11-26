@@ -7,7 +7,7 @@ no,name,qty,spec_mm,material_process,note
 4,SPREADER_M003 방열판,1,"판 38 × 39 × 1.0 + 기둥 A/B1/B2 + +X 플랜지 2 × 39 × 7.4, 구멍 Ø4.0 × 4",Al 6061 가공,M-002b + M-003
 5,LENS_WIN_PMMA 렌즈 창,1,Ø20.6 × 3.0,투명 PMMA 레이저 컷,
 6,WIN_A_PMMA LED A 창,1,47.05 × 20.60 × 3.0,투명 PMMA,
-7,WIN_B_PMMA LED B 창,1,47.05 × 15.50 × 3.0,투명 PMMA,
+7,WIN_B_PMMA LED B 창,1,47.05 × 15.50 × 3.0 + 탭 30.90 × 4.80 (T자),투명 PMMA,fab/PMMA_WIN_B_t3.0.dxf
 8,ALS_WIN_PMMA ALS 창,1,4.5 × 9.0 × 1.5,투명 PMMA,
 9,FOAM_LENS_RING 렌즈 폼 링,1,ID 16.4 / OD 19.0 × 1.0 (0.7로 압축),"흑색 셀 폼 (PORON 4701-30 등, 1.0t 가용 미확인)",30 % 압축 (3M·Rogers 권장 25–35 %)
 10,FOAM_ALS_GASKET ALS 개스킷,1,바깥 5.0 × 9.0 / 안 3.0 × 7.0 × 1.6 (1.2로 압축),흑색 PVC 폼 (3M 4516 1.6t 대표),25 % 압축

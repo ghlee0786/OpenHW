@@ -1,8 +1,8 @@
 (export
 	(version "E")
 	(design
-		(source "C:\\workspace_python\\OpenHW\\.harness-worktrees\\t-20261127-055630-c14c\\hardware\\schematic\\front\\front.kicad_sch")
-		(date "2026-11-27T05:57:33")
+		(source "C:\\workspace_python\\OpenHW\\.harness-worktrees\\t-20261127-062731-6d2e\\hardware\\schematic\\front\\front.kicad_sch")
+		(date "2026-11-27T06:28:42")
 		(tool "Eeschema 10.0.8")
 		(sheet
 			(number "1")
@@ -11,7 +11,7 @@
 			(title_block
 				(title "OpenHW front (sensor) board - reCamera Core 2002 J1 mate")
 				(company "OpenHW PoC")
-				(rev "C-020")
+				(rev "C-021")
 				(date "2026-11-27")
 				(source "front.kicad_sch")
 				(comment
@@ -3928,6 +3928,114 @@
 				(tstamps "/")
 			)
 			(tstamps "a0fbb493-e414-480e-9b74-90b8f967f1cf")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "R22")
+			(value "10k 1%")
+			(footprint "Resistor_SMD:R_0402_1005Metric")
+			(fields
+				(field
+					(name "Footprint") "Resistor_SMD:R_0402_1005Metric")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description")
+				)
+			)
+			(libsource
+				(lib "Device")
+				(part "R")
+				(description "Resistor")
+			)
+			(property
+				(name "Sheetname")
+				(value "front")
+			)
+			(property
+				(name "Sheetfile")
+				(value "front.kicad_sch")
+			)
+			(property
+				(name "ki_keywords")
+				(value "R res resistor")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "R_*")
+			)
+			(sheetpath
+				(names "/")
+				(tstamps "/")
+			)
+			(tstamps "8cf887e2-b8bd-4550-9ac3-9f1e511e2653")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "R23")
+			(value "10k 1%")
+			(footprint "Resistor_SMD:R_0402_1005Metric")
+			(fields
+				(field
+					(name "Footprint") "Resistor_SMD:R_0402_1005Metric")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description")
+				)
+			)
+			(libsource
+				(lib "Device")
+				(part "R")
+				(description "Resistor")
+			)
+			(property
+				(name "Sheetname")
+				(value "front")
+			)
+			(property
+				(name "Sheetfile")
+				(value "front.kicad_sch")
+			)
+			(property
+				(name "ki_keywords")
+				(value "R res resistor")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "R_*")
+			)
+			(sheetpath
+				(names "/")
+				(tstamps "/")
+			)
+			(tstamps "81d05c45-ec10-44ef-a5e7-b21b299597a7")
 			(units
 				(unit
 					(name "A")
@@ -8187,6 +8295,11 @@
 				(pinfunction "1_1")
 				(pintype "passive")
 			)
+			(node
+				(ref "R22")
+				(pin "2")
+				(pintype "passive")
+			)
 		)
 		(net
 			(code "31")
@@ -8218,6 +8331,11 @@
 			(node
 				(ref "R13")
 				(pin "2")
+				(pintype "passive")
+			)
+			(node
+				(ref "R22")
+				(pin "1")
 				(pintype "passive")
 			)
 			(node
@@ -8284,6 +8402,11 @@
 				(pinfunction "1_1")
 				(pintype "passive")
 			)
+			(node
+				(ref "R23")
+				(pin "2")
+				(pintype "passive")
+			)
 		)
 		(net
 			(code "35")
@@ -8315,6 +8438,11 @@
 			(node
 				(ref "R14")
 				(pin "2")
+				(pintype "passive")
+			)
+			(node
+				(ref "R23")
+				(pin "1")
 				(pintype "passive")
 			)
 			(node

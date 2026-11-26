@@ -1,6 +1,6 @@
 {
- "head": "a2d878c",
- "base": "a2d878c",
+ "head": "613cf14",
+ "base": "613cf14",
  "checks": [
   {
    "sec": "4절",
@@ -2823,6 +2823,22 @@
    "item": "전면 R5 CAM_PG–CAM_PG_AV",
    "expected": "R5 100k",
    "actual": "R5 100k",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "3.1",
+   "item": "전면 R22 IRA_SET–IRA_K",
+   "expected": "R22 10k",
+   "actual": "R22 10k",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "3.1",
+   "item": "전면 R23 IRB_SET–IRB_K",
+   "expected": "R23 10k",
+   "actual": "R23 10k",
    "ok": true,
    "info": false
   },

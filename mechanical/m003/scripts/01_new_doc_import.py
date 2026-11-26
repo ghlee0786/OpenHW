@@ -3,7 +3,7 @@ Coordinates: origin O = core board centre at its bottom face, +Z = optical axis 
 KiCad STEPs: XY already in O, Z = each board's bottom = 0 -> carrier moved to z = -(btb_h+core_t)... see params."""
 import adsk.core, adsk.fusion
 SCR = r"C:\Users\gh\AppData\Local\Temp\claude\152719db0d1b2c74\decb4398-40a5-4677-aeb1-556f1d7e2c56\scratchpad\m003\ref"
-LANE = r"C:\workspace_python\OpenHW\.harness-worktrees\t-20261127-013549-8089\mechanical\step\stack-reference.step"
+LANE = r"C:\workspace_python\OpenHW\.harness-worktrees\t-20261127-040816-30c6\mechanical\step\stack-reference.step"
 
 def run(_c):
     app = adsk.core.Application.get()
