@@ -15,14 +15,17 @@ D3 rst en bat54
 M3 pg en 0 0 nq
 Cg3 en 0 61p
 R4 v33 pg 100k
-R20 pg pgio 1k
+R20 pg pgio 100k
+R21 pgio d4a 1k
+D4 d4a pg bat54
 M1 iov g1i v33 v33 pa
 Rg1 pgio g1i 7.8
 Cgs1 g1i v33 590p
 Cgd1 g1i iov 55p
 C20 pgio iov 4.7n
 Db1 iov v33 dsi
-R5 pg pgav 10k
+R5 pg pgav 100k
+D5 pg pgav bat54
 M2 avd g2i v33 v33 pa
 Rg2 pgav g2i 7.8
 Cgs2 g2i v33 590p

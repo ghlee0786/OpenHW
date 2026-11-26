@@ -11,6 +11,9 @@
       "R4",
       "R5",
       "R20",
+      "R21",
+      "D4",
+      "D5",
       "C20",
       "C21",
       "C7",
@@ -20,14 +23,14 @@
       "C10",
       "D3"
     ],
-    "schematic_commit": "7760f38"
+    "schematic_commit": "a2d878c"
   },
   "model": {
     "source": "RC + 레벨 1 MOSFET 근사",
     "url": "https://www.aosmd.com/res/datasheets/AO3401A.pdf",
     "license": "—",
     "behavioral": true,
-    "basis": "회로 boards.py 7760f38 L181–196; AO3401A AOS Rev3.1(VGS(th) -0.5/-0.9/-1.3, RDS(on) 60/85mΩ@-2.5V, Ciss 645 Crss 55 pF, Rg 7.8); DMG1012T DS31783; GC2053 사본 V1.1 §2.3·§9.2·§9.3; CORE_3V3 경로 0.1Ω·22µF(가정)"
+    "basis": "회로 boards.py a2d878c L181–196; D4·D5 BAT54WS 근사(가정); AO3401A AOS Rev3.1(VGS(th) -0.5/-0.9/-1.3, RDS(on) 60/85mΩ@-2.5V, Ciss 645 Crss 55 pF, Rg 7.8); DMG1012T DS31783; GC2053 사본 V1.1 §2.3·§9.2·§9.3; CORE_3V3 경로 0.1Ω·22µF(가정)"
   },
   "criteria_commit": "7cab389",
   "checks": [
@@ -36,16 +39,16 @@
       "op": ">=",
       "limit": 0.0,
       "unit": "s",
-      "value": -0.00230825,
+      "value": 0.00110504,
       "corner": "최악 경우 (vto ±, DVDD 부하 두 경우)",
-      "pass": false
+      "pass": true
     },
     {
       "name": "AVDD<90% − RESET<0.54V (리셋 먼저)",
       "op": ">=",
       "limit": 0.0,
       "unit": "s",
-      "value": 0.00111748,
+      "value": 0.00105094,
       "corner": "같음",
       "pass": true
     },
@@ -68,7 +71,7 @@
       "pass": true
     }
   ],
-  "verdict": "fail",
+  "verdict": "pass",
   "waveforms": [
     "hardware/sim/png/SIM-L9-cam-off.png"
   ],
@@ -78,5 +81,5 @@
     "version": "47",
     "sha256": "22d5cae2bd32b2e39157a8d27bf457122f68285b72a9ebefdf41551b628233ab"
   },
-  "notes": "경우별: vto -0.5 · DVDD→IOVDD: IOVDD−AVDD -2308.3 µs, AVDD−RESET 4470.3 µs, CORE_3V3 최저 3.294 V; vto -0.5 · DVDD→AVDD: IOVDD−AVDD 2483.6 µs, AVDD−RESET 2177.7 µs, CORE_3V3 최저 3.294 V; vto -1.3 · DVDD→IOVDD: IOVDD−AVDD -1031.2 µs, AVDD−RESET 2088.2 µs, CORE_3V3 최저 3.294 V; vto -1.3 · DVDD→AVDD: IOVDD−AVDD 209.1 µs, AVDD−RESET 1117.5 µs, CORE_3V3 최저 3.294 V | 가정: 모듈 BXF4677 내부 LDO 지연·문턱 미상 → 보드 레일 90 % 로 대신. DVDD12 공급 레일 미상 → 두 경우 중 나쁜 쪽 | 수정 제안 검증(판정 밖, S6 — Q1 게이트 R20 100k ∥ (1k+BAT54), Q2 게이트 R5 100k ∥ BAT54): 최악 켤 때 AVDD−IOVDD 180.2 µs(≥50), 끌 때 IOVDD−AVDD 1105.0 µs(≥0), CORE_3V3 돌입 310 mA, 최저 3.269 V"
+  "notes": "경우별: vto -0.5 · DVDD→IOVDD: IOVDD−AVDD 1105.0 µs, AVDD−RESET 2726.0 µs, CORE_3V3 최저 3.294 V; vto -0.5 · DVDD→AVDD: IOVDD−AVDD 3470.3 µs, AVDD−RESET 2537.4 µs, CORE_3V3 최저 3.294 V; vto -1.3 · DVDD→IOVDD: IOVDD−AVDD 1368.3 µs, AVDD−RESET 1113.0 µs, CORE_3V3 최저 3.294 V; vto -1.3 · DVDD→AVDD: IOVDD−AVDD 1732.3 µs, AVDD−RESET 1050.9 µs, CORE_3V3 최저 3.294 V | 가정: 모듈 BXF4677 내부 LDO 지연·문턱 미상 → 보드 레일 90 % 로 대신. DVDD12 공급 레일 미상 → 두 경우 중 나쁜 쪽"
 }

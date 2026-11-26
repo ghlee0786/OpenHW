@@ -25,7 +25,7 @@ SIM = os.path.dirname(HERE)
 REPO = os.path.dirname(os.path.dirname(SIM))
 NG = os.environ.get("NGSPICE", "C:/Users/gh/tools/ngspice/47/Spice64/bin/ngspice_con.exe")
 CRITERIA_COMMIT = "7cab389"
-SCH_COMMIT = "7760f38"   # C-018 a61dc63 + C-019 (계약 v1.15): R6 6.04k, R17 4.7k·C19 4.7nF, 전면 R20 1k·C20·C21 4.7nF
+SCH_COMMIT = "a2d878c"   # C-020 (S6): 전면 R20 100k·R21 1k·D4 BAT54WS, R5 100k·D5 BAT54WS (+ C-018/C-019: R6 6.04k, R17 4.7k·C19 4.7nF, C20·C21 4.7nF)
 ILIM = 1.86   # TPS26600 R6 6.04 kΩ: I(OL) 최소 1.86 A (대표 ≈1.99 A, 계약 v1.14 3.1절 L108) — "시험 회로의 ILIM"을 보수적으로 최솟값으로
 ILIM_OLD = 1.49   # 7cab389 작성 때 회로(R6 8.06 kΩ)의 숫자 — 비교로만 적는다
 plt.rcParams["font.family"] = ["Malgun Gothic", "DejaVu Sans"]
@@ -549,15 +549,15 @@ AO3401A = ".model pa pmos level=1 vto={vto} kp=10\n"   # AOS AO3401A Rev3.1: VGS
 
 
 def rails_body(vto=-0.9, rli=110, rla=110, t_on=1e-3, t_off=20e-3):
-    """센서 레일 (C-019 7760f38): CORE_3V3 → Q1(AO3401A, 게이트 R20 1k ← CAM_PG, C20 4.7n G–D) → CAM_IOVDD,
-    Q2(게이트 R5 10k ← CAM_PG, C21 4.7n G–D) → CAM_AVDD, CAM_PG = R4 100k 풀업 · Q3 DMG1012T(G=CAM_EN). 리셋 R7·C10·D3."""
+    """센서 레일 (C-020 a2d878c): CORE_3V3 → Q1(AO3401A, 게이트 R20 100k ∥ (R21 1k + D4 BAT54WS → CAM_PG), C20 4.7n G–D) → CAM_IOVDD,
+    Q2(게이트 R5 100k ∥ D5 BAT54WS(CAM_PG →), C21 4.7n G–D) → CAM_AVDD, CAM_PG = R4 100k 풀업 · Q3 DMG1012T(G=CAM_EN). 리셋 R7·C10·D3."""
     return (GEN_D + BAT54 + ".model nq nmos level=1 vto=1.0 kp=1.79\n" + AO3401A.format(vto=vto) +
             f"V33s v33s 0 3.3\nR33 v33s v33 0.1\nC33 v33 0 22u\n"
             f"Ven e0 0 PWL(0 0 {t_on:.6g} 0 {t_on + 1e-6:.6g} 1.71 {t_off:.6g} 1.71 {t_off + 1e-6:.6g} 0)\nRen e0 en {GPIO}\nR6 en 0 100k\n"
             "R7 en rst 10k\nC10 rst 0 100n\nD3 rst en bat54\n"
             "M3 pg en 0 0 nq\nCg3 en 0 61p\nR4 v33 pg 100k\n"
-            "R20 pg pgio 1k\nM1 iov g1i v33 v33 pa\nRg1 pgio g1i 7.8\nCgs1 g1i v33 590p\nCgd1 g1i iov 55p\nC20 pgio iov 4.7n\nDb1 iov v33 dsi\n"
-            "R5 pg pgav 10k\nM2 avd g2i v33 v33 pa\nRg2 pgav g2i 7.8\nCgs2 g2i v33 590p\nCgd2 g2i avd 55p\nC21 pgav avd 4.7n\nDb2 avd v33 dsi\n"
+            "R20 pg pgio 100k\nR21 pgio d4a 1k\nD4 d4a pg bat54\nM1 iov g1i v33 v33 pa\nRg1 pgio g1i 7.8\nCgs1 g1i v33 590p\nCgd1 g1i iov 55p\nC20 pgio iov 4.7n\nDb1 iov v33 dsi\n"
+            "R5 pg pgav 100k\nD5 pg pgav bat54\nM2 avd g2i v33 v33 pa\nRg2 pgav g2i 7.8\nCgs2 g2i v33 590p\nCgd2 g2i avd 55p\nC21 pgav avd 4.7n\nDb2 avd v33 dsi\n"
             f"C7 iov 0 1u\nRli iov 0 {rli}\nC8 avd 0 1u\nC9 avd 0 100n\nRla avd 0 {rla}\n")
 
 
@@ -570,38 +570,31 @@ def b8():
     t, ven, vr, vi, va = d["time"], col(d, h, 1), col(d, h, 2), col(d, h, 3), col(d, h, 4)
     t_rel = cross(t, vr, 0.7 * 1.8, True, 1e-3)
     t_pw = max(cross(t, vi, 0.9 * 3.3, True, 1e-3) or 1, cross(t, va, 0.9 * 3.3, True, 1e-3) or 1)
-    checks.append(check("리셋 해제 − 센서 전원 90 % 시각", ">=", 0.0, "s", (t_rel - t_pw) if t_rel else None, "C-019 레일, AO3401A vto −0.9, 부하 30mA(가정)"))
+    checks.append(check("리셋 해제 − 센서 전원 90 % 시각", ">=", 0.0, "s", (t_rel - t_pw) if t_rel else None, "C-020 레일, AO3401A vto −0.9, 부하 30mA(가정)"))
     t_dn = cross(t, ven, 0.855, False, 19e-3)
     t_rl = cross(t, vr, 0.3 * 1.8, False, t_dn or 0)
     checks.append(check("CAM_EN 하강 → CAM_RESET < 0.54 V", "<=", 50e-6, "s", (t_rl - t_dn) if (t_rl and t_dn) else None, "D3 BAT54WS"))
     t_iv = cross(t, vi, 0.9 * 3.3, False, t_dn or 0)
     checks.append(check("전원 90 % 하강 − 리셋 하강", ">=", 0.0, "s", (t_iv - t_rl) if (t_iv and t_rl) else None, "같음"))
     notes.append(f"기록만: 리셋 해제 {((t_rel - 1e-3) * 1e3) if t_rel else float('nan'):.2f} ms (CAM_EN 뒤) vs X1 기동 최대 3 ms — GC2053 'MCLK 뒤 리셋 해제' 수치 요구는 미확인이라 판정 밖. 첫 I2C는 FW 가 CAM_EN 뒤 ≥5 ms")
-    notes.append("C-019 레일(7760f38: R20 1k·C20·C21 4.7nF). AO3401A AOS Rev3.1 수치. 센서 레일 부하 30 mA(가정)")
+    notes.append("C-020 레일(a2d878c: R20 100k·R21 1k·D4 / R5 100k·D5, C20·C21 4.7nF). AO3401A AOS Rev3.1 수치. 센서 레일 부하 30 mA(가정)")
     fig, ax = plt.subplots(figsize=(9, 4))
     for y, lb in ((ven, "CAM_EN"), (vr, "CAM_RESET"), (vi, "CAM_IOVDD"), (va, "CAM_AVDD")):
         ax.plot(t * 1e3, y, label=lb)
     ax.legend(); ax.set_xlabel("시간 [ms]"); ax.set_ylabel("[V]"); ax.grid(alpha=.3)
-    ax.set_title("SIM-L8 센서 리셋 RC (R7 10k · C10 100 nF · D3) 와 센서 전원 (C-019)")
+    ax.set_title("SIM-L8 센서 리셋 RC (R7 10k · C10 100 nF · D3) 와 센서 전원 (C-020)")
     fig.tight_layout(); fig.savefig(png, dpi=110); plt.close(fig)
-    return dict(id="SIM-L8", title="센서 리셋 RC 시간과 전원 순서", refs=["R7", "C10", "D3", "Q1", "Q2", "Q3", "R4", "R5", "R6", "R20", "C20", "C21", "C7", "C8", "C9"],
+    return dict(id="SIM-L8", title="센서 리셋 RC 시간과 전원 순서", refs=["R7", "C10", "D3", "Q1", "Q2", "Q3", "R4", "R5", "R6", "R20", "R21", "D4", "D5", "C20", "C21", "C7", "C8", "C9"],
                 checks=checks, png=[png], net="SIM-L8.cir", notes=notes, model=rails_model())
 
 
 def rails_model():
     return dict(source="RC + 레벨 1 MOSFET 근사", url="https://www.aosmd.com/res/datasheets/AO3401A.pdf", license="—", behavioral=True,
-                basis="회로 boards.py 7760f38 L181–196; AO3401A AOS Rev3.1(VGS(th) -0.5/-0.9/-1.3, RDS(on) 60/85mΩ@-2.5V, Ciss 645 Crss 55 pF, Rg 7.8); DMG1012T DS31783; GC2053 사본 V1.1 §2.3·§9.2·§9.3; CORE_3V3 경로 0.1Ω·22µF(가정)")
+                basis="회로 boards.py a2d878c L181–196; D4·D5 BAT54WS 근사(가정); AO3401A AOS Rev3.1(VGS(th) -0.5/-0.9/-1.3, RDS(on) 60/85mΩ@-2.5V, Ciss 645 Crss 55 pF, Rg 7.8); DMG1012T DS31783; GC2053 사본 V1.1 §2.3·§9.2·§9.3; CORE_3V3 경로 0.1Ω·22µF(가정)")
 
 
 # 부하 경우: (이름, IOVDD 부하 Ω, AVDD 부하 Ω) — GC2053 §2.3 최대 IIOVDD 2.5mA · IAVDD 18mA · IDVDD 39mA 를 3.3V 입력 전류로 근사
 LOADS = (("DVDD→IOVDD", 3.3 / 41.5e-3, 3.3 / 18e-3), ("DVDD→AVDD", 3.3 / 2.5e-3, 3.3 / 57e-3))
-
-
-def s6(body):
-    """수정 제안 S6 (판정 밖): 게이트 비대칭 RC — Q1: 켤 때 1k+BAT54(소프트스타트 유지)·끌 때 R20 100k 로 천천히,
-    Q2: 켤 때 R5 100k 로 천천히·끌 때 BAT54 로 빨리 → IOVDD 먼저 켜고 마지막에 끈다."""
-    return (body.replace("R20 pg pgio 1k\n", "R20 pg pgio 100k\nR20a pgio d20 1k\nD20 d20 pg bat54\n")
-                .replace("R5 pg pgav 10k\n", "R5 pg pgav 100k\nD21 pg pgav bat54\n"))
 
 
 def rail_runs(mod=None):
@@ -613,23 +606,6 @@ def rail_runs(mod=None):
                             save_as=os.path.join(SIM, "SIM-L9.cir") if (not mod and vto == -1.3 and lname == LOADS[0][0]) else None)
             runs.append((f"vto {vto} · {lname}", d, h))
     return runs
-
-
-def s6_note(runs):
-    on, off, ipk, vmin = [], [], 0.0, 9.0
-    for _, d, h in runs:
-        t = d["time"]
-        ven, vi, va, v3, i3 = (col(d, h, k) for k in (1, 3, 4, 5, 6))
-        ten = cross(t, ven, 0.855, True, 0.9e-3)
-        tdn = cross(t, ven, 0.855, False, 5.9e-3)
-        ti, ta = cross(t, vi, 2.97, True, ten or 0), cross(t, va, 2.97, True, ten or 0)
-        to, tao = cross(t, vi, 2.97, False, tdn or 0), cross(t, va, 2.97, False, tdn or 0)
-        on.append((ta - ti) if (ta and ti) else float("nan"))
-        off.append((to - tao) if (to and tao) else float("nan"))
-        m = (t > 0.9e-3) & (t < 5.9e-3)
-        ipk, vmin = max(ipk, float((-i3[m]).max())), min(vmin, float(v3[t > 0.9e-3].min()))
-    return (f"수정 제안 검증(판정 밖, S6 — Q1 게이트 R20 100k ∥ (1k+BAT54), Q2 게이트 R5 100k ∥ BAT54): 최악 켤 때 AVDD−IOVDD {min(on) * 1e6:.1f} µs(≥50), "
-            f"끌 때 IOVDD−AVDD {min(off) * 1e6:.1f} µs(≥0), CORE_3V3 돌입 {ipk * 1e3:.0f} mA, 최저 {vmin:.3f} V")
 
 
 def b9(runs):
@@ -658,8 +634,8 @@ def b9(runs):
             ax.plot((r["t"][m] - 6e-3) * 1e3, y[m], label=lb)
         ax.set_title(r["name"], fontsize=9); ax.grid(alpha=.3)
     axs[0].legend(fontsize=8, ncol=4); axs[-1].set_xlabel("CAM_EN 하강 뒤 [ms]")
-    fig.suptitle("SIM-L9 CAM_EN 끄는 순서 (C-019)"); fig.tight_layout(); fig.savefig(png, dpi=110); plt.close(fig)
-    return dict(id="SIM-L9", title="CAM_EN 끄는 순서 — IOVDD·AVDD·리셋·CORE_3V3", refs=["Q1", "Q2", "Q3", "R4", "R5", "R20", "C20", "C21", "C7", "C8", "C9", "R7", "C10", "D3"],
+    fig.suptitle("SIM-L9 CAM_EN 끄는 순서 (C-020)"); fig.tight_layout(); fig.savefig(png, dpi=110); plt.close(fig)
+    return dict(id="SIM-L9", title="CAM_EN 끄는 순서 — IOVDD·AVDD·리셋·CORE_3V3", refs=["Q1", "Q2", "Q3", "R4", "R5", "R20", "R21", "D4", "D5", "C20", "C21", "C7", "C8", "C9", "R7", "C10", "D3"],
                 checks=checks, png=[png], net="SIM-L9.cir", notes=notes, model=rails_model())
 
 
@@ -689,9 +665,9 @@ def b10(runs):
         ax[1].plot((r["t"][m] - 1e-3) * 1e6, r["i3"][m] * 1e3, label=r["name"])
     ax[0].set_ylabel("[V]"); ax[0].legend(fontsize=7, ncol=2); ax[0].grid(alpha=.3)
     ax[1].set_ylabel("CORE_3V3 전류 [mA]"); ax[1].set_xlabel("CAM_EN 상승 뒤 [µs]"); ax[1].legend(fontsize=7); ax[1].grid(alpha=.3)
-    ax[0].set_title("SIM-L10 CAM_EN 켜는 순서 (C-019)")
+    ax[0].set_title("SIM-L10 CAM_EN 켜는 순서 (C-020)")
     fig.tight_layout(); fig.savefig(png, dpi=110); plt.close(fig)
-    return dict(id="SIM-L10", title="CAM_EN 켜는 순서 — IOVDD→AVDD ≥50µs·CORE_3V3", refs=["Q1", "Q2", "Q3", "R4", "R5", "R20", "C20", "C21", "C7", "C8", "C9"],
+    return dict(id="SIM-L10", title="CAM_EN 켜는 순서 — IOVDD→AVDD ≥50µs·CORE_3V3", refs=["Q1", "Q2", "Q3", "R4", "R5", "R20", "R21", "D4", "D5", "C20", "C21", "C7", "C8", "C9"],
                 checks=checks, png=[png], net="SIM-L9.cir", notes=notes, model=rails_model())
 
 
@@ -709,10 +685,7 @@ def main():
         try:
             if tid in ("SIM-L9", "SIM-L10") and runs is None:
                 runs = rail_runs()
-                s6n = s6_note(rail_runs(s6))
             r = b3(b2res) if tid == "SIM-L3" else b9(runs) if tid == "SIM-L9" else b10(runs) if tid == "SIM-L10" else fn()
-            if tid in ("SIM-L9", "SIM-L10"):
-                r["notes"].append(s6n)
             if tid == "SIM-L2":
                 b2res = r
             verdict = "pass" if all(c["pass"] for c in r["checks"]) else "fail"

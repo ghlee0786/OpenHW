@@ -15,7 +15,7 @@
       "C11",
       "X1"
     ],
-    "schematic_commit": "7760f38"
+    "schematic_commit": "a2d878c"
   },
   "model": {
     "source": "레벨 1 MOSFET 맞춤 (데이터시트 VGS(th)·RDS(on)·Ciss·Rg)",
