@@ -14,7 +14,7 @@
       "C14",
       "C15"
     ],
-    "schematic_commit": "f0745ed"
+    "schematic_commit": "a2d878c"
   },
   "model": {
     "source": "데이터시트 동작 모델 (AL8860 히스테리시스·소프트스타트·CTRL, VSMA·SS24 다이오드 맞춤)",
