@@ -257,6 +257,11 @@ class Board:
         hv = ndimage.distance_transform_edt(~self.hardvia[sl]) * G
         hl = ndimage.distance_transform_edt(~self.holes[sl]) * G
         viaok &= (hv >= vrad)[inner] & (hl >= 0.25 + vrad + 0.15)[inner]
+        # 외곽: 비아 가장자리 ≥ 0.40(DRU fab_copper_to_edge) + 반올림 0.05 — 외곽 띠 거리 변환만으로는 0.375 가 나왔다(P-003)
+        rr_ = np.arange(r0, r1 + 1)[:, None]
+        cc_ = np.arange(c0, c1 + 1)[None, :]
+        de_ = np.minimum(np.minimum(rr_, self.ny - 1 - rr_), np.minimum(cc_, self.nx - 1 - cc_)) * G
+        viaok &= de_ >= 0.40 + vrad + 0.05
         # 자기 SMD 패드 위 비아 금지(비아 인 패드 안 씀)
         for L in (0, 3):
             viaok &= ~ndimage.binary_dilation(ownpad[L] & ~self.holes[sl][inner], iterations=int(vrad / G) + 2)
@@ -943,8 +948,14 @@ def main():
             if not path:
                 continue
             segs = B.corners([(L, r + r0, c + c0, d) for L, r, c, d in path])
+            # 끝이 같은 넷 비아 구리 안의 아무 칸이면 비아 중심까지 잇는다(track_not_centered_on_via, P-003 In2)
+            lastL, lastc = segs[-1]
+            ep = B.xy(*lastc[-1])
+            vv = next((v for v in B.vias if v["net"] == net and 1e-6 < math.dist(v["pos"], ep) < v["dia"] / 2), None)
+            if vv:
+                segs[-1] = (lastL, list(lastc) + [None])
             for kk, (L, cells) in enumerate(segs):
-                pts = [B.xy(*p) for p in cells]
+                pts = [B.xy(*p) if p is not None else tuple(vv["pos"]) for p in cells]
                 for a, b in zip(pts[:-1], pts[1:]):
                     B.add_track(net, L, a, b, w)
                 if kk < len(segs) - 1:

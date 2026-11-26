@@ -38,7 +38,7 @@ def side_of(fp):
     return "B" if fp.IsFlipped() else "F"
 
 
-def mask_openings(b, s):
+def mask_openings(b, s, skip=frozenset()):
     ps = pcbnew.SHAPE_POLY_SET()
     L = MASK[s]
     for fp in b.GetFootprints():
@@ -51,7 +51,7 @@ def mask_openings(b, s):
     # V-005b RQ-14: 비아는 텐팅이어도 장애물(구멍 위 인쇄 불량 — PCBWay 'avoid overlapping with vias') → 비아 구리 링 전체
     cu = pcbnew.F_Cu if s == "F" else pcbnew.B_Cu
     for t in b.GetTracks():
-        if t.GetClass() == "PCB_VIA":
+        if t.GetClass() == "PCB_VIA" and (t.GetPosition().x, t.GetPosition().y) not in skip:
             t.TransformShapeToPolygon(ps, cu, 0, ERR, pcbnew.ERROR_OUTSIDE)
     ps.Simplify()
     return ps
@@ -276,11 +276,25 @@ def prio(ref):
     return (order.index(k) if k in order else len(order), ref)
 
 
+def free_gnd_vias(b):
+    """트랙이 닿지 않은 GND 비아(배선기의 이음 비아 — 면끼리만 잇는다) 위치."""
+    ends = set()
+    for t in b.GetTracks():
+        if t.GetClass() == "PCB_TRACK":
+            ends.add((t.GetStart().x, t.GetStart().y))
+            ends.add((t.GetEnd().x, t.GetEnd().y))
+    return {(v.GetPosition().x, v.GetPosition().y): v for v in b.GetTracks()
+            if v.GetClass() == "PCB_VIA" and v.GetNetname() == "/GND" and (v.GetPosition().x, v.GetPosition().y) not in ends}
+
+
 def place_refs(b, edge, log):
     obst = {}
     crt = {}
+    # 글자 자리가 이음 비아뿐이면 그 비아를 비킨다(지우고 면을 다시 채움) — 섬 미연결은 DRC 가 판정
+    free = free_gnd_vias(b)
+    log["vias_removed"] = []
     for s in ("F", "B"):
-        o = pcbnew.SHAPE_POLY_SET(mask_openings(b, s))
+        o = pcbnew.SHAPE_POLY_SET(mask_openings(b, s, frozenset(free)))
         o.Inflate(MM(CLR_MASK), pcbnew.CORNER_STRATEGY_ROUND_ALL_CORNERS, ERR)
         si = pcbnew.SHAPE_POLY_SET()
         for fp, g in silk_items(b, s):
@@ -340,6 +354,12 @@ def place_refs(b, edge, log):
                 break
         if done:
             tb = t.GetBoundingBox()
+            m_ = MM(CLR_MASK + 0.35)
+            for key, v in list(free.items()):
+                if tb.GetLeft() - m_ <= key[0] <= tb.GetRight() + m_ and tb.GetTop() - m_ <= key[1] <= tb.GetBottom() + m_:
+                    log["vias_removed"].append([round(TO(key[0]), 3), round(TO(key[1]), 3)])
+                    b.Delete(v)
+                    del free[key]
             o = pcbnew.SHAPE_POLY_SET()
             o.NewOutline()
             for xx, yy in ((tb.GetLeft(), tb.GetTop()), (tb.GetRight(), tb.GetTop()), (tb.GetRight(), tb.GetBottom()), (tb.GetLeft(), tb.GetBottom())):
@@ -382,6 +402,8 @@ def main():
     log = {"marks": [], "widened": 0, "clipped": {}, "dots_fail": [], "other_shapes": [], "marks_moved": [], "refs_silk": [], "refs_fab_only": []}
     if mode == "refs":
         place_refs(b, edge, log)
+        if log["vias_removed"]:
+            pcbnew.ZONE_FILLER(b).Fill(b.Zones())
         b.Save(path)
     else:
         for s in ("F", "B"):
@@ -390,7 +412,7 @@ def main():
         log["refs_silk"] = [fp.GetReference() for fp in b.GetFootprints() if fp.Reference().GetLayer() in (pcbnew.F_SilkS, pcbnew.B_SilkS)]
         log["refs_fab_only"] = sorted(fp.GetReference() for fp in b.GetFootprints() if fp.Reference().GetLayer() not in (pcbnew.F_SilkS, pcbnew.B_SilkS))
     json.dump(log, open(rep, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
-    print(f"실크 {mode}: 남은 실크 충돌 {len(log.get('conflicts', []))} · 참조 실크 {len(log['refs_silk'])} · Fab 만 {len(log['refs_fab_only'])} {log['refs_fab_only']}")
+    print(f"실크 {mode}: 비킨 이음 비아 {len(log.get('vias_removed', []))} · 남은 실크 충돌 {len(log.get('conflicts', []))} · 참조 실크 {len(log['refs_silk'])} · Fab 만 {len(log['refs_fab_only'])} {log['refs_fab_only']}")
 
 
 if __name__ == "__main__":

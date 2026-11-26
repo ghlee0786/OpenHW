@@ -36,7 +36,14 @@ def split_at(t, rects):
                 ts.add(u)
     us = sorted(ts)
     pt = [(ax + u * (bx - ax), ay + u * (by - ay)) for u in us]
-    return list(zip(pt[:-1], pt[1:]))
+    # 길이 0 에 가까운 조각은 버린다(track_dangling) — 앞 조각 끝을 다음 조각 시작에 붙인다
+    out = []
+    for p, q in zip(pt[:-1], pt[1:]):
+        if ((q[0] - p[0]) ** 2 + (q[1] - p[1]) ** 2) ** 0.5 < 0.002 and out:
+            out[-1] = (out[-1][0], q)
+        elif ((q[0] - p[0]) ** 2 + (q[1] - p[1]) ** 2) ** 0.5 >= 0.002:
+            out.append((p, q))
+    return out
 
 
 def main():
@@ -66,6 +73,8 @@ def main():
     # enclosedByArea 규칙 영역(DP_TWIST · DP_TUNE · DP_BRK, V-005 RQ-7 · V-006) 경계에서 트랙을 나눈다
     twist = [(a["layer"], a["rect"]) for a in r.get("areas", []) if a["name"] in ("DP_TWIST", "DP_TUNE", "DP_BRK")]
     for t in r["tracks"]:
+        if t["a"] == t["b"]:
+            continue
         for pa, pb in split_at(t, twist):
             s = pcbnew.PCB_TRACK(b)
             s.SetStart(V(pa))
