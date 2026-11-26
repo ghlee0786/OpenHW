@@ -60,7 +60,7 @@
 | R-014 | orch | research t18s | KiCad 10 IPC API·실시간 MCP 조사(설치 목록만) | docs/research/r014-kicad-live-mcp.md (새 레인) | 근거·결론, 커밋 | completed — 레인 t-20261127-013426-192c 955edcd. 원인 = kicad_common.json api.enable_server=false(orch 확인), 설치된 iQreu/kicad-mcp(kipy 0.9.0)로 실시간 PCB 편집 가능 — 새 MCP 불필요. 필요: C1 KiCad API 켜기+재시작(설정 변경 → 사용자 결정), C2 pcb가 자기 레인 보드를 열기. 한계: 회로도·DRC·라우터는 IPC 없음(KiCad 11) |
 | R-015 | orch | research t18s | Fusion Electronics KiCad 가져오기·DRC 교차 검토 가능 여부 | docs/research/r015-fusion-electronics.md (새 레인) | 근거·결론, 커밋 | completed — 같은 레인 9af8aba. KiCad 가져오기는 v7+ 표기뿐(10 미확인)·규칙/차동 손실 미확인 → 전기 교차 검토에 안 씀(O-58), 기구는 STEP. 라이선스: 개인용은 company environments 금지 → 사용자 확인 필요 |
 | M-003 | orch (O-56) | mechanical t18x | 외함 설계: KiCad STEP 기준, #25 벽·#26 방열·PMMA 창+흑색 폼, 3D 프린트 시제품 | mechanical/** (새 레인) | F3D·STEP·STL·도면·렌더·간섭 수치, 커밋 | 1차 completed — 레인 t-20261127-013549-8089 d74012a·8261d9b(orch 해시 확인 f3d 61414b1e·STEP a26cc967·HOUSING a9c41c21·FRONT_COVER 32472a17). 외형 51.75×69.5×69.9, PETG+Al 옆판, 창 4장 분리, 간섭: 외함 충돌 0, USB-C 플러그↔캐리어 판 9.72 → O-61. 열: 옆판→공기 약 55 K/W 병목(가정, 차선 핀 옆판/금속 외함 K32, 실측). LED 안쪽 각 7.2°/8.1° < M-001e 14.7°(I3, 차선 K13). 2차: pcb 배치 고정 STEP·J3 수정 뒤 재검사 |
-| F-004c | orch (O-57) | firmware t18w | 원인 K 후속: K-1 층별 compare 첫 오차 층 → K-2 헤드 혼합정밀도 → K-3 sigmoid 그래프 밖, 기준 2da6706 그대로 | firmware/** (F-004 레인) | 단계별 커밋, 합격 시 해시·시험·빌드 / K 3회째 불합격 시 D 근거 | running |
+| F-004c | orch (O-57) | firmware t18w | 원인 K 후속: K-1 층별 compare 첫 오차 층 → K-2 헤드 혼합정밀도 → K-3 sigmoid 그래프 밖, 기준 2da6706 그대로 | firmware/** (F-004 레인) | 단계별 커밋, 합격 시 해시·시험·빌드 / K 3회째 불합격 시 D 근거 | completed(합격) — 335f3e7. K-1: 새 원인 L(검증 입력 행 정렬 누락, --aligned_input [1,1,416,1280]) — F-004 3회·F-004b 실패의 첫 원인은 검증 입력, 원인 J 판정 철회. INT8은 백본 1183_Conv부터 오차 누적(원인 K) → K-2 전체 BF16: K1 21/21·K2 0.013·K3 0.944·K4 20/21·K5 0 PASS. 기준 수치 2da6706 그대로(orch diff 확인 — 입력 형식만 바뀜). cvimodel eee83a22…(orch 해시 확인), 원인 M(패치 표시 파일) 고친 뒤 이미지 rc 0, emmc.zip 00b685a0…(orch 확인). orch 재실행: persond 33/0·daynight 40/0·통합 16/0 모두 rc 0. HIL 미확인(보드 BF16 로드·FPS·정렬 프레임) |
 | G-002 | orch (O-59) | pcb t190 | KiCad 실시간 GUI 작업: 자기 레인 보드를 PCB 편집기로 열고 kicad-mcp(IPC)로 편집, 단계별 스크린샷, 스크립트와 동시 쓰기 금지 | hardware/pcb/** (P-003 레인), validation/runtime/kicad-gui/G-002 | IPC 연결 확인, 스크린샷, DRC 종료 코드(kicad-cli), 커밋 | running |
 
 ## 운영 변경 (2026-11-26, 사용자 지시 · lead 전달)
@@ -136,6 +136,7 @@
 | O-59 | lead 결정 D-003 #33: KiCad API 켬(R-014 C1), 사용자 실시간 MCP 작업 요구 | pcb에 G-002 — 스크립트 저장·정지 후 GUI가 한 보드 파일씩 소유, IPC 편집·단계별 스크린샷, 판정은 kicad-cli DRC, 라우터는 GUI 저장·닫기 후 | 같은 파일 동시 쓰기 방지, 판정은 종료 코드 | MCP가 IPC 연결 못 하면 스크립트·kicad-cli 계속, 칸 재시작은 lead |
 | O-60 | lead 사전 결정: G-002에서 kicad MCP가 칸 시작 때 IPC 없음으로 굳어 있으면 | 보고 기다리지 않고 orch가 pcb 칸 재시작 — 진행분 커밋 확인 → hc kill → 같은 sessionId 95e7dda5 --resume·같은 레인·같은 MCP 설정 → hc get 실행 확인 | 새 세션 중복 시작 방지, 멈추지 않음 | 재시작 뒤에도 IPC 실패면 원인 기록·스크립트 헤드리스 편집+스크린샷(#33 차선) |
 | O-61 | M-003 간섭: USB-C J3 셸 앞면이 판 가장자리보다 안쪽(pcb 6ecfa85: J3 B.Cu 90°, 위치 −15.805, courtyard x −19.98 vs 외곽 −20.0 — orch 확인), 데이터시트는 셸 0.49 밖 → 플러그 오버몰드가 판 모서리에 걸려 완전 삽입 불가 우려 | pcb가 J3를 −X로 옮겨 셸 앞면을 데이터시트 기준(판 가장자리 밖 0.49)에 맞춤, 관련 배선 수정, STEP 재커밋 → mechanical 2차 간섭 재검사 | 커넥터 맞물림이 기능 조건 | 판 외곽에 J3 앞 노치(따냄) |
+| O-62 | F-004c K-2: 첫 오차 층이 백본 앞(1183_Conv)이라 '그 층부터 BF16' = 사실상 전체 | 전체 BF16(firmware 선택, orch 승인) | 합격 기준 충족, 라이선스 Apache-2.0 유지 | quantize_table로 1183_Conv 이후만 BF16(FPS 부족 시 bring-up에서) |
 
 ## 발주 패키지 직전 정리 목록
 - [ ] 회로도 표시 겹침: 캐리어 J2 옆 12V_IN_RAW 라벨, D3 PWR_LED 라벨, J1 품번 문자 (O-32)
@@ -153,8 +154,9 @@
 - [ ] 절연 패드 두께(P330/340/350)는 G2 실측 후 선택 (M-002b K24)
 - [ ] IR LED via-in-pad(수지 충전·도금 덮개) 옵션 여부 — 견적 금액 보고 후 결정 (O-44)
 - [ ] 사람 감지 모델 경로 사용자 결정 대기: (A) 원인 J 회피 재변환(같은 원인 4번째라 허가 필요) / (B) Seeed YOLO11n AGPL / (C) Sophgo 라이선스 문의 — 현재 (D) 모델 없이 마감 (F-004)
-- [ ] (사용자 결정 대기) F-004 대체 모델 경로 — AGPL YOLO11n(B) / Sophgo 문의(C) (원인 K 후속은 O-57로 진행)
+- [x] F-004 사람 감지 모델 — F-004c 합격(YOLOX-Nano BF16, Apache-2.0). 대체 경로 B/C 불필요
 - [ ] (사용자 지시 대기) push — main 병합은 1a6147a로 끝남, 남은 3레인(orch·pcb·firmware)은 완료 시 lead가 batch
 - [ ] (사용자 진행) PCBWay 가입·문의 — lead 초안 t-20261127-013043-46d1 docs/manufacturing/pcbway-inquiry-draft.md
 - [x] KiCad API 켜기 — lead 처리(D-003 #33, 백업 .bak-20261127-lead) → G-002
 - [ ] (사용자 확인 대기) Fusion 라이선스 종류·만료(R-015: 개인용은 company environments 금지, tool-status.md에 만료 안내 기록)
+- [ ] bring-up: BF16 cvimodel 보드 로드·실검출·FPS(BF16은 INT8보다 느림 — 부족하면 O-62 차선), sscma-node 프레임 행 정렬
