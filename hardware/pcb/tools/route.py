@@ -88,6 +88,7 @@ class Board:
         self.holes = np.zeros((self.ny, self.nx), bool)         # 드릴 구멍(모든 넷)
         self.netid = {}
         self.pads = []
+        self.padm = np.zeros((4, self.ny, self.nx), bool)  # 패드 구리 자리(짝 넷 패드는 굴곡 검사에서 늘 장애물)
         nid = -10
         for p in geom["pads"]:
             n = p["net"]
@@ -104,6 +105,7 @@ class Board:
                 L = LAYERS.index(ln)
                 for poly in polys:
                     self.raster_poly(L, poly, i)
+                    self.raster_poly_mask(self.padm[L], poly)
             if p["drill"]:
                 self.disc(self.holes, p["pos"], p["drill"] / 2, True)
                 if p["npth"]:
@@ -806,7 +808,7 @@ def main():
                         for tt in np.linspace(0, 1, 30):
                             rr, cc = B.cell(x0 + (x1 - x0) * tt, y0 + (y1 - y0) * tt)
                             blk = B.occ[L, rr - mrg:rr + mrg + 1, cc - mrg:cc + mrg + 1]
-                            tb = B.trk[L, rr - mrg:rr + mrg + 1, cc - mrg:cc + mrg + 1]
+                            tb = B.trk[L, rr - mrg:rr + mrg + 1, cc - mrg:cc + mrg + 1] & ~B.padm[L, rr - mrg:rr + mrg + 1, cc - mrg:cc + mrg + 1]
                             bad_ = (blk != 0) & (blk != B.netid[short]) & ~((blk == pid) & tb)
                             if np.any(bad_):
                                 ok = False
