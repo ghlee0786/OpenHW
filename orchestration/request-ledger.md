@@ -37,9 +37,9 @@
 | R-009 | orch | research t18s | BOM 미확정·재고 위험 해소(AC 코드·CLA216 짝 커넥터·SRN6045·C15849·VSMA 재고·풋프린트 치수 대조) | docs/research/r009-bom-risks.md (+bom-full.csv 비고) | 6항목 결론, 21열 유지, 커밋 | completed — 898ed80 (92행·21열 orch 확인). AC 코드 GlobTek, CLA216 짝 PicoBlade 1안(G2 확인), SRN6045 DK 재고, VSMA 위탁, 풋프린트 대조(DC 잭·ALS-PT19) |
 | M-002 | orch (P-003 Q3·Q4·Q5) | mechanical t18x | 캐리어 외형(40×54 vs 45×45)·FFC −X 경로·IR LED 열 접촉 자리 | mechanical/** (M-001 레인) | 외형·좌표·FFC 길이·열 자리, 커밋 | completed — 커밋 3f7ceee. 캐리어 40×54·전면 40×40, (+17,−17) 구멍 삭제, GH 6P 하니스 35mm, LED 열 경로 패드→Al 기둥→방열판→외함 (실측 판정) |
 | C-004 | orch (V-004 반영) | schematic t18z | R1~R13·K1~K4 수정: I2C2 풀업·X1 → CAM_1V8 스위칭(O-33), RESET 보호, TPS54302 Cff·출력 C, 5V_SYS TVS, DC 잭 풋프린트, microSD 소프트스타트, AL8860 L·D·C, USB_DET, DRV8837 IN 레벨, 계약 v1.4 | hardware/schematic/**, hardware/libraries/** (C-002 레인), 계약(C-001 레인) | 최종 커밋, 의도 차이 목록, ERC 0, pcb용 변경 부품표 | completed — 58eb49b (계약 v1.4 d159068), orch 재실행 ERC 0/0, carrier 91→97부품·front 78→83 |
-| V-004b | orch | review t191 | C-004 수정분 재검토 | validation/review-V004b-C004.md | 판정표, 레인·커밋 | running |
+| V-004b | orch | review t191 | C-004 수정분 재검토 | validation/review-V004b-C004.md | 판정표, 레인·커밋 | completed — 6404bf7. ERC 0/0, 의도 밖 변경 0, 해소 R3·R4·R6·R7·R9·R11·R13·K1~K4·MODE, 부분/신규 N1(Q6 게이트 순서)·R2·R5·R8·R10·R12 |
 | R-008b | orch | research t18s | C-004 58eb49b 기준 BOM 재내보내기 + 남은 MPN 확인(RT9013-28GB·F1·C1·L1·SS24·22µF DC 바이어스·XKB 외곽·GH 케이블) | docs/research/bom-full.csv (R-008 레인) | 차이표, 21열, 커밋 | queued (R-009 뒤) |
-| C-005 | orch | schematic t18z | R-009·V-004b 반영: 전면 J2 PicoBlade(O-34), ALS-PT19 풋프린트, DC 잭 대조, V-004b 미해소 | hardware/schematic/**, hardware/libraries/** | ERC 0, 의도 차이, 부품표 | queued (V-004b 회수 뒤) |
+| C-005 | orch | schematic t18z | R-009·V-004b 반영: 전면 J2 PicoBlade(O-34), ALS-PT19 풋프린트, DC 잭 대조, V-004b 미해소 | hardware/schematic/**, hardware/libraries/** | ERC 0, 의도 차이, 부품표 | running (R-009 + 실크 19건 + V-004b N1·R2·R5·R8·R10·R12·계약 v1.5) |
 
 ## 운영 변경 (2026-11-26, 사용자 지시 · lead 전달)
 - 의견 묻지 않고 진행: 사람 쪽 미정값은 D-003(lead 레인 t-20261126-144135-5470 docs/decisions/D-003-working-defaults.md, 커밋 8ac5ce5) 값으로 확정 취급. 새 갈림길은 기본값 선택 → 아래 「분기 기록」에 분기점·선택·이유·차선책 → lead 요약 보고. 문제 시 해당 행으로 돌아가 차선책.
