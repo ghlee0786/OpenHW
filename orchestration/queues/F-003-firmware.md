@@ -9,3 +9,4 @@
 ■ 업무: 1) DTS/보드 초기화 변경(LED 3개·ADS1015·spi0/mcp2518fd·mm610x·wifi_pin 삭제, GPIO_ZQ→PWM_2, 계약 GPIO 배정 반영)을 패치 파일로 2) 주야 전환 데몬: LTR-329 i2c-2 0x29 i2c-dev 폴링(D-003 #18) → 히스테리시스 → ICR(DRV8837 IN1 gpio495/IN2 gpio352 펄스 100~500ms) + IR LED(IR_LED_EN gpio431, PWM_2) + ISP IR 모드(sdr_ir) 전환, 차선 LIGHT_SENSE ADC1 3) 패치 적용 빌드(slot 경유) 종료 코드·이미지 해시. 보드 없음 → HIL 미검증, 컴파일 성공만 판정. 단위 시험 가능한 부분(히스테리시스 로직)은 호스트 시험 작성·실행.
 ■ 소유 파일: firmware/** (patches/, apps/daynight/, docs/). 새 레인 start "F-003 BSP·주야 전환".
 ■ 완료 조건: 패치·앱·빌드 결과(종료 코드·해시)·호스트 시험 결과(명령·통과 수), 레인 id·커밋 → hc send t18r.
+■ 추가(O-31): IR LED 스트링당 평균 전력 상한 ≤1.6W — 1.0A 피크에서 IR_PWM 듀티 ≤25%를 데몬이 강제(설정으로 넘을 수 없게), 노출 동기 펄스 허용. 호스트 시험에 듀티 상한 검사 포함.

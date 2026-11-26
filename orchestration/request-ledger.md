@@ -28,13 +28,14 @@
 | R-007 | orch | research t18s | 기구 도면 수치: CIL093 외형, CLA216 공동·구멍, VSMA1085400 패키지, DF30 결합 높이, BXF4677 블록 | docs/research/r007-mech-dims.md | 5항목 수치표, 레인·커밋 | completed — 레인 t-20261126-165815-3a00 커밋 4f0a8ab. CIL093·CLA216 공동 14.1□ 깊이 약 1.2·VSMA1085400 높이 2.445·DF30 0.9 |
 | V-003 | orch (단계 4 독립 검토) | review t191 | L-001 라이브러리 핀·패드 데이터시트 원문 대조 | validation/review-V003-L001.md | 부품별 판정표, 영향, kicad-cli 결과, 레인·커밋 | running |
 | M-001d | orch | mechanical t18x | R-007 수치 반영, 받침+블록 2.03 > CLA216 공동 약 1.2 간섭 해소(스페이서/컷아웃/재배치 비교), 초점 BFL 재계산 | mechanical/** (M-001 레인) | z표·충돌 0 목표·선택 근거, 커밋 | completed — 커밋 c05bb28. K15 받침 0.75+스페이서 1.5, 실제 충돌 0, 전체 53.3mm, 칼라 광차단, PCB 허용 높이표 §3.6 |
-| P-003 | orch (단계 5) | pcb t190 | 캐리어·전면 보드 배치·배선·DRC·STEP (GUI 소유권 schematic→pcb, 창 닫힘 확인 후) | hardware/schematic/<보드>/*.kicad_pcb, hardware/pcb/** | DRC 종료 코드·미연결, 차동 길이표, STEP sha256, 스크린샷, 레인·커밋 | running |
+| P-003 | orch (단계 5) | pcb t190 | 캐리어·전면 보드 배치·배선·DRC·STEP (GUI 소유권 schematic→pcb, 창 닫힘 확인 후) | hardware/schematic/<보드>/*.kicad_pcb, hardware/pcb/** | DRC 종료 코드·미연결, 차동 길이표, STEP sha256, 스크린샷, 레인·커밋 | running — 레인 t-20261126-171922-251f 계획 단계 99790d9: BTB 면 판정 60/60(캐리어 -A F.Cu −90°, 전면 -B B.Cu 180°), 캐리어 40×40 뒷면 커넥터 불가 → 외형 M-002 대기, 회로도 가져오기 C-003/C-002b 대기 |
 | R-008 | orch | research t18s | 회로도 BOM 내보내기 → 견적용 전체 BOM + R-004와 차이표 | docs/research/bom-full.csv, r008-bom-diff.md | 21열·행 수, 차이표, 미확정 MPN, 레인·커밋 | completed — 레인 t-20261126-171912-e7d2 커밋 dbafdc8, 92행·21열(orch 확인), kicad-cli bom 0/0, 미확정 10건 |
 | V-004 | orch (단계 4 독립 검토) | review t191 | C-002 회로 독립 검토(전원·보호·구동·I2C·PHY·USB·BTB·FPC) | validation/review-V004-C002.md | 판정표·수정안, ERC 재실행, 레인·커밋 | running (기준 276fc89, C-003 변경분은 나중에 추가 절) |
 | V-003 결과 | — | review t191 | (완료) L-001 독립 대조 | validation/review-V003-L001.md | — | completed — 레인 t-20261126-165808-da7a 커밋 e0cbdea. 전면 -B는 B.Cu 뒤집기+180°만 맞음, AL8860 EP 랜드·BTB courtyard·M12 홀더 속성/구멍·DRV8837 3D·FFC 1A 신호 전용 지적 |
 | C-003 | orch (V-003 반영) | schematic t18z | 라이브러리 수정(BTB courtyard·실크, AL8860 파생 랜드, M12 홀더 Ø1.7·속성, DRV8837 3D) + 12V_IR 커넥터 정격 재검토 | hardware/libraries/**, hardware/schematic/** (C-002 레인) | ERC 0 유지, 의도 변경만 차이, 커밋 | running |
 | C-002b | lead O-28 | schematic t18z | 회로도 가독성 정리(기능 블록 계층 시트·주석), 참조 지정자 불변 | hardware/schematic/** (C-002 레인) | 넷리스트 동일 증명, ERC 0, SVG 경로, 커밋 | running (C-003과 별도 커밋) |
 | R-009 | orch | research t18s | BOM 미확정·재고 위험 해소(AC 코드·CLA216 짝 커넥터·SRN6045·C15849·VSMA 재고·풋프린트 치수 대조) | docs/research/r009-bom-risks.md (+bom-full.csv 비고) | 6항목 결론, 21열 유지, 커밋 | running (C-003/C-002b 뒤 R-008b BOM 재내보내기 예정) |
+| M-002 | orch (P-003 Q3·Q4·Q5) | mechanical t18x | 캐리어 외형(40×54 vs 45×45)·FFC −X 경로·IR LED 열 접촉 자리 | mechanical/** (M-001 레인) | 외형·좌표·FFC 길이·열 자리, 커밋 | running |
 
 ## 운영 변경 (2026-11-26, 사용자 지시 · lead 전달)
 - 의견 묻지 않고 진행: 사람 쪽 미정값은 D-003(lead 레인 t-20261126-144135-5470 docs/decisions/D-003-working-defaults.md, 커밋 8ac5ce5) 값으로 확정 취급. 새 갈림길은 기본값 선택 → 아래 「분기 기록」에 분기점·선택·이유·차선책 → lead 요약 보고. 문제 시 해당 행으로 돌아가 차선책.
@@ -76,3 +77,5 @@
 | O-28 | 회로도 가독성 정리 시점 (lead 분기) | C-002b를 C-003과 함께 지금 C-002 레인에서(별도 커밋), P-003은 회로도 가져오기를 schematic 최종 커밋까지 보류하고 그동안 보드 설정·BTB 면 판정·배치/배선 계획 | 시트 구조·커넥터 변경이 어차피 생기므로 PCB가 한 번만 가져오게, 같은 파일 동시 편집 없음 | P-003 첫 DRC 뒤 정리(재연결 필요) / 정리 없이 V-004 |
 | — | VS Code 키 입력 사고 | lead 확인: 메인 체크아웃 미커밋 변경 없음, VS Code 미저장 표시 없음 → 추가 조치 없음 | GUI 작업자 키 입력 전 포커스 확인 의무 | — |
 | O-29 | F-002 원인 C 2회째 (호스트 메모리 압박 → Claude Code가 백그라운드 빌드 종료, VM OOM 아님, 커밋 778db5d) | 빌드를 hc 터미널 1개(일반 프로그램, slot 경유)로 옮기고 docker --memory 16g 상한, -j4 이어 빌드. 이 업무에 한해 firmware의 hc 칸 1개 생성 허용 | 실행 방식 자체를 고쳐 같은 원인 제거, Claude 설정 변경은 사용자 결정이라 피함 | 컨테이너 OOM(137)이면 원인 D → -j2 / 원인 C 3회째면 멈추고 보고 |
+| O-30 | KiCad 프로젝트 공용 파일(.kicad_pro·fp-lib-table) 작성자 | schematic이 C-003/C-002b 마지막 커밋에 넷클래스·OpenHW_Mech 줄을 넣고, 그 뒤 소유를 pcb로 이전 | 같은 파일 동시 편집 방지, 회로도 단계 끝에서 한 번 넘김 | pcb가 가져온 뒤 직접 편집 |
+| O-31 | IR LED 열 (1A 연속 6.2W → ΔT≈130K 불가) | 스트링당 평균 ≤1.6W: 1.0A 피크·듀티 ≤25%(FW 강제), PCB 열 비아·구리 확산, 외함 열 접촉 자리 | 10m 조사 위해 피크 전류 유지, 평균 열은 듀티로 제한 | 정전류 0.3A 연속 / MCPCB LED 서브보드 |
