@@ -80,15 +80,18 @@
 | VD-001 | 사용자 지시 → lead → orch | 전 칸 | 가상 설계 완료·검증 조건 1~6 (orchestration/queues/VD-001-plan.md) | — | 조건별 기계 판정 + HTML 한 장 | running |
 | C-014 | orch (VD-001 1) | schematic t18z | 계약 v1.11↔회로도 넷리스트 기계 대조 + ERC·netcompare | hardware/schematic/tools (새 레인) | 불일치 수 종료 코드, 커밋 | completed — 레인 t-20261127-041255-b9cd 48042d5: contract_check.py(계약 374줄+ERC+netcompare), orch 재실행 종료 8(불일치 8)·selftest 0. 불일치 8은 모두 계약 문구 낡음 → O-82·C-015 |
 | R-020 | orch (VD-001 4) | research t18s | 임피던스·차동 길이/skew·전원 IPC-2152 전류·전압 강하 계산 스크립트, 열 연결 | docs/research/r020 (새 레인) | 한도 초과 수 종료 코드, 커밋 | 1차 completed — 레인 t-20261127-044402-b5de 59627bc: pcb 3012bf3(=6ecfa85 보드) 기준 ev_check 종료 7(43항목: 통과 28·불합격 7·미배선 8) — orch 재실행 7·식 시험 0·고장 주입 0 동일. 임피던스 6쌍 ±10% 안(마스크 −8Ω 보정 의존 — 보정 없으면 CSI/MDI 110.6Ω). 불합격: 쌍 안 차 MDI_TX/RX·USB, USB 비결합(기존 RQ-5·6), 전원 3(5V_SYS 0.30선·12V_IN_F 비아·전면 CORE_3V3 0.15선) → RQ-17~19. 최종은 pcb 완료 커밋에서 재실행 |
-| M-007 | orch (VD-001 5) | mechanical t18x | 대체 3D 모델·전체 조립 STEP 틀·간섭/틈/플러그/광축/LED 가림/BTB 기계 판정·렌더 | mechanical/** (M-006 레인) | 실패 수 종료 코드, 커밋 | running |
-| V-006 | orch (VD-001 2·3·6) | review t191 | 완화↔D-003 대조·R-010 16항 자동 검사·VD-001 HTML 생성기 | docs/review, validation/runtime/vd001 (새 레인) | 고장 주입 시험, 커밋 | running |
+| M-007 | orch (VD-001 5) | mechanical t18x | 대체 3D 모델·전체 조립 STEP 틀·간섭/틈/플러그/광축/LED 가림/BTB 기계 판정·렌더 | mechanical/** (M-006 레인) | 실패 수 종료 코드, 커밋 | completed(판정 실패 4) — cdce9bd: 대체 3D 모델 5종·연결 규칙, run_all.py 한 명령 조립·판정(종료=실패 수), 3012bf3 기준 실패 4(USB-C O-61 미반영·R9–R11), 틈 16쌍 통과, 광축 0.000, LED 직접광 84.6%(analysis2 86 — 렌즈 경통이 가림), BTB 8.0. 렌더 5장 |
+| V-006 | orch (VD-001 2·3·6) | review t191 | 완화↔D-003 대조·R-010 16항 자동 검사·VD-001 HTML 생성기 | docs/review, validation/runtime/vd001 (새 레인) | 고장 주입 시험, 커밋 | completed — 레인 t-20261127-041330-15d7 3d88931: v006_relax·cond2·fab(R-010 16항)·vd001_html, 형식 docs/review/vd001-format.md. orch 재실행 test_v006_relax 0·test_v006_fab 16건 0·test_v006_vd001_html 0. D-003 기록 없는 완화 목록 → O-86 |
 | SIM-001a | orch (O-80, VD-001 7) | schematic t18z | ngspice 격리 설치(1회) + 전원 경로 시뮬: TPS26600·TPS54302·LDO/레일·기동 순서 — 기준 먼저 커밋 | hardware/sim (새 레인) + C:/Users/gh/tools/ngspice | 파형·수치·판정 JSON, 커밋 | queued(C-014 뒤) |
-| SIM-001b | orch (O-80, VD-001 7) | firmware t18w | AL8860×2·DRV8837 ICR·Q6/Q7 역급전·I2C 상승/리셋 RC 시뮬 — 기준 먼저 커밋 | hardware/sim (새 레인) | 파형·수치·판정 JSON, 커밋 | queued(F-008 뒤) |
+| SIM-001b | orch (O-80, VD-001 7) | firmware t18w | AL8860×2·DRV8837 ICR·Q6/Q7 역급전·I2C 상승/리셋 RC 시뮬 — 기준 먼저 커밋 | hardware/sim (새 레인) | 파형·수치·판정 JSON, 커밋 | completed(fail 4) — 레인 t-20261127-041440-3ed1 기준 7cab389 → 결과 a3b988c, orch 재실행 run.py 종료 4 동일. pass B1·B4·B7·B8, fail B2/B3 eFuse 창·B3 끔 링잉·B5 CAM_1V8 돌입·B6 역급전 전압 → O-87·C-017 |
 | REN-001 | 사용자 목표 → lead → orch | mechanical t18x | VD-001 끝점: kicad-cli PCB 레이트레이싱 렌더 + Blender 5.2 제품 렌더(STEP→메시 무료 도구, 재질, 2560×1440, 턴테이블 8초) — 현재 배선본으로 장면 먼저 | mechanical/** (M-006 레인), validation/runtime/vd001/render | 파일 수·해상도·STEP 해시(기계), 사람 눈은 HTML | running |
 | C-015 | orch (O-82) | schematic t18z | 계약 v1.12: C-014 불일치 8 해소(회로도 기준) + DNP 목록 절 신설·판정화 | hardware/schematic/hw-fw-contract.md, tools/contract_check.py (C-014 레인) | contract_check 종료 0, selftest 0, 커밋 | completed — 0c2e8e7: 계약 v1.12(8곳 문구 정정, 12B DNP 목록), 회로도 변경 0, README 10절 B DNP 행 정정. orch 재실행 contract_check 종료 0(384줄 불일치 0·ERC 0·netcompare 0)·selftest 0(18건) → VD-001 조건 1 통과(C-016 반영 뒤 재판정) |
-| C-016 | orch (O-83) | schematic t18z | 코어 J2-32(PWR_WAKEUP1)에서 ALS_INT_RSV 분리·미연결, 계약 v1.12 반영 | hardware/schematic/** (C-014 레인) | ERC 0, 의도한 넷 차이만, contract_check 0, 커밋 | queued(C-015 뒤) |
+| C-016 | orch (O-83) | schematic t18z | 코어 J2-32(PWR_WAKEUP1)에서 ALS_INT_RSV 분리·미연결, 계약 v1.12 반영 | hardware/schematic/** (C-014 레인) | ERC 0, 의도한 넷 차이만, contract_check 0, 커밋 | completed — b9cd ea1336b(+1902144·1f632b6): J1-32 미연결·R15 삭제·TP24·전면 J2 2.54mm 패드(BOM/CPL 제외)·계약 v1.12 정정. ERC 0, contract_check 0, netcompare 의도 차이만(carrier 3·front 9). BOM(bom-full) 갱신 필요 → R-021 |
 | F-009 | orch (O-83) | firmware t18w | DTS·daynight에서 ALS_INT GPIO 사용 제거(있으면), 호스트 시험 재실행 | firmware/** (새 레인) | 시험 종료 0, 커밋 | queued(SIM-001b 뒤) |
-| M-008 | orch (O-85) | mechanical t18x | G2 수정값: CLA216 방향 정정 후 전면 부품 간섭·리드 경로, DF30 11.55 반영 J3 새 좌표 — PCB용 좌표 표 | mechanical/m008 (M-006 레인) | 좌표 표·간섭 결과, 커밋 | running |
+| M-008 | orch (O-85) | mechanical t18x | G2 수정값: CLA216 방향 정정 후 전면 부품 간섭·리드 경로, DF30 11.55 반영 J3 새 좌표 — PCB용 좌표 표 | mechanical/m008 (M-006 레인) | 좌표 표·간섭 결과, 커밋 | completed — 969d169: CLA216 코일 +Y·리드 +X, DF30 (0,−11.55) KiCad (100,111.55), 전면 F1–F6·금지 영역 표, 재검사 남은 겹침 3(R9–R11, F1–F3로 해소) |
+| P-004c | orch (O-86) | pcb t190 | C-016 반영·M-008 배치(F1–F6·금지 영역)·O-61·3D 모델 연결·규칙 완화 정리(ignore 4 해제·0.14→0.15·u2 0.20→0.30·DP_BRK/TUNE 기록)·CPL 원점/회전 | hardware/pcb/** (P-003 레인) | DRC 0·parity 0·V-006 relax 0, 커밋 | running |
+| C-017 | orch (O-87) | schematic t18z | SIM-001b 수정: CAM_1V8 돌입(1k+10nF)·ILIM R6 6.98k·CAM_1V8 블리더 10k, 계약 v1.13(IIC2 내부 풀업 금지) | hardware/schematic/** (b9cd) | ERC 0·contract_check 0, 커밋 | running |
+| R-021 | orch | research t18s | bom-full·PCBWay BOM 갱신: C-016(J2 제외·R15 삭제·TP24) + C-017 부품 | docs/research/bom-full.csv, manufacturing/bom (새 레인) | make_pcbway_bom 종료 0, 커밋 | queued(C-017 뒤) |
 
 ## 운영 변경 (2026-11-26, 사용자 지시 · lead 전달)
 - 의견 묻지 않고 진행: 사람 쪽 미정값은 D-003(lead 레인 t-20261126-144135-5470 docs/decisions/D-003-working-defaults.md, 커밋 8ac5ce5) 값으로 확정 취급. 새 갈림길은 기본값 선택 → 아래 「분기 기록」에 분기점·선택·이유·차선책 → lead 요약 보고. 문제 시 해당 행으로 돌아가 차선책.
@@ -192,6 +195,8 @@
 | O-83 | M-006: 코어 J2-32 = Seeed 보드 PWR_WAKEUP1 ↔ 우리 ALS_INT_RSV | lead 기본값 + R-019: Seeed B301·B101은 미연결·풀 없음 → 우리 10k CORE_1V8 풀업 제거(꺼질 때 Low로 끌려 PWR_UP bit12 재기동 위험), ALS_INT_RSV는 하니스 예비선만, 전면 LTR-329는 INT 핀 없음, 계약 v1.12, firmware DTS 정리 | ALS는 폴링(#18)이라 인터럽트 불필요, 깨우기 입력에 외부 신호 거는 위험 제거 | Seeed 원 용도 확인 후 재연결 |
 | O-84 | M-006: CLA216 리드 커넥터 — Seeed S401 J3 GH 1.25 2P ↔ 우리 PicoBlade(O-34) | R-019: 공식 자료로 판정 불가(설명은 '2핀 1.25mm JST'뿐, 도면 치수 없음, S401 J3은 스피커 출력이라 근거 아님) → 기본값 확정: 전면 J2를 2핀 2.54mm 스루홀 납땜 패드로(C-016에 포함). GH면 전면 J2를 GH 1.25 2P로 교체(심볼·풋프린트→pcb→외함 재검사), 판정 불가면 2핀 0.1in 스루홀 납땜 패드 | lead 기본값 | — |
 | O-85 | R-019 G2 불통과: ① CLA216 코일 하우징 20.3이 구멍 축과 직각(±Y)인데 기준 모델은 같은 X축 ② S401 홀더 축→DF30 11.55 vs 우리 12.0 | G2 수정이 PCB 배치에 걸리므로 mechanical M-008을 M-007·REN-001보다 먼저 → 좌표 표를 pcb에 전달·반영 → V-005 최종·M-007 재검사. G1은 문서 통과(미확인은 bring-up) | 광축·간섭은 실물 확인이 없으니 문서 값대로 맞춰야 함 | bring-up에서 스페이서·심으로 보정 |
+| O-86 | V-006: D-003 기록 없는 완화(ignore 5종·CSI/MDI 폭 0.14·DP_BRK/DP_TUNE·u2 열 비아 0.20) | footprint_filters_mismatch ignore만 유지(제조 무관, D-003 기록), 나머지 ignore 4종 해제 후 원인 수정, 폭 0.15 복귀, u2 비아 0.30, DP_BRK/DP_TUNE은 탈출 구간 한정 완화로 유지하되 영역·이유를 lead가 D-003에 기록. CPL은 왼쪽 아래 원점·0~360°(보조 원점은 STEP용 유지) | 기록 없는 완화 0, 제조 규칙과 무관한 lint만 기록하고 남김 | 남는 항목은 수·이유와 함께 D-003 |
+| O-87 | SIM-001b fail 4 | S1 CAM_1V8 1k+10nF, S2 ILIM R6 6.98k(≈1.72A), S4 CAM_1V8 10k 블리더 → C-017 후 firmware 재시뮬. S3 끔 구간 링잉은 기준을 바꾸지 않고 '불합격·발광 아님 근거'로 남김 → bring-up 확인 | 결과 본 뒤 기준 변경 금지, 같은 모델로 검증된 수정 채택 | S2 차선: 12V_IR +22µF / 그대로 실측 |
 
 ## 발주 패키지 직전 정리 목록
 - [ ] 회로도 표시 겹침: 캐리어 J2 옆 12V_IN_RAW 라벨, D3 PWR_LED 라벨, J1 품번 문자 (O-32)
@@ -229,3 +234,5 @@
 - [x] ngspice 47 공용 설치: C:/Users/gh/tools/ngspice/47/Spice64/bin/ngspice_con.exe — SourceForge ng-spice-rework/47 ngspice-47_64.7z md5 550f3a5a…(게시값 일치, orch 재확인), 로컬 sha256 59225971…, -v 확인(orch). py7zr 0.22.0 C:/Users/gh/tools/py7zr-venv(확인용)
 - [ ] bring-up(G1 문서 게이트 잔여): BTB 접점 전류 정격(VIN 핀당 0.325A 피크)·HCTL↔SUNGTECH 교차 결합·결합 높이 실측, 코어 2002 안테나 스프링 없음 확인
 - [ ] bring-up(G2 잔여): 센서 블록 두께·강판 귀·공동 깊이·DF30 결합·광학 중심·Tflex 두께 실측
+- [ ] bring-up: SIM B3 IR 끔 구간 링잉(6mA 피크, 평균 41µA 역방향) — 꺼짐 중 발광 없음 확인
+- [ ] VD-001: M-007 J5 LED 직접광 84.6%(렌즈 경통 가림, analysis2 86) — mechanical 개선 검토
