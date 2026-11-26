@@ -987,6 +987,20 @@ def main():
         B.failed.append(f"{net} 병렬 비아 자리 없음 {pos}")
         return False
 
+    def whole_tune():
+        # 넷 전체 P/N 차(꼬임 구간 · 순서 잇기 단선 포함, V-005 A8 판정 방식)를 쌍 구간 굴곡으로 보정 — 꼬임 쌍과 순서 잇기(USB) 쌍
+        whole = [(tname, tnets) for tname, tnets, r in twist_rects] +         [(i["name"], (i["P"], i["N"])) for i in infos if i["P"] in chained or i["N"] in chained]
+        for tname, tnets in whole:
+            info = next((i for i in infos if i["P"] in tnets), None)
+            if not info:
+                continue
+            tot = {n: sum(math.dist(t_["a"], t_["b"]) for t_ in B.tracks if t_["net"] == n) for n in tnets}
+            d_ = tot[info["P"]] - tot[info["N"]]
+            lim = INTRA[netclass(info["P"])["name"]]
+            if abs(d_) > lim:
+                print(f"넷 전체 {tname}: P/N 차 {d_:+.2f} mm → 쌍 구간에서 보정")
+                intra_tune(info, *((info["P"], info["N"]) if d_ < 0 else (info["N"], info["P"])), abs(d_), lim)
+
     retry = []
     chained = {}
     for net, (ic, tp, conn) in CHAIN[board_name].items():
@@ -1008,9 +1022,19 @@ def main():
                 B.failed.append(f"{net} {b_['ref']}.{b_['num']} (순서 잇기)")
         print(f"순서 잇기 {net}: " + " → ".join(f"{q['ref']}.{q['num']}" for q in seq) + (" 완료" if ok_all else " 일부 실패"))
         chained[net] = seq
+    twist_esd = {}
+    for _tn, (dref, jref), tnets in TWIST.get(board_name, []):
+        for n_ in tnets:
+            dp_ = next((q for q in nets.get(n_, []) if q["ref"] == dref), None)
+            if dp_:
+                twist_esd[n_] = (jref, dp_)
+    tuned = False
     for net in order:
         if net in chained:
             continue
+        if not tuned and not any(net in (i_["P"], i_["N"]) for i_ in infos):
+            whole_tune()  # 꼬임 단선까지 깐 뒤, 다른 신호가 자리를 차지하기 전에 넷 전체 P/N 차 보정
+            tuned = True
         nc = netclass(net)
         pads = nets[net]
         hs = nc["name"] in HS
@@ -1041,7 +1065,8 @@ def main():
             tpos = [p["pos"] for p in tree_pads] + [t["a"] for t in B.tracks if t["net"] == net] + [t["b"] for t in B.tracks if t["net"] == net]
             nxt = min(todo, key=lambda p: min(math.dist(p["pos"], q) for q in tpos))
             todo.remove(nxt)
-            if connect(net, nxt, widths, layers, vtype, 4.0, 200_000, tree_pads):
+            only = twist_esd[net][1] if net in twist_esd and nxt["ref"] == twist_esd[net][0] else None
+            if connect(net, nxt, widths, layers, vtype, 4.0, 200_000, tree_pads, only_pad=only):
                 ok_n += 1
                 tree_pads.append(nxt)
             else:
@@ -1126,18 +1151,7 @@ def main():
                     B.add_via("/GND", B.xy(r, c), VIA)
                     n_st += 1
         print(f"GND 이음 비아 {n_st}")
-    # 넷 전체 P/N 차(꼬임 구간 · 순서 잇기 단선 포함, V-005 A8 판정 방식)를 쌍 구간 굴곡으로 보정 — 꼬임 쌍과 순서 잇기(USB) 쌍
-    whole = [(tname, tnets) for tname, tnets, r in twist_rects] +         [(i["name"], (i["P"], i["N"])) for i in infos if i["P"] in chained or i["N"] in chained]
-    for tname, tnets in whole:
-        info = next((i for i in infos if i["P"] in tnets), None)
-        if not info:
-            continue
-        tot = {n: sum(math.dist(t_["a"], t_["b"]) for t_ in B.tracks if t_["net"] == n) for n in tnets}
-        d_ = tot[info["P"]] - tot[info["N"]]
-        lim = INTRA[netclass(info["P"])["name"]]
-        if abs(d_) > lim:
-            print(f"넷 전체 {tname}: P/N 차 {d_:+.2f} mm → 쌍 구간에서 보정")
-            intra_tune(info, *((info["P"], info["N"]) if d_ < 0 else (info["N"], info["P"])), abs(d_), lim)
+    whole_tune()
     report["twist"] = []
     for tname, tnets, r in twist_rects:
         def inside(q):
