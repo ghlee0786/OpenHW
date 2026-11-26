@@ -52,5 +52,5 @@
 | O-16 | 모듈 5개 (O-7 판정) | (a) 유지 | Seeed 공개 재고 101991223 창고 55+7, MP·IN_STOCK, EOL 없음(R-004). Digi-Key Marketplace 3개는 제외 | (b) 변형 혼용 |
 | O-17 | 짝 BTB (원품 SUNGTECH 유통 없음) | 풋프린트 = B301 파생 SUNGTECH ST-BTB-058060(-A 캐리어/-B 전면), BOM 턴키 대표 = 치수 일치 HCTL HC-PBB05-2-60-M/F-H4.0, 게이트: 실물 결합 확인 전 발주 금지 | 턴키 조달 가능 + 원품 치수 유지 | ① Seeed Fusion PCBA 원품 OPL ② Seeed B301·S401 보드 재사용 |
 | O-18 | GC2053 조달 (칩 공인 유통 없음) | S401 보드의 BXF4677 모듈(DF30 24P)을 전면 보드에 꽂는 안 잠정 | IQ 그대로, 칩 실장 위험 없음 | O-3 차선 순서(GC4653 → CAM-GC2083) · M12·ICR 병용은 R-006 판정 |
-| O-19 | F-002 재시작 (메모리 부족 중단) | 기존 볼륨 이어서 make -j4, slot --timeout-min 240, 시작 전 여유 메모리 ≥8GB일 때만, 1시간 안 확보 안 되면 보고 | 같은 원인 반복 방지, 다른 프로젝트 컨테이너는 사용자 판단(lead에 올림) | WSL2 직접 빌드(F5 차선) |
+| O-19 | F-002 재시작 (메모리 부족 중단) | 기존 볼륨 이어서 make -j4, slot --timeout-min 240 안에서 docker run --rm, 시작 조건 = wsl -d docker-desktop free -m available ≥ 8GB (lead 정정 2026-11-26: 호스트 여유 메모리는 VM 페이지 캐시라 기준 아님, 다른 컨테이너 28개 합 1.5GB로 원인 아님 — orch 첫 판단 오류) | 같은 원인 반복 방지 | -j2 → 그래도 OOM이면 근거와 보고 / WSL2 직접 빌드(F5 차선) |
 | O-20 | KiCad 프로젝트 위치 | 보드마다 hardware/schematic/<carrier|front>/ 에 프로젝트, *.kicad_sch·*.kicad_pro=schematic, *.kicad_pcb=pcb(P-003에서 이동) | KiCad는 회로도·PCB가 같은 프로젝트 폴더여야 동기화됨 | hardware/pcb/<보드>/ 에 프로젝트 |
