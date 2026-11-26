@@ -19,7 +19,7 @@
 | R-006 | orch (V-001 ④⑥ 분기 복귀, O-8) | research t18s | 렌즈 재선정(GC2053 HFOV 85~95°, 왜곡 모델·BFL·IR 보정) + IR LED 조사각·개수(1.0A, 직렬 ≤2) | docs/research/optics-ir-r006.md (+csv) | 렌즈 1안·차선 계산 근거, LED 결론, 레인·커밋 | completed — 레인 t-20261126-161427-aecf 커밋 67e9959. 렌즈 CIL093(HFOV 88°), IR LED VSMA1085400 2직렬×2스트링, 센서 실장 M1 ②(홀더 제거) |
 | M-001 | orch | mechanical t18x | 공개 STEP 측정 → 3층 적층·광축·IR LED·창·체결 기준안 (외함 아님) | mechanical/** | 측정표·기준안·Fusion MCP 결과, 레인·커밋 | completed — 레인 t-20261126-161155-50dc 커밋 ad23d15. Fusion MCP read·execute 성공, J1 윗면/J2 아랫면 독립 확인, 적층안 z·M1.6 나사·IR 후보 영역, 분기 K1~K8 |
 | G-001 | lead t18q (사용자 요청 2026-11-26) | schematic t18z | L-001·C-002를 KiCad 10 GUI로 보이게 진행, 단계별 스크린샷, GUI 단일 소유(pcb 금지 통지) | 스크린샷 C:/workspace_python/OpenHW/validation/runtime/kicad-gui/** (gitignore) | 창 뜸 즉시 보고 → lead 전달, ERC는 kicad-cli 종료 코드 | running (C-001b 뒤 L-001부터) |
-| F-003 | orch | firmware t18w | 계약 v1 DTS 패치 + 주야 전환 데몬(LTR-329 i2c-dev → ICR·IR LED·ISP IR 모드) + 패치 빌드·호스트 시험 | firmware/** | 빌드 종료 코드·해시, 호스트 시험 결과, 레인·커밋 | running (계약 v1.8·회로도 c653eac 기준) |
+| F-003 | orch | firmware t18w | 계약 v1 DTS 패치 + 주야 전환 데몬(LTR-329 i2c-dev → ICR·IR LED·ISP IR 모드) + 패치 빌드·호스트 시험 | firmware/** | 빌드 종료 코드·해시, 호스트 시험 결과, 레인·커밋 | completed — 레인 t-20261126-203052-0734 커밋 37644e4. BSP 패치·daynight 데몬·sscma mirror+flip·IR bin 전환, orch 재실행 make test pass=37 fail=0 종료 0, 빌드 0 + 이미지 해시, HIL 미검증 |
 | M-001b | orch | mechanical t18x | 적층 갱신: 짝 BTB 높이 8.0 추정, 높이 매개변수화, DF30 모듈 자리 변수 | mechanical/** (M-001 레인) | z표·매개변수·간섭, 커밋 | completed — 커밋 fd9ed82. btb_h 8.0 기본(4.0/8.0 재생성 OK), 전체 39.9mm, 허용 높이 캐리어 윗면 ≤6.2·전면 아랫면 ≤5.2, 의도 외 간섭 0 |
 | P-002 | orch | pcb t190 | KiCad .kicad_dru·넷클래스·캐리어/전면 보드 외형(GUI 없이) | hardware/pcb/rules/**, hardware/pcb/outline/** | 파일·kicad-cli 결과, 레인·커밋 | completed — 레인 t-20261126-163344-acdf 커밋 022c364. 외형 40×40·4층·넷클래스, orch 재실행 kicad-cli pcb drc carrier 0·front 0 |
 | V-002 | orch | review t191 | R-004 핵심 6주장 독립 검증(BTB 원품번·HCTL 치수 대조·짝 높이·DF30 핀·재고·전원 IC 정격) | validation/review-V002-R004.md | 판정표·영향, 레인·커밋 | completed — 레인 t-20261126-163344-e260 커밋 51489c5. ①③④⑤ 일치, ② 부분(패드 0.25 vs 0.30·몸체 폭), ⑥ TPS26600 연결 조건부 → O-21~O-23 |
@@ -49,6 +49,7 @@
 | C-009 | orch (O-41) | schematic t18z | 전면 J4 핀 3·4 넷 맞바꿈(직선 GH 케이블), 계약 v1.8 | hardware/schematic/front (C-002 레인) | netcompare 2넷, ERC 0, 커밋 | completed — c653eac (계약 v1.8 2dde4a2), orch 재실행 front ERC 0. 회로도 배선 기준 c653eac |
 | R-011 | orch (단계 6 준비) | research t18s | PCBWay 9열 BOM 생성기(보드별)·참조 지정자 일치 검사 | manufacturing/bom/** | 스크립트 종료 0·일치 검사, 레인·커밋 | completed — 레인 t-20261126-190248-efe1 커밋 7dc3996, orch 재실행 종료 0. carrier 50행(참조 73)·front 39행(참조 62) KiCad 일치, 음성 시험 검출 |
 | R-012 | orch | research t18s | GH 6P 하니스 AWG26 전선 MPN(SSHL 허용 외경 안) | bom-full.csv·manufacturing/bom | 품번·차선·재고, 커밋 | completed — 9a5fbfb·dce3c91, orch 생성기 재실행 0. 1안 Alpha Wire 422607 UL1061 26AWG(OD 공차 상한 1.04 > 단자 1.0 → 조건부), 차선 Remington 26UL1061STR |
+| F-004 | orch | firmware t18w | 사람 감지(tdl_models) → 이벤트 전송·RTSP, 이벤트 로직 시험, 패치 빌드 | firmware/** | 모델 출처·라이선스·해시, 시험·빌드 결과, 레인·커밋 | running |
 
 ## 운영 변경 (2026-11-26, 사용자 지시 · lead 전달)
 - 의견 묻지 않고 진행: 사람 쪽 미정값은 D-003(lead 레인 t-20261126-144135-5470 docs/decisions/D-003-working-defaults.md, 커밋 8ac5ce5) 값으로 확정 취급. 새 갈림길은 기본값 선택 → 아래 「분기 기록」에 분기점·선택·이유·차선책 → lead 요약 보고. 문제 시 해당 행으로 돌아가 차선책.
@@ -115,3 +116,4 @@
 - [ ] PCBWay 미확인: 좌표 회전 보정 정책·PCBA 등급·X-ray 비용·0.4/0.5mm 커넥터 명시 — 확인 회신은 외부 연락이라 사용자 지시 필요 (R-010)
 - [ ] 두 보드 모두 50×100 미만 → 패널 설계 필요 (R-010)
 - [ ] PCBWay BOM Type 값 Hybrid·Manual 수용 여부 미확인 (R-011)
+- [ ] bring-up 확인: cvi_pwm duty==period가 period−1로 깎임(스코프), pwmchip0·portc 416 추론, ICR 극성, ISP bin 실행 중 교체 효과 (F-003)
