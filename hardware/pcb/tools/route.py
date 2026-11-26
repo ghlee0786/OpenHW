@@ -25,7 +25,7 @@ from scipy import ndimage
 G = 0.05
 CLR = 0.16
 HS_CLR = 0.30  # DRU hs_track_spacing
-EPS = 0.045
+EPS = 0.05
 VIA = {"dia": 0.65, "drill": 0.30}
 VIA_PWR = {"dia": 0.80, "drill": 0.40}
 LAYERS = ["F.Cu", "In1.Cu", "In2.Cu", "B.Cu"]
@@ -33,6 +33,14 @@ DIRS = [(1, 0), (1, 1), (0, 1), (-1, 1), (-1, 0), (-1, -1), (0, -1), (1, -1)]
 ROOT = Path(__file__).resolve().parents[3]
 NC = json.loads((ROOT / "hardware/pcb/rules/netclasses.json").read_text(encoding="utf-8"))
 HS = {"CSI_100", "MDI_100", "USB_90"}
+# 쌍으로 깔 길이가 없는 짧은 커넥터–ESD 구간: 두 부품 패드 전체를 감싸는 탈출 구역(DP_BRK)으로 두고 단선으로 잇는다
+#  캐리어 U3(USBLC6) ↔ J3(USB-C): 핀 사이 약 2.1mm — 쌍 탈출(패드 끝 +0.85)끼리 겹쳐 쌍 배선 불가
+EXTRA_BRK = {"carrier": [("U3", "J3")], "front": []}
+# P/N 꼬임 구간 (O-47): J1 쪽 순서와 RJ45 핀 순서가 엇갈려 ESD → RJ45 사이에서만 P·N 을 비아로 교차.
+#  두 부품의 그 넷 패드를 감싸는 규칙 영역 DP_TWIST 안에서 P·N 을 단선으로 잇는다(DRU mdi_twist_*). 영역 밖 규칙은 그대로.
+TWIST = {"carrier": [("MDI_TX", ("D4", "J5"), ("/EPHY_TXP", "/EPHY_TXN")),
+                     ("MDI_RX", ("D5", "J5"), ("/EPHY_RXP", "/EPHY_RXN"))],
+         "front": []}
 
 # 차동 쌍 (보드별): 이름 → (P넷, N넷, 시작 패드쌍 (refP, numP, refN, numN), 끝 패드쌍)
 PAIRS = {
@@ -48,6 +56,7 @@ PAIRS = {
         ("MDI_TX", "/EPHY_TXP", "/EPHY_TXN", ("J1", "2", "J1", "4"), ("D4", "1", "D4", "2")),
         # USB: U3(USBLC6-2SC6)는 관통형(1↔6 DP, 3↔4 DN) — 배치 회전에 따라 P/N 좌우가 맞는 쪽 핀쌍을 고른다
         ("USB_A", "/USB_DP", "/USB_DN", ("J1", "3", "J1", "1"), [("U3", "6", "U3", "4"), ("U3", "1", "U3", "3")]),
+        # (ESD → RJ45 구간은 P/N 꼬임 구간 — 쌍이 아니라 TWIST 로 단선 배선, O-47)
     ],
 }
 
@@ -123,6 +132,7 @@ class Board:
             self.occ[L, :, :e] = -3
             self.occ[L, :, -e:] = -3
         self.tracks, self.vias, self.failed = [], [], []
+        self.trk = np.zeros((4, self.ny, self.nx), bool)  # 트랙·비아 자리 (차동 쌍은 같은 넷 트랙도 장애물로 — 2구간 쌍이 1구간 위를 지나 P/N 엇갈림 방지)
 
     # --- 좌표 ---
     def cell(self, x, y):
@@ -168,7 +178,7 @@ class Board:
         sub = arr[r0:r1 + 1, c0:c1 + 1]
         sub[m] = val
 
-    def capsule(self, L, a, b, rad, val):
+    def capsule(self, L, a, b, rad, val, arr=None):
         ra, ca = self.cell(*a)
         rb, cb = self.cell(*b)
         k = int(math.ceil(rad / G)) + 1
@@ -179,7 +189,7 @@ class Board:
         L2 = dr * dr + dc * dc
         t = np.clip(((ys - ra) * dr + (xs - ca) * dc) / L2, 0, 1) if L2 else np.zeros_like(ys)
         d2 = (ys - ra - t * dr) ** 2 + (xs - ca - t * dc) ** 2
-        sub = self.occ[L, r0:r1 + 1, c0:c1 + 1]
+        sub = (self.occ if arr is None else arr)[L, r0:r1 + 1, c0:c1 + 1]
         sub[d2 <= (rad / G) ** 2] = val
 
     # --- 추가 ---
@@ -188,11 +198,13 @@ class Board:
             return
         self.tracks.append({"net": net, "layer": LAYERS[L], "w": w, "a": list(a), "b": list(b)})
         self.capsule(L, a, b, w / 2, self.netid[net])
+        self.capsule(L, a, b, w / 2, True, self.trk)
 
     def add_via(self, net, pos, v):
         self.vias.append({"net": net, "pos": list(pos), "dia": v["dia"], "drill": v["drill"]})
         for L in range(4):
             self.disc(self.occ[L], pos, v["dia"] / 2, self.netid[net])
+            self.disc(self.trk[L], pos, v["dia"] / 2, True)
         self.disc(self.holes, pos, v["drill"] / 2, True)
 
     # --- 탐색 창 ---
@@ -202,7 +214,7 @@ class Board:
         m = int(margin / G)
         return (max(min(rs) - m, 0), min(max(rs) + m, self.ny - 1), max(min(cs) - m, 0), min(max(cs) + m, self.nx - 1))
 
-    def free_maps(self, win, own_ids, hw, vrad, layers, hs=False):
+    def free_maps(self, win, own_ids, hw, vrad, layers, hs=False, own_tracks_block=False):
         """창 안에서 층별 '지날 수 있음'과 '비아 가능'. hs=True: 다른 고속 넷 구리와 HS_CLR(DRU hs_track_spacing), 탈출 구역(CSI_BRK*) 안은 CLR."""
         r0, r1, c0, c1 = win
         pad = int((CLR + max(hw, vrad) + 0.2) / G) + 2
@@ -214,13 +226,15 @@ class Board:
         for L in range(4):
             o = self.occ[L][sl]
             other = (o != 0) & ~np.isin(o, list(own_ids))
+            if own_tracks_block:
+                other |= self.trk[L][sl] & np.isin(o, list(own_ids))
             d = ndimage.distance_transform_edt(~other) * G
             hd = ndimage.distance_transform_edt(~self.hard[L][sl]) * G
             own = np.isin(o, list(own_ids))
             ownpad[L] = own[inner]
             if L in layers:
                 ok = (d >= CLR + hw + EPS) & (hd >= hw + 0.02)
-                if hs and self.hs_ids:
+                if self.hs_ids:  # DRU hs_track_spacing 은 고속 트랙 ↔ 모든 다른 넷 트랙 — 일반 넷 배선도 지킨다
                     hso = np.isin(o, list(self.hs_ids - set(own_ids)))
                     dh = ndimage.distance_transform_edt(~hso) * G
                     ok &= (dh >= HS_CLR + hw + EPS) | self.brk[L][sl]
@@ -382,6 +396,29 @@ def main():
     B = Board(geom)
     import thermal  # 배선 전 열 구리(LED 애노드 영역·노출 패드·열 비아, EP 둘레 GND 비아) — 이후 배선이 피한다
     th_zones, th_masks = thermal.pre_route(B, board_name, LAYERS, CLR, EPS, G)
+    extra_areas = []
+    twist_rects = []
+    for tname, refs, tnets in TWIST[board_name]:
+        pts = [q for p in B.pads if p["ref"] in refs and p["net"] in tnets
+               for polys in p["polys"].values() for poly in polys for q in poly]
+        r = (min(q[0] for q in pts) - 0.4, min(q[1] for q in pts) - 0.4, max(q[0] for q in pts) + 0.4, max(q[1] for q in pts) + 0.4)
+        twist_rects.append((tname, tnets, r))
+        for ln in ("F.Cu", "B.Cu"):
+            extra_areas.append({"name": "DP_TWIST", "layer": ln, "rect": list(r)})
+            ra, ca = B.cell(r[0], r[1])
+            rb, cb = B.cell(r[2], r[3])
+            B.brk[LAYERS.index(ln), ra:rb + 1, ca:cb + 1] = True
+    for refs in EXTRA_BRK[board_name]:
+        pts = [q for p in B.pads if p["ref"] in refs and p["id"] > 0 and netclass(p["net"])["name"] in HS
+               for polys in p["polys"].values() for poly in polys for q in poly]
+        if not pts:
+            continue
+        r = (min(q[0] for q in pts) - 0.4, min(q[1] for q in pts) - 0.4, max(q[0] for q in pts) + 0.4, max(q[1] for q in pts) + 0.4)
+        for ln in ("F.Cu", "B.Cu"):
+            extra_areas.append({"name": "DP_BRK", "layer": ln, "rect": list(r)})
+            ra, ca = B.cell(r[0], r[1])
+            rb, cb = B.cell(r[2], r[3])
+            B.brk[LAYERS.index(ln), ra:rb + 1, ca:cb + 1] = True
     padmap = {(p["ref"], p["num"]): p for p in B.pads}
     report = {"pairs": [], "nets": {}}
 
@@ -401,15 +438,14 @@ def main():
     # 1) 차동 쌍 — 경로 찾기 → (CSI) 레인 길이 맞춤 → 그리기
     def route_pair(spec):
         """spec 끝(4번째)은 패드쌍 하나 또는 후보 목록(관통형 부품: 같은 넷 패드가 양쪽에 있음). P/N 좌우가 맞는 후보부터."""
-        name, pn, nn, (sa, sna, sb, snb), ends = spec
+        name, pn, nn, starts_spec, ends = spec
+        starts_l = starts_spec if isinstance(starts_spec, list) else [starts_spec]
         ends = ends if isinstance(ends, list) else [ends]
         nc = netclass(pn)
         w, gap = nc["diff_pair_width"], nc["diff_pair_gap"]
         hw = w + gap / 2
         own = {B.netid[pn], B.netid[nn]}
         layers = [0, 3]
-        P0, N0 = padmap[(sa, sna)], padmap[(sb, snb)]
-        mid0 = ((P0["pos"][0] + N0["pos"][0]) / 2, (P0["pos"][1] + N0["pos"][1]) / 2)
 
         def outward(ref, mid, pad, mate, other):
             """패드 긴 축 방향으로, 부품 패드 중심에서 멀어지는 쪽.
@@ -422,7 +458,8 @@ def main():
             if v == (0, 0):
                 ax = np.subtract(pad["pos"], mate["pos"])
                 v = (0, int(np.sign(other[1] - mid[1]) or 1)) if abs(ax[0]) >= abs(ax[1]) else (int(np.sign(other[0] - mid[0]) or 1), 0)
-            return DIRS.index(v)
+                return [DIRS.index(v), DIRS.index((-v[0], -v[1]))]  # 한 부품 양 끝 패드: 두 진입 방향 모두 후보
+            return [DIRS.index(v)]
 
         def half_len(p, u):  # 패드 중심에서 바깥 방향 끝까지
             pts = [q for polys in p["polys"].values() for poly in polys for q in poly]
@@ -437,11 +474,17 @@ def main():
             return [(LAYERS[L], r) for L in Ls]
 
         last_reason = "side"
-        for (ea, ena, eb, enb) in ends:
-            P1, N1 = padmap[(ea, ena)], padmap[(eb, enb)]
-            mid1 = ((P1["pos"][0] + N1["pos"][0]) / 2, (P1["pos"][1] + N1["pos"][1]) / 2)
-            sd = outward(sa, mid0, P0, N0, mid1)
-            od1 = outward(ea, mid1, P1, N1, mid0)
+        combos = []
+        for (sa, sna, sb, snb) in starts_l:
+            P0, N0 = padmap[(sa, sna)], padmap[(sb, snb)]
+            mid0 = ((P0["pos"][0] + N0["pos"][0]) / 2, (P0["pos"][1] + N0["pos"][1]) / 2)
+            for (ea, ena, eb, enb) in ends:
+                P1, N1 = padmap[(ea, ena)], padmap[(eb, enb)]
+                mid1 = ((P1["pos"][0] + N1["pos"][0]) / 2, (P1["pos"][1] + N1["pos"][1]) / 2)
+                for sd_ in outward(sa, mid0, P0, N0, mid1):
+                    for od_ in outward(ea, mid1, P1, N1, mid0):
+                        combos.append((P0, N0, mid0, ea, ena, eb, enb, P1, N1, mid1, sd_, od_))
+        for (P0, N0, mid0, ea, ena, eb, enb, P1, N1, mid1, sd, od1) in combos:
             ed = (od1 + 4) % 8
             u0, u1 = np.array(DIRS[sd], float), np.array(DIRS[od1], float)
             nrm = np.array([-u0[1], u0[0]])
@@ -465,7 +508,7 @@ def main():
                 B.brk[LAYERS.index(ln), ra:rb + 1, ca:cb + 1] = True
             c0, c1 = B.cell(*S_far), B.cell(*E_far)
             win = B.window([c0, c1], 5.0)
-            passable, viaok = B.free_maps(win, own, hw, VIA["dia"] / 2, layers, hs=True)
+            passable, viaok = B.free_maps(win, own, hw, VIA["dia"] / 2, layers, hs=True, own_tracks_block=True)
             r0, _, cc0, _ = win
             for (pa, pb, X), Ls in (((P0, N0, S_far), sL), ((P1, N1, E_far), eL)):  # 패드 → 탈출점 직사각형 열기
                 cs_ = [B.cell(*pa["pos"]), B.cell(*pb["pos"]), B.cell(*X)]
@@ -632,13 +675,8 @@ def main():
     # 쌍 안 길이 보정: 짧은 선에만 짝 반대쪽으로 45° 굴곡 (꺾임 방향 차이로 생긴 P/N 길이차 — 45°마다 약 2·반간격·tan22.5°)
     INTRA = {"CSI_100": 0.15, "USB_90": 0.15, "MDI_100": 1.27}
     tune_areas = []
-    for i in infos:
-        lim = INTRA[netclass(i["P"])["name"]]
-        diff = i["lens"][i["P"]] - i["lens"][i["N"]]
-        if abs(diff) <= lim:
-            continue
-        short, partner = (i["P"], i["N"]) if diff < 0 else (i["N"], i["P"])
-        need = abs(diff)
+    def intra_tune(i, short, partner, need, lim):
+        """짧은 넷(short)의 이 쌍 트랙 직선에 굴곡을 넣어 need 만큼 늘린다. 남은 차를 돌려준다."""
         w = i["w"]
         hh, top, gsp = 0.45, 0.3, 0.3
         per = 2 * hh * (math.sqrt(2) - 1)  # 굴곡 하나가 더하는 길이
@@ -699,6 +737,13 @@ def main():
             print(f"쌍 {i['name']}: 쌍 안 보정 {short} 굴곡 {placed}개 · 남은 차 {max(need, 0):.2f} mm")
         if need > lim:
             print(f"쌍 {i['name']}: 쌍 안 보정 자리 없음 (차 {need:.2f} mm)")
+        return need
+
+    for i in infos:
+        lim = INTRA[netclass(i["P"])["name"]]
+        diff = i["lens"][i["P"]] - i["lens"][i["N"]]
+        if abs(diff) > lim:
+            intra_tune(i, *((i["P"], i["N"]) if diff < 0 else (i["N"], i["P"])), abs(diff), lim)
     for i in infos:
         report["pairs"].append({"pair": i["name"], "P": i["P"], "N": i["N"], "len_P": round(i["lens"][i["P"]], 3),
                                 "len_N": round(i["lens"][i["N"]], 3), "skew": round(abs(i["lens"][i["P"]] - i["lens"][i["N"]]), 3),
@@ -708,7 +753,7 @@ def main():
 
     if len(sys.argv) > 4 and sys.argv[4] == "pairs":  # 디버그: 쌍만
         json.dump({"tracks": B.tracks, "vias": B.vias, "failed": B.failed, "report": report,
-                "areas": [{"name": "DP_BRK", "layer": ln, "rect": list(r)} for i in infos for ln, r in i["brk"]] + tune_areas, "zones": th_zones, "masks": th_masks}, open(sys.argv[3], "w", encoding="utf-8"), ensure_ascii=False, indent=1)
+                "areas": [{"name": "DP_BRK", "layer": ln, "rect": list(r)} for i in infos for ln, r in i["brk"]] + tune_areas + extra_areas, "zones": th_zones, "masks": th_masks}, open(sys.argv[3], "w", encoding="utf-8"), ensure_ascii=False, indent=1)
         return
     # 2) 단선 넷 (GND 제외, 쌍 넷의 남은 패드 포함)
     pair_nets = {x for p in PAIRS[board_name] for x in (p[1], p[2])}
@@ -719,12 +764,45 @@ def main():
     order = sorted((n for n in nets if n != "/GND" and len(nets[n]) > 1),
                    key=lambda n: (netclass(n)["name"] not in ("PWR_12V_IN", "PWR_5V", "PWR_12V_IR"), len(nets[n])))
 
-    def connect(net, nxt, widths, layers, vtype, margin, cap):
+    def tree_mask(net, tree_pads):
+        """그 넷 구리 중 tree_pads 와 이어진 부분 (층별 연결 요소, 구멍 자리에서만 층끼리 연결)."""
+        nid = B.netid[net]
+        own_ = B.occ == nid
+        lab = np.zeros(own_.shape, np.int32)
+        base = 0
+        for L in range(4):
+            l2, n2 = ndimage.label(own_[L])
+            lab[L] = np.where(l2 > 0, l2 + base, 0)
+            base += n2
+        parent = list(range(base + 1))
+
+        def find(a):
+            while parent[a] != a:
+                parent[a] = parent[parent[a]]
+                a = parent[a]
+            return a
+        hs_ = B.holes & own_.any(axis=0)
+        for r, c in zip(*np.nonzero(hs_)):
+            ids = [int(lab[L, r, c]) for L in range(4) if lab[L, r, c]]
+            for a in ids[1:]:
+                parent[find(a)] = find(ids[0])
+        seeds = set()
+        for tp in tree_pads:
+            for L, r, c in pad_cells(tp, [0, 1, 2, 3]):
+                if lab[L, r, c]:
+                    seeds.add(find(int(lab[L, r, c])))
+        if not seeds:
+            return own_
+        roots = np.array([find(i) for i in range(base + 1)])
+        return np.isin(roots[lab], list(seeds)) & (lab > 0)
+
+    def connect(net, nxt, widths, layers, vtype, margin, cap, tree_pads=None):
         """패드 nxt 를 그 넷의 이미 이어진 구리(나무)에 잇는다. 성공하면 True."""
         own = {B.netid[net]}
+        tm = tree_mask(net, tree_pads) if tree_pads else (B.occ == B.netid[net])
         tree_cells = set()
         for L in range(4):
-            rs, cs = np.nonzero(B.occ[L] == B.netid[net])
+            rs, cs = np.nonzero(tm[L])
             tree_cells |= {(L, r, c) for r, c in zip(rs, cs)}
         mine = pad_cells(nxt, layers)
         tree_cells -= mine
@@ -784,17 +862,18 @@ def main():
             tpos = [p["pos"] for p in tree_pads] + [t["a"] for t in B.tracks if t["net"] == net] + [t["b"] for t in B.tracks if t["net"] == net]
             nxt = min(todo, key=lambda p: min(math.dist(p["pos"], q) for q in tpos))
             todo.remove(nxt)
-            if connect(net, nxt, widths, layers, vtype, 4.0, 200_000):
+            if connect(net, nxt, widths, layers, vtype, 4.0, 200_000, tree_pads):
                 ok_n += 1
                 tree_pads.append(nxt)
             else:
                 fail_n += 1
-                retry.append((net, nxt, widths[-1:], layers, vtype))
+                retry.append((net, nxt, widths[-1:], layers, vtype, tree_pads))
         report["nets"][net] = {"ok": ok_n, "fail": fail_n}
         print(f"{net:22s} {nc['name']:10s} 연결 {ok_n} 실패 {fail_n}")
     # 2차: 실패한 연결을 넓은 창(10mm)·큰 상한·최소 폭으로 다시
-    for net, nxt, widths, layers, vtype in retry:
-        if connect(net, nxt, widths, layers, vtype, 10.0, 1_500_000):
+    for net, nxt, widths, layers, vtype, tree_pads in retry:
+        if connect(net, nxt, widths, layers, vtype, 10.0, 1_500_000, tree_pads):
+            tree_pads.append(nxt)
             report["nets"][net]["ok"] += 1
             report["nets"][net]["fail"] -= 1
             print(f"2차 연결 {net} {nxt['ref']}.{nxt['num']}")
@@ -815,7 +894,25 @@ def main():
             starts = {(L, r - r0, c - c0) for L2, r, c in pad_cells(p, [L]) if r0 <= r <= r1 and c0 <= c <= c1}
             targets = {(L, r, c) for r, c in zip(*np.nonzero(viaok & passable[L]))}
             path = B.astar(win, starts, targets, passable, viaok, [L]) if targets and starts else None
-            if not path:
+            if not path:  # 비아 자리가 없으면 3.5mm 안 기존 GND 비아(면에 닿음)까지 같은 층 0.2 트랙
+                win2 = B.window([B.cell(*p["pos"])], 3.5)
+                q0, q1, k0, k1 = win2
+                pas2, via2 = B.free_maps(win2, {gid}, 0.10, VIA["dia"] / 2, [L])
+                st2 = {(L, r - q0, c - k0) for L2, r, c in pad_cells(p, [L]) if q0 <= r <= q1 and k0 <= c <= k1}
+                tg2 = set()
+                for v in B.vias:
+                    if v["net"] == "/GND" and math.dist(v["pos"], p["pos"]) < 3.5:
+                        r_, c_ = B.cell(*v["pos"])
+                        if q0 <= r_ <= q1 and k0 <= c_ <= k1:
+                            tg2.add((L, r_ - q0, c_ - k0))
+                path2 = B.astar(win2, st2, tg2, pas2, via2, [L]) if st2 and tg2 else None
+                if path2:
+                    cl2 = B.corners([(Lx, r + q0, c + k0, d) for Lx, r, c, d in path2])[0][1]
+                    pts2 = [B.xy(*q) for q in cl2]
+                    for a2, b2 in zip(pts2[:-1], pts2[1:]):
+                        B.add_track("/GND", L, a2, b2, 0.2)
+                    gnd_ok += 1
+                    continue
                 gnd_fail += 1
                 continue
             cells = B.corners([(Lx, r + r0, c + c0, d) for Lx, r, c, d in path])[0][1]
@@ -827,8 +924,29 @@ def main():
             B.add_via("/GND", pts[-1], VIA)
             gnd_ok += 1
     print(f"GND 패드 비아 {gnd_ok} · 자리 없음 {gnd_fail} (면 채움에 맡김)")
+    for tname, tnets, r in twist_rects:
+        info = next((i for i in infos if i["P"] in tnets), None)
+        if not info:
+            continue
+        tot = {n: sum(math.dist(t_["a"], t_["b"]) for t_ in B.tracks if t_["net"] == n) for n in tnets}
+        d_ = tot[info["P"]] - tot[info["N"]]
+        lim = INTRA[netclass(info["P"])["name"]]
+        if abs(d_) > lim:
+            print(f"꼬임 {tname}: 넷 전체 P/N 차 {d_:+.2f} mm → 쌍 구간에서 보정")
+            intra_tune(info, *((info["P"], info["N"]) if d_ < 0 else (info["N"], info["P"])), abs(d_), lim)
+    report["twist"] = []
+    for tname, tnets, r in twist_rects:
+        def inside(q):
+            return r[0] <= q[0] <= r[2] and r[1] <= q[1] <= r[3]
+        row = {"name": tname, "rect_kicad": [round(v, 3) for v in r]}
+        for n in tnets:
+            row[n] = {"len": round(sum(math.dist(t_["a"], t_["b"]) for t_ in B.tracks if t_["net"] == n and inside(t_["a"]) and inside(t_["b"])), 3),
+                      "vias": sum(1 for v in B.vias if v["net"] == n and inside(v["pos"]))}
+        row["skew"] = round(abs(row[tnets[0]]["len"] - row[tnets[1]]["len"]), 3)
+        report["twist"].append(row)
+        print(f"꼬임 {tname}: " + " · ".join(f"{n} {row[n]['len']} mm 비아 {row[n]['vias']}" for n in tnets) + f" · 차 {row['skew']} mm")
     out = {"tracks": B.tracks, "vias": B.vias, "failed": B.failed, "report": report,
-                "areas": [{"name": "DP_BRK", "layer": ln, "rect": list(r)} for i in infos for ln, r in i["brk"]] + tune_areas,
+                "areas": [{"name": "DP_BRK", "layer": ln, "rect": list(r)} for i in infos for ln, r in i["brk"]] + tune_areas + extra_areas,
                 "zones": th_zones, "masks": th_masks}
     json.dump(out, open(sys.argv[3], "w", encoding="utf-8"), ensure_ascii=False, indent=1)
     print(f"트랙 {len(B.tracks)} · 비아 {len(B.vias)} · 실패 {len(B.failed)}")

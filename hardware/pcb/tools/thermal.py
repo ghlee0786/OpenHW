@@ -48,7 +48,8 @@ def pre_route(B, board_name, LAYERS, CLR, EPS, G):
             near = (ys ** 2 + xs ** 2) * G * G <= (rad + CLR + EPS) ** 2
             if np.any(near & (blk != 0) & (blk != net_id)):
                 return False
-        if B.hardvia[r, c]:
+        mv = int(rad / G) + 1
+        if np.any(B.hardvia[r - mv:r + mv + 1, c - mv:c + mv + 1]):  # 비아 둘레 전체가 금지 영역 밖
             return False
         h = int((rad + 0.25 + 0.2) / G) + 1
         if np.any(B.holes[r - h:r + h + 1, c - h:c + h + 1]):

@@ -88,6 +88,21 @@
   (condition "(A.hasNetclass('CSI_100') || A.hasNetclass('MDI_100') || A.hasNetclass('USB_90')) && A.Type == 'Track' && B.Type == 'Track' && !A.isCoupledDiffPair() && A.intersectsArea('DP_BRK')")
   (constraint clearance (min 0.16mm)))
 
+# MDI P/N 꼬임 구간 (P-003, O-47): 캐리어 J1(코어 J2 짝)에서 오는 TX·RX 쌍과 RJ45(HR911105A 표준 핀 배정) 사이에서 P/N 순서가
+# 기하학상 한 번 엇갈린다(회로도 핀 맞바꿈 O-46 은 10BASE-T 자동 극성 근거 없음으로 철회 — R-013). ESD(D4·D5)와 RJ45 핀만 감싸는
+# 규칙 영역 DP_TWIST(약 5mm, 배선기가 두 부품의 그 넷 패드 둘레로 계산) 안에서만 P·N 을 단선으로 비아 교차한다.
+# 이 영역 안: 쌍 간격 상한 = 영역 폭, 쌍 서로·다른 고속 트랙 간격 = 제조 최소 0.16. 영역 밖 규칙은 그대로. 비결합 길이는 아래 mdi 6mm 에 포함.
+# 비결합: 꼬임 구간의 P·N 단선(각 약 1~6mm)이 쌍 전체 비결합 길이에 더해진다 → 꼬임 구간에 걸린 MDI 쌍만
+#  상한 = 구간 밖 6mm + 꼬임 구간 단선 실측 합(P-003 DRC 보고서에 쌍별 값). 처음 값 20mm(O-47 승인 범위, V-005 검토 대상).
+(rule "mdi_twist_pair"
+  (condition "A.hasNetclass('MDI_100') && A.intersectsArea('DP_TWIST')")
+  (constraint diff_pair_gap (min 0.15mm) (max 7.0mm))
+  (constraint diff_pair_uncoupled (max 20mm)))
+
+(rule "mdi_twist_spacing"
+  (condition "A.hasNetclass('MDI_100') && A.Type == 'Track' && B.Type == 'Track' && A.intersectsArea('DP_TWIST')")
+  (constraint clearance (min 0.16mm)))
+
 # ---- 전원 (IPC-2221 외층 ΔT10℃ 계산 이상, netclasses.md §3) ----
 (rule "pwr_12v_in_width"
   (condition "A.hasNetclass('PWR_12V_IN')")

@@ -54,7 +54,8 @@ def main():
                                    "a": [mm(t.GetStart().x), mm(t.GetStart().y)], "b": [mm(t.GetEnd().x), mm(t.GetEnd().y)]})
     data["areas"] = [{"name": z.GetZoneName(), "layers": [n for n, lid in CU if z.IsOnLayer(lid)], "polys": poly_points(z.Outline())}
                      for z in b.Zones() if z.GetIsRuleArea()]
-    for z in b.Zones():
+    fpz = [z for fp in list(b.GetFootprints()) for z in fp.Zones()]  # 풋프린트 안 금지 영역(예: microSD J4)
+    for z in list(b.Zones()) + fpz:
         if z.GetIsRuleArea() and (z.GetDoNotAllowTracks() or z.GetDoNotAllowVias()):
             data["keepouts"].append({"name": z.GetZoneName(), "layers": [n for n, lid in CU if z.IsOnLayer(lid)],
                                      "polys": poly_points(z.Outline()), "tracks": z.GetDoNotAllowTracks(),
