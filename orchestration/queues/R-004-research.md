@@ -1,5 +1,12 @@
-[예약 — 배정 금지: R-003 보고 후 lead 가 모듈 확정을 알리면 시작] R-004 · PCBWay 턴키 견적 확인용 짧은 BOM (lead t18q 2026-11-26)
-■ 규칙: AGENTS.md 전체 · README.md 「단계와 판정」 2(조사/BOM) · orchestration/roles/research.md. 파일 작성만 — PCBWay 업로드·견적 요청·계정 로그인·구매 금지. 회로 미설계이므로 캐리어 부품은 「대표 후보」로 표시, 호환 확정 금지.
-■ 내용: 확정 모듈 1종(R-003 의 제조사 SKU·판매처 품번) + 캐리어 핵심 부품 소수: 카메라 커넥터, 이더넷 잭/마그네틱, 전원 입력 IC, IR-cut 구동 IC, IR LED 드라이버.
-■ 형식: docs/research/bom-template.csv 열 그대로 — 제조사·MPN·패키지·수량(1/5/10 보드 기준)·출처 URL·확인일.
-■ 산출물(제안): docs/research/bom-quote-draft.csv · 새 레인 · 병합 금지. 완료 시 레인 id·커밋을 hc send t18r.
+[orch t18r → research] 배정 R-004 · 견적 확인용 짧은 BOM + 핵심 미확인 해소 (lead 예약분, 모듈 확정으로 시작)
+■ 공통 규칙: AGENTS.md 전체(git·레인·할 수 없을 때·검증) · README.md 「단계와 판정」·「MCP 및 CAD 소유권」 · 자기 역할 지침 orchestration/roles/<역할>.md. 역할 지침의 「지금은 준비만·설계 시작 금지」 문구는 사용자 지시(2026-11-26, lead 전달)로 해제됨 — README 단계 순서대로 진행 허가. 사람 쪽 미정값은 D-003 표 값으로 확정 취급하고 질문으로 멈추지 말 것. 새 갈림길은 기본값을 골라 산출 문서에 「분기점·선택·이유·차선책」 표로 남김. 계속 금지: 구매·장바구니·제조 주문·견적 요청/업로드(PCBWay 포함)·판매자/외부 연락·계정 가입/로그인·main 병합(accept)/push. CAD 파일·GUI 활성문서는 단일 작성자. 편집은 자기 Pilot 레인(node harness/cli.js start "...")에서만, 자기 파일만 경로 지정 커밋.
+■ 읽기 전용 입력(미병합 레인 — 수정 금지): 결정 C:/workspace_python/OpenHW/.harness-worktrees/t-20261126-144135-5470/docs/decisions/D-001-soc.md · D-002-module-carrier.md · D-003-working-defaults.md, docs/planning/product-brief.md / R-001 C:/workspace_python/OpenHW/.harness-worktrees/t-20261126-144331-462e/docs/research/soc-sg2002.md / R-002 C:/workspace_python/OpenHW/.harness-worktrees/t-20261126-150127-43df/docs/research/optics-ir.md·optics-candidates.csv / R-003 C:/workspace_python/OpenHW/.harness-worktrees/t-20261126-152145-fce6/docs/research/module-sg2002.md·module-candidates.csv
+■ orch 확정(2026-11-26): 모듈 = Seeed reCamera Core 2002 8GB 무선 없음, SKU 101991223 (O-2) · 센서 = GC2053 잠정 (O-3: reCamera SDK에 IQ가 있고 Seeed S401 센서 보드 KiCad 공개. 차선 GC4653 → CAM-GC2083 기성 모듈) · 광학 = R-002 1안(O1~O9) · 캐리어는 B301/S401을 참고만 하고 독자 설계(O-4: CC BY-SA 4.0 ShareAlike 회피. 차선: 파생 수용 후 CC BY-SA 표기)
+■ 보고: 끝나거나 막히면 hc send t18r (lead·다른 칸에 직접 보내지 말 것). 하위 에이전트 병렬 허용, 새 hc 칸 금지. 보고에 레인 id·커밋 해시·돌린 명령과 종료 코드(없으면 「돌리지 않음」).
+■ 업무 (순서대로):
+ 1) reCamera Core 2002 B2B 60P 0.5mm 짝 커넥터(J1 ST-BTB-058060-A / J2 -B)의 커넥터 제조사 원품번·데이터시트·턴키 조달처, J1/J2 중 센서용·베이스용 구분 — 회로도·Seeed 위키 근거. 회로·PCB를 막는 최우선 항목.
+ 2) GC2053 센서: 칩 단품 소량 조달처, Seeed S401(또는 GC2053 센서 보드)·M12 홀더 포함 기성 센서 보드 단품 판매 여부와 가격, reCamera SDK IQ 파일 경로 근거. 칩 조달 불가면 O-3 차선 순서대로 판정하고 결론.
+ 3) BOM: docs/research/bom-template.csv 열 그대로 docs/research/bom-quote-draft.csv — 모듈 101991223 1종 + 캐리어 핵심 부품 대표 후보(짝 BTB 커넥터, 센서 보드 FPC 커넥터, 이더넷 RJ45/마그네틱, 12V→5V 강압 IC(D-003 #10, 5V≥1A+IR LED 여유), ICR 구동 AP1511B, IR LED 드라이버 AL8860MP-13, IR LED VSMA1085600, 조도센서 LTR-329ALS-01, microSD 슬롯(#8), 렌즈 CIL327·ICR 홀더 CLA216-ICR). 회로 미설계이므로 「대표 후보」 표시. 제조사·MPN·패키지·수량(보드 1/5/10 기준, D-003 #12 기본 5)·출처 URL·확인일·턴키/위탁 구분.
+■ 소유 파일: docs/research/bom-quote-draft.csv, docs/research/r004-notes.md (1·2 결론과 근거). 그 외 수정 금지. 새 레인 start "R-004 견적용 BOM".
+■ 완료 조건: 1의 원품번(또는 확인 불가 근거+대안), 2 결론, BOM csv 완성, 레인 id·커밋.
+■ R-004 뒤 R-005: D-003 #14 — 공개 라이선스가 명시된 자료(reCamera C1 회로도·B301·S401 등 CC BY-SA 4.0/Apache, R-002의 Antmicro Apache-2.0 홀더 풋프린트 원본)만 hardware/datasheets/<공급사>/ 에 원본 그대로 + hardware/datasheets/INDEX.md(URL·리비전·sha256·라이선스·확인일). Confidential·라이선스 미표기 자료는 링크·해시만. 별도 레인 start "R-005 데이터시트 보관". 끝나면 hc send t18r.

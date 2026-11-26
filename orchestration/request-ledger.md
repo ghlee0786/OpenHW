@@ -5,9 +5,15 @@
 | id | 요청자 | 담당 | 업무 | 소유 파일 | 완료 조건 | 상태 |
 |---|---|---|---|---|---|---|
 | R-001 | lead t18q (사용자 결정 2026-11-26) | research t18s | D-001 「확인 필요」 1~5 조사: SG2002 소량 조달·PCBWay 공급, 데이터시트·설계 가이드·참고 보드 공개 범위, SDK·tpu-mlir, 지원 센서·IQ 파일, V851s 비교 | docs/research/soc-sg2002.md, (선택) docs/research/soc-candidates.csv | 항목별 출처 URL+확인일, 확인됨/미확인 구분, SG2002 조달 결론(불가 시 대안), 사용자 질문 목록, 레인 id·커밋 → orch 회수 → lead 보고 | completed — 레인 t-20261126-144331-462e 커밋 bbf3930(미병합). 결론: SG2002 소량 조달 불확실 → 사용자 결정 A~D·질문 7개를 lead 보고(2026-11-26) |
-| R-002 | lead t18q (사용자 추가 요구 2026-11-26, brief c6ba2bc) | research t18s | 광학 일체 실장 조사: M12 렌즈·홀더 치수/풋프린트, ICR 구동, IR LED 850/940nm·센서 QE 궁합, 주야 판별 방식, 기구 주의점·소량 조달 | docs/research/optics-ir.md, (선택) docs/research/optics-candidates.csv | 항목별 출처 URL+확인일, 확인됨/미확인, 선택지·장단점, lead 질문 목록, 레인 id·커밋 → orch 회수 → lead 보고 | running (R-001 회수 직후 2026-11-26 배정 · 접수 확인. 배정문 orchestration/queues/R-002-research.md) |
-| R-003 | lead t18q (사용자 결정 D-002 경로 C, 2026-11-26 · 우선순위 최상) | research t18s | SG2002 모듈 구매처 확인: LicheeRV Nano 코어 등 후보, 1/5/10 구매처·단가·재고·EOL, 실장 방식·PCBWay 조립, 핀맵·풋프린트·STEP·라이선스·MIPI/이더넷/USB/전원 인출, SDK·센서 지원 | docs/research/module-sg2002.md, (선택) docs/research/module-candidates.csv | 구매 가능 모듈 1개 이상 확정 또는 불가+대안, 질문 목록, 레인 id·커밋 → orch 회수 → lead 보고 | running (2026-11-26 배정 · 접수 확인. R-002 하위 에이전트는 계속, 본체는 R-003 먼저. 배정문 orchestration/queues/R-003-research.md. D-003 #15 판정·권고 1종 요구 추가) |
-| R-004 | lead t18q (2026-11-26) | research t18s (예정) | PCBWay 턴키 견적 확인용 짧은 BOM: 확정 모듈 1종 + 캐리어 핵심 부품 대표 후보(카메라 커넥터·이더넷 잭/마그네틱·전원 입력 IC·IR-cut 구동 IC·IR LED 드라이버) | (제안) docs/research/bom-quote-draft.csv | bom-template.csv 열, 제조사·MPN·패키지·수량(1/5/10)·출처 URL·확인일, 레인 id·커밋 | reserved (R-003이 D-003 #15 만족 모듈을 내면 orch가 확정 후 즉시 시작. 배정문 orchestration/queues/R-004-research.md) |
+| R-002 | lead t18q (사용자 추가 요구 2026-11-26, brief c6ba2bc) | research t18s | 광학 일체 실장 조사: M12 렌즈·홀더 치수/풋프린트, ICR 구동, IR LED 850/940nm·센서 QE 궁합, 주야 판별 방식, 기구 주의점·소량 조달 | docs/research/optics-ir.md, (선택) docs/research/optics-candidates.csv | 항목별 출처 URL+확인일, 확인됨/미확인, 선택지·장단점, lead 질문 목록, 레인 id·커밋 → orch 회수 → lead 보고 | completed — 레인 t-20261126-150127-43df 커밋 214754d(미병합). 1안 O1~O9, 남은 미확인 ①~⑤ |
+| R-003 | lead t18q (사용자 결정 D-002 경로 C, 2026-11-26 · 우선순위 최상) | research t18s | SG2002 모듈 구매처 확인: LicheeRV Nano 코어 등 후보, 1/5/10 구매처·단가·재고·EOL, 실장 방식·PCBWay 조립, 핀맵·풋프린트·STEP·라이선스·MIPI/이더넷/USB/전원 인출, SDK·센서 지원 | docs/research/module-sg2002.md, (선택) docs/research/module-candidates.csv | 구매 가능 모듈 1개 이상 확정 또는 불가+대안, 질문 목록, 레인 id·커밋 → orch 회수 → lead 보고 | completed — 레인 t-20261126-152145-fce6 커밋 c958a25(미병합). 권고 reCamera Core 2002 8GB (101991223) |
+| R-004 | lead t18q (2026-11-26) | research t18s (예정) | PCBWay 턴키 견적 확인용 짧은 BOM: 확정 모듈 1종 + 캐리어 핵심 부품 대표 후보(카메라 커넥터·이더넷 잭/마그네틱·전원 입력 IC·IR-cut 구동 IC·IR LED 드라이버) | (제안) docs/research/bom-quote-draft.csv | bom-template.csv 열, 제조사·MPN·패키지·수량(1/5/10)·출처 URL·확인일, 레인 id·커밋 | running (2026-11-26 모듈 확정 후 배정 · 접수 확인. BTB 원품번·GC2053 조달 포함, 이어서 R-005) |
+| R-005 | orch (D-003 #14) | research t18s | 공개 라이선스 자료만 hardware/datasheets 보관 + INDEX.md | hardware/datasheets/** | URL·리비전·sha256·라이선스·확인일 | queued (R-004 뒤, 배정문은 R-004-research.md 끝) |
+| C-001 | orch (단계 3) | schematic t18z | HW/FW 계약 초안: 전원 트리·예산, B2B 사용 핀, I2C·GPIO, 부트·디버그·보호, FPC 핀배치 | hardware/schematic/hw-fw-contract.md | 표 완성·근거/미확인·분기 기록, 레인·커밋 | running (2026-11-26 접수 확인) |
+| F-001 | orch (단계 3) | firmware t18w | reCamera SDK 사실: 빌드 호스트·부트·DT/핀먹스·센서 IQ·I2C/GPIO·ICR·조도·EPHY·SD·tpu-mlir | firmware/docs/sdk-facts.md | 표·핀 요약 절, 레인·커밋 | running (2026-11-26 접수 확인) |
+| P-001 | orch (단계 5 준비) | pcb t190 | PCBWay 공정 규칙·스택업·임피던스, 0.5mm 커넥터 조립 조건 → KiCad 규칙 제안 | hardware/pcb/fab-rules-pcbway.md | 규칙표 출처·확인일, 스택업 안, 레인·커밋 | running (2026-11-26 접수 확인) |
+| V-001 | orch | review t191 | R-002·R-003 핵심 6주장 독립 재확인 | validation/review-V001-R002-R003.md | 판정표·영향, 레인·커밋 | running (2026-11-26 접수 확인) |
+| — | 대기 | mechanical t18x | PCB STEP 나오기 전 배정 없음(의존: C-002 회로 → PCB 배치) | — | — | waiting (의존) |
 
 ## 운영 변경 (2026-11-26, 사용자 지시 · lead 전달)
 - 의견 묻지 않고 진행: 사람 쪽 미정값은 D-003(lead 레인 t-20261126-144135-5470 docs/decisions/D-003-working-defaults.md, 커밋 8ac5ce5) 값으로 확정 취급. 새 갈림길은 기본값 선택 → 아래 「분기 기록」에 분기점·선택·이유·차선책 → lead 요약 보고. 문제 시 해당 행으로 돌아가 차선책.
@@ -19,3 +25,8 @@
 | # | 분기점 | 선택 | 이유 | 차선책 |
 |---|---|---|---|---|
 | O-1 | R-003 우선순위 요청 시 진행 중 R-002 처리 | R-002 하위 에이전트는 계속, 본체가 R-003 먼저 | 끊으면 19분치 조사 손실 | R-002 중단(interrupt) |
+| O-2 | 모듈 확정 (D-003 #15) | Seeed reCamera Core 2002 8GB 무선 없음 SKU 101991223 | #15 ①② 충족, ③ 풋프린트 충족·코어 STEP 없음(부분). 후보 중 유일하게 CSI·MDI가 커넥터로 캐리어에 나옴. STEP은 케이스 STEP+회로도 외형으로 대체(R-003 M4) | LicheeRV Nano-E + GC4653 → Duo 256M + CAM-GC2083 (R-003 M1) |
+| O-3 | 센서 (D-003 #5 GC2083 문제: reCamera SDK IQ 없음, 칩 단품 판매처 없음) | GC2053 잠정 | 모듈 공급사 SDK에 IQ 있음 + Seeed S401 센서 보드 KiCad 공개 → 이식 위험 최소. R-004에서 조달 확인 | GC4653(D-003 #5 차선, IQ 이식 필요) → CAM-GC2083 기성 모듈 |
+| O-4 | 참고 설계 라이선스 (B301/S401 CC BY-SA 4.0) | 참고만 하고 캐리어·센서 보드 독자 설계 | ShareAlike 전파 회피, 나중에 수용으로 바꾸기 쉬움 | 파생 수용 후 CC BY-SA 4.0 표기 |
+| O-5 | 단계 3 착수 순서 | schematic 계약 초안(C-001) + firmware SDK 사실(F-001) 병렬, KiCad 회로도는 계약 뒤(C-002) | 같은 파일 동시 편집 없이 병렬화, 계약이 회로의 입력 | 순차(FW 사실 먼저) |
+| O-6 | 기다리는 동안 병렬 일 | pcb는 PCBWay 공정 규칙(P-001), review는 R-002/R-003 독립 검증(V-001), mechanical 대기 | 의존 없는 일만 병렬, 결정 근거 조기 검증 | 전부 순차 |
