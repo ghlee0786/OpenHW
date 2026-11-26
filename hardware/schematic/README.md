@@ -919,3 +919,19 @@
   - selftest 25/25
   - 보이는 겹침 0
   - Rev 「C-021」
+
+## 30. C-022 — openhw 라이브러리 2건 (orch O-101, mechanical M-009 `f7fd41e`)
+
+- **바꾼 것:**
+  - 전면 J2 풋프린트 → `openhw:CLA216_ICR_SolderPads_1x02_P2.54mm` (헤더 몸체 없는 2패드, courtyard 패드 + 0.25). 핀 번호·넷(1 □ = ICR_A, 2 = ICR_B)·BOM/CPL 제외는 그대로다.
+  - `openhw:M12_Holder_20mm_CLA216-ICR`(MH1) F.CrtYd → 16점 외형(뒷면 BTB 고정 핀 NPTH 두 곳 노치, 구멍까지 0.100). 자세한 것은 `hardware/libraries/README.md` 「C-022 추가」.
+- **netcompare (`613cf14` 대비), 의도한 차이만:**
+  - 캐리어: 0
+  - 전면: J2 풋프린트 이름 1건
+- **UUID:** 심벌 변경 0.
+- **판정:**
+  - ERC 두 보드 0
+  - contract_check 불일치 0, selftest 25/25
+  - `kicad-cli fp upgrade` 종료 0
+  - `.net` 재생성, 보이는 겹침 0
+  - Rev 「C-022」
