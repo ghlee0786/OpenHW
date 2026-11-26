@@ -1,6 +1,6 @@
 # F-005 bring-up 확인 절차서 — reCamera Core 2002 캐리어·전면 보드
 
-- 배정: orch t18r F-005 (O-67) · 추가 O-69(IR 스트링 B) · lead #10(12V 입력 전류) · 작성: firmware t18w · 레인 `t-20261127-021240-b74e` (main `1a6147a` 기준) · 2026-11-27 · **F-006 갱신** (O-70 ethtool · O-71 열 판정 수치, 레인 `t-20261127-022900-ed35`)
+- 배정: orch t18r F-005 (O-67) · 추가 O-69(IR 스트링 B) · lead #10(12V 입력 전류) · 작성: firmware t18w · 레인 `t-20261127-021240-b74e` (main `1a6147a` 기준) · 2026-11-27 · **F-006 갱신** (O-70 ethtool · O-71 열 판정 수치, 레인 `t-20261127-022900-ed35`) · **F-007** PC 쪽 도구 연결(13절, 레인 `t-20261127-033718-7bdb`)
 - 판정 원칙:
   - 이 문서의 모든 판정은 **보드가 도착한 뒤** 한다. 지금까지 HIL은 0건이다.
   - `verifiable` 열의 뜻:
@@ -103,6 +103,8 @@
   - 샘플: ≥1MS/s, 기록 길이는 IR PWM 10주기(400Hz → 25ms) 이상.
   - IR 켬 구간(PWM Low)의 최댓값과 ICR 전환 펄스(밤↔낮 전환 순간, 약 0.245A × 200ms)를 따로 잡는다.
 - **기록:** 평균 A, 피크 A, 12V 전압(TP1)의 최저값, 시험 시작·끝 시각, 장치 `top -b -n1` 한 장, 그리고 `bringup-check.sh` 출력.
+- **집계 (F-007):** 로거 CSV(시간 열 + 전류 열, A 또는 mA)를 `python firmware/tools/host/current_csv.py <기록.csv>`로 집계한다. 출력은 전체 평균, 피크, **30분 이동 창 평균의 최댓값**이다. 종료 코드 0 = ≤ 1.9 A, 1 = 넘음(3A급 어댑터 교체 — 구매는 사용자 지시), 2 = 기록이 30분보다 짧음. 피크가 2.08 A를 넘으면 경고만 한다.
+- **RTSP 부하 유지·확인 (F-007):** `python firmware/tools/host/rtsp_check.py record rtsp://admin:<임시값>@<장치IP>:554/live load.mkv --seconds 1800`으로 30분 녹화하면 부하가 유지된다. 끝나면 `rtsp_check.py probe load.mkv --expect-fps 15`로 끊김이 없었는지 본다.
 
 ## 2. 부팅 · 이미지 기록 · 콘솔 UART
 
@@ -121,7 +123,7 @@
 | # | 목적 | 준비물 | 절차 · 명령 | 기대값 | 판정 | 불합격 시 차선 | verifiable |
 |---|---|---|---|---|---|---|---|
 | 3-1 | 센서 I2C 감지 | 콘솔 | `bringup-check.sh` C2 = `i2cget -y -f 2 0x3f 0xf0` / `0xf1` | **0x20 / 0x53** (칩 ID 0x2053, SDK `gc2053_sensor_ctl.c` L14–16). 주소 **0x3f** (계약 6절, F-001 `s32I2cAddr=0x3f`) | 일치하면 합격 | 응답 없음 → 1-6·1-7(CAM_1V8·MCLK) · TP17/18 풀업(4.7k → CAM_1V8) · 센서 FPC 방향(DF30 180°, P-003) | 예 |
-| 3-2 | 영상 나옴 | PC (RTSP), 1-9의 임시 `rtsp_pass` | `ffplay rtsp://admin:<임시값>@<장치IP>:554/live` (끝나면 `rtsp_pass` 비움) | 720p 15fps 영상 (persond `cam_option=1`, `cam_fps=15`) | 영상이 나오면 합격 | sscma-node를 포그라운드로 띄워(0절과 같은 방법) 오류 확인 | 아니오 (눈) |
+| 3-2 | 영상 나옴 | PC (RTSP), 1-9의 임시 `rtsp_pass` | `ffplay rtsp://admin:<임시값>@<장치IP>:554/live` (끝나면 `rtsp_pass` 비움). 기계 판정은 `python firmware/tools/host/rtsp_check.py probe rtsp://admin:<임시값>@<장치IP>:554/live --seconds 20 --expect-fps 15` (F-007: FPS ≥ 13.5 · 최대 간격 ≤ 0.5 s · 실시간 비율 ≥ 0.9이면 rc 0). 지연은 `rtsp_check.py latency <URL> f.png`로 프레임 1장과 PC 수신 시각을 남기고, 카메라가 찍은 PC 화면 ms 시계와 비교한다(사람 눈) | 720p 15fps 영상 (persond `cam_option=1`, `cam_fps=15`) | 영상이 나오면 합격 | sscma-node를 포그라운드로 띄워(0절과 같은 방법) 오류 확인 | 영상 = 아니오 (눈) / probe = 예 |
 | 3-3 | **mirror + flip** (P-003) | 글자가 쓰인 종이 | 카메라 앞에 글자를 보이고 3-2 화면을 본다. 이어서 `/etc/openhw/daynight.conf`에 `isp_mirror_flip = 0`을 넣고 `/etc/init.d/S91sscma-node restart; /etc/init.d/S97persond restart` 한 뒤 다시 본다. 끝나면 원래대로 되돌린다 | 기본(1): 글자가 바로 읽히고 위아래가 맞다. 0: 상하좌우가 뒤집힌다 (F-003 3절, sscma-node 패치 `u8Orien`) | 기본에서 바로 보이면 합격 | 반대면 기본값을 0으로 바꾸는 것을 F-00x로 보고(설정 한 줄) | 아니오 (눈, 사진 2장) |
 | 3-4 | 주야 IQ bin 전환 | 어두운 상자, 3-2 화면 | 밤으로 만든다(1-9 절차 1). `cat /run/daynight/mode`로 모드를 확인하고 영상 톤을 본다. bin 로드 로그는 sscma-node를 포그라운드로 띄웠을 때의 콘솔 출력에서 본다(`/etc/init.d/S91sscma-node stop` 뒤 같은 명령줄로 실행 — 명령줄은 그 init 스크립트 안에서 확인). 낮으로 되돌린다 | `/run/daynight/mode`가 `night`일 때 `gcore_gc2053_sdr_ir.bin`, `day`일 때 `sdr.bin`을 `CVI_BIN_ImportBinData`로 읽는다(F-003 3절 `OPENHW_DN` 스레드, 500ms 주기). 밤에는 IR 영상(흑백 경향) | 로그 줄이 있고 영상 톤이 바뀌면 합격 | ISP가 도는 중의 교체 반영은 미확인(F-003 미확인 5) → 차선은 bin 교체 뒤 sscma-node 재시작 | 로그 = 예 / 영상 = 아니오 |
 | 3-5 | I2C2 공유 | 콘솔 | daynight를 포그라운드로 띄운 채(0절) 밤·낮 전환을 10회 하면서 daynight 콘솔과 `dmesg`의 I2C 오류를 센다 | 오류 0 (GC2053 0x3f와 LTR-329 0x29가 같은 버스, F-003 미확인 6) | 0이면 합격 | 폴링 주기(`poll_ms`)를 늘리는 것을 보고 | 예 |
@@ -132,8 +134,8 @@
 |---|---|---|---|---|---|---|---|
 | 4-1 | 모델 파일 | 콘솔 | `bringup-check.sh` P1 = `sha256sum /usr/share/openhw/models/yolox_nano_person_416_bf16_cv181x.cvimodel` | **`eee83a224e203248e141ad51426cb6c151f1597c9d5e5b893c66c661baea9835`** (2,808,720 B, F-004c 9.3절) | 일치하면 합격 | 2-4 다시 | 예 |
 | 4-2 | 모델 로드 | 콘솔 | persond를 포그라운드로 띄운다(0절). persond는 sscma의 `create` 응답을 `persond: sscma …`로 stderr에 찍는다 | `openhw_person` create 응답 `code` 0, 오류 없음 | 오류가 없으면 합격 | 로드 실패 → sscma-node가 BF16 cvimodel을 받는지(F-004c 미확인 1). 차선: INT8은 기준 불합격이므로 부분 BF16(O-62, `--quantize_table`) | 예 |
-| 4-3 | 실검출 | 사람, 빈 벽 | PC에서 `mosquitto_sub`가 불가하다(1883은 로컬 전용, D-003 #30). **콘솔에서** `mosquitto_sub -h 127.0.0.1 -t openhw/v1/event -v` · ① 사람이 화면 가운데에 3초 서 있다 → ② 화면 밖으로 나가 10초 · ③ 빈 벽 1분 | ① `person_enter`, `boxes` 중심 ≈ (0.5, 0.5) ±0.2 ② 5초(`leave_ms`) 뒤 `person_leave` ③ 이벤트 0 | ①②③이 모두 맞으면 합격 | ③에서 오검출 → `min_score` 상향 기록. ①에서 박스 위치가 엇나감 → 4-5 | 예 |
-| 4-4 | **FPS 측정법** | 콘솔 | `SECS=60 sh bringup-check.sh` → F1. sscma-node `invoke` 메시지(`sscma/v0/recamera/node/out/openhw_person`) 개수 ÷ 60초, `data.perf` `[[pre, inf, post]]` ms 평균 (sscma-node `model.cpp` L76·L251) | **목표 수치 없음.** product-brief·D-003에 FPS·지연 목표가 없다. 참고로 Seeed YOLO11n INT8은 20 FPS · 50ms(sdk-facts L136)인데, 우리 모델·정밀도와는 다르다 | **측정만 기록**: FPS, inf ms, 카메라 15fps 대비 비율 | FPS가 사용에 부족하다고 사용자가 판단하면 차선은 부분 BF16 → INT8 혼합(O-62) 또는 `cam_fps` 조정 | 예 (기록) |
+| 4-3 | 실검출 | 사람, 빈 벽 | PC에서 `mosquitto_sub`가 불가하다(1883은 로컬 전용, D-003 #30). **콘솔에서** `mosquitto_sub -h 127.0.0.1 -t openhw/v1/event -v`. PC에 남기려면 (F-007) `ssh root@<장치IP> "mosquitto_sub -h 127.0.0.1 -t openhw/v1/event -v" | python firmware/tools/host/event_log.py record --stdin -o ev.jsonl` → 끝나면 `event_log.py check ev.jsonl`(등장/퇴장 짝·쿨다운 30 s·score ≥ 0.5·필드 검사, 종료 코드 = 위반 수) · ① 사람이 화면 가운데에 3초 서 있다 → ② 화면 밖으로 나가 10초 · ③ 빈 벽 1분 | ① `person_enter`, `boxes` 중심 ≈ (0.5, 0.5) ±0.2 ② 5초(`leave_ms`) 뒤 `person_leave` ③ 이벤트 0 | ①②③이 모두 맞으면 합격 | ③에서 오검출 → `min_score` 상향 기록. ①에서 박스 위치가 엇나감 → 4-5 | 예 |
+| 4-4 | **FPS 측정법** | 콘솔 | `SECS=60 sh bringup-check.sh` → F1. PC에서 길게 (F-007): `ssh root@<장치IP> "mosquitto_sub -h 127.0.0.1 -t sscma/v0/recamera/node/out/openhw_person -v" | python firmware/tools/host/event_log.py record --stdin -o inv.jsonl` → `python firmware/tools/host/fps_stats.py inv.jsonl` (FPS · MQTT 누락 · perf 단계별 평균/p50/p95/최대, 목표가 없어 rc 0 = 기록). sscma-node `invoke` 메시지(`sscma/v0/recamera/node/out/openhw_person`) 개수 ÷ 60초, `data.perf` `[[pre, inf, post]]` ms 평균 (sscma-node `model.cpp` L76·L251) | **목표 수치 없음.** product-brief·D-003에 FPS·지연 목표가 없다. 참고로 Seeed YOLO11n INT8은 20 FPS · 50ms(sdk-facts L136)인데, 우리 모델·정밀도와는 다르다 | **측정만 기록**: FPS, inf ms, 카메라 15fps 대비 비율 | FPS가 사용에 부족하다고 사용자가 판단하면 차선은 부분 BF16 → INT8 혼합(O-62) 또는 `cam_fps` 조정 | 예 (기록) |
 | 4-5 | **프레임 행 정렬 확인** (F-004c 원인 L) | 사람, 줄자 | 모델 입력은 `images_raw [1,1,416,1280] uint8`(행 1248B + 64B 정렬 패딩)이다. sscma-node는 카메라 채널 프레임(`raw->img`, physical)을 그대로 `setInput`한다(`model.cpp` L103–110). ① 사람이 화면 왼쪽 1/4, 오른쪽 1/4, 위, 아래에 차례로 선다 ② 이벤트 `boxes`의 cx·cy를 기록한다 | 박스 중심이 실제 위치를 따라간다(왼쪽 cx < 0.4, 오른쪽 > 0.6). 점수가 F-004c 호스트 모의(사람 0.6~0.93)와 비슷하다 | 4곳이 모두 맞으면 합격 | **점수가 늘 0.01 안팎이거나 박스가 대각선으로 밀리면** 행 정렬 불일치다(호스트에서 F-004b까지 본 증상과 같다) → 카메라 채널 stride와 모델 입력 크기(532,480 B)를 sscma-node 로그로 대조. 차선: `--aligned_input` 없이 재변환 | 예 |
 | 4-6 | 야간 IR 정확도 | 어두운 방, 사람 | 밤 모드에서 4-3을 반복한다 | 기록만 (COCO 가시광 가중치라 떨어질 수 있다, F-004 7절) | 기록 | — | 예 (기록) |
 
@@ -308,3 +310,29 @@ A만 시험했을 때의 상한(계산값 × 1.25): 방열판(내부) 21.3 K · 
 
 - `emmc.zip` 증가가 rootfs 증가보다 크다. 원인은 확인하지 않았다. 추정으로는 같은 빌드에서 sscma-node·daynight를 dirclean 뒤 다시 빌드해 압축 대상 바이트가 바뀐 것이 섞였다.
 - **HIL 미확인:** 이 EPHY 드라이버가 `ethtool -s`(속도 강제·광고 제한)를 받는지 확인하지 않았다(6절).
+
+## 13. PC 쪽 도구 (F-007, `firmware/tools/host/`)
+
+- 모두 Python 3 표준 라이브러리만 쓴다. 외부 명령은 `ffprobe`·`ffmpeg`(① 도구)과 `mosquitto_sub`(② 직접 구독)이다.
+- 장치의 1883은 루프백 전용이다(D-003 #30). 그래서 이벤트·invoke는 **ssh 파이프 + `--stdin`**으로 받는다.
+- **설치가 필요한 것 (목록만, 설치는 사용자가 정한다):**
+  - `ffmpeg`/`ffprobe`: 이 PC에는 다른 프로젝트 경로에 있다(`C:/workspace_cpp/nvr-deps/ffmpeg/bin`).
+  - ② 직접 구독을 쓰려면 `mosquitto-clients`.
+  - `ssh` 클라이언트: Windows 기본 OpenSSH.
+- **Windows Git Bash에서는** 한글 출력이 깨지므로 `PYTHONIOENCODING=utf-8`을 붙인다(PowerShell은 그대로 된다). 판정은 종료 코드라 영향이 없다. 이 PC에서 `rtsp_check.py probe`(파일)와 `current_csv.py` 스모크 시험은 rc 0이었다.
+
+| 도구 | 하는 일 | 종료 코드 | 절차서 |
+|---|---|---|---|
+| `rtsp_check.py probe <URL\|파일> [--seconds 20] [--expect-fps 15] [--max-gap 0.5]` | 비디오 패킷 pts로 FPS·최대 간격을 잰다. URL이면 첫 패킷부터의 실시간 비율도 본다. 비밀번호는 출력에서 가린다 | 0 합격 · 1 기준 미달 · 2 수신 실패 | 3-2, 1-9 |
+| `rtsp_check.py record <URL> <out.mkv> [--seconds 60]` | `-c copy` 녹화 | 0 · 2 | 1-9 |
+| `rtsp_check.py latency <URL> <out.png>` | 프레임 1장 + PC 수신 시각(`.txt`). 비교는 사람 눈 | 0 · 2 | 3-2 |
+| `event_log.py record (--stdin \| --host H --port P) [--topic T] [--seconds N] -o x.jsonl` | 줄마다 `{"rx", "topic", "msg"}`로 기록한다 | 0 | 4-3, 4-4 |
+| `event_log.py check x.jsonl [--cooldown-ms 30000] [--min-score 0.5]` | 필드 누락 · 모르는 event · 등장 중 등장 · 없는데 퇴장 · 쿨다운 위반 · ts 역행 · 낮은 score · count < 1 | 위반 수 · 이벤트 0건 = 2 | 4-3 |
+| `fps_stats.py inv.jsonl [--cam-fps 15] [--min-fps N]` | FPS(count 증가 ÷ 수신 시간), MQTT 누락, perf pre/inf/post 평균·p50·p95·최대 | 0 기록 · 1 `--min-fps` 미달 · 2 invoke < 2 | 4-4 |
+| `current_csv.py log.csv [--window-min 30] [--limit 1.9] [--adapter 2.08]` | 평균, 피크, 30분 창 평균 최댓값(시간 가중). 열·단위는 자동으로 찾는다(mA) | 0 ≤ 1.9 A · 1 넘음 · 2 짧음/형식 | 1-9 |
+
+**사전 시험 (하드웨어 없이, `firmware/tools/host/test_host_tools.sh`):**
+- recamera-os-builder 컨테이너에서 `ffmpeg`·`mosquitto`·GStreamer RTSP 서버를 apt로 설치해 돌린다.
+- 네트워크는 127.0.0.1만 쓴다: 가짜 RTSP(videotestsrc 720p 15fps, `:8554`), mosquitto(`:18830`).
+- 판정: 시험 20건(R1~R8 · E1~E4 · F1~F3 · C1~C5)의 종료 코드를 기대값과 맞춘다. 고장 주입(30fps 기대, 서버 없음, 5fps 파일, 1초 끊김, 위반 4건 이벤트, 낮은 score, FPS 하한, 30분 미만, 뒤 30분만 2.0 A)을 포함한다.
+- 스크립트 종료 코드 = 기대와 다른 시험 수.
