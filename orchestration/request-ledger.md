@@ -181,6 +181,7 @@
 | O-79 | 사용자 설치 허가(F-007 목록 ffmpeg·mosquitto-clients·OpenSSH) | ffmpeg/ffprobe만 설치. OpenSSH는 Windows 내장 있음, mosquitto-clients는 장치 1883 루프백 전용(#30)이라 ssh 파이프로 충분 → 설치 안 함 | 필요한 것만 설치(되돌리기 쉬움) | 필요해지면 mosquitto 격리 설치 |
 | G1/G2' | 사용자 결정 2026-11-27: 실물 구매 안 함(D-003 #24) | G1·G2 실물 게이트를 문서 게이트(R-019)+STEP 교차(M-006)로 대체, R-019 통과가 PCB 발주 조건, 남는 위험은 첫 PCBA bring-up 확인 항목(F-005 절차서) | 사용자 결정 | — |
 | O-80 | 사용자 지시 갱신: VD-001 7) SIM-001 추가, 제조사·비용 일은 최후로 미룸, git 커밋·병합·push·PR 사용자 허용(lead batch+push) | SIM을 전원 경로(schematic, ngspice 설치 1회)와 부하·제어(firmware, 같은 경로) 둘로 나눔, 결과 JSON 형식 공통. 비용(R-017 계열) 중단, PCBWay 항목 배정·보고에서 뺌 | 칸 여유와 회로 지식, 설치 중복 방지 | 한 칸(schematic)이 전부 |
+| O-81 | SIM 결과 형식 없음·ngspice 미설치로 SIM-001b 대기, 사용자 지시 '허들은 모두 허용(설치·설정·재시작), 결제 금지, 범위는 가상 설계까지' | 결과 JSON 공통 형식을 orch가 정함(queues/SIM-result-format.md). ngspice 설치는 준비된 firmware가 먼저(사용자 홈 격리·공식·sha256), schematic은 그 경로 사용. Docker Desktop은 firmware가 시작(앱만 — 다른 프로젝트 컨테이너 조작 안 함) 후 F-008 재시험 | 대기 제거, 설치 1회 | — |
 
 ## 발주 패키지 직전 정리 목록
 - [ ] 회로도 표시 겹침: 캐리어 J2 옆 12V_IN_RAW 라벨, D3 PWR_LED 라벨, J1 품번 문자 (O-32)
@@ -213,4 +214,4 @@
 - [x] (사용자 허가 → F-008, O-79) F-007 bring-up PC 도구 실행에 필요: ffmpeg/ffprobe(이 PC엔 다른 프로젝트 경로에만), mosquitto-clients(직접 구독 시), OpenSSH 클라이언트 — 설치는 사용자 결정
 - [x] 병합 main 0c2ec91 (batch b-20261127-035125-1201: V-005 7699·R-017 aefa·R-018 1c02·F-007 7bdb·lead e5ac). b74e cancel(태그 보존). 남은 레인 orch 727e·pcb 251f·mechanical 8089. V-005 최종은 main에서 새 레인
 - [ ] (사용자 진행) PCBWay 문의 전송 — 사용자 로그인 완료, 초안 붙여 넣기(lead 안내), 회신 반영처는 초안 표
-- [ ] (lead/사용자 결정) Docker Desktop이 꺼져 있음(2026-11-27, OpenHW 칸이 끈 것 아님) — 켜도 되는지. 필요한 일: F-008 컨테이너 재시험, 이후 이미지 빌드·호스트 시험
+- [x] (사용자 지시 '허들 허용' → firmware가 시작, O-81) Docker Desktop이 꺼져 있음(2026-11-27, OpenHW 칸이 끈 것 아님) — 켜도 되는지. 필요한 일: F-008 컨테이너 재시험, 이후 이미지 빌드·호스트 시험
