@@ -58,7 +58,7 @@
 		)
 		(fill yes)
 		(layer "F.SilkS")
-		(uuid "0ad9e682-7986-4192-b46d-08b549d4ecd8")
+		(uuid "ebd6ff1b-33eb-474d-a263-6ab4cd8c1863")
 	)
 	(fp_rect
 		(start -1.35 -1.35)
@@ -121,4 +121,15 @@
 		(uuid "b70bbb91-30b5-4408-a99b-0e43d30ccbcb")
 	)
 	(embedded_fonts no)
+	(model "${KIPRJMOD}/../../../mechanical/models/Lite-On_LTR-329ALS-01_2x2mm_P1.2mm.step"
+		(offset
+			(xyz 0 0 0)
+		)
+		(scale
+			(xyz 1 1 1)
+		)
+		(rotate
+			(xyz 0 0 0)
+		)
+	)
 )

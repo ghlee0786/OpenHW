@@ -70,7 +70,7 @@
 		)
 		(fill yes)
 		(layer "F.SilkS")
-		(uuid "3719c1fd-bd9d-4117-9e1e-77e34de213dc")
+		(uuid "3668494a-089d-43ad-ba5b-b6e8428d1532")
 	)
 	(pad "1" smd rect
 		(at -0.75 0)
@@ -85,4 +85,15 @@
 		(uuid "418c0c3a-473b-4ce6-bfc0-531b9a7f9acc")
 	)
 	(embedded_fonts no)
+	(model "${KIPRJMOD}/../../../mechanical/models/Everlight_ALS-PT19_1.7x0.8mm.step"
+		(offset
+			(xyz 0 0 0)
+		)
+		(scale
+			(xyz 1 1 1)
+		)
+		(rotate
+			(xyz 0 0 0)
+		)
+	)
 )

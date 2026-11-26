@@ -51,13 +51,33 @@
 	(duplicate_pad_numbers_are_jumpers no)
 	(fp_line
 		(start -1.4 3.055)
+		(end -1 3.055)
+		(stroke
+			(width 0.15)
+			(type default)
+		)
+		(layer "F.SilkS")
+		(uuid "aebfc857-7f1b-4803-bbe9-df806e884f16")
+	)
+	(fp_line
+		(start -0.16 3.055)
+		(end 0.02 3.055)
+		(stroke
+			(width 0.15)
+			(type default)
+		)
+		(layer "F.SilkS")
+		(uuid "00d40002-edbf-4a89-bb54-f870c99c5193")
+	)
+	(fp_line
+		(start 0.86 3.055)
 		(end 1.4 3.055)
 		(stroke
 			(width 0.15)
 			(type default)
 		)
 		(layer "F.SilkS")
-		(uuid "70f3b5ed-abeb-474e-90e5-59013b101053")
+		(uuid "aed3deca-375b-4c25-8960-72229f80d497")
 	)
 	(fp_circle
 		(center -3.2 2.9)
@@ -68,7 +88,7 @@
 		)
 		(fill yes)
 		(layer "F.SilkS")
-		(uuid "b39e7fa0-9ff1-44a7-823d-03b89f134bb7")
+		(uuid "bb17ee7b-684e-4622-be5b-ab69770d1a13")
 	)
 	(fp_rect
 		(start -3 -3)
@@ -174,4 +194,15 @@
 		(uuid "8d09276c-924b-4720-99e5-d718ec7e3d10")
 	)
 	(embedded_fonts no)
+	(model "${KIPRJMOD}/../../../mechanical/models/Vishay_VSMA1085600_3.4x3.4mm.step"
+		(offset
+			(xyz 0 0 0)
+		)
+		(scale
+			(xyz 1 1 1)
+		)
+		(rotate
+			(xyz 0 0 0)
+		)
+	)
 )

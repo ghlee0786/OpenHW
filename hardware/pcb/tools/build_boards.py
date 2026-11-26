@@ -242,7 +242,8 @@ def load_fp(fpid):
 
 def place(fp, side, rot, pos):
     fp.SetPosition(K(*pos))
-    if side == "B" and not fp.IsFlipped():
+    # 면을 바꿔 다시 놓을 때(시험점 반대 면 시도)는 되돌린다 — 안 그러면 뒷면에 남은 채 윗면 기준으로 판정돼 D2 와 겹쳤다(TP21)
+    if (side == "B") != fp.IsFlipped():
         fp.Flip(fp.GetPosition(), pcbnew.FLIP_DIRECTION_TOP_BOTTOM)
     fp.SetOrientationDegrees(rot)
 

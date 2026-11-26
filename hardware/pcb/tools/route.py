@@ -236,7 +236,7 @@ class Board:
             own = np.isin(o, list(own_ids))
             ownpad[L] = own[inner]
             if L in layers:
-                ok = (d >= CLR + hw + EPS) & (hd >= hw + 0.02)
+                ok = (d >= CLR + hw + EPS) & (hd >= hw + 0.06)  # 금지 영역 반올림 여유 0.06 (P-003 KO_H3 안 트랙; 0.1 은 CSI_D1 통로를 막음)
                 if self.hs_ids:  # DRU hs_track_spacing 은 고속 트랙 ↔ 모든 다른 넷 트랙 — 일반 넷 배선도 지킨다
                     hso = np.isin(o, list(self.hs_ids - set(own_ids)))
                     dh = ndimage.distance_transform_edt(~hso) * G
@@ -256,7 +256,7 @@ class Board:
             viaok &= (d >= CLR + vrad + EPS)[inner]
         hv = ndimage.distance_transform_edt(~self.hardvia[sl]) * G
         hl = ndimage.distance_transform_edt(~self.holes[sl]) * G
-        viaok &= (hv >= vrad)[inner] & (hl >= 0.25 + vrad + 0.15)[inner]
+        viaok &= (hv >= vrad + 0.05)[inner] & (hl >= 0.25 + vrad + 0.15)[inner]  # 금지 영역 반올림 여유 0.05 (KO_H2 안 비아 0.015)
         # 외곽: 비아 가장자리 ≥ 0.40(DRU fab_copper_to_edge) + 반올림 0.05 — 외곽 띠 거리 변환만으로는 0.375 가 나왔다(P-003)
         rr_ = np.arange(r0, r1 + 1)[:, None]
         cc_ = np.arange(c0, c1 + 1)[None, :]
@@ -653,9 +653,9 @@ def main():
                 if hh < 0.25 or hh > 1.2 or foot + 1.0 > Ls:
                     continue
                 u = (b - a) / Ls
-                for side in (1, -1):
+                for side, at in [(s_, a_) for s_ in (1, -1) for a_ in (0.5, 0.25, 0.75, 0.0, 1.0)]:
                     nrm = np.array([-u[1], u[0]]) * side
-                    p = a + u * (Ls - foot) / 2
+                    p = a + u * (0.5 + (Ls - foot - 1.0) * at)  # at: 직선 위 굴곡 묶음 자리 (쌍 안 보정과 같은 탐색)
                     new = [tuple(a)]
                     for j in range(kk):
                         q1 = p + u * hh + nrm * hh
@@ -667,7 +667,7 @@ def main():
                     # 간격 검사: 굴곡 바깥 끝(+반폭+고속 간격)까지 다른 넷 구리가 없어야
                     ok = True
                     for t in np.linspace(0, 1, 60):
-                        for (x0, y0), (x1, y1) in zip(new[:-1], new[1:]):
+                        for (x0, y0), (x1, y1) in zip(new[1:-2], new[2:-1]):  # 굴곡 부분만(앞뒤 직선은 원래 경로)
                             x, y = x0 + (x1 - x0) * t, y0 + (y1 - y0) * t
                             r, c = B.cell(x, y)
                             m = int((hw_ + HS_CLR + EPS) / G) + 1

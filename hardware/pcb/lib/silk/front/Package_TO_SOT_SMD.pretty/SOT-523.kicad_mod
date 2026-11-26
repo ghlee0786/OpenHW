@@ -63,7 +63,7 @@
 			(type solid)
 		)
 		(layer "F.SilkS")
-		(uuid "5346ad9f-a0ef-4818-b0ed-af2d17457469")
+		(uuid "f2d2d0da-1b7e-4115-b7c4-e43f36409623")
 	)
 	(fp_line
 		(start 0.65 0.9)
@@ -73,7 +73,7 @@
 			(type solid)
 		)
 		(layer "F.SilkS")
-		(uuid "ec53991d-f725-49a4-b080-d7597fdbe3db")
+		(uuid "e4a61697-025b-49aa-9108-39d5c2d8e39f")
 	)
 	(fp_circle
 		(center -1.25 -0.51)
@@ -84,7 +84,7 @@
 		)
 		(fill yes)
 		(layer "F.SilkS")
-		(uuid "b4358a53-edf2-45a4-902b-b93af401f910")
+		(uuid "ae8d9167-357e-4da9-9877-74a29006e909")
 	)
 	(fp_line
 		(start -1.15 -1.05)
@@ -209,7 +209,7 @@
 		(uuid "b119f0c8-2364-4020-aabd-f01b47d0c559")
 	)
 	(embedded_fonts no)
-	(model "${KICAD10_3DMODEL_DIR}/Package_TO_SOT_SMD.3dshapes/SOT-523.step"
+	(model "${KIPRJMOD}/../../../mechanical/models/SOT-523.step"
 		(offset
 			(xyz 0 0 0)
 		)

@@ -312,7 +312,7 @@
 			(type solid)
 		)
 		(layer "F.SilkS")
-		(uuid "758d39d2-68d9-45a7-a5fd-2a8e8578dc53")
+		(uuid "c98accf6-b5ac-47ca-a2d4-93ebbe9413a9")
 	)
 	(fp_line
 		(start 8.9 -0.9)
@@ -322,7 +322,7 @@
 			(type solid)
 		)
 		(layer "F.SilkS")
-		(uuid "51a1fc25-66a0-476f-b0a6-bf60ef62d188")
+		(uuid "a03ae4e4-6f95-4c62-956b-61fde8f2bf5c")
 	)
 	(fp_circle
 		(center -8.1 -2.6)
@@ -333,7 +333,7 @@
 		)
 		(fill yes)
 		(layer "F.SilkS")
-		(uuid "de92a179-4f44-41f2-bb1f-3d71db110d87")
+		(uuid "0f8b4823-f1f7-46d6-b5ad-8658c85c5709")
 	)
 	(pad "" np_thru_hole circle
 		(at -8.2 1.25 90)
@@ -830,4 +830,15 @@
 		(uuid "c0d030b1-c7b4-4544-b794-e25c7541e9d5")
 	)
 	(embedded_fonts no)
+	(model "${KIPRJMOD}/../../../mechanical/models/BTB_ST-BTB-058060-B_2x30_P0.5mm.step"
+		(offset
+			(xyz 0 0 0)
+		)
+		(scale
+			(xyz 1 1 1)
+		)
+		(rotate
+			(xyz 0 0 0)
+		)
+	)
 )

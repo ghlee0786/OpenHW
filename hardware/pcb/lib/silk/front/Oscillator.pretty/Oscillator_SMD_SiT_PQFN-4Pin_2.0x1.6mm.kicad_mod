@@ -44,7 +44,7 @@
 			(type solid)
 		)
 		(layer "F.SilkS")
-		(uuid "313ad069-d6df-4bbb-af5f-a5ef735a2b47")
+		(uuid "2ad4ec75-e9d8-4480-841c-66480f31184b")
 	)
 	(fp_line
 		(start -1.46 -0.26)
@@ -54,7 +54,7 @@
 			(type default)
 		)
 		(layer "F.SilkS")
-		(uuid "a424811d-7b28-48a1-87ad-1ee091778775")
+		(uuid "b20cd85d-d48e-4140-9dc7-8b90003809be")
 	)
 	(fp_line
 		(start -1.46 0.94)
@@ -64,7 +64,7 @@
 			(type default)
 		)
 		(layer "F.SilkS")
-		(uuid "0ab4b94a-b3ad-4a02-9e29-3fe6d5ad84cf")
+		(uuid "f72325d9-977a-45a3-9b30-68df7ec0162a")
 	)
 	(fp_line
 		(start -1.46 1.26)
@@ -74,7 +74,7 @@
 			(type solid)
 		)
 		(layer "F.SilkS")
-		(uuid "c5462c82-d21a-4f2d-a562-76bf651bec46")
+		(uuid "4647e343-9a3e-4e72-9596-df7ecfefbdc7")
 	)
 	(fp_line
 		(start -0.359999 1.26)
@@ -84,7 +84,7 @@
 			(type default)
 		)
 		(layer "F.SilkS")
-		(uuid "a5d4ff1a-91d4-4bed-91a9-3b83e557f246")
+		(uuid "3034c245-7d75-41a2-83f0-35a902e52d1a")
 	)
 	(fp_line
 		(start 1.14 1.26)
@@ -94,7 +94,7 @@
 			(type default)
 		)
 		(layer "F.SilkS")
-		(uuid "1319c7b6-def0-452c-ae43-ae6b65a62bde")
+		(uuid "b5309cc7-e174-4610-97c5-13de12bf19dd")
 	)
 	(fp_circle
 		(center -1.63 1.43)
@@ -105,7 +105,7 @@
 		)
 		(fill yes)
 		(layer "F.SilkS")
-		(uuid "cc1f1dc8-21f3-4eea-b038-9a9cf958f77f")
+		(uuid "92032358-c4bc-4f3d-ade9-053f05159bd1")
 	)
 	(fp_rect
 		(start -1.5 -1.3)
@@ -167,7 +167,7 @@
 		(roundrect_rratio 0.25)
 	)
 	(embedded_fonts no)
-	(model "${KICAD10_3DMODEL_DIR}/Oscillator.3dshapes/Oscillator_SMD_SiT_PQFN-4Pin_2.0x1.6mm.step"
+	(model "${KIPRJMOD}/../../../mechanical/models/Oscillator_SMD_SiT_PQFN-4Pin_2.0x1.6mm.step"
 		(offset
 			(xyz 0 0 0)
 		)
