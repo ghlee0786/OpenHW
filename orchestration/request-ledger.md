@@ -32,8 +32,8 @@
 | R-008 | orch | research t18s | 회로도 BOM 내보내기 → 견적용 전체 BOM + R-004와 차이표 | docs/research/bom-full.csv, r008-bom-diff.md | 21열·행 수, 차이표, 미확정 MPN, 레인·커밋 | completed — 레인 t-20261126-171912-e7d2 커밋 dbafdc8, 92행·21열(orch 확인), kicad-cli bom 0/0, 미확정 10건 |
 | V-004 | orch (단계 4 독립 검토) | review t191 | C-002 회로 독립 검토(전원·보호·구동·I2C·PHY·USB·BTB·FPC) | validation/review-V004-C002.md | 판정표·수정안, ERC 재실행, 레인·커밋 | running (기준 276fc89, C-003 변경분은 나중에 추가 절) |
 | V-003 결과 | — | review t191 | (완료) L-001 독립 대조 | validation/review-V003-L001.md | — | completed — 레인 t-20261126-165808-da7a 커밋 e0cbdea. 전면 -B는 B.Cu 뒤집기+180°만 맞음, AL8860 EP 랜드·BTB courtyard·M12 홀더 속성/구멍·DRV8837 3D·FFC 1A 신호 전용 지적 |
-| C-003 | orch (V-003 반영) | schematic t18z | 라이브러리 수정(BTB courtyard·실크, AL8860 파생 랜드, M12 홀더 Ø1.7·속성, DRV8837 3D) + 12V_IR 커넥터 정격 재검토 | hardware/libraries/**, hardware/schematic/** (C-002 레인) | ERC 0 유지, 의도 변경만 차이, 커밋 | running |
-| C-002b | lead O-28 | schematic t18z | 회로도 가독성 정리(기능 블록 계층 시트·주석), 참조 지정자 불변 | hardware/schematic/** (C-002 레인) | 넷리스트 동일 증명, ERC 0, SVG 경로, 커밋 | running (C-003과 별도 커밋) |
+| C-003 | orch (V-003 반영) | schematic t18z | 라이브러리 수정(BTB courtyard·실크, AL8860 파생 랜드, M12 홀더 Ø1.7·속성, DRV8837 3D) + 12V_IR 커넥터 정격 재검토 | hardware/libraries/**, hardware/schematic/** (C-002 레인) | ERC 0 유지, 의도 변경만 차이, 커밋 | completed — 08d0a3e·7f69f63(최종). 보드 간 FFC→JST GH 6P(C3-1), AL8860·DRV8837 파생, M12 Ø1.8, orch ERC 재실행 0/0 |
+| C-002b | lead O-28 | schematic t18z | 회로도 가독성 정리(기능 블록 계층 시트·주석), 참조 지정자 불변 | hardware/schematic/** (C-002 레인) | 넷리스트 동일 증명, ERC 0, SVG 경로, 커밋 | completed — 4dc59dc, orch netcompare 재실행 차이 0(91/93·78/64). SVG는 C-003 기준 재출력 요청 |
 | R-009 | orch | research t18s | BOM 미확정·재고 위험 해소(AC 코드·CLA216 짝 커넥터·SRN6045·C15849·VSMA 재고·풋프린트 치수 대조) | docs/research/r009-bom-risks.md (+bom-full.csv 비고) | 6항목 결론, 21열 유지, 커밋 | running (C-003/C-002b 뒤 R-008b BOM 재내보내기 예정) |
 | M-002 | orch (P-003 Q3·Q4·Q5) | mechanical t18x | 캐리어 외형(40×54 vs 45×45)·FFC −X 경로·IR LED 열 접촉 자리 | mechanical/** (M-001 레인) | 외형·좌표·FFC 길이·열 자리, 커밋 | running |
 
