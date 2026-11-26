@@ -241,6 +241,11 @@ class Board:
                     hso = np.isin(o, list(self.hs_ids - set(own_ids)))
                     dh = ndimage.distance_transform_edt(~hso) * G
                     ok &= (dh >= HS_CLR + hw + EPS) | self.brk[L][sl]
+                    if set(own_ids) & self.hs_ids and not hs:
+                        # 고속 넷의 단선(꼬임 구간 · 순서 잇기)도 DRU hs_track_spacing: 다른 넷 트랙과 0.30 (P-003 TXN↔SPARE1 0.225)
+                        ot = other & self.trk[L][sl]
+                        if ot.any():
+                            ok &= (ndimage.distance_transform_edt(~ot) * G >= HS_CLR + hw + EPS) | self.brk[L][sl]
                     if L == 2 and not (set(own_ids) & self.hs_ids):
                         # V-005 RQ-8: In2(GND_PWR)는 B.Cu 고속선의 기준면 — 그 아래(트랙 가장자리에서 3h ≈ 0.6mm)로 신호를 지나가지 않게
                         o3 = self.occ[3][sl]
@@ -866,7 +871,9 @@ def main():
         if p["id"] > 0:
             nets.setdefault(p["net"], []).append(p)
     order = sorted((n for n in nets if n != "/GND" and len(nets[n]) > 1),
-                   key=lambda n: (netclass(n)["name"] not in ("PWR_12V_IN", "PWR_5V", "PWR_12V_IR"), len(nets[n])))
+                   # 쌍 넷의 남은 패드(꼬임 구간 ESD → RJ45 단선)를 먼저 — 다른 넷이 막으면 돌아가서 쌍 안 길이 차가 커진다(TXN +10mm)
+                   key=lambda n: (not any(n in (i_["P"], i_["N"]) for i_ in infos),
+                                  netclass(n)["name"] not in ("PWR_12V_IN", "PWR_5V", "PWR_12V_IR"), len(nets[n])))
 
     def tree_mask(net, tree_pads):
         """그 넷 구리 중 tree_pads 와 이어진 부분 (층별 연결 요소, 구멍 자리에서만 층끼리 연결)."""
