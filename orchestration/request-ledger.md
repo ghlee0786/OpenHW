@@ -99,7 +99,7 @@
 | REN-002 | lead 판정 → orch | mechanical t18x | 최종 렌더: 3D 모델 전수 감사·대체 모델·연결 표, PCB 렌더 재생성, 제품 렌더 재질·추가 컷(뒷면 커넥터·사용 장면·치수선)·턴테이블 | mechanical/** (30c6), validation/runtime/vd001/render | 빠짐 0, judge 0, manifest, 커밋 | running |
 | R-022 | orch | research t18s | BOM 갱신: C-018(R6 6.04k·R17 4.7k·C19 4.7n·U2 풋프린트) + C-019(R2 78.7k·R3 10.7k·R20 1k·C20/C21 4.7nF) | bom-full·PCBWay BOM (새 레인) | make_pcbway_bom 0, 커밋 | completed — 레인 t-20261127-054531-37bc 3ce97b3: C-018·C-019 반영(R2 78.7k C67239 재고 2,100·차선 ROHM C308010, R3 10.7k C138068, R6 6.04k C25913, U2 풋프린트, C19–C21 4.7nF C1538, R17 4.7k, R20 1k), make_pcbway_bom 종료 0(orch 재실행 0·출력 변화 없음) |
 | C-020 | orch (O-97) | schematic t18z | 카메라 레일 순서 S6: Q1 게이트 100k∥(1k+BAT54), Q2 게이트 100k∥BAT54, 계약 v1.16 | hardware/schematic (새 레인) | ERC 0·contract_check 0, 커밋 | completed — 레인 t-20261127-055630-c14c a2d878c(+3c0b0bd): R20 100k·R21 1k·D4 BAT54WS(Q1), R5 100k·D5 BAT54WS(Q2), 극성 재확인, 계약 v1.16. orch 재실행 contract_check 0·selftest 0(24, 극성 고장 포함) |
-| SIM-001d | orch (O-97) | firmware t18w + schematic t18z | C-020 a2d878c로 재시뮬: firmware L5·L9·L10(+전체 L), schematic SIM-001a C3(CORE_3V3 강하) | hardware/sim (각 새 레인) | 같은 기준, 종료 코드, 커밋 | running — schematic 몫 완료 c14c 939d2f0: SIM-001a 15/15 종료 0(orch 재실행 0), C3 CORE_3V3 강하 0.041V, IOVDD 10µs→AVDD 170µs. firmware SIM-L 진행 중 |
+| SIM-001d | orch (O-97) | firmware t18w + schematic t18z | C-020 a2d878c로 재시뮬: firmware L5·L9·L10(+전체 L), schematic SIM-001a C3(CORE_3V3 강하) | hardware/sim (각 새 레인) | 같은 기준, 종료 코드, 커밋 | completed — schematic c14c 939d2f0 15/15 / firmware 레인 t-20261127-060029-2377(start --from bf55) 942c7e5: 종료 1(pass 9, L3 S3만 — 기준대로 불합격 기록), L9 IOVDD 마지막 1.105ms·L10 AVDD 180µs 뒤·돌입 310mA. 참고: 리셋 해제 여유 최악 0.37ms(bring-up 1-7) |
 | R-023 | orch | research t18s | BOM 갱신 C-020: D4·D5 BAT54WS, R21 1k, R5·R20 100k | bom-full·PCBWay BOM (새 레인) | make_pcbway_bom 0, 커밋 | completed — 레인 t-20261127-060023-2ca0 6ae4eed: D3–D5 BAT54WS C124205, 10k×3·100k×7·1k×2 갱신, make_pcbway_bom 종료 0(orch 재실행 0) |
 
 ## 운영 변경 (2026-11-26, 사용자 지시 · lead 전달)
@@ -256,3 +256,4 @@
 - [ ] bring-up: SIM B3 IR 끔 구간 링잉(6mA 피크, 평균 41µA 역방향) — 꺼짐 중 발광 없음 확인
 - [ ] VD-001: M-007 J5 LED 직접광 84.6%(렌즈 경통 가림, analysis2 86) — mechanical 개선 검토
 - [ ] bring-up: 센서 IOVDD/AVDD 켜기·끄기 순서 프로브 확인(SIM은 보드 레일 90% 대리 — 모듈 내부 LDO 지연 미상)
+- [ ] bring-up: 센서 리셋 해제 vs AVDD 90% 여유(SIM 최악 0.37ms) 측정
