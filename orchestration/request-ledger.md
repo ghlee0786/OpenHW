@@ -42,3 +42,5 @@
 | O-12 | 짝 BTB 풋프린트 출처 (V-001 ③: B301/S401 파일은 Apache-2.0, CC BY-SA는 코어 회로도 PDF만) | B301 KiCad 풋프린트에서 파생 허용 + Apache-2.0 고지·출처 기록, SUNGTECH 데이터시트 나오면 치수 대조 | ShareAlike 위험 낮음, 회로·PCB 착수를 막는 항목 해소 | 데이터시트로 독자 작성 |
 | O-13 | 렌즈 (V-001 ④ CIL327 F-θ로 HFOV 약 121° > D-003 #4 90°) | R-002 O2 무효 → R-006에서 재선정, 기구는 렌즈 길이 변수로 진행 | 결정 근거 뒤집힘(O-8) | — |
 | O-14 | ICR·IR LED 구동 (V-001 ⑤⑥) | ICR 드라이버 VDD 5V+펄스, AP1511B vs DRV8837 정격 근거 있는 쪽 / IR LED 1.0A·직렬 ≤2·방열 기판 | 3.3V에서 코일 전압 하한, 1.5A 여유 0 | AP1511B 3.3V 유지 불가 → DRV8837 |
+| G-001 | lead t18q (사용자 요청 2026-11-26) | schematic t18z | L-001·C-002를 KiCad 10 GUI로 보이게 진행, 단계별 스크린샷, GUI 단일 소유(pcb 금지 통지) | 스크린샷 C:/workspace_python/OpenHW/validation/runtime/kicad-gui/** (gitignore) | 창 뜸 즉시 보고 → lead 전달, ERC는 kicad-cli 종료 코드 | running (C-001b 뒤 L-001부터) |
+| O-15 | GUI 스크린샷 저장 위치 | 메인 체크아웃 validation/runtime/kicad-gui/<작업id>/ (gitignore) | 레인 gc 뒤에도 남음, 커밋 대상 아님 | 레인 worktree 안 validation/runtime/ |
