@@ -207,12 +207,12 @@ C(f, 'C12', '1uF', 'FRONT_2V8', 'GND'); C(f, 'C13', '100nF', 'FRONT_2V8', 'GND')
 f.add('Q4', 'Device:Q_Photo_NPN', 'ALS-PT19 (alt)', 'openhw:Everlight_ALS-PT19_1.7x0.8mm', {'1': 'CORE_1V8', '2': 'LIGHT_SENSE'}, dnp=True,
       fields={'Note': 'alternative analog ALS (contract C15); footprint placeholder - ALS-PT19 land to be drawn if used'})
 R(f, 'R11', '10k', 'LIGHT_SENSE', 'GND', dnp=True)
-f.block('IR','IR LED 2스트링 · AL8860 x2 (B 스트링 DNP)',['12V_IR → Rs 0.1R → VSMA1085400 x2 직렬 → L 68uH → SW · 스트링당 1.0A (O-25, V-001 6)','IR_PWM High = 끔 · R12 풀업 → 기본 끔 (K1) · CTRL = IR_PWM 오픈드레인 공통 (분기 C2-5) · 기본 12V_IR 꺼짐 (eFuse SHDN) · 열: 스트링 평균 ≤1.6W = IR_PWM 듀티 ≤25% (O-31, FW 강제)'],cols=6)
+f.block('IR','IR LED 2스트링 · AL8860 x2 (A·B 실장, O-69)',['12V_IR → Rs 0.1R → VSMA1085400 x2 직렬 → L 68uH → SW · 스트링당 1.0A (O-25, V-001 6)','IR_PWM High = 끔 · R12 풀업 → 기본 끔 (K1) · CTRL = IR_PWM 오픈드레인 공통 (분기 C2-5) · 기본 12V_IR 꺼짐 (eFuse SHDN) · 열: 스트링 평균 ≤1.6W = IR_PWM 듀티 ≤25% (O-31, FW 강제)'],cols=6)
 # IR PWM -> CTRL (open drain, both strings share CTRL - branch C18)
 f.add('Q5', 'Transistor_FET:DMG1012T', 'DMG1012T', 'Package_TO_SOT_SMD:SOT-523', {'1': 'IR_PWM', '2': 'GND', '3': 'IR_CTRL'})
 R(f, 'R12', '100k', 'CORE_1V8', 'IR_PWM')
-# IR strings A (populated) / B (DNP); AL8860 1.0A (Rs 0.1R), 2x VSMA1085400 each
-for k, dn in (('A', False), ('B', True)):
+# IR strings A / B both populated (O-69, R-016); AL8860 1.0A (Rs 0.1R), 2x VSMA1085400 each
+for k, dn in (('A', False), ('B', False)):
     u = 'U4' if k == 'A' else 'U5'; base = 0 if k == 'A' else 10
     f.add(u, 'Driver_LED:AL8860MP', 'AL8860MP-13', 'openhw:Diodes_MSOP-8EP_3x3mm_P0.65mm_EP1.7x2.0mm_AL8860',
           {'1': f'IR{k}_SET', '2': 'GND', '3': 'GND', '4': 'IR_CTRL', '5': f'IR{k}_SW', '6': f'IR{k}_SW', '8': '12V_IR', '9': 'GND'}, dnp=dn,

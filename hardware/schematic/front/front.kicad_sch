@@ -6901,7 +6901,7 @@
 		)
 		(uuid "b86c7241-5e16-4922-8998-1fb7600ad425")
 	)
-	(text "IR LED 2스트링 · AL8860 x2 (B 스트링 DNP)"
+	(text "IR LED 2스트링 · AL8860 x2 (A·B 실장, O-69)"
 		(exclude_from_sim no)
 		(at 198.12 255.27 0)
 		(effects
@@ -13722,7 +13722,7 @@
 		(in_bom yes)
 		(on_board yes)
 		(in_pos_files yes)
-		(dnp yes)
+		(dnp no)
 		(uuid "94718bec-7a29-4595-9eec-b1489dacc592")
 		(property "Reference" "U5"
 			(at 382.27 318.77 0)
@@ -13772,7 +13772,7 @@
 				(justify left)
 			)
 		)
-		(property "Note" "string B DNP (R-006 O-25)"
+		(property "Note" "string B"
 			(at 370.84 330.20 0)
 			(hide yes)
 			(effects
@@ -13826,7 +13826,7 @@
 		(in_bom yes)
 		(on_board yes)
 		(in_pos_files yes)
-		(dnp yes)
+		(dnp no)
 		(uuid "49e0b9c2-8c38-47c5-828a-4b088c2c8f22")
 		(property "Reference" "R14"
 			(at 417.83 317.50 0)
@@ -13889,7 +13889,7 @@
 		(in_bom yes)
 		(on_board yes)
 		(in_pos_files yes)
-		(dnp yes)
+		(dnp no)
 		(uuid "d414ca9a-9a41-4260-8a2b-e3f16c6aec8d")
 		(property "Reference" "D_IR_B1"
 			(at 220.98 356.87 0)
@@ -13962,7 +13962,7 @@
 		(in_bom yes)
 		(on_board yes)
 		(in_pos_files yes)
-		(dnp yes)
+		(dnp no)
 		(uuid "458343b5-94f3-4358-a572-73ea723c190d")
 		(property "Reference" "D_IR_B2"
 			(at 264.16 356.87 0)
@@ -14035,7 +14035,7 @@
 		(in_bom yes)
 		(on_board yes)
 		(in_pos_files yes)
-		(dnp yes)
+		(dnp no)
 		(uuid "a78cce5a-d282-4f56-99e0-600af57837a9")
 		(property "Reference" "L2"
 			(at 298.45 355.60 0)
@@ -14108,7 +14108,7 @@
 		(in_bom yes)
 		(on_board yes)
 		(in_pos_files yes)
-		(dnp yes)
+		(dnp no)
 		(uuid "9f2cbf66-a9c1-489b-bf60-d68ea5a56cfa")
 		(property "Reference" "D2"
 			(at 340.36 356.87 0)
@@ -14191,7 +14191,7 @@
 		(in_bom yes)
 		(on_board yes)
 		(in_pos_files yes)
-		(dnp yes)
+		(dnp no)
 		(uuid "b6140105-ad55-4421-bd13-83ef27eb8e04")
 		(property "Reference" "C16"
 			(at 377.19 355.60 0)
@@ -14254,7 +14254,7 @@
 		(in_bom yes)
 		(on_board yes)
 		(in_pos_files yes)
-		(dnp yes)
+		(dnp no)
 		(uuid "9d0c3e4c-7c72-41ac-bd49-68a91bff4080")
 		(property "Reference" "C17"
 			(at 412.75 355.60 0)
