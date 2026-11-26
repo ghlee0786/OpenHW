@@ -1,8 +1,8 @@
 # C-001 HW/FW 계약 — reCamera Core 2002 캐리어·전면 보드
 
-- 상태: **계약 v1 (FW 대조 완료)** · 2026-11-26
+- 상태: **계약 v1.2 (FW 대조 완료 · C-002 회로도 반영)** · 2026-11-26
 - 배정: orch t18r C-001 → C-001b(FW 대조) · 작성자: schematic (단독) · 레인 `t-20261126-155208-d030`
-- 이력: 초안 `ac12920` → v1 `8613910` → v1.1 (이 커밋: L-001 데이터시트로 LTR-329 1.8V I2C 호환·AL8860 CTRL 구동을 확인하고, FFC 대표 MPN을 기록)
+- 이력: 초안 `ac12920` → v1 `8613910` → v1.1 `be646c2` → v1.2 (이 커밋: O-21 eFuse 연결, O-22 센서 모듈 전원·리셋·I2C 풀업, O-25 IR 2스트링, FPC 대칭 핀배치 — C-002 회로도 `5a5cf5c`와 일치)
 - KiCad 회로도는 C-002에서 그린다. 부품은 「1안」이고 재고·정격 확정은 C-002/R-004에서 한다.
 
 ## 0. 입력과 근거
@@ -96,7 +96,7 @@
                                               │                         │     코어 +3V3 ─▶ 캐리어 27 ─ P-FET(SD0_PWR_EN) ─▶ microSD
                                               │                         │     코어 +3V3/+1V8 ─▶ 전면 센서 전원 스위치(CAM_EN)
                                               │                         └─ 전원 LED, STATUS_LED
-                                              └─ 부하 스위치(IR_LED_EN) ── 12V_IR ─▶ FPC ─▶ 전면 AL8860 (1.0A) ─▶ 850nm LED 직렬 ≤2개
+                                              └─ eFuse TPS26600 (SHDN ← IR_LED_EN, 10k 풀다운) ── 12V_IR ─▶ FPC(4접점) ─▶ 전면 AL8860 ×2 (스트링 A 실장 · B DNP, 각 1.0A) ─▶ VSMA1085400 직렬 2개 ×2
 ```
 
 | 레일 | 출처 | 정격/제한 | 근거 | 확인 |
@@ -118,9 +118,9 @@
 | 전면 3V3 LDO · 발진기 · LED | — | <30mA | <0.15W | 일반값 | 가정 |
 | **5V_SYS 합계 (피크)** | | **≈1.3A** | **6.5W** | | 가정 |
 | 5V 벅 입력 (효율 88%) | 12V | 0.62A | 7.4W | | 가정 |
-| IR LED: VSMA1085600 ×2 직렬, 1.0A | 12V_IR | — | LED 6.2W typ / 6.6W max | V-001 ⑥ (Vf 1A typ 3.1V, max 3.3V) | 개수는 **R-006 대기** |
-| AL8860 입력 (효율 90%) | 12V | 0.61A | 7.3W | 계산 | 가정 |
-| **12V 입력 합계** | | **≈1.2A** | **≈14.7W** | | 가정 → **어댑터 12V 2A** |
+| IR LED (v1.2, O-25): VSMA1085400 2직렬 × 2스트링, 스트링마다 1.0A | 12V_IR | — | LED 12.4W typ / 13.2W max | V-001 ⑥, R-006 | 스트링 B는 DNP로 시작 |
+| AL8860 ×2 입력 (효율 90%) | 12V | 1.22A (max Vf) | 14.7W | 계산 | 가정 |
+| **12V 입력 합계 (v1.2)** | | **≈1.84A** | **≈22W** | | 가정 → **어댑터 GST25A12 2.08A (여유 약 12%)**. 스트링 B DNP이면 ≈1.23A |
 | 주간 (IR 꺼짐) | | ≈0.62A | ≈7.4W | | 가정 |
 
 - **IR LED 조건 (V-001 ⑥):**
@@ -278,10 +278,10 @@
 | 5 | CAM_RX0_0N (D0−) | 6 | GND |
 | 7 | CAM_RX0_0P (D0+) | 8 | GND |
 | 9 | CAM_RX0_CLKN | 10 | GND |
-| 11 | CAM_RX0_CLKP | 12 | AVDD (코어 3V3 → Q8 스위치, CAM_EN 제어) |
-| 13 | CAM_RX0_1N (D1−) | 14 | IOVDD (코어 3V3 → Q3 스위치) |
-| 15 | CAM_RX0_1P (D1+) | 16 | AVDD |
-| 17~23 | GND | 24 | 센서 리셋/PWDN 추정 (R8 10k로 CAM_EN) |
+| 11 | CAM_RX0_CLKP | 12 | AVDD 3.3V 전원 입력 (CORE_3V3 → AO3401A 스위치, CAM_EN 제어) |
+| 13 | CAM_RX0_1N (D1−) | 14 | **IOVDD 3.3V 전원 입력** (신호 레벨 아님, V-002 ④) |
+| 15 | CAM_RX0_1P (D1+) | 16 | DVDD → AVDD 레일 (S401과 같음) |
+| 17~23 | GND | 24 | **RESET** (V-002 ④ 확정) — CAM_EN → 10k + 100nF(DNP) RC 자리 (O-22) |
 
 - **CSI 레인 (F-001 대조, 일치):** SDK `sns_cfg_gc2053.as16LaneId = {2,0,3,-1,-1}`, PN swap 없음.
   - 0번 항목은 클록 레인이다(추론, Milk-V GC2083 `lane_id=1,0,2`와 같은 형식).
@@ -302,9 +302,10 @@
 - **조도센서 읽기 (O-9):**
   - 커널 5.10에는 LTR-329 드라이버가 없다(F-001).
   - `CONFIG_I2C_CHARDEV=y`이므로 사용자 공간 i2c-dev 폴링으로 읽는다. 커널 백포트는 하지 않는다.
-- **풀업:**
-  - S401 패턴은 4.7k를 CAM_1V8(CAM_EN 스위치)에 단다.
-  - CAM_EN은 부팅 때 `S70hardware`가 켜고 계속 켜 둔다(F-001). 그래서 조도센서도 CAM_EN=1 상태에서 읽는다는 제약을 FW에 둔다.
+- **풀업 (v1.2, O-22):**
+  - 전면 보드가 4.7k를 **CORE_1V8(상시)**에 둔다. CAM_EN 스위치 레일에는 두지 않는다. 그래서 LTR-329 폴링이 CAM_EN과 무관해진다.
+  - 역급전: CAM_EN=0이면 모듈 IOVDD가 꺼진다. 이때 풀업에서 모듈 I/O로 흐를 수 있는 전류는 최대 1.8V/4.7k ≈ 0.38mA/선이다. 모듈 내부가 미공개라 실물로 측정한다(C-002 분기 C2-6).
+  - FW 기본은 CAM_EN 상시 1이다(`S70hardware`). 차선 규칙: CAM_EN=1일 때만 LTR-329를 폴링한다.
 - **LTR-329 레벨 (v1.1 확인됨):**
   - 근거 문서: Lite-On DS86-2014-0006 Rev C (2020-03-14, 파일명 V1.5). 제조사 사이트가 자동 접근을 거부해서 Adafruit 미러로 받았다(sha256 72948664…8b22, L-001 README).
   - 8절 Recommended Operating Conditions: VDD 2.4~3.6V, **VIO 1.7~3.6V**. 절대최대: VDD·SCL·SDA 3.8V.
@@ -394,9 +395,29 @@
 | USB-C | ESD | D± 저용량 ESD, VBUS TVS, CC 5.1k 풀다운 | B101 패턴 |
 | microSD | ESD | 7선 ESD | B101 패턴 |
 | RJ45 | 서지·ESD | 칩 쪽 쌍마다 저용량 TVS, 칩 쪽 센터탭 100nF → GND, 라인 쪽 Bob Smith 75Ω + 1nF/2kV → 실드, GNDPWR–GND 1M + 1nF | B101 넷리스트 |
-| 12V_IR | 단락·LED 개방 | 전류 제한이 있는 부하 스위치. AL8860 개방·단락 동작은 데이터시트로 확인 (L-001) | — |
+| 12V_IR | 단락·과전류 | **TPS26600 eFuse**: SHDN ← IR_LED_EN(10k 풀다운, 기본 끔), UVLO → IN(SLVSDG2G: 「must be connected to the IN terminal」), OVP·MODE → RTN(내장 33V OVP, 전류 제한 후 자동 재시도), RTN = GND(역접은 앞단 P-FET가 맡음), **ILIM 8.06kΩ ≈ 1.49A**(2스트링 1.22A 기준, O-21의 10k/1.2A는 1스트링용), dVdT 22nF | O-21, V-002 ⑥, C-002 C2-4 |
 | ICR | 코일 단락 | DRV8837 과전류 차단 1.9~3.5A, 열 차단 150°C | SLVSBA4F 6.5 |
 | UPGRAD_KEY | 출력과 버튼 충돌 | 직렬 1kΩ | 7절 |
+
+## 12A. 전면 보드 – 캐리어 FPC 핀배치 (v1.2)
+
+- 커넥터: TE 1-84952-0 (하접 ZIF 1.0mm 10P, 접점 1A, R-004 P3) ×2. 케이블은 LX FFC 10P Same Side (R-004).
+- **대칭 배치:** FFC 방향이 바뀌어도 전원·GND가 맞도록 1↔10, 2↔9, 3↔8, 4↔7이 같은 신호다. 뒤집히면 5↔6만 바뀌는데, 둘 다 1.8V 예비선이라 FW에서 바꿔 읽으면 된다.
+
+| 핀 | 신호 | 캐리어 쪽 | 전면 쪽 |
+|---|---|---|---|
+| 1 | GND | GND | GND |
+| 2 | 12V_IR | TPS26600 OUT | AL8860 ×2 VIN |
+| 3 | 12V_IR | 〃 | 〃 |
+| 4 | GND | GND | GND |
+| 5 | SPARE1 | 캐리어 20 (XGPIOC_14) | 시험점 |
+| 6 | ALS_INT_RSV | 캐리어 32 (PWR_GPIO_8) | 10k → CORE_1V8 |
+| 7 | GND | GND | GND |
+| 8 | 12V_IR | TPS26600 OUT | AL8860 VIN |
+| 9 | 12V_IR | 〃 | 〃 |
+| 10 | GND | GND | GND |
+
+- 12V_IR 4접점 × 1A ≥ 2스트링 최악 1.22A. GND도 4접점이다.
 
 ## 13. 분기점·선택·이유·차선책 (v1 갱신)
 
@@ -412,20 +433,22 @@
 | C8 | IR 밝기 | IR_PWM(PWM_2) → N-MOSFET → AL8860 CTRL + IR_LED_EN 하드웨어 차단 | 1.8V PWM으로는 CTRL 선형 구간(0.3~2.5V)에 걸린다. 끔을 두 겹으로 보장 | IR_PWM을 CTRL에 직결 (V-001: 3.3V 로직 직구동 가능 — 패드 도메인이 3.3V로 확인될 때) |
 | C9 | 이더넷 자기부품 | 칩 쪽 센터탭이 따로 나오는 통합 마그넷 RJ45 | 부품 수·면적 | B101식 개별 트랜스 |
 | C10 | 전면 3.3V | 코어 VIN → 전면 LDO | 코어 3V3을 센서에 남긴다 | 코어 +3V3 |
-| C11 | 보드 간 링크 | 1.0mm 10P FFC — 대표 MPN **TE 1-84953-0** (L-001) | 12V 1A를 3접점으로 | JST-GH 케이블 |
+| C11 | 보드 간 링크 | 1.0mm 10P FFC — **TE 1-84952-0** (R-004 P3, 접점 1A 확인. L-001의 1-84953-0에서 바꿈) | 12V_IR 4접점(12A절) | 1-84953-0 상접 / JST-GH 케이블 |
 | C12 | BTB 짝 커넥터 | 캐리어 -A, 전면 -B (Sungtech). 풋프린트는 B301 파생 허용 (O-12, Apache-2.0 고지) | 코어와 같은 시리즈 | 호환품 (R-004) |
 | **C13** | **ICR 드라이버 (V-001 ⑤)** | **TI DRV8837DSGR**: VM = 5V(VIN), VCC = 전면 3.3V, IN1/IN2를 GPIO에 직결 | 정격 근거가 있다(SLVSBA4F): VCC 1.8~7V, **VIH ≤ 0.5×VCC = 1.65V** → 1.8V GPIO 직결 가능. rDS(on) HS+LS 280/330mΩ → 코일 약 4.9V·0.245A로 CLA216 3.0~5.0V 안. θJA 60.9°C/W. VCC = 1.8V는 **UVLO 상승 최대 1.8V**에 걸려 쓰지 않는다 | UMW AP1511B (VDD 5V, 펄스만 — V-001 조건). 권장 전류·열 데이터가 없고 1.8V 입력 VIH도 미확인 |
 | **C14** | **캐리어 GPIO 재배정 (F-001 대조)** | IR_LED_EN = MIPI_TXP1(gpio431), SPARE1 = MIPI_TXM1(gpio430), IIC1(TXM2/TXP2)은 예비 I2C | 초안은 IIC1 패드에 GPIO를 뒀는데 SDK가 IIC1(ADS1015)로 쓴다. IIC2 대체 기능인 TXM1/TXP1은 IIC2가 이미 PWR_GPIO1/2에 있어 비어 있다 | 초안대로 IIC1 패드를 GPIO로 (FW가 i2c1 삭제) |
 | **C15** | **조도센서 레벨 (O-9, v1.1 확정)** | LTR-329를 1.8V CAM_I2C2에 직결 (VDD 3.3V, 레벨시프터 없음) | 데이터시트 Rev C: VIO 1.7~3.6V, 주소 0x29 ≠ 0x3f | LIGHT_SENSE 포토트랜지스터(ALS-PT19) — 미실장 패드만 남긴다 |
 | **C16** | **UPGRAD_KEY 보호** | 버튼 직렬 1kΩ | DTS wifi_pin이 gpio510을 출력으로 쓸 수 있다 | FW가 wifi_pin을 지우면 0Ω |
 | **C17** | **IR LED 설정 (V-001 ⑥)** | AL8860 Rs 0.1Ω(1.0A), 12V에서 직렬 ≤2, 방열 기판 | 1.5A 설정은 절대최대에 여유가 0 | FR4 + thermal via + 0.8A 이하 |
+| **C18** | **C-002 반영 (v1.2)** | ① FPC 대칭 핀배치(12A절) ② ILIM 8.06k ③ 두 AL8860 CTRL이 IR_PWM 하나를 공유 ④ I2C2 풀업은 CORE_1V8 상시 ⑤ DVDD를 AVDD 레일로 | C-002 README 12절 C2-3~C2-8 | 각 행의 차선은 C-002 README에 있다 |
+| **C19** | **ICR·IR 부품 (O-25)** | IR LED VSMA1085400(±40°) 4자리 = 2직렬 × 2스트링, B는 DNP. 풋프린트는 VSMA1085600과 같다(도면 6.550-5366.9-3) | R-006 | VSMA1085600(±60°) |
 
 ## 14. 남은 미확인
 
 **C-002 전 필요:**
 1. ~~LTR-329 데이터시트~~ → **해결 (v1.1):** Rev C 확보, VIO 1.7~3.6V, 핀·랜드는 L-001 README에 대조
 2. ~~AL8860 CTRL~~ → **해결 (v1.1):** DS39014 Rev 8-2 원문 「Leave floating for normal operation · Drive with PWM signal from open-collector or open-drain transistor」 → C8의 N-MOSFET 방식과 맞다
-2-1. **FFC 정격 (새 항목):** 대표 MPN TE 1-84953-0(L-001 L5, 차선 JUSHUO AFA07-S10FCA-00)의 핀당 전류 정격. TE 도면을 아직 읽지 않았다
+2-1. ~~FFC 정격~~ → **해결 (v1.2):** R-004 P3에서 TE 1-84952-0 접점 1A를 데이터시트로 확인. FFC 케이블 도체 정격은 미표기(R-004)
 3. **BTB:** 원품번, 핀당 전류 정격, 짝 높이 (R-004 SUNGTECH 데이터시트)
 4. **코어 VIN 상한:** SY80004·SGM2036 정격. 5V 벅 정밀도와 출력 TVS를 정하는 데 쓴다.
 5. **GC2053 24P 센서 모듈:** 품번·조달처 (O-3)
