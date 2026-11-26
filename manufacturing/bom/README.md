@@ -16,6 +16,7 @@
 | `inputs/front-kicad-bom.csv` | 같은 방법 (`front.kicad_sch` sha256 4bd5b354…1b304) | c4f429b83e7ae6de4293e304dfd6ebb0a37604c8a8f4c7fd24ce24466c8c0eab |
 
 - R-016 (2026-11-27): main eb0da0f의 회로도(C-011 `83728da`)로 다시 내보냈다(종료 0). 결과는 위 두 파일과 바이트까지 같았다(sha256 동일). 그래서 KiCad 입력은 바꾸지 않았다.
+- **R-021 (2026-11-27): 입력 3개를 모두 바꿨다.** `inputs/bom-full.csv` = R-021 레인 t-20261127-051043-fac0의 `docs/research/bom-full.csv`(sha256 93e344677d719e73a13b2c57908b1bc66621c6b461ae260acb51695767db57ba → **O-90 판 c364206b04a7f73e96c54ef7bd4a0efd903ba563329b263bccefd63cd1edd124**: 캐리어 C18·C22를 FH 0402B103K500NT C1524로). KiCad BOM 2개는 회로도 **f0745ed**(C-017, C-016 ea1336b 포함)를 `git show`로 꺼내 같은 명령으로 내보냈다(종료 0 · 0): carrier sha256 9f2b6eea1f530f5b521e15aa075824b077773e209d0593456376b712213f1abd, front sha256 ce2a9138418a36cc1a74bf6ba7e7a3c7068309bfc0041f234fc7ff41e889b8e7. 위 표의 sha256은 이전 판 기록이다.
 
 KiCad 내보내기 명령(KiCad 10.0.8, 종료 코드 carrier 0 · front 0):
 
@@ -71,6 +72,15 @@ python -I make_pcbway_bom.py --bom-full <csv> --kicad-carrier <csv> --kicad-fron
   - 목록과 근거는 `docs/research/r016-ir-string-b.md`에 있다.
 - 확인 실행: 위 8개의 DNP만 지운 front KiCad BOM(scratchpad, 커밋하지 않음)을 `--kicad-front`로 주고 `--out`은 scratchpad로 했다 → **종료 코드 0**. 출력 CSV 2개는 일반 실행 결과와 바이트까지 같다(`cmp`).
 - schematic이 DNP를 해제하면 `inputs/front-kicad-bom.csv`를 다시 내보내고 생성기를 다시 돌린다. 종료 코드 0이 나와야 끝난다.
+
+### R-021 재생성 (2026-11-27, C-016·C-017)
+
+| 보드 | 행 | 참조 지정자 | 실장 | DNS | KiCad 일치 (TP 제외) | 바뀐 것 |
+|---|---|---|---|---|---|---|
+| carrier | 50 | 73 | 66 | 7 | 참조 73 · DNP 7 일치 | R6 8.06k → **6.98k 1%** (UNI-ROYAL 0402WGF6981TCE, C47500) · **O-90: C18·C22** Samsung CL05B103KB5NNNC(C15195, 재고 0) → **FH 0402B103K500NT (C1524)** |
+| front | 40 | 63 | 59 | 4 | 참조 63 · DNP 4 일치 (TP 24개 제외) | **J2 삭제**(BOM/CPL 제외 2.54mm 납땜 패드, O-84) · **R15 삭제** · **R18 1k**·**R19 10k**·**C19 10nF**(FH 0402B103K500NT, C1524) 추가 · TP24 추가 |
+
+- `python -I make_pcbway_bom.py` → **종료 코드 0**
 
 - 음성 시험: carrier KiCad BOM에서 C23을 뺀 입력 → **종료 코드 1** (「BOM에만: ['C23']」 출력)
 - 음성 시험: 입력 파일 없음 → **종료 코드 2**
