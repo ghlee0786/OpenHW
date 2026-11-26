@@ -18,6 +18,7 @@
 - R-016 (2026-11-27): main eb0da0f의 회로도(C-011 `83728da`)로 다시 내보냈다(종료 0). 결과는 위 두 파일과 바이트까지 같았다(sha256 동일). 그래서 KiCad 입력은 바꾸지 않았다.
 - **R-021 (2026-11-27): 입력 3개를 모두 바꿨다.** `inputs/bom-full.csv` = R-021 레인 t-20261127-051043-fac0의 `docs/research/bom-full.csv`(sha256 93e344677d719e73a13b2c57908b1bc66621c6b461ae260acb51695767db57ba → **O-90 판 c364206b04a7f73e96c54ef7bd4a0efd903ba563329b263bccefd63cd1edd124**: 캐리어 C18·C22를 FH 0402B103K500NT C1524로). KiCad BOM 2개는 회로도 **f0745ed**(C-017, C-016 ea1336b 포함)를 `git show`로 꺼내 같은 명령으로 내보냈다(종료 0 · 0): carrier sha256 9f2b6eea1f530f5b521e15aa075824b077773e209d0593456376b712213f1abd, front sha256 ce2a9138418a36cc1a74bf6ba7e7a3c7068309bfc0041f234fc7ff41e889b8e7. 위 표의 sha256은 이전 판 기록이다.
 - **R-022 (2026-11-27): 입력 3개를 다시 바꿨다.** `inputs/bom-full.csv` = R-022 레인 t-20261127-054531-37bc의 `docs/research/bom-full.csv`(sha256 e3fae849edcd7fbdf6c145ecad58107bcf8510a7be7aba717df9290357b8cbd0). KiCad BOM은 회로도 **7760f38**(C-019, C-018 a61dc63 포함)을 `git show`로 꺼내 같은 명령으로 내보냈다(종료 0 · 0): carrier sha256 9f44da04eaf791a8789afd6b05bae157172e6f67980fe7a486510043dd2ba45d, front sha256 fa44d6f9f8185853c27c6ca756439d01df0c3929430d7f782ad1b19b82f821db.
+- **R-023 (2026-11-27):** `inputs/bom-full.csv` = R-023 레인 t-20261127-060023-2ca0의 `docs/research/bom-full.csv`(sha256 23a0aeebd53a7e5983b8af05d99e787dca9f1574242ebb72775a9e614574bce8). KiCad BOM은 회로도 **a2d878c**(C-020)에서 내보냈다(종료 0 · 0): carrier는 R-022와 같음(sha256 9f44da04…a45d), front sha256 b379086400b3131923d15a5453a2dacd4a3cdb3e2f5769d037512fb5e44f1ac0.
 
 KiCad 내보내기 명령(KiCad 10.0.8, 종료 코드 carrier 0 · front 0):
 
@@ -89,6 +90,15 @@ python -I make_pcbway_bom.py --bom-full <csv> --kicad-carrier <csv> --kicad-fron
 |---|---|---|---|---|---|---|
 | carrier | 50 | 73 | 66 | 7 | 참조 73 · DNP 7 일치 | R2 100k → **78.7k 1%** UNI-ROYAL 0402WGF7872TCE C67239 (재고 **2,100 적음** → 차선 ROHM MCR01MRTF7872 C308010 재고 9,100) · R3 13.3k → **10.7k 1%** YAGEO RC0402FR-0710K7L C138068 (재고 2,200, 차선 FH RC-02W1072FT C321262 재고 0) · R6 6.98k → **6.04k 1%** UNI-ROYAL 0402WGF6041TCE C25913 (재고 143,400) · U2 풋프린트 `…_ThermalVias` → ThermalVias 없는 변형 |
 | front | 40 | 66 | 62 | 4 | 참조 66 · DNP 4 일치 (TP 24개 제외) | C19 10nF → **4.7nF**, **C20·C21 4.7nF** 추가 → `C19,C20,C21` FH 0402B472K500NT C1538 (재고 369,900) · R17 10k → **4.7k** (`R1,R5,R7,R19` 10k ×4 / `R9,R10,R17` 4.7k ×3) · **R20 1k** 추가 (`R18,R20`) |
+
+- `python -I make_pcbway_bom.py` → **종료 코드 0**
+
+### R-023 재생성 (2026-11-27, C-020)
+
+| 보드 | 행 | 참조 지정자 | 실장 | DNS | KiCad 일치 (TP 제외) | 바뀐 것 (LCSC 공개 JSON, 확인일 2026-11-27) |
+|---|---|---|---|---|---|---|
+| carrier | 50 | 73 | 66 | 7 | 참조 73 · DNP 7 일치 | 없음 |
+| front | 40 | 69 | 65 | 4 | 참조 69 · DNP 4 일치 (TP 24개 제외) | **D4·D5** BAT54WS 추가 → `D3,D4,D5` BAT54WS-7-F C124205 ×3 (재고 51,975) · **R5** 10k → 100k, **R20** 1k → 100k → 10k `R1,R7,R19` ×3 · 100k `R2,R3,R4,R5,R6,R12,R20` ×7 (C25741 재고 3,379,100) · **R21** 1k 추가 → `R18,R21` ×2 |
 
 - `python -I make_pcbway_bom.py` → **종료 코드 0**
 
