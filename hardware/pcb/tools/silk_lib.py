@@ -95,7 +95,16 @@ MODELS = ("USB_C_Receptacle_HRO_TYPE-C-31-M-12", "RJ45_Hanrun_HR911105A_Horizont
 
 
 def set_model(path, name):
-    """사본의 (model "...") 경로를 저장소 mechanical/models 의 대체 모델로 바꾼다(없으면 블록을 더한다). 모델은 그림이 아니라 E4 대조 밖."""
+    """사본의 (model "...") 경로를 저장소 mechanical/models 의 대체 모델로 바꾼다(없으면 블록을 더한다). 모델은 그림이 아니라 E4 대조 밖.
+    openhw 7종은 mechanical REN-002 apply_models.py(5309621, 연결 표 LINK)를 그대로 부른다 — 보드가 아니라 사본 라이브러리에
+    적용해야 보드 부품과 라이브러리가 같다(lib_footprint_mismatch 0)."""
+    if path.parent.name == "openhw.pretty":
+        import importlib.util
+        spec = importlib.util.spec_from_file_location("apply_models", ROOT / "mechanical/ren002/apply_models.py")
+        mod = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(mod)
+        mod.apply(str(path))
+        return
     if name not in MODELS or not (ROOT / "mechanical/models" / f"{name}.step").exists():
         return
     uri = "${KIPRJMOD}/../../../mechanical/models/" + f"{name}.step"
@@ -185,33 +194,51 @@ def fix_places(board, pcb_path):
     for fp in b.GetFootprints():
         k = fp.GetFPIDAsString()
         count[k] = count.get(k, 0) + 1
-    res = {"saved": [], "multi_left": []}
-    for s in ("F", "B"):
-        op = silk.mask_openings(b, s)
-        for fp in list(b.GetFootprints()):
-            if silk.side_of(fp) != s:
-                continue
-            # 이 부품 실크만 담은 임시 판정: 걸리는 실크가 있는지
+    res = {"saved": [], "multi_left": [], "union": []}
+    ops = {s: silk.mask_openings(b, s) for s in ("F", "B")}
+
+    def needs(fp):
+        s = silk.side_of(fp)
+        log = {"marks": [], "widened": 0, "clipped": {}, "to_fab": {}, "dots_fail": [], "other_shapes": [], "marks_moved": []}
+        tmp = pcbnew.BOARD()
+        c = pcbnew.Cast_to_FOOTPRINT(fp.Duplicate(False))
+        tmp.Add(c)
+        silk.clip_lines(tmp, s, ops[s], edge, log, apply=False)
+        return bool(log.get("conflicts"))
+
+    groups = {}
+    for fp in list(b.GetFootprints()):
+        groups.setdefault(fp.GetFPIDAsString(), []).append(fp)
+    for k, members in groups.items():
+        if not any(needs(fp) for fp in members):
+            continue
+        sides = {silk.side_of(fp) for fp in members}
+        if len(sides) > 1:  # 면이 다른 같은 종류는 한 사본으로 맞출 수 없다
+            res["multi_left"] += [{"ref": fp.GetReference(), "fpid": k, "why": "면이 다름"} for fp in members]
+            continue
+        s = sides.pop()
+        # 같은 종류가 여러 개면 O-74 ③ 보완(orch): 자리마다 필요한 자르기를 합친 공통 사본 하나 — 사본을 자리마다 옮겨 차례로 자른다
+        tmp = pcbnew.BOARD()
+        c = pcbnew.Cast_to_FOOTPRINT(members[0].Duplicate(False))
+        tmp.Add(c)
+        cut = 0
+        for fp in members:
+            c.SetPosition(fp.GetPosition())
+            c.SetOrientation(fp.GetOrientation())
             log = {"marks": [], "widened": 0, "clipped": {}, "to_fab": {}, "dots_fail": [], "other_shapes": [], "marks_moved": []}
-            tmp = pcbnew.BOARD()
-            c = pcbnew.Cast_to_FOOTPRINT(fp.Duplicate(False))
-            tmp.Add(c)
-            silk.clip_lines(tmp, s, op, edge, log)
+            silk.clip_lines(tmp, s, ops[s], edge, log)
             for _, g in log.pop("drop", []):
                 g.SetWidth(DROP_W)
-            if not log["clipped"].get(s) and not log["marks_moved"]:
-                continue
-            k = fp.GetFPIDAsString()
-            if count[k] > 1:
-                res["multi_left"].append({"ref": fp.GetReference(), "fpid": k, "side": s})
-                continue
-            lib = k.split(":", 1)[0]
-            IO.FootprintSave(str(od / f"{lib}.pretty"), c)
-            nm = k.split(":", 1)[1]
-            graft(od / f"{lib}.pretty" / f"{nm}.kicad_mod", src_path(lib) / f"{nm}.kicad_mod")
-            res["saved"].append({"ref": fp.GetReference(), "fpid": k})
+            cut += log["clipped"].get(s, 0) + len(log["marks_moved"])
+        lib, nm = k.split(":", 1)
+        IO.FootprintSave(str(od / f"{lib}.pretty"), c)
+        graft(od / f"{lib}.pretty" / f"{nm}.kicad_mod", src_path(lib) / f"{nm}.kicad_mod")
+        set_model(od / f"{lib}.pretty" / f"{nm}.kicad_mod", nm)
+        left = sum(1 for g in c.GraphicalItems() if g.GetLayer() in (pcbnew.F_SilkS, pcbnew.B_SilkS) and g.GetWidth() != DROP_W)
+        (res["saved"] if len(members) == 1 else res["union"]).append(
+            {"refs": [fp.GetReference() for fp in members], "fpid": k, "cut": cut, "silk_left": left})
     json.dump(res, open(ROOT / f"hardware/pcb/route/silk-lib-{board}.json", "w", encoding="utf-8"), ensure_ascii=False, indent=1)
-    print(f"{board}: 자리별 사본 {len(res['saved'])} {[r['ref'] for r in res['saved']]} · 여러 개라 못 고침 {len(res['multi_left'])} "
+    print(f"{board}: 자리별 사본 {[r['refs'] for r in res['saved']]} · 합친 공통 사본 {[r['refs'] for r in res['union']]} · 못 고침 {len(res['multi_left'])} "
           f"{[r['ref'] for r in res['multi_left']]}")
 
 

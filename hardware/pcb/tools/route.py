@@ -909,6 +909,9 @@ def main():
 
     def connect(net, nxt, widths, layers, vtype, margin, cap, tree_pads=None, only_pad=None):
         """패드 nxt 를 그 넷의 이미 이어진 구리(나무)에 잇는다. only_pad 면 그 패드에만. 성공하면 True."""
+        if nxt["ref"] == "J1" and netclass(net)["name"] == "PWR_5V" and 0.3 not in widths:
+            # BTB J1(0.5 피치, 패드 폭 0.3)의 5V 핀은 0.6 으로 나올 수 없다 — 핀마다 0.3 탈출(5V 핀 4개 병렬, 핀당 ≈0.33A, R-020 RQ-17 본선은 0.6 이상)
+            widths = list(widths) + [0.3]
         own = {B.netid[net]}
         if only_pad is not None:
             tree_cells = set(pad_cells(only_pad, [0, 1, 2, 3]))
