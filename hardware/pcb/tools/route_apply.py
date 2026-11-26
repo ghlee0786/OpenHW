@@ -100,7 +100,9 @@ def main():
         z.SetMinThickness(MM(0.2))
         z.SetThermalReliefGap(MM(0.3))
         z.SetThermalReliefSpokeWidth(MM(0.3))
-        z.SetPadConnection(pcbnew.ZONE_CONNECTION_THERMAL)
+        # THT 패드만 열 완화, SMD 패드는 직결 — 외층 열 완화 살이 트랙에 막혀 1개만 남던 문제(starved_thermal, P-003) 해소.
+        # 리플로 조립에서 흔한 설정. 0402 툼스톤 위험은 조립 검사(AOI)로 본다.
+        z.SetPadConnection(pcbnew.ZONE_CONNECTION_THT_THERMAL)
         z.SetIslandRemovalMode(pcbnew.ISLAND_REMOVAL_MODE_ALWAYS)
         ol = z.Outline()
         ol.NewOutline()

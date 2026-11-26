@@ -36,6 +36,8 @@ HS = {"CSI_100", "MDI_100", "USB_90"}
 # 쌍으로 깔 길이가 없는 짧은 커넥터–ESD 구간: 두 부품 패드 전체를 감싸는 탈출 구역(DP_BRK)으로 두고 단선으로 잇는다
 #  캐리어 U3(USBLC6) ↔ J3(USB-C): 핀 사이 약 2.1mm — 쌍 탈출(패드 끝 +0.85)끼리 겹쳐 쌍 배선 불가
 EXTRA_BRK = {"carrier": [("U3", "J3")], "front": []}
+# 순서 잇기 (O-49): USB 테스트점을 가지선 없이 선 위에 — 쌍이 끝난 U3 핀 → U3 반대편 핀(관통형) → TP → 가까운 USB-C 핀 → 나머지
+CHAIN = {"carrier": {"/USB_DP": ("U3", "TP8", "J3"), "/USB_DN": ("U3", "TP9", "J3")}, "front": {}}
 # P/N 꼬임 구간 (O-47): J1 쪽 순서와 RJ45 핀 순서가 엇갈려 ESD → RJ45 사이에서만 P·N 을 비아로 교차.
 #  두 부품의 그 넷 패드를 감싸는 규칙 영역 DP_TWIST 안에서 P·N 을 단선으로 잇는다(DRU mdi_twist_*). 영역 밖 규칙은 그대로.
 TWIST = {"carrier": [("MDI_TX", ("D4", "J5"), ("/EPHY_TXP", "/EPHY_TXN")),
@@ -252,7 +254,8 @@ class Board:
     def astar(self, win, starts, targets, passable, viaok, layers, via_cost=30.0, pair_off=None, start_dir=8, end_dir=None, cap=200_000,
               no_via_near=None, min_run=0):
         """starts/targets: {(L, r, c)} 창 좌표. pair_off: 쌍 비아 간격(셀) — 비아는 진행 방향 직각 양쪽.
-        min_run>0 (쌍): 90° 꺾임 금지, 꺾임·비아 앞뒤 최소 직진 min_run 셀 — 띄운 P/N 선이 뒤집히지 않게."""
+        min_run>0 (쌍): 90° 꺾임 금지, 꺾임·비아 앞뒤 최소 직진 min_run 셀 — 띄운 P/N 선이 뒤집히지 않게.
+        상태 비용·이전 칸은 numpy 배열(float32/int32)에 둔다 — 파이썬 사전은 상태 수백만에서 메모리가 GB 단위로 커진다(O-48)."""
         r0, r1, c0, c1 = win
         H, W = r1 - r0 + 1, c1 - c0 + 1
         tset = set(targets)
@@ -267,27 +270,47 @@ class Board:
             dc = max(tc0 - c, 0, c - tc1)
             return max(dr, dc) + 0.414 * min(dr, dc)
 
+        Ls = list(layers)
+        li_of = {L: i for i, L in enumerate(Ls)}
+        R = min_run + 1
+        N = len(Ls) * H * W * 9 * R
+        best = np.full(N, np.inf, np.float32)
+        prev = np.full(N, -1, np.int32)
+
+        def idx(L, r, c, d, run):
+            return (((li_of[L] * H + r) * W + c) * 9 + d) * R + run
+
+        def unidx(k):
+            run = k % R
+            k //= R
+            d = k % 9
+            k //= 9
+            c = k % W
+            k //= W
+            r = k % H
+            li = k // H
+            return Ls[li], r, c, d, run
+
         lcost = {0: 1.0, 3: 1.0, 2: 1.6, 1: 99.0}
         max_turn = 1 if min_run else 2
         openh = []
-        best = {}
-        prev = {}
         for (L, r, c) in starts:
-            if L in layers:
-                s = (L, r, c, start_dir, min_run)
-                best[s] = 0.0
-                heapq.heappush(openh, (h(r, c), 0.0, s))
+            if L in li_of:
+                k = idx(L, r, c, start_dir, min_run)
+                best[k] = 0.0
+                heapq.heappush(openh, (h(r, c), k))
         n = 0
         while openh:
-            f, gcost, s = heapq.heappop(openh)
-            if best.get(s, 1e18) < gcost - 1e-9:
+            f, k = heapq.heappop(openh)
+            L, r, c, d, run = unidx(k)
+            gcost = float(best[k])
+            if f > gcost + h(r, c) + 1e-3:  # 더 싼 길로 이미 갱신된 낡은 항목
                 continue
-            L, r, c, d, run = s
             if (L, r, c) in tset and (end_dir is None or d == end_dir) and run >= min_run:
-                path = [s]
-                while path[-1] in prev:
-                    path.append(prev[path[-1]])
-                return [q[:4] for q in path[::-1]]
+                path = [k]
+                while prev[path[-1]] >= 0:
+                    path.append(int(prev[path[-1]]))
+                return [unidx(q)[:4] for q in path[::-1]]
             n += 1
             if n > cap:
                 return None
@@ -307,12 +330,12 @@ class Board:
                 if dr and dc and not (passable[L][r, cc] and passable[L][rr, c]):
                     continue
                 nrun = min(run + 1, min_run) if (turn == 0 and d != 8) else (1 if min_run else 0)
-                ns = (L, rr, cc, nd, nrun)
                 ng = gcost + (1.4142 if dr and dc else 1.0) * lcost[L] + tp
-                if ng < best.get(ns, 1e18):
-                    best[ns] = ng
-                    prev[ns] = s
-                    heapq.heappush(openh, (ng + h(rr, cc), ng, ns))
+                nk = idx(L, rr, cc, nd, nrun)
+                if ng < best[nk]:
+                    best[nk] = ng
+                    prev[nk] = k
+                    heapq.heappush(openh, (ng + h(rr, cc), nk))
             # 층 바꿈
             if d == 8 and pair_off:
                 continue
@@ -330,15 +353,15 @@ class Board:
                     continue
             elif not viaok[r, c]:
                 continue
-            for L2 in layers:
+            for L2 in Ls:
                 if L2 == L or not passable[L2][r, c]:
                     continue
-                ns = (L2, r, c, d, 0)
                 ng = gcost + via_cost
-                if ng < best.get(ns, 1e18):
-                    best[ns] = ng
-                    prev[ns] = s
-                    heapq.heappush(openh, (ng + h(r, c), ng, ns))
+                nk = idx(L2, r, c, d, 0)
+                if ng < best[nk]:
+                    best[nk] = ng
+                    prev[nk] = k
+                    heapq.heappush(openh, (ng + h(r, c), nk))
         return None
 
     # --- 경로 → 선분 ---
@@ -520,7 +543,7 @@ def main():
             targets = {(L, c1[0] - r0, c1[1] - cc0) for L in eL}
             nov = [(c0[0] - r0, c0[1] - cc0), (c1[0] - r0, c1[1] - cc0)]  # 탈출점 1.2mm 안에는 쌍 비아 금지
             path = B.astar(win, starts, targets, passable, viaok, layers, via_cost=60.0, pair_off=(VIA["dia"] + 0.25) / 2 / G,
-                           start_dir=sd, end_dir=ed, cap=3_000_000, no_via_near=(nov, 1.2 / G), min_run=6)
+                           start_dir=sd, end_dir=ed, cap=4_000_000, no_via_near=(nov, 1.2 / G), min_run=6)
             if not path:
                 diag = {f"start L{L}": bool(passable[L][r, c]) for L, r, c in starts} | \
                        {f"end L{L}": bool(passable[L][r, c]) for L, r, c in targets}
@@ -755,6 +778,13 @@ def main():
         json.dump({"tracks": B.tracks, "vias": B.vias, "failed": B.failed, "report": report,
                 "areas": [{"name": "DP_BRK", "layer": ln, "rect": list(r)} for i in infos for ln, r in i["brk"]] + tune_areas + extra_areas, "zones": th_zones, "masks": th_masks}, open(sys.argv[3], "w", encoding="utf-8"), ensure_ascii=False, indent=1)
         return
+    def checkpoint(stage):
+        json.dump({"tracks": B.tracks, "vias": B.vias, "failed": B.failed, "report": report, "stage": stage,
+                   "areas": [{"name": "DP_BRK", "layer": ln, "rect": list(r)} for i in infos for ln, r in i["brk"]] + tune_areas + extra_areas,
+                   "zones": th_zones, "masks": th_masks},
+                  open(sys.argv[3] + f".{stage}.json", "w", encoding="utf-8"), ensure_ascii=False)
+        print(f"중간 저장: {sys.argv[3]}.{stage}.json", flush=True)
+    checkpoint("pairs")
     # 2) 단선 넷 (GND 제외, 쌍 넷의 남은 패드 포함)
     pair_nets = {x for p in PAIRS[board_name] for x in (p[1], p[2])}
     nets = {}
@@ -796,14 +826,17 @@ def main():
         roots = np.array([find(i) for i in range(base + 1)])
         return np.isin(roots[lab], list(seeds)) & (lab > 0)
 
-    def connect(net, nxt, widths, layers, vtype, margin, cap, tree_pads=None):
-        """패드 nxt 를 그 넷의 이미 이어진 구리(나무)에 잇는다. 성공하면 True."""
+    def connect(net, nxt, widths, layers, vtype, margin, cap, tree_pads=None, only_pad=None):
+        """패드 nxt 를 그 넷의 이미 이어진 구리(나무)에 잇는다. only_pad 면 그 패드에만. 성공하면 True."""
         own = {B.netid[net]}
-        tm = tree_mask(net, tree_pads) if tree_pads else (B.occ == B.netid[net])
-        tree_cells = set()
-        for L in range(4):
-            rs, cs = np.nonzero(tm[L])
-            tree_cells |= {(L, r, c) for r, c in zip(rs, cs)}
+        if only_pad is not None:
+            tree_cells = set(pad_cells(only_pad, [0, 1, 2, 3]))
+        else:
+            tm = tree_mask(net, tree_pads) if tree_pads else (B.occ == B.netid[net])
+            tree_cells = set()
+            for L in range(4):
+                rs, cs = np.nonzero(tm[L])
+                tree_cells |= {(L, r, c) for r, c in zip(rs, cs)}
         mine = pad_cells(nxt, layers)
         tree_cells -= mine
         if not tree_cells:
@@ -817,6 +850,8 @@ def main():
             passable, viaok = B.free_maps(win, own, w / 2, vtype["dia"] / 2, layers)
             r0, r1, c0, c1 = win
             starts = {(L, r - r0, c - c0) for L, r, c in mine if r0 <= r <= r1 and c0 <= c <= c1}
+            ok_st = {s for s in starts if passable[s[0]][s[1], s[2]]}  # 간격을 만족하는 패드 칸에서 출발(가장자리 출발로 이웃 패드 간격 위반 방지)
+            starts = ok_st or starts
             targets = {(L, r - r0, c - c0) for L, r, c in tree_cells if L in layers and r0 <= r <= r1 and c0 <= c <= c1}
             path = B.astar(win, starts, targets, passable, viaok, layers, cap=cap) if starts and targets else None
             if not path:
@@ -832,7 +867,29 @@ def main():
         return False
 
     retry = []
+    chained = {}
+    for net, (ic, tp, conn) in CHAIN[board_name].items():
+        if net not in nets:
+            continue
+        pads_ = nets[net]
+        ic_pads = [q for q in pads_ if q["ref"] == ic]
+        start = next((q for q in ic_pads if any(math.dist(q["pos"], t_["a"]) < 0.3 or math.dist(q["pos"], t_["b"]) < 0.3
+                                               for t_ in B.tracks if t_["net"] == net)), ic_pads[0])
+        seq = [start] + [q for q in ic_pads if q is not start] + [q for q in pads_ if q["ref"] == tp]
+        cps = sorted([q for q in pads_ if q["ref"] == conn], key=lambda q: math.dist(q["pos"], seq[-1]["pos"]))
+        seq += cps
+        nc_ = netclass(net)
+        vt = VIA
+        ok_all = True
+        for a_, b_ in zip(seq[:-1], seq[1:]):
+            if not connect(net, b_, [nc_["track_width"], 0.15], [0, 3], vt, 4.0, 300_000, only_pad=a_):
+                ok_all = False
+                B.failed.append(f"{net} {b_['ref']}.{b_['num']} (순서 잇기)")
+        print(f"순서 잇기 {net}: " + " → ".join(f"{q['ref']}.{q['num']}" for q in seq) + (" 완료" if ok_all else " 일부 실패"))
+        chained[net] = seq
     for net in order:
+        if net in chained:
+            continue
         nc = netclass(net)
         pads = nets[net]
         hs = nc["name"] in HS
@@ -880,6 +937,7 @@ def main():
         else:
             B.failed.append(f"{net} {nxt['ref']}.{nxt['num']}")
 
+    checkpoint("signals")
     # 3) GND 비아 (SMD GND 패드마다)
     gnd_ok = gnd_fail = 0
     if "/GND" in B.netid:
