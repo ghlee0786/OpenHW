@@ -85,7 +85,7 @@
 | SIM-001a | orch (O-80, VD-001 7) | schematic t18z | ngspice 격리 설치(1회) + 전원 경로 시뮬: TPS26600·TPS54302·LDO/레일·기동 순서 — 기준 먼저 커밋 | hardware/sim (새 레인) + C:/Users/gh/tools/ngspice | 파형·수치·판정 JSON, 커밋 | queued(C-014 뒤) |
 | SIM-001b | orch (O-80, VD-001 7) | firmware t18w | AL8860×2·DRV8837 ICR·Q6/Q7 역급전·I2C 상승/리셋 RC 시뮬 — 기준 먼저 커밋 | hardware/sim (새 레인) | 파형·수치·판정 JSON, 커밋 | queued(F-008 뒤) |
 | REN-001 | 사용자 목표 → lead → orch | mechanical t18x | VD-001 끝점: kicad-cli PCB 레이트레이싱 렌더 + Blender 5.2 제품 렌더(STEP→메시 무료 도구, 재질, 2560×1440, 턴테이블 8초) — 현재 배선본으로 장면 먼저 | mechanical/** (M-006 레인), validation/runtime/vd001/render | 파일 수·해상도·STEP 해시(기계), 사람 눈은 HTML | running |
-| C-015 | orch (O-82) | schematic t18z | 계약 v1.12: C-014 불일치 8 해소(회로도 기준) + DNP 목록 절 신설·판정화 | hardware/schematic/hw-fw-contract.md, tools/contract_check.py (C-014 레인) | contract_check 종료 0, selftest 0, 커밋 | running |
+| C-015 | orch (O-82) | schematic t18z | 계약 v1.12: C-014 불일치 8 해소(회로도 기준) + DNP 목록 절 신설·판정화 | hardware/schematic/hw-fw-contract.md, tools/contract_check.py (C-014 레인) | contract_check 종료 0, selftest 0, 커밋 | completed — 0c2e8e7: 계약 v1.12(8곳 문구 정정, 12B DNP 목록), 회로도 변경 0, README 10절 B DNP 행 정정. orch 재실행 contract_check 종료 0(384줄 불일치 0·ERC 0·netcompare 0)·selftest 0(18건) → VD-001 조건 1 통과(C-016 반영 뒤 재판정) |
 | C-016 | orch (O-83) | schematic t18z | 코어 J2-32(PWR_WAKEUP1)에서 ALS_INT_RSV 분리·미연결, 계약 v1.12 반영 | hardware/schematic/** (C-014 레인) | ERC 0, 의도한 넷 차이만, contract_check 0, 커밋 | queued(C-015 뒤) |
 | F-009 | orch (O-83) | firmware t18w | DTS·daynight에서 ALS_INT GPIO 사용 제거(있으면), 호스트 시험 재실행 | firmware/** (새 레인) | 시험 종료 0, 커밋 | queued(SIM-001b 뒤) |
 
