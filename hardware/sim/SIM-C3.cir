@@ -7,13 +7,16 @@ C33 c33 0 12u
 V18 s18 0 1.8
 R18p s18 c18 0.1
 C18p c18 0 8.5u
-* 전면 CAM_EN (1 ms): Q3 → CAM_PG, Q7 → CAM_1V8_PD
+* 전면 CAM_EN (1 ms): Q3 → CAM_PG (→ R20 1k → Q1, → R5 10k → Q2), Q7 → CAM_1V8_PD
 Ven en 0 PULSE(0 1 1m 1u 1u 1 2)
 R4 c33 pg 100k
 Sq3 pg 0 en 0 SQ
 R5 pg pgav 10k
-Mq1 iov pg c33 c33 PAO
-Cg1 pg c33 645p
+Rf20 pg pgio 1k
+Cf20 pgio iov 4.7n
+Mq1 iov pgio c33 c33 PAO
+Cg1 pgio c33 645p
+Cf21 pgav avd 4.7n
 Mq2 avd pgav c33 c33 PAO
 Cg2 pgav c33 645p
 C7 iov 0 1u

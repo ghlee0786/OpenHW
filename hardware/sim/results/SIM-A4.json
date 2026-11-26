@@ -10,7 +10,7 @@
    "U1",
    "J2(어댑터)"
   ],
-  "schematic_commit": "a61dc63"
+  "schematic_commit": "7760f38"
  },
  "model": {
   "source": "데이터시트 동작 모델 (어댑터·TPS26600·TPS54302 평균) + IR 부하 25 % 듀티 전류원",
@@ -26,7 +26,7 @@
    "op": "<=",
    "limit": 3.34,
    "unit": "A",
-   "value": 1.861845,
+   "value": 1.837219,
    "corner": "GST40A12 Vout 11.64 V",
    "pass": true
   },
@@ -35,7 +35,7 @@
    "op": "<=",
    "limit": 1.9,
    "unit": "A",
-   "value": 0.939527,
+   "value": 0.915214,
    "corner": "8 ms 창",
    "pass": true
   },
@@ -44,7 +44,7 @@
    "op": "<=",
    "limit": 3.51,
    "unit": "A",
-   "value": 2.765092,
+   "value": 2.740152,
    "corner": "I(OL) 최대 (R6 −1 %, +5 %)",
    "pass": true
   },
@@ -53,7 +53,7 @@
    "op": ">=",
    "limit": 4.75,
    "unit": "V",
-   "value": 5.076785,
+   "value": 4.979261,
    "corner": "",
    "pass": true
   },
@@ -62,7 +62,7 @@
    "op": ">=",
    "limit": 4.75,
    "unit": "V",
-   "value": 5.076785,
+   "value": 4.979261,
    "corner": "1 ms 감지 가정",
    "pass": true
   },
@@ -71,7 +71,7 @@
    "op": ">=",
    "limit": 4.75,
    "unit": "V",
-   "value": 5.076785,
+   "value": 4.979261,
    "corner": "판정 제외",
    "pass": true
   },
@@ -80,7 +80,7 @@
    "op": "<=",
    "limit": 2.08,
    "unit": "A",
-   "value": 1.861845,
+   "value": 1.837219,
    "corner": "판정 제외",
    "pass": true
   },
@@ -89,7 +89,7 @@
    "op": "<=",
    "limit": 2.29,
    "unit": "A",
-   "value": 2.998435,
+   "value": 2.982991,
    "corner": "판정 제외",
    "pass": false
   },
@@ -98,7 +98,7 @@
    "op": ">=",
    "limit": 4.75,
    "unit": "V",
-   "value": 3.91367,
+   "value": 3.923233,
    "corner": "판정 제외",
    "pass": false
   },
@@ -124,5 +124,5 @@
   "sha256": "59225971… (7z, firmware 설치·검증 — orch O-81)",
   "path": "C:/Users/gh/tools/ngspice/47/Spice64/bin/ngspice_con.exe"
  },
- "notes": "GST40A12 정전류: 정상 피크 1.862 A·평균 0.940 A, 과부하 피크 2.765 A, 5V 최소 5.077 V / hiccup 5V 최소 5.077 V. GST60A12 정전류 5V 최소 5.077 V. GST25A12(2.29 A): 과부하 피크 2.998 A, 5V 최소 정전류 3.914 V · hiccup 0.000 V, 12V_IN 최소 4.06 V. IR 두 스트링을 같은 위상(최악)으로 둠. 어댑터 출력 C 100 µF·감지 1 ms 는 가정."
+ "notes": "GST40A12 정전류: 정상 피크 1.837 A·평균 0.915 A, 과부하 피크 2.740 A, 5V 최소 4.979 V / hiccup 5V 최소 4.979 V. GST60A12 정전류 5V 최소 4.979 V. GST25A12(2.29 A): 과부하 피크 2.983 A, 5V 최소 정전류 3.923 V · hiccup 0.000 V, 12V_IN 최소 4.06 V. IR 두 스트링을 같은 위상(최악)으로 둠. 어댑터 출력 C 100 µF·감지 1 ms 는 가정."
 }

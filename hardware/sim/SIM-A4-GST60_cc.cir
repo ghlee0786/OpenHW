@@ -65,8 +65,8 @@ Bin vin 0 I = max(v(il), 0) * v(sw) / max(v(vin), 1) / 0.92
 
 Xbk in12 v5 fb TPS54302 params: L=1e-05 FSW=400000.0
 Cv5 v5 0 6.993e-05
-Rtop v5 fb 100k
-Rbot fb 0 13.3k
+Rtop v5 fb 78700
+Rbot fb 0 10700
 Cff v5 fb 75p
 Rld v5 0 3.846
 Vpwm pwm 0 PULSE(0 1 9m 1u 1u 0.5m 2m)
