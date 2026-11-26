@@ -15,6 +15,7 @@
 import fnmatch
 import heapq
 import json
+import os
 import math
 import sys
 from pathlib import Path
@@ -723,14 +724,14 @@ def main():
         pid = B.netid[partner]
         placed = 0
 
-        def shape(a, u, nrm, Ls, k, H):
+        def shape(a, u, nrm, Ls, k, H, at=0.5):
             """k 개 굴곡의 점 목록과 발 길이. H ≤ 2c 이면 삼각(높이 H)."""
             tri = H <= 2 * cc_
             foot1 = (2 * H + top) if tri else (4 * cc_ + top)
             foot = k * foot1 + (k - 1) * gsp
             if foot + 0.8 > Ls:
                 return None
-            p = a + u * (Ls - foot) / 2
+            p = a + u * (0.4 + (Ls - foot - 0.8) * at)  # at: 직선 위 굴곡 묶음 자리(0 = 시작 쪽, 1 = 끝 쪽)
             pts = []
             for _ in range(k):
                 if tri:
@@ -754,6 +755,7 @@ def main():
         def add_of(k, H):
             return k * (2 * H * (math.sqrt(2) - 1) if H <= 2 * cc_ else 2 * H - K2)
 
+        why = []  # 진단: (직선 길이, 굴곡 수, 높이, 막은 넷 id)
         # 긴 직선부터, 들어가는 만큼 굴곡을 나눠 넣는다
         for t in sorted([t for t in B.tracks if t["net"] == short], key=lambda t: -math.dist(t["a"], t["b"])):
             if need <= lim / 2:
@@ -780,20 +782,27 @@ def main():
                 per = need / k
                 H = per / (2 * (math.sqrt(2) - 1)) if per <= 2 * (2 * cc_) * (math.sqrt(2) - 1) else (per + K2) / 2
                 H = min(H, 0.8)
-                for HH in sorted({H, min(H, 0.6), min(H, 0.45), min(H, 0.3)}, reverse=True):
-                    body = shape(a, u, nrm, Ls, k, HH)
+                for HH, at in [(h_, a_) for h_ in sorted({H, min(H, 0.6), min(H, 0.45), min(H, 0.3)}, reverse=True)
+                               for a_ in (0.5, 0.25, 0.75, 0.0, 1.0)]:
+                    if got:
+                        break
+                    body = shape(a, u, nrm, Ls, k, HH, at)
                     if body is None:
                         continue
                     new = [tuple(a)] + body + [tuple(b)]
                     ok = True
                     mrg = int((w / 2 + HS_CLR + EPS) / G) + 1
-                    for (x0, y0), (x1, y1) in zip(new[:-1], new[1:]):
+                    for (x0, y0), (x1, y1) in zip(new[1:-2], new[2:-1]):  # 굴곡 부분만 검사(앞뒤 직선은 원래 트랙의 일부라 이미 규칙 안)
                         for tt in np.linspace(0, 1, 30):
                             rr, cc = B.cell(x0 + (x1 - x0) * tt, y0 + (y1 - y0) * tt)
                             blk = B.occ[L, rr - mrg:rr + mrg + 1, cc - mrg:cc + mrg + 1]
                             tb = B.trk[L, rr - mrg:rr + mrg + 1, cc - mrg:cc + mrg + 1]
-                            if np.any((blk != 0) & (blk != B.netid[short]) & ~((blk == pid) & tb)):
+                            bad_ = (blk != 0) & (blk != B.netid[short]) & ~((blk == pid) & tb)
+                            if np.any(bad_):
                                 ok = False
+                                why.append((round(Ls, 2), k, round(HH, 2), int(blk[bad_][0])))
+                                if os.environ.get("TUNE_DEBUG") and abs(Ls - float(os.environ["TUNE_DEBUG"])) < 0.05:
+                                    print("  보정 진단", round(Ls, 2), k, round(HH, 2), at, int(blk[bad_][0]), B.xy(rr, cc), "nrm", nrm.round(2), "a", a.round(2), "b", b.round(2))
                                 break
                         if not ok:
                             break
@@ -820,7 +829,11 @@ def main():
         if placed:
             print(f"쌍 {i['name']}: 쌍 안 보정 {short} 굴곡 {placed}개 · 남은 차 {max(need, 0):.2f} mm")
         if need > lim:
-            print(f"쌍 {i['name']}: 쌍 안 보정 자리 없음 (차 {need:.2f} mm)")
+            inv = {v: k_ for k_, v in B.netid.items()}
+            seen = {}
+            for Ls_, k_, h_, nid_ in why:
+                seen.setdefault(Ls_, (k_, h_, inv.get(nid_, nid_)))
+            print(f"쌍 {i['name']}: 쌍 안 보정 자리 없음 (차 {need:.2f} mm) · 막힌 직선(길이: 굴곡 수, 높이, 막은 것) {seen}")
         return need
 
     for i in infos:

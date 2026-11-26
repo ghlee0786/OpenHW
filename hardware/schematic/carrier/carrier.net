@@ -1,8 +1,8 @@
 (export
 	(version "E")
 	(design
-		(source "C:\\workspace_python\\OpenHW\\.harness-worktrees\\t-20261126-171922-251f\\hardware\\schematic\\carrier\\carrier.kicad_sch")
-		(date "2026-11-27T05:11:45")
+		(source "C:\\workspace_python\\OpenHW\\.harness-worktrees\\t-20261127-041255-b9cd\\hardware\\schematic\\carrier\\carrier.kicad_sch")
+		(date "2026-11-27T05:37:22")
 		(tool "Eeschema 10.0.8")
 		(sheet
 			(number "1")
@@ -11,7 +11,7 @@
 			(title_block
 				(title "OpenHW carrier board (rear) - reCamera Core 2002 J2 mate")
 				(company "OpenHW PoC")
-				(rev "C-017")
+				(rev "C-019")
 				(date "2026-11-27")
 				(source "carrier.kicad_sch")
 				(comment
@@ -2912,7 +2912,7 @@
 		)
 		(comp
 			(ref "R2")
-			(value "100k 1%")
+			(value "78.7k 1%")
 			(footprint "Resistor_SMD:R_0402_1005Metric")
 			(fields
 				(field
@@ -2966,7 +2966,7 @@
 		)
 		(comp
 			(ref "R3")
-			(value "13.3k 1%")
+			(value "10.7k 1%")
 			(footprint "Resistor_SMD:R_0402_1005Metric")
 			(fields
 				(field
@@ -3128,7 +3128,7 @@
 		)
 		(comp
 			(ref "R6")
-			(value "6.98k 1%")
+			(value "6.04k 1%")
 			(footprint "Resistor_SMD:R_0402_1005Metric")
 			(fields
 				(field
@@ -5620,14 +5620,14 @@
 		(comp
 			(ref "U2")
 			(value "TPS26600PWPR")
-			(footprint "Package_SO:HTSSOP-16-1EP_4.4x5mm_P0.65mm_EP3.4x5mm_Mask2.66x2.46mm_ThermalVias")
+			(footprint "Package_SO:HTSSOP-16-1EP_4.4x5mm_P0.65mm_EP3.4x5mm_Mask2.66x2.46mm")
 			(fields
 				(field
 					(name "MPN") "TI TPS26600PWPR (LCSC C544399)")
 				(field
 					(name "Note") "UVLO=IN (no UVLO); OVP=RTN internal 33V; MODE open = circuit-breaker + auto-retry (C-004 C4-6); RTN=GND allowed (SLVSDG2G, reverse polarity handled by Q1); FLT/IMON unused (leave floating per datasheet)")
 				(field
-					(name "Footprint") "Package_SO:HTSSOP-16-1EP_4.4x5mm_P0.65mm_EP3.4x5mm_Mask2.66x2.46mm_ThermalVias")
+					(name "Footprint") "Package_SO:HTSSOP-16-1EP_4.4x5mm_P0.65mm_EP3.4x5mm_Mask2.66x2.46mm")
 				(field
 					(name "Datasheet")
 				)
@@ -8564,7 +8564,7 @@
 		(net
 			(code "24")
 			(name "/MDI_RCT")
-			(class "Default")
+			(class "MDI_100")
 			(node
 				(ref "C16")
 				(pin "1")
@@ -8580,7 +8580,7 @@
 		(net
 			(code "25")
 			(name "/MDI_TCT")
-			(class "Default")
+			(class "MDI_100")
 			(node
 				(ref "C15")
 				(pin "1")

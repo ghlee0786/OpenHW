@@ -136,6 +136,18 @@ def pre_route(B, board_name, LAYERS, CLR, EPS, G):
             if w * h < 2.0:
                 continue
             cx, cy = p["pos"]
+            if board_name == "carrier" and p["ref"] == "U2":
+                # C-018: U2 를 ThermalVias 없는 HTSSOP-16-1EP 로 바꿨다 — 노출 패드 안 Ø0.6/0.3 열 비아(#21 구멍 0.3)를 1.0 격자로
+                x0, x1 = min(q[0] for q in pts) + 0.5, max(q[0] for q in pts) - 0.5
+                y0, y1 = min(q[1] for q in pts) + 0.5, max(q[1] for q in pts) - 0.5
+                nx_, ny_ = int((x1 - x0) / 1.0) + 1, int((y1 - y0) / 1.0) + 1
+                ox_, oy_ = (x0 + x1 - (nx_ - 1) * 1.0) / 2, (y0 + y1 - (ny_ - 1) * 1.0) / 2
+                k_ = 0
+                for ix in range(nx_):
+                    for iy in range(ny_):
+                        B.add_via("/GND", (round(ox_ + ix * 1.0, 4), round(oy_ + iy * 1.0, 4)), TVIA)
+                        k_ += 1
+                print(f"열: U2 노출 패드 안 열 비아 {k_} (Ø{TVIA['dia']}/{TVIA['drill']}, 1.0 격자)")
             n = 0
             for ang in np.linspace(0, 2 * math.pi, 16, endpoint=False):
                 if n >= 6:
