@@ -50,7 +50,7 @@
 | R-011 | orch (단계 6 준비) | research t18s | PCBWay 9열 BOM 생성기(보드별)·참조 지정자 일치 검사 | manufacturing/bom/** | 스크립트 종료 0·일치 검사, 레인·커밋 | completed — 레인 t-20261126-190248-efe1 커밋 7dc3996, orch 재실행 종료 0. carrier 50행(참조 73)·front 39행(참조 62) KiCad 일치, 음성 시험 검출 |
 | R-012 | orch | research t18s | GH 6P 하니스 AWG26 전선 MPN(SSHL 허용 외경 안) | bom-full.csv·manufacturing/bom | 품번·차선·재고, 커밋 | completed — 9a5fbfb·dce3c91, orch 생성기 재실행 0. 1안 Alpha Wire 422607 UL1061 26AWG(OD 공차 상한 1.04 > 단자 1.0 → 조건부), 차선 Remington 26UL1061STR |
 | F-004 | orch | firmware t18w | 사람 감지(tdl_models) → 이벤트 전송·RTSP, 이벤트 로직 시험, 패치 빌드 | firmware/** | 모델 출처·라이선스·해시, 시험·빌드 결과, 레인·커밋 | running |
-| M-002b | orch (O-43) | mechanical t18x | IR LED 열 경로 전기 절연: 절연 갭 패드 품번·수치, 기둥 접촉면, ΔT 재계산 | mechanical/** (M-001 레인) | 품번·열 저항·간섭, 커밋 | running |
+| M-002b | orch (O-43) | mechanical t18x | IR LED 열 경로 전기 절연: 절연 갭 패드 품번·수치, 기둥 접촉면, ΔT 재계산 | mechanical/** (M-001 레인) | 품번·열 저항·간섭, 커밋 | completed — e33bdde. Laird Tflex P340 1겹(>5kV)+방열판 일체 GND 기둥, 금속 접촉 0, ΔT A 9.5K·B 7.0K(추정), 차선 Fujipoly GR25B |
 
 ## 운영 변경 (2026-11-26, 사용자 지시 · lead 전달)
 - 의견 묻지 않고 진행: 사람 쪽 미정값은 D-003(lead 레인 t-20261126-144135-5470 docs/decisions/D-003-working-defaults.md, 커밋 8ac5ce5) 값으로 확정 취급. 새 갈림길은 기본값 선택 → 아래 「분기 기록」에 분기점·선택·이유·차선책 → lead 요약 보고. 문제 시 해당 행으로 돌아가 차선책.
@@ -120,3 +120,4 @@
 - [ ] PCBWay BOM Type 값 Hybrid·Manual 수용 여부 미확인 (R-011)
 - [ ] bring-up 확인: cvi_pwm duty==period가 period−1로 깎임(스코프), pwmchip0·portc 416 추론, ICR 극성, ISP bin 실행 중 교체 효과 (F-003)
 - [ ] orch 셸의 Pilot guard 훅이 PC 부하 때 10초 시간 초과로 명령을 막음(2026-11-26 여러 번, 재시도로 통과) — 하네스 동작 기록(bug_report off)
+- [ ] 절연 패드 두께(P330/340/350)는 G2 실측 후 선택 (M-002b K24)
