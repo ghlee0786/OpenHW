@@ -25,8 +25,8 @@ SIM = os.path.dirname(HERE)
 REPO = os.path.dirname(os.path.dirname(SIM))
 NG = os.environ.get("NGSPICE", "C:/Users/gh/tools/ngspice/47/Spice64/bin/ngspice_con.exe")
 CRITERIA_COMMIT = "7cab389"
-SCH_COMMIT = "f0745ed"   # C-017 (계약 v1.13): R6 6.98k, 전면 R18 1k·C19 10nF·R19 10k
-ILIM = 1.72   # TPS26600 ILIM, R6 6.98 kΩ (계약 v1.13 3.1절) — 기준 7cab389 의 "ILIM" 한계 (SIM-001b-criteria-c017.md)
+SCH_COMMIT = "a2d878c"   # C-020 (S6): 전면 R20 100k·R21 1k·D4 BAT54WS, R5 100k·D5 BAT54WS (+ C-018/C-019: R6 6.04k, R17 4.7k·C19 4.7nF, C20·C21 4.7nF)
+ILIM = 1.86   # TPS26600 R6 6.04 kΩ: I(OL) 최소 1.86 A (대표 ≈1.99 A, 계약 v1.14 3.1절 L108) — "시험 회로의 ILIM"을 보수적으로 최솟값으로
 ILIM_OLD = 1.49   # 7cab389 작성 때 회로(R6 8.06 kΩ)의 숫자 — 비교로만 적는다
 plt.rcParams["font.family"] = ["Malgun Gothic", "DejaVu Sans"]
 plt.rcParams["axes.unicode_minus"] = False
@@ -311,18 +311,18 @@ def b2():
     fig, ax = plt.subplots(figsize=(9, 4))
     for c, r in out.items():
         ax.plot(r["t"] * 1e3, r["iin"], lw=.6, label=f"{c} 평균 {r['mean']:.3f} A")
-    ax.axhline(ILIM, color="r", ls="--", label=f"ILIM {ILIM} A (R6 6.98k)"); ax.axhline(ILIM_OLD, color="gray", ls=":", label="옛 ILIM 1.49 A")
+    ax.axhline(ILIM, color="r", ls="--", label=f"ILIM {ILIM} A (R6 6.04k, I(OL) 최소)"); ax.axhline(ILIM_OLD, color="gray", ls=":", label="옛 ILIM 1.49 A")
     ax.set_xlabel("시간 [ms]"); ax.set_ylabel("12V_IR 입력 전류 [A]"); ax.legend(); ax.grid(alpha=.3)
     ax.set_title("SIM-L2 스트링 A+B 동시 100 % — 12V_IR 입력 전류 (입력 캡 C14·C16 포함)")
     fig.tight_layout(); fig.savefig(png, dpi=110); plt.close(fig)
-    return dict(id="SIM-L2", title="스트링 A+B 동시 — 12V_IR eFuse 입력 전류 합", refs=["U4", "U5", "R13", "R14", "L1", "L2", "C14", "C16", "U2·R6 6.98k(carrier TPS26600)"],
+    return dict(id="SIM-L2", title="스트링 A+B 동시 — 12V_IR eFuse 입력 전류 합", refs=["U4", "U5", "R13", "R14", "L1", "L2", "C14", "C16", "U2·R6 6.04k(carrier TPS26600)"],
                 checks=checks, png=[png], net="SIM-L2.cir", notes=notes, out=out,
                 model=b1_model())
 
 
 def b1_model():
     return dict(source="데이터시트 동작 모델 (AL8860 히스테리시스·소프트스타트·CTRL)", url="https://www.diodes.com/assets/Datasheets/AL8860.pdf",
-                license="—", behavioral=True, basis="AL8860 DS39014 Rev.8-2 p.2·4·11–13; VSMA1085400 80294 p.3; SS24S 89008 p.2; TPS26600 ILIM R6 6.98k ≈ 1.72A (계약 v1.13 3.1절, C-017)")
+                license="—", behavioral=True, basis="AL8860 DS39014 Rev.8-2 p.2·4·11–13; VSMA1085400 80294 p.3; SS24S 89008 p.2; TPS26600 R6 6.04k I(OL) 최소 1.86A·대표 1.99A (계약 v1.14 3.1절, C-018)")
 
 
 GPIO = "93.75"   # SoC 1.8V IO 출력 저항 ≈ (1.8-1.35)/4.8mA (Table 2-8, DS=00)
@@ -447,8 +447,8 @@ def cam_sw(vcore, q):
     return (q + f"Vcore core 0 {vcore}\nRcore core c18 0.1\n"
             f"Ven e0 0 PWL(0 0 1m 0 1.001m 1.71 6m 1.71 6.001m 0)\nRen e0 en {GPIO}\n"
             "M6 cam g6i c18 c18 pq6\nRg6 g6 g6i 15.2\nCgs6 g6i c18 731p\nCgd6 g6i cam 77p\nDb6 cam c18 dsi\n"
-            "R17 c18 g6 10k\nR18 g7 g6 1k\nM7 g7 en 0 0 nq7\nCg7 en 0 55p\nCd7 en g7 5.4p\nC19 g6 cam 10n\n"
-            "C18 cam c18e 1u\nR18e c18e 0 5m\nC11 cam 0 100n\nRx1 cam 0 450\nR19 cam 0 10k\n")   # C-017: R18 1k · C19 10nF · R19 10k
+            "R17 c18 g6 4.7k\nR18 g7 g6 1k\nM7 g7 en 0 0 nq7\nCg7 en 0 55p\nCd7 en g7 5.4p\nC19 g6 cam 4.7n\n"
+            "C18 cam c18e 1u\nR18e c18e 0 5m\nC11 cam 0 100n\nRx1 cam 0 450\nR19 cam 0 10k\n")   # C-017/C-018: R17 4.7k · R18 1k · C19 4.7nF · R19 10k
 
 
 def b5():
@@ -472,20 +472,7 @@ def b5():
     checks.append(check("꺼짐: CAM_EN 하강 → Q6 VGS > −0.3 V", "<=", 100e-6, "s", (t_off - t_dn) if (t_off and t_dn) else None, "Q6·Q7 약함"))
     t_low = cross(ts, vcam, 0.3, False, t_dn or 0)
     notes.append(f"기록만: 꺼진 뒤 CAM_1V8 < 0.3V 까지 {((t_low - t_dn) * 1e3) if (t_low and t_dn) else float('nan'):.2f} ms (X1 부하 450Ω 가정)")
-    notes.append("C-017 회로(f0745ed): Q7 드레인 → R18 1 kΩ → Q6 게이트, C19 10 nF 게이트–CAM_1V8(밀러 소프트스타트), R19 10 kΩ 블리더. 이전 회로(656b50a) 돌입 5.11 A는 a3b988c 결과")
-    # 수정 제안 검증(판정 밖, S5): 꺼짐이 C19 충전(R17 10k × 10 nF)으로 느려짐 → R17 4.7 kΩ · C19 4.7 nF
-    pv = []
-    for strong in (True, False):
-        q = q_models(-0.5, 13.4, 0.5, 4.0) if strong else q_models(-0.9, 5.56, 1.0, 1.79)
-        bp = cam_sw(1.89 if strong else 1.8, q).replace("C19 g6 cam 10n", "C19 g6 cam 4.7n").replace("R17 c18 g6 10k", "R17 c18 g6 4.7k")
-        dp, hp = run_tran(bp, ["-i(Vcore)", "v(cam)", "v(en)", "v(g6)-v(c18)"], "8m", "1n", "50n")
-        tp = dp["time"]
-        te = cross(tp, col(dp, hp, 3), 0.855, True)
-        to = cross(tp, col(dp, hp, 2), 1.71, True, te or 0)
-        td = cross(tp, col(dp, hp, 3), 0.855, False, 5e-3)
-        tf = cross(tp, col(dp, hp, 4), -0.3, True, td or 0)
-        pv.append((float(col(dp, hp, 1)[tp > 0.9e-3].max()), (to - te) if (to and te) else float("nan"), (tf - td) if (tf and td) else float("nan")))
-    notes.append(f"수정 제안 검증(판정 밖, S5): R17 4.7 kΩ · C19 4.7 nF → 돌입 {pv[0][0]:.3f} A(강함), 켜짐 {pv[1][1] * 1e6:.1f} µs · 꺼짐 {pv[1][2] * 1e6:.1f} µs(약함), 최종 VGS −1.48 V, 켬 때 Q7 전류 0.32 mA")
+    notes.append("C-018 회로(7760f38): Q7 드레인 → R18 1 kΩ → Q6 게이트, C19 4.7 nF, R17 4.7 kΩ(S5), R19 10 kΩ 블리더. 이전 결과: 656b50a a3b988c(돌입 5.11 A) · f0745ed 55480c0(꺼짐 347 µs)")
     fig, ax = plt.subplots(2, 1, figsize=(9, 5))
     m = (ti > 0.999e-3) & (ti < 1.02e-3)
     ax[0].plot((ti[m] - 1e-3) * 1e6, ii[m]); ax[0].axhline(0.3, color="r", ls="--", lw=.8); ax[0].set_ylabel("CORE_1V8 전류 [A]"); ax[0].set_xlabel("CAM_EN 상승 뒤 [µs]"); ax[0].grid(alpha=.3)
@@ -519,7 +506,7 @@ def b6():
     checks.append(check("CAM_MCLK 전압 (X1 꺼짐)", "<=", 0.3, "V", v.get("v(mclk)", float("nan")), "X1 출력 1M(가정)"))
     notes.append(f"기록만(민감도 — SW가 IIC2 내부 풀업 55k 를 켠 경우): SDA {vs.get('v(sda)', float('nan')):.3f} V, 센서로 {abs(vs.get('i(vsd)', float('nan'))) * 1e6:.2f} µA, CAM_1V8 {vs.get('v(cam)', float('nan')):.3f} V")
     notes.append("가정: 센서 핀 ESD 다이오드 IS 1e-14, 꺼진 센서 레일 부하 10k, LTR-329 핀 누설 0(데이터시트 미확인)")
-    notes.append("C-017 회로(f0745ed): CAM_1V8–GND R19 10 kΩ 블리더 포함. 이전 회로 결과는 a3b988c")
+    notes.append("C-017/C-018 회로(7760f38): CAM_1V8–GND R19 10 kΩ 블리더 포함. 이전 회로 결과는 a3b988c")
     return dict(id="SIM-L6", title="꺼진 센서 역급전 (CAM_EN=0, O-33)", refs=["R9", "R10", "R19", "Q6", "X1", "R8", "J3(DF30)", "U3(LTR-329)"], checks=checks, png=[],
                 net="SIM-L6.cir", notes=notes,
                 model=dict(source="DC 동작점 (저항·다이오드·전류원)", url="", license="—", behavioral=True,
@@ -558,36 +545,130 @@ def b7():
                                         behavioral=True, basis="UM10204 Rev.7 Table 10·11, §7.1; hardware/pcb/calc/microstrip_fd.py; fab-rules-pcbway.md §2.1"))
 
 
+AO3401A = ".model pa pmos level=1 vto={vto} kp=10\n"   # AOS AO3401A Rev3.1: VGS(th) -0.5/-0.9/-1.3, RDS(on) 60/85 mΩ@-2.5V → kp≈10
+
+
+def rails_body(vto=-0.9, rli=110, rla=110, t_on=1e-3, t_off=20e-3):
+    """센서 레일 (C-020 a2d878c): CORE_3V3 → Q1(AO3401A, 게이트 R20 100k ∥ (R21 1k + D4 BAT54WS → CAM_PG), C20 4.7n G–D) → CAM_IOVDD,
+    Q2(게이트 R5 100k ∥ D5 BAT54WS(CAM_PG →), C21 4.7n G–D) → CAM_AVDD, CAM_PG = R4 100k 풀업 · Q3 DMG1012T(G=CAM_EN). 리셋 R7·C10·D3."""
+    return (GEN_D + BAT54 + ".model nq nmos level=1 vto=1.0 kp=1.79\n" + AO3401A.format(vto=vto) +
+            f"V33s v33s 0 3.3\nR33 v33s v33 0.1\nC33 v33 0 22u\n"
+            f"Ven e0 0 PWL(0 0 {t_on:.6g} 0 {t_on + 1e-6:.6g} 1.71 {t_off:.6g} 1.71 {t_off + 1e-6:.6g} 0)\nRen e0 en {GPIO}\nR6 en 0 100k\n"
+            "R7 en rst 10k\nC10 rst 0 100n\nD3 rst en bat54\n"
+            "M3 pg en 0 0 nq\nCg3 en 0 61p\nR4 v33 pg 100k\n"
+            "R20 pg pgio 100k\nR21 pgio d4a 1k\nD4 d4a pg bat54\nM1 iov g1i v33 v33 pa\nRg1 pgio g1i 7.8\nCgs1 g1i v33 590p\nCgd1 g1i iov 55p\nC20 pgio iov 4.7n\nDb1 iov v33 dsi\n"
+            "R5 pg pgav 100k\nD5 pg pgav bat54\nM2 avd g2i v33 v33 pa\nRg2 pgav g2i 7.8\nCgs2 g2i v33 590p\nCgd2 g2i avd 55p\nC21 pgav avd 4.7n\nDb2 avd v33 dsi\n"
+            f"C7 iov 0 1u\nRli iov 0 {rli}\nC8 avd 0 1u\nC9 avd 0 100n\nRla avd 0 {rla}\n")
+
+
+RAIL_VECS = ["v(en)", "v(rst)", "v(iov)", "v(avd)", "v(v33)", "i(V33s)"]
+
+
 def b8():
     checks, notes, png = [], [], os.path.join(SIM, "png", "SIM-L8-reset.png")
-    body = (GEN_D + BAT54 + ".model nq nmos level=1 vto=1.0 kp=1.79\n.model pa pmos level=1 vto=-0.9 kp=5.5\n"
-            f"V33 v33 0 3.3\nVen e0 0 PWL(0 0 1m 0 1.001m 1.71 20m 1.71 20.001m 0)\nRen e0 en {GPIO}\nR6 en 0 100k\n"
-            "R7 en rst 10k\nC10 rst 0 100n\nD3 rst en bat54\n"
-            "M3 pg en 0 0 nq\nCg3 en 0 61p\nR4 v33 pg 100k\nM1 iov pg v33 v33 pa\nCg1 pg v33 645p\n"
-            "R5 pg pgav 10k\nM2 avd pgav v33 v33 pa\nCg2 pgav v33 645p\n"
-            "C7 iov 0 1u\nRli iov 0 110\nC8 avd 0 1u\nC9 avd 0 100n\nRla avd 0 110\n")
-    d, h = run_tran(body, ["v(en)", "v(rst)", "v(iov)", "v(avd)"], "25m", "100n", "2u", save_as=os.path.join(SIM, "SIM-L8.cir"))
+    d, h = run_tran(rails_body(), RAIL_VECS, "25m", "100n", "2u", save_as=os.path.join(SIM, "SIM-L8.cir"))
     t, ven, vr, vi, va = d["time"], col(d, h, 1), col(d, h, 2), col(d, h, 3), col(d, h, 4)
     t_rel = cross(t, vr, 0.7 * 1.8, True, 1e-3)
     t_pw = max(cross(t, vi, 0.9 * 3.3, True, 1e-3) or 1, cross(t, va, 0.9 * 3.3, True, 1e-3) or 1)
-    checks.append(check("리셋 해제 − 센서 전원 90 % 시각", ">=", 0.0, "s", (t_rel - t_pw) if t_rel else None, "AO3401A 레벨1 가정, 부하 30mA(가정)"))
+    checks.append(check("리셋 해제 − 센서 전원 90 % 시각", ">=", 0.0, "s", (t_rel - t_pw) if t_rel else None, "C-020 레일, AO3401A vto −0.9, 부하 30mA(가정)"))
     t_dn = cross(t, ven, 0.855, False, 19e-3)
     t_rl = cross(t, vr, 0.3 * 1.8, False, t_dn or 0)
     checks.append(check("CAM_EN 하강 → CAM_RESET < 0.54 V", "<=", 50e-6, "s", (t_rl - t_dn) if (t_rl and t_dn) else None, "D3 BAT54WS"))
     t_iv = cross(t, vi, 0.9 * 3.3, False, t_dn or 0)
     checks.append(check("전원 90 % 하강 − 리셋 하강", ">=", 0.0, "s", (t_iv - t_rl) if (t_iv and t_rl) else None, "같음"))
     notes.append(f"기록만: 리셋 해제 {((t_rel - 1e-3) * 1e3) if t_rel else float('nan'):.2f} ms (CAM_EN 뒤) vs X1 기동 최대 3 ms — GC2053 'MCLK 뒤 리셋 해제' 수치 요구는 미확인이라 판정 밖. 첫 I2C는 FW 가 CAM_EN 뒤 ≥5 ms")
-    notes.append("가정: AO3401A 레벨1(vto −0.9, Ciss 645 pF — 데이터시트 미조사), 센서 레일 부하 30 mA")
+    notes.append("C-020 레일(a2d878c: R20 100k·R21 1k·D4 / R5 100k·D5, C20·C21 4.7nF). AO3401A AOS Rev3.1 수치. 센서 레일 부하 30 mA(가정)")
     fig, ax = plt.subplots(figsize=(9, 4))
     for y, lb in ((ven, "CAM_EN"), (vr, "CAM_RESET"), (vi, "CAM_IOVDD"), (va, "CAM_AVDD")):
         ax.plot(t * 1e3, y, label=lb)
     ax.legend(); ax.set_xlabel("시간 [ms]"); ax.set_ylabel("[V]"); ax.grid(alpha=.3)
-    ax.set_title("SIM-L8 센서 리셋 RC (R7 10k · C10 100 nF · D3) 와 센서 전원")
+    ax.set_title("SIM-L8 센서 리셋 RC (R7 10k · C10 100 nF · D3) 와 센서 전원 (C-020)")
     fig.tight_layout(); fig.savefig(png, dpi=110); plt.close(fig)
-    return dict(id="SIM-L8", title="센서 리셋 RC 시간과 전원 순서", refs=["R7", "C10", "D3", "Q1", "Q2", "Q3", "R4", "R5", "R6", "C7", "C8", "C9"],
-                checks=checks, png=[png], net="SIM-L8.cir", notes=notes,
-                model=dict(source="RC + 레벨 1 MOSFET 근사", url="", license="—", behavioral=True,
-                           basis="회로 값 boards.py L180–190; DMG1012T DS31783; GC2053 사본 V1.1 VIH 0.7·VIF; X1 기동 최대 3 ms (YXC 사본)"))
+    return dict(id="SIM-L8", title="센서 리셋 RC 시간과 전원 순서", refs=["R7", "C10", "D3", "Q1", "Q2", "Q3", "R4", "R5", "R6", "R20", "R21", "D4", "D5", "C20", "C21", "C7", "C8", "C9"],
+                checks=checks, png=[png], net="SIM-L8.cir", notes=notes, model=rails_model())
+
+
+def rails_model():
+    return dict(source="RC + 레벨 1 MOSFET 근사", url="https://www.aosmd.com/res/datasheets/AO3401A.pdf", license="—", behavioral=True,
+                basis="회로 boards.py a2d878c L181–196; D4·D5 BAT54WS 근사(가정); AO3401A AOS Rev3.1(VGS(th) -0.5/-0.9/-1.3, RDS(on) 60/85mΩ@-2.5V, Ciss 645 Crss 55 pF, Rg 7.8); DMG1012T DS31783; GC2053 사본 V1.1 §2.3·§9.2·§9.3; CORE_3V3 경로 0.1Ω·22µF(가정)")
+
+
+# 부하 경우: (이름, IOVDD 부하 Ω, AVDD 부하 Ω) — GC2053 §2.3 최대 IIOVDD 2.5mA · IAVDD 18mA · IDVDD 39mA 를 3.3V 입력 전류로 근사
+LOADS = (("DVDD→IOVDD", 3.3 / 41.5e-3, 3.3 / 18e-3), ("DVDD→AVDD", 3.3 / 2.5e-3, 3.3 / 57e-3))
+
+
+def rail_runs(mod=None):
+    runs = []
+    for vto in (-0.5, -1.3):
+        for lname, rli, rla in LOADS:
+            body = rails_body(vto, rli, rla, 1e-3, 6e-3)
+            d, h = run_tran(mod(body) if mod else body, RAIL_VECS, "40m", "50n", "2u",
+                            save_as=os.path.join(SIM, "SIM-L9.cir") if (not mod and vto == -1.3 and lname == LOADS[0][0]) else None)
+            runs.append((f"vto {vto} · {lname}", d, h))
+    return runs
+
+
+def b9(runs):
+    checks, notes, png = [], [], os.path.join(SIM, "png", "SIM-L9-cam-off.png")
+    rows = []
+    for name, d, h in runs:
+        t, ven, vr, vi, va, v3, i3 = (d["time"], *[col(d, h, k) for k in range(1, 7)])
+        tdn = cross(t, ven, 0.855, False, 5.9e-3)
+        ti = cross(t, vi, 0.9 * 3.3, False, tdn or 0)
+        ta = cross(t, va, 0.9 * 3.3, False, tdn or 0)
+        tr = cross(t, vr, 0.54, False, tdn or 0)
+        m = t > 5.9e-3
+        rows.append(dict(name=name, io_av=(ti - ta) if (ti and ta) else float("nan"), av_rst=(ta - tr) if (ta and tr) else float("nan"),
+                         v3min=float(v3[m].min()), rev=float(max(0.0, i3[m].max())), t=t, vi=vi, va=va, vr=vr, ven=ven))
+    w = lambda k, f=min: f(r[k] for r in rows)  # noqa: E731
+    checks.append(check("IOVDD<90% − AVDD<90% (IOVDD 마지막)", ">=", 0.0, "s", w("io_av"), "최악 경우 (vto ±, DVDD 부하 두 경우)"))
+    checks.append(check("AVDD<90% − RESET<0.54V (리셋 먼저)", ">=", 0.0, "s", w("av_rst"), "같음"))
+    checks.append(check("끄는 동안 CORE_3V3 최저", ">=", 3.135, "V", w("v3min"), "같음 (경로 0.1Ω·22µF 가정)"))
+    checks.append(check("레일 → CORE_3V3 역류 최대", "<=", 1e-3, "A", w("rev", max), "i(V33s) 양수 = 전원으로 되돌아감"))
+    notes.append("경우별: " + "; ".join(f"{r['name']}: IOVDD−AVDD {r['io_av'] * 1e6:.1f} µs, AVDD−RESET {r['av_rst'] * 1e6:.1f} µs, CORE_3V3 최저 {r['v3min']:.3f} V" for r in rows))
+    notes.append("가정: 모듈 BXF4677 내부 LDO 지연·문턱 미상 → 보드 레일 90 % 로 대신. DVDD12 공급 레일 미상 → 두 경우 중 나쁜 쪽")
+    fig, axs = plt.subplots(len(rows), 1, figsize=(9, 2.2 * len(rows)), sharex=True)
+    for ax, r in zip(axs, rows):
+        m = (r["t"] > 5.95e-3) & (r["t"] < 7.5e-3)
+        for y, lb in ((r["ven"], "CAM_EN"), (r["vr"], "RESET"), (r["vi"], "IOVDD"), (r["va"], "AVDD")):
+            ax.plot((r["t"][m] - 6e-3) * 1e3, y[m], label=lb)
+        ax.set_title(r["name"], fontsize=9); ax.grid(alpha=.3)
+    axs[0].legend(fontsize=8, ncol=4); axs[-1].set_xlabel("CAM_EN 하강 뒤 [ms]")
+    fig.suptitle("SIM-L9 CAM_EN 끄는 순서 (C-020)"); fig.tight_layout(); fig.savefig(png, dpi=110); plt.close(fig)
+    return dict(id="SIM-L9", title="CAM_EN 끄는 순서 — IOVDD·AVDD·리셋·CORE_3V3", refs=["Q1", "Q2", "Q3", "R4", "R5", "R20", "R21", "D4", "D5", "C20", "C21", "C7", "C8", "C9", "R7", "C10", "D3"],
+                checks=checks, png=[png], net="SIM-L9.cir", notes=notes, model=rails_model())
+
+
+def b10(runs):
+    checks, notes, png = [], [], os.path.join(SIM, "png", "SIM-L10-cam-on.png")
+    rows = []
+    for name, d, h in runs:
+        t, ven, vr, vi, va, v3, i3 = (d["time"], *[col(d, h, k) for k in range(1, 7)])
+        ten = cross(t, ven, 0.855, True, 0.9e-3)
+        ti = cross(t, vi, 0.9 * 3.3, True, ten or 0)
+        ta = cross(t, va, 0.9 * 3.3, True, ten or 0)
+        m = (t > 0.9e-3) & (t < 5.9e-3)
+        rows.append(dict(name=name, av_io=(ta - ti) if (ti and ta) else float("nan"), ti=(ti - ten) if (ti and ten) else float("nan"),
+                         ta=(ta - ten) if (ta and ten) else float("nan"), v3min=float(v3[m].min()), ipk=float((-i3[m]).max()),
+                         t=t, vi=vi, va=va, ven=ven, i3=-i3))
+    w = lambda k, f=min: f(r[k] for r in rows)  # noqa: E731
+    checks.append(check("AVDD≥90% − IOVDD≥90% (IOVDD 먼저)", ">=", 50e-6, "s", w("av_io"), "최악 경우 (vto ±, DVDD 부하 두 경우)"))
+    checks.append(check("켜는 동안 CORE_3V3 최저", ">=", 3.135, "V", w("v3min"), "같음"))
+    checks.append(check("CORE_3V3 돌입 피크 전류", "<=", 1.0, "A", w("ipk", max), "같음 (CAM_EN 상승 뒤, uic 초기 충전 제외)"))
+    notes.append("경우별: " + "; ".join(f"{r['name']}: IOVDD 90% {r['ti'] * 1e6:.1f} µs, AVDD 90% {r['ta'] * 1e6:.1f} µs, 차 {r['av_io'] * 1e6:.1f} µs, CORE_3V3 최저 {r['v3min']:.3f} V, 돌입 {r['ipk'] * 1e3:.0f} mA" for r in rows))
+    notes.append("가정: GC2053 §9.2 t1(IOVDD→AVDD28 ≥50µs)을 보드 레일(모듈 LDO 입력) 90 % 로 대신 — 모듈 LDO 지연은 넣지 않음")
+    fig, ax = plt.subplots(2, 1, figsize=(9, 6), sharex=True)
+    for r in rows:
+        m = (r["t"] > 0.98e-3) & (r["t"] < 1.4e-3)
+        ax[0].plot((r["t"][m] - 1e-3) * 1e6, r["vi"][m], label=f"IOVDD {r['name']}")
+        ax[0].plot((r["t"][m] - 1e-3) * 1e6, r["va"][m], ls="--", label=f"AVDD {r['name']}")
+        ax[1].plot((r["t"][m] - 1e-3) * 1e6, r["i3"][m] * 1e3, label=r["name"])
+    ax[0].set_ylabel("[V]"); ax[0].legend(fontsize=7, ncol=2); ax[0].grid(alpha=.3)
+    ax[1].set_ylabel("CORE_3V3 전류 [mA]"); ax[1].set_xlabel("CAM_EN 상승 뒤 [µs]"); ax[1].legend(fontsize=7); ax[1].grid(alpha=.3)
+    ax[0].set_title("SIM-L10 CAM_EN 켜는 순서 (C-020)")
+    fig.tight_layout(); fig.savefig(png, dpi=110); plt.close(fig)
+    return dict(id="SIM-L10", title="CAM_EN 켜는 순서 — IOVDD→AVDD ≥50µs·CORE_3V3", refs=["Q1", "Q2", "Q3", "R4", "R5", "R20", "R21", "D4", "D5", "C20", "C21", "C7", "C8", "C9"],
+                checks=checks, png=[png], net="SIM-L9.cir", notes=notes, model=rails_model())
 
 
 def main():
@@ -596,11 +677,15 @@ def main():
     os.makedirs(os.path.join(SIM, "png"), exist_ok=True)
     tool = dict(name="ngspice", version=ng_version(), sha256=sha256(NG))
     bad = 0
-    order = [("SIM-L1", b1), ("SIM-L2", b2), ("SIM-L3", None), ("SIM-L4", b4), ("SIM-L5", b5), ("SIM-L6", b6), ("SIM-L7", b7), ("SIM-L8", b8)]
+    order = [("SIM-L1", b1), ("SIM-L2", b2), ("SIM-L3", None), ("SIM-L4", b4), ("SIM-L5", b5), ("SIM-L6", b6), ("SIM-L7", b7), ("SIM-L8", b8),
+             ("SIM-L9", None), ("SIM-L10", None)]
+    runs = None
     b2res = None
     for tid, fn in order:
         try:
-            r = b3(b2res) if tid == "SIM-L3" else fn()
+            if tid in ("SIM-L9", "SIM-L10") and runs is None:
+                runs = rail_runs()
+            r = b3(b2res) if tid == "SIM-L3" else b9(runs) if tid == "SIM-L9" else b10(runs) if tid == "SIM-L10" else fn()
             if tid == "SIM-L2":
                 b2res = r
             verdict = "pass" if all(c["pass"] for c in r["checks"]) else "fail"

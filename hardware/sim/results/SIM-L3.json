@@ -10,14 +10,14 @@
       "U4",
       "U5"
     ],
-    "schematic_commit": "f0745ed"
+    "schematic_commit": "a2d878c"
   },
   "model": {
     "source": "데이터시트 동작 모델 (AL8860 히스테리시스·소프트스타트·CTRL)",
     "url": "https://www.diodes.com/assets/Datasheets/AL8860.pdf",
     "license": "—",
     "behavioral": true,
-    "basis": "AL8860 DS39014 Rev.8-2 p.2·4·11–13; VSMA1085400 80294 p.3; SS24S 89008 p.2; TPS26600 ILIM R6 6.98k ≈ 1.72A (계약 v1.13 3.1절, C-017)"
+    "basis": "AL8860 DS39014 Rev.8-2 p.2·4·11–13; VSMA1085400 80294 p.3; SS24S 89008 p.2; TPS26600 R6 6.04k I(OL) 최소 1.86A·대표 1.99A (계약 v1.14 3.1절, C-018)"
   },
   "criteria_commit": "7cab389",
   "checks": [
@@ -42,7 +42,7 @@
     {
       "name": "켬 순간 12V_IR 20µs 이동 평균 최댓값 ≤ ILIM",
       "op": "<=",
-      "limit": 1.72,
+      "limit": 1.86,
       "unit": "A",
       "value": 1.58519,
       "corner": "worst_in, A+B 동시, 1 ms 이후(uic 초기 충전 제외) · 옛 1.49A 대비 초과",
