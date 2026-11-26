@@ -1,6 +1,6 @@
 {
- "head": "a61dc63",
- "base": "a61dc63",
+ "head": "7760f38",
+ "base": "7760f38",
  "checks": [
   {
    "sec": "4절",
@@ -2764,9 +2764,41 @@
   },
   {
    "sec": "3.1",
-   "item": "5V 벅 출력 (R 100k 1%/13.3k 1%, VREF 0.596V) ±5% 안",
+   "item": "5V 벅 출력 (R 78.7k 1%/10.7k 1%, VREF 0.596V) ±5% 안",
    "expected": "True",
    "actual": "True",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "3.1",
+   "item": "TPS54302 FB 분압 R2(5V_SYS–FB) / R3(FB–GND)",
+   "expected": "78.7k/10.7k",
+   "actual": "78.7k/10.7k",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "3.1",
+   "item": "전면 Q1 게이트 직렬 R20",
+   "expected": "R20 1k",
+   "actual": "R20 1k",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "3.1",
+   "item": "전면 Q1 게이트–드레인 C20",
+   "expected": "C20 4.7nF",
+   "actual": "C20 4.7nF",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "3.1",
+   "item": "전면 Q2 게이트–드레인 C21",
+   "expected": "C21 4.7nF",
+   "actual": "C21 4.7nF",
    "ok": true,
    "info": false
   },
