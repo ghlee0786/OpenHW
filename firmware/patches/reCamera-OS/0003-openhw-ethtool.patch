@@ -1,0 +1,10 @@
+--- a/external/buildroot/configs/cvitek_CV181X_musl_riscv64_defconfig
++++ b/external/buildroot/configs/cvitek_CV181X_musl_riscv64_defconfig
+@@ -513,6 +513,7 @@
+ BR2_PACKAGE_DNSMASQ_TFTP=y
+ BR2_PACKAGE_DNSMASQ_DHCP=y
+ BR2_PACKAGE_IPERF3=y
++BR2_PACKAGE_ETHTOOL=y
+ BR2_PACKAGE_NTP=y
+ BR2_PACKAGE_NTP_NTPD=y
+ BR2_PACKAGE_NTP_NTPDATE=y
