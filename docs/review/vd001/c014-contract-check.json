@@ -1,6 +1,6 @@
 {
- "head": "f0745ed",
- "base": "f0745ed",
+ "head": "a61dc63",
+ "base": "a61dc63",
  "checks": [
   {
    "sec": "4절",
@@ -2645,16 +2645,16 @@
   {
    "sec": "3.1·12절",
    "item": "TPS26600 ILIM 저항",
-   "expected": "6.98k",
-   "actual": "6.98k",
+   "expected": "6.04k",
+   "actual": "6.04k",
    "ok": true,
    "info": false
   },
   {
    "sec": "3.1·12절",
    "item": "TPS26600 ILIM 저항",
-   "expected": "6.98k",
-   "actual": "6.98k",
+   "expected": "6.04k",
+   "actual": "6.04k",
    "ok": true,
    "info": false
   },
@@ -2773,8 +2773,8 @@
   {
    "sec": "3.1",
    "item": "R17 값·넷",
-   "expected": "10k CAM_1V8_G-CORE_1V8",
-   "actual": "10k CAM_1V8_G-CORE_1V8",
+   "expected": "4.7k CAM_1V8_G-CORE_1V8",
+   "actual": "4.7k CAM_1V8_G-CORE_1V8",
    "ok": true,
    "info": false
   },
@@ -2813,8 +2813,8 @@
   {
    "sec": "3.1",
    "item": "Q6 게이트–드레인 C19",
-   "expected": "C19 10nF",
-   "actual": "C19 10nF",
+   "expected": "C19 4.7nF",
+   "actual": "C19 4.7nF",
    "ok": true,
    "info": false
   },
