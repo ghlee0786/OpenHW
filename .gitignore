@@ -1,0 +1,15 @@
+# 로컬 실행 상태/내려받은 도구/빌드
+.tools/
+.venv/
+node_modules/
+__pycache__/
+*.pyc
+orchestration/ready/
+orchestration/pane-ledger.json
+orchestration/space-layout.json
+orchestration/verification.json
+validation/runtime/
+*-backups/
+*.lck
+*.log
+.env*

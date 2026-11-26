@@ -1,0 +1,14 @@
+{
+  "mcpServers": {
+    "kicad": {
+      "command": "C:/Users/gh/.local/share/openhw-tools/kicad-mcp/.venv/Scripts/python.exe",
+      "args": [
+        "C:/Users/gh/.local/share/openhw-tools/kicad-mcp/server.py"
+      ],
+      "env": {
+        "KICAD_ROOT": "C:/Program Files/KiCad/10.0",
+        "KICAD_MCP_ENABLE_SCH_EDIT": "0"
+      }
+    }
+  }
+}

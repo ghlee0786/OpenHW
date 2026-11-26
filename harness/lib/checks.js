@@ -1,0 +1,526 @@
+'use strict';
+// v5 검사 — 발견 · 실행 · 요약 파싱 · 판정. 완료 판정은 사용자가 준 검사와 저장소의 기존 명령만 쓴다.
+const fs = require('node:fs'), path = require('node:path');
+const { spawn, spawnSync } = require('node:child_process');
+
+const CHECK_TIMEOUT_MS = 15 * 60 * 1000, CAP = 256 * 1024, MAX_TIMER_MS = 2 ** 31 - 1;
+const IS_WIN = process.platform === 'win32';
+
+// ── 명령 문자열 → argv ────────────────────────────────────────────────
+// 셸 연산자(&& || | ; > <)가 있으면 셸 문자열 하나로 둔다(argv 길이 1 · 실행은 셸로).
+const SHELL_OPS = /(^|\s)(&&|\|\||\||;|>>?|<|2>&1)(\s|$)/;
+function splitCommand(cmd) {
+  const s = String(cmd || '').trim();
+  if (!s) return [];
+  if (SHELL_OPS.test(s)) return [s];
+  const out = []; let cur = '', q = null, any = false;
+  for (let i = 0; i < s.length; i++) {
+    const c = s[i];
+    if (q) { if (c === q) q = null; else cur += c; continue; }
+    if (c === '"' || c === "'") { q = c; any = true; continue; }
+    if (/\s/.test(c)) { if (cur || any) out.push(cur); cur = ''; any = false; continue; }
+    cur += c;
+  }
+  if (cur || any) out.push(cur);
+  return out;
+}
+const isShellString = argv => argv.length === 1 && /\s/.test(argv[0]);
+const display = argv => isShellString(argv) ? argv[0] : argv.map(a => /[\s"]/.test(a) ? `"${a.replace(/"/g, '\\"')}"` : a).join(' ');
+
+// ── 발견 ───────────────────────────────────────────────────────────────
+function yamlTestCommand(file) {
+  let text = ''; try { text = fs.readFileSync(file, 'utf8'); } catch { return null; }
+  return yamlTestCommandOf(text);
+}
+function yamlTestCommandOf(text) {
+  if (text == null) return null;
+  const m = /^\s*test_command:\s*(.+?)\s*$/m.exec(text);
+  if (!m) return null;
+  let v = m[1].trim();
+  // [2026-10-29 감사 G2 #22] 따옴표 바깥만 떼어 "node -e \"x\"" 의 \" 가 그대로 남아 명령이 깨졌다 — YAML 문자열로 푼다(yamlString 처럼).
+  //   큰따옴표: JSON 이스케이프(\" · \\) · 작은따옴표: '' → '. 따옴표 밖의 # 은 주석.
+  const dq = /^"((?:[^"\\]|\\.)*)"(?:\s+#.*)?$/.exec(v), sq = /^'((?:[^']|'')*)'(?:\s+#.*)?$/.exec(v);
+  if (dq) { try { v = JSON.parse(`"${dq[1]}"`); } catch { v = dq[1]; } }
+  else if (sq) v = sq[1].replace(/''/g, "'");
+  else v = v.replace(/\s+#.*$/, '').trim();
+  return v && !/^(none|null|~|없음)$/i.test(v) ? v : null;
+}
+// 프로젝트 블록(AGENTS.md · CLAUDE.md 의 yaml)의 숫자 값 — 예: check_timeout_min: 45
+function yamlNumber(root, name) {
+  for (const f of ['AGENTS.md', 'CLAUDE.md']) {
+    let t = ''; try { t = fs.readFileSync(path.join(root, f), 'utf8'); } catch { continue; }
+    const m = new RegExp('^\\s*' + name + ':\\s*["\']?(\\d+(?:\\.\\d+)?)', 'm').exec(t);
+    if (m) return Number(m[1]);
+  }
+  return null;
+}
+// 프로젝트 블록의 문자열 값 — 예: reply_language: "Korean". 없으면 null.
+function yamlString(root, name) {
+  const esc = String(name).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  for (const f of ['AGENTS.md', 'CLAUDE.md']) {
+    let t = ''; try { t = fs.readFileSync(path.join(root, f), 'utf8'); } catch { continue; }
+    const m = new RegExp('^[ \\t]*' + esc + ':[ \\t]*(.+?)[ \\t]*\\r?$', 'm').exec(t);
+    if (!m) continue;
+    let v = m[1];
+    if (/^"/.test(v)) { try { v = JSON.parse(v.replace(/\s+#.*$/, '')); } catch { v = v.replace(/^"|"$/g, ''); } }
+    else if (/^'/.test(v)) v = v.replace(/^'|'$/g, '');
+    else v = v.replace(/\s+#.*$/, '');
+    if (String(v).trim()) return String(v).trim();
+  }
+  return null;
+}
+// 프로젝트 블록의 문자열 목록 — 흐름형 `name: ["a", 'b', c]` 또는 블록형 `name:` 다음 줄들의 `- a`. 없으면 null.
+//   예: owns: ["src/a, b/*", 'docs/(x)']. 따옴표 안의 쉼표·괄호는 값의 일부다.
+function yamlListOf(text, name) {
+  if (text == null) return null;
+  const esc = String(name).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const unq = v => { v = v.trim(); return (v.length >= 2 && ((v[0] === '"' && v.endsWith('"')) || (v[0] === "'" && v.endsWith("'")))) ? v.slice(1, -1) : v; };
+  const flow = new RegExp('^[ \\t]*' + esc + ':[ \\t]*\\[(.*)$', 'm').exec(text);
+  if (flow) {
+    const s = flow[1], out = []; let cur = '', q = null, closed = false;
+    for (let i = 0; i < s.length && !closed; i++) {
+      const c = s[i];
+      if (q) { cur += c; if (c === q) q = null; continue; }
+      if (c === '"' || c === "'") { q = c; cur += c; continue; }
+      if (c === ',' || c === ']') { if (cur.trim()) out.push(unq(cur)); cur = ''; if (c === ']') closed = true; continue; }
+      cur += c;
+    }
+    return out.filter(Boolean);
+  }
+  const block = new RegExp('^([ \\t]*)' + esc + ':[ \\t]*(?:#.*)?\\r?$', 'm').exec(text);
+  if (!block) return null;
+  const out = [];
+  for (const line of text.slice(block.index + block[0].length).split(/\r?\n/).slice(1)) {
+    const m = /^[ \t]*-[ \t]+(.+?)[ \t]*$/.exec(line);
+    if (!m) { if (!line.trim()) continue; break; }
+    const v = /^["']/.test(m[1]) ? m[1] : m[1].replace(/[ \t]+#.*$/, '');
+    if (unq(v)) out.push(unq(v));
+  }
+  return out;
+}
+function yamlList(root, name) {
+  for (const f of ['AGENTS.md', 'CLAUDE.md']) {
+    let t = ''; try { t = fs.readFileSync(path.join(root, f), 'utf8'); } catch { continue; }
+    const v = yamlListOf(t, name);
+    if (v) return v;
+  }
+  return null;
+}
+const readText = (root, rel) => { try { return fs.readFileSync(path.join(root, rel), 'utf8'); } catch { return ''; } };
+
+// 저장소 종류 — 언어 팩(langs.js)이 정한다(PRD R5 · 언어 중립)
+function repoKinds(root) { return require('./langs').detect(root); }
+
+// 사용자 검사가 있으면 그것, 없으면 저장소에서 발견, 없으면 none.
+// projectRoot: 프로젝트 블록(test_command)을 먼저 읽을 곳 — 부른 체크아웃. 지시 파일이 커밋 전이거나 git 밖(CLAUDE.md)이면 worktree 에는 옛 판이 있다
+//   ([2026-10-03 · .NET 앱 저장소] 그래서 단위 테스트 대신 솔루션 전체 dotnet test 가 돌았다). 없으면 root(worktree).
+function discover(root, userChecks, projectRoot) {
+  const user = (userChecks || []).map(c => Array.isArray(c) ? c : splitCommand(c)).filter(a => a.length);
+  if (user.length) return { source: 'user', commands: user };
+  for (const dir of [...new Set([projectRoot, root].filter(Boolean))]) {
+    for (const f of ['CLAUDE.md', 'AGENTS.md']) {
+      const v = yamlTestCommand(path.join(dir, f));
+      if (v) return { source: 'detected', commands: [splitCommand(v)], from: f };
+    }
+  }
+  // 언어 팩 순서대로 처음 찾은 테스트 명령(node · python · dotnet · go · rust · java · c/c++)
+  const t = require('./langs').testCommand(root);
+  if (t) return { source: 'detected', commands: t.commands, from: t.from };
+  return { source: 'none', commands: [] };
+}
+
+// 검사 명령의 프로그램 이름(argv[0] · 셸 문자열이면 첫 단어) — 경로와 확장자(.exe · .cmd · .bat)를 뗀다.
+function programName(argv) {
+  const first = isShellString(argv) ? splitCommand(argv[0].split(SHELL_OPS)[0])[0] : argv[0];
+  if (!first) return null;
+  const base = String(first).split(/[\\/]/).pop().replace(/\.(exe|cmd|bat)$/i, '');   // Windows 경로는 POSIX 에서도 \ 로 자른다
+  return /^[A-Za-z0-9_.+-]+$/.test(base) ? base : null;
+}
+
+// ── 린트(프로젝트 블록 lint_command) ───────────────────────────────────
+// {files} 가 있으면 작업이 바꾼 파일(저장소 상대 · 있는 것만)로 바꾼 셸 문자열 하나 — 바뀐 파일이 없으면 null(돌리지 않는다).
+//   {files} 가 없으면 저장소 전체를 린트하는 명령 그대로.
+const shq = f => /^[A-Za-z0-9_.,:=+/\@-]+$/.test(f) ? f : `"${String(f).replace(/"/g, '\\"')}"`;
+function lintArgv(cmd, files) {
+  const c = String(cmd || '').trim();
+  if (!c) return null;
+  if (!/{files}/.test(c)) return splitCommand(c);
+  if (!(files || []).length) return null;
+  return [c.replace(/{files}/g, files.map(shq).join(' '))];
+}
+// [자동 이슈 #38] 작업에 기록된 린트를 프로젝트 블록의 지금 lint_command 에 맞춘다(accept) — 작업 뒤 {files} 로 바꿔도
+//   시작 때 값으로 계속 거절했다. dirs 순서대로 처음 찾은 값을 쓴다. 바뀌었으면 { from, to }, 그대로면 null.
+function syncLint(task, dirs) {
+  let now = null;
+  for (const d of dirs) { if (d && (now = yamlString(d, 'lint_command'))) break; }
+  const was = task.checks.lint ? task.checks.lint.command : null;
+  if ((now || null) === (was || null)) return null;
+  if (now) task.checks.lint = { command: now, files: /{files}/.test(now), baseline_ok: null, last: null };
+  else delete task.checks.lint;
+  return { from: was, to: now || null };
+}
+
+// ── 검사 정의(M6) ─────────────────────────────────────────────────────
+// 검사 명령 문자열은 작업 시작 때 고정되지만, 그 명령이 읽는 정의(package.json scripts.test · pytest 설정 · 명령이 가리키는 스크립트)는
+//   모델이 worktree 에서 고칠 수 있다. 고쳤으면 보고하고(checks_modified), npm test 는 기준의 scripts.test 로 판정한다.
+const scriptsOf = text => { try { const s = JSON.parse(text).scripts; return s && typeof s === 'object' ? s : {}; } catch { return null; } };
+function npmTestScript(root) { const s = scriptsOf(readText(root, 'package.json')); return s && typeof s.test === 'string' ? s.test : null; }
+const argvOf = c => Array.isArray(c) ? (isShellString(c) ? splitCommand(c[0].split(SHELL_OPS)[0]) : c) : splitCommand(String(c || ''));
+function isNpmTest(argv) {
+  if (isShellString(argv)) return false;
+  const p = programName(argv), rest = argv.slice(1).join(' ');
+  return p === 'npm' && /^(test|t|tst|run test|run-script test)$/.test(rest);
+}
+// 작업 시작 때 기록해 둘 정의.
+function definitions(root) { return { npm_test: npmTestScript(root) }; }
+// 판정에 쓸 명령: npm test 인데 scripts.test 가 기준과 다르면 기준의 스크립트를 셸로(npm 처럼 node_modules/.bin 을 PATH 앞에).
+function commandsForJudge(root, checks) {
+  const defs = (checks && checks.defs) || {};
+  return ((checks && checks.commands) || []).map(argv => {
+    if (!isNpmTest(argv) || typeof defs.npm_test !== 'string') return argv;
+    if (npmTestScript(root) === defs.npm_test) return argv;
+    return { argv: [defs.npm_test], shell: true, bin: path.join(root, 'node_modules', '.bin'), label: `${display(argv)} (judged with scripts.test from the base commit: ${defs.npm_test})` };
+  });
+}
+
+// ── 요약 파싱 ─────────────────────────────────────────────────────────
+const ANSI = /\x1b\[[0-9;?]*[A-Za-z]/g;
+function lastNum(s, re) { let m, v = null; const g = new RegExp(re.source, 'gim'); while ((m = g.exec(s))) v = Number(m[1]); return v; }
+// node:test(tap `# pass` · spec `ℹ pass`) · `결과: N PASS / M FAIL` · pytest `== 2 failed, 3 passed in 0.1s ==` · dotnet `Failed: 1, Passed: 3` · jest `Tests: 1 failed, 3 passed` · vitest `Tests  1 failed | 3 passed (4)`.
+//   [2026-10-29 감사 G2 #16] FORCE_COLOR · pytest --color=yes 의 색 코드 때문에 요약을 못 읽어 원래 빨간 저장소의 accept 가 모두 "나빠짐" 이 됐다 — 색을 먼저 벗긴다.
+function parseSummary(text) {
+  const s = String(text || '').replace(ANSI, '');
+  const p = lastNum(s, /^[ \t]*(?:#|ℹ)[ \t]*pass[ \t]+(\d+)[ \t]*\r?$/), f = lastNum(s, /^[ \t]*(?:#|ℹ)[ \t]*fail[ \t]+(\d+)[ \t]*\r?$/);
+  if (p != null || f != null) return { found: true, pass: p || 0, fail: f || 0 };
+  const kr = [...s.matchAll(/결과:\s*(\d+)\s*PASS\s*\/\s*(\d+)\s*FAIL/g)].pop();
+  if (kr) return { found: true, pass: Number(kr[1]), fail: Number(kr[2]) };
+  const py = [...s.matchAll(/^=+ (.*?\b(?:passed|failed|error|errors)\b.*?) in [\d.]+s(?: \([^)]*\))? =+\s*$/gm)].pop();
+  if (py) { const n = w => { const m = new RegExp(`(\\d+) ${w}`).exec(py[1]); return m ? Number(m[1]) : 0; }; return { found: true, pass: n('passed'), fail: n('failed') + n('errors?') }; }
+  // [2026-09-30 실측 · Python 서비스 저장소] `pytest -q`(와 -n auto)의 마지막 줄에는 === 테두리가 없다: "2 failed, 7070 passed, 66 skipped in 312.45s (0:05:12)"
+  const pyq = [...s.matchAll(/^[ \t]*((?:\d+ (?:failed|passed|skipped|deselected|xfailed|xpassed|warnings?|errors?)(?:, )?)+) in [\d.]+s(?: \([^)]*\))?[ \t]*\r?$/gm)].pop();
+  if (pyq && /\b(passed|failed|errors?)\b/.test(pyq[1])) { const n = w => { const m = new RegExp(`(\\d+) ${w}\\b`).exec(pyq[1]); return m ? Number(m[1]) : 0; }; return { found: true, pass: n('passed'), fail: n('failed') + n('errors?') }; }
+  // dotnet(VSTest): 테스트 프로젝트마다 한 줄 — 모두 더한다. 한국어 Windows 에서는 "실패!  - 실패: 1, 통과: 9, …"(2026-10-03 실측).
+  const dn = [...s.matchAll(/(?:Failed|실패):\s*(\d+),\s*(?:Passed|통과):\s*(\d+)/g)];
+  if (dn.length) return { found: true, pass: dn.reduce((a, m) => a + Number(m[2]), 0), fail: dn.reduce((a, m) => a + Number(m[1]), 0) };
+  const mtp = [...s.matchAll(/^\s*Test summary: total: \d+, failed: (\d+), succeeded: (\d+)/gm)].pop();   // dotnet 10 Microsoft.Testing.Platform
+  if (mtp) return { found: true, pass: Number(mtp[2]), fail: Number(mtp[1]) };
+  const js = [...s.matchAll(/^\s*Tests(?::\s+|\s{2,})(.*)$/gm)].pop();   // vitest 는 콜론 없이 "      Tests  1 failed | 1 passed (2)"(G2 #18) — "Test Files" 줄은 아니다
+  if (js && /\b(passed|failed)\b/.test(js[1])) { const n = w => { const m = new RegExp(`(\\d+) ${w}`).exec(js[1]); return m ? Number(m[1]) : 0; }; return { found: true, pass: n('passed'), fail: n('failed') }; }
+  const lg = require('./langs').parseSummary(s);   // cargo · go · ctest · maven(언어 팩)
+  if (lg) return lg;
+  return { found: false, pass: 0, fail: 0 };
+}
+
+// ── 실행 ───────────────────────────────────────────────────────────────
+function killTree(pid) {
+  if (pid == null) return;
+  if (IS_WIN) spawnSync('taskkill', ['/PID', String(pid), '/T', '/F'], { stdio: 'ignore', windowsHide: true });
+  else { try { process.kill(-pid, 'SIGKILL'); } catch { try { process.kill(pid, 'SIGKILL'); } catch { /* 끝남 */ } } }
+}
+function childEnv(binDir) {
+  const env = { ...process.env };
+  for (const k of Object.keys(env)) if (/^(CLAUDECODE|CLAUDE_CODE_ENTRYPOINT|NODE_TEST_CONTEXT)$/.test(k)) delete env[k];
+  if (binDir) {   // Windows 의 이름은 Path — 대소문자를 가리지 않고 같은 키를 고친다.
+    const k = Object.keys(env).find(x => x.toUpperCase() === 'PATH') || 'PATH';
+    env[k] = binDir + path.delimiter + (env[k] || '');
+  }
+  return env;
+}
+const winQuote = a => /^[A-Za-z0-9_.,:=+\/\\@-]+$/.test(a) ? a : `"${String(a).replace(/"/g, '\\"')}"`;
+// Windows cmd 는 실행 파일 경로의 '/' 를 스위치로 읽는다('tools/bin/ok.cmd' → 'tools' + '/bin…') — 명령마다 첫 단어의 '/' 를 '\' 로.
+//   [2026-10-18 자동 이슈 #18] --check '.venv/Scripts/python -m pytest' 가 매번 실패해 정체됐다. 인자(경로 · URL)는 건드리지 않는다.
+const winProg = tok => (/\//.test(tok) && !/^[a-z][a-z0-9+.-]*:\/\//i.test(tok) && !/^-/.test(tok) ? tok.replace(/\//g, '\\') : tok);
+const winShell = s => String(s).replace(/(^|&&|\|\||\||;)(\s*)("[^"]*"|[^\s"&|;]+)/g, (m, op, sp, tok) => op + sp + winProg(tok));
+function spawnSpec(argv, forceShell) {
+  if (forceShell || isShellString(argv)) return { cmd: IS_WIN ? winShell(argv.join(' ')) : argv.join(' '), args: [], shell: true };
+  if (/^node(\.exe)?$/i.test(argv[0])) return { cmd: process.execPath, args: argv.slice(1), shell: false };
+  // Windows: npm·npx 등은 .cmd — 셸 없이 띄울 수 없다.
+  if (IS_WIN) return { cmd: [winProg(argv[0]), ...argv.slice(1)].map(winQuote).join(' '), args: [], shell: true };
+  return { cmd: argv[0], args: argv.slice(1), shell: false };
+}
+
+// 출력이 이만큼 멈추면 멈춘 것으로 본다 — 멈춘 테스트를 떼어 낼 줄 아는 러너(언어 팩 hang)에만. o.stallMs: 0 이면 끔.
+const STALL_MS = Number(process.env.HARNESS_CHECK_STALL_MS) || 5 * 60 * 1000;   // 환경 값은 테스트용
+// 검사의 부모가 끝난 뒤 남은 출력을 기다리는 시간 — 그 뒤에도 파이프가 닫히지 않으면 자손이 붙든 것으로 본다(#53).
+const EXIT_GRACE_MS = 3000;
+function runCheck(cwd, argv, o) {
+  const timeoutMs = Math.max(1000, (o && o.timeoutMs) || CHECK_TIMEOUT_MS);
+  const opt = o || {};
+  const stallMs = opt.stallMs != null ? opt.stallMs : (require('./langs').hangFor(argv) ? STALL_MS : 0);
+  return new Promise(resolve => {
+    const t0 = Date.now(), spec = spawnSpec(argv, opt.shell);
+    let out = '', total = 0, tail = '', timedOut = false, stalled = false, done = false, child, timer, stallTimer;
+    const stop = why => { if (done || timedOut) return; timedOut = true; stalled = why === 'stall'; killTree(child.pid); setTimeout(() => finish(null), 5000).unref(); };
+    const arm = () => { if (!stallMs) return; clearTimeout(stallTimer); stallTimer = setTimeout(() => stop('stall'), stallMs); };
+    // 앞부분은 CAP 에서 자른다 — 파이프가 큰 조각 하나(Windows · Node 20 에서 700KB)를 넘기면 앞부분이 상한을 넘고 꼬리가 비었다(BA-26 · CI)
+    const push = b => { arm(); total += b.length; let s = b.toString('utf8'); if (out.length < CAP) { const room = CAP - out.length; out += s.slice(0, room); s = s.slice(room); } if (s) tail = (tail + s).slice(-CAP); };
+    const finish = (code, err) => {
+      if (done) return; done = true; clearTimeout(timer); clearTimeout(stallTimer);
+      const output = out + (tail ? `\n…[${total - out.length - tail.length} bytes omitted]…\n` + tail : '') + (err ? `\n[spawn error] ${err}` : '');
+      const s = parseSummary(output);
+      const ok = code === 0 && !timedOut && !(s.found && s.fail > 0);
+      resolve({ command: opt.label || display(argv), argv, exit_code: code, timed_out: timedOut, ...(stalled ? { stalled: true } : {}), found: s.found, pass: s.found ? s.pass : (ok ? 1 : 0), fail: s.found ? s.fail : (ok ? 0 : 1), ok, output, ms: Date.now() - t0 });
+    };
+    try { child = spawn(spec.cmd, spec.args, { cwd, env: { ...childEnv(opt.bin), ...require('./proc').isolationEnv(cwd), ...(opt.slotHeld ? { HARNESS_SLOT_HELD: opt.slotHeld } : {}) }, stdio: ['ignore', 'pipe', 'pipe'], windowsHide: true, shell: spec.shell, detached: !IS_WIN }); }
+    catch (e) { return finish(null, e.message); }
+    // [2026-10-29 다른 세션 실측] Node 타이머는 2^31-1ms(약 24.8일)를 넘으면 1ms 로 바뀐다 — 상한을 크게 풀면(check_timeout_min 100000) 검사가 곧바로 "시간 초과" 로 끝났다. 한도로 자른다.
+    timer = setTimeout(() => stop('timeout'), Math.min(timeoutMs, MAX_TIMER_MS));
+    arm();
+    child.stdout.on('data', push); child.stderr.on('data', push);
+    child.on('error', e => finish(null, e.message));
+    child.on('close', code => finish(code));
+    // [자동 이슈 #53] 검사(dotnet test)는 끝났는데 남은 자손(MSBuild 노드 · nodeReuse)이 출력 파이프를 붙들어 'close' 가 오지 않았다 —
+    //   결과가 상한(15분)까지 돌아오지 않았다. 부모가 끝나면 잠시 남은 출력을 받고, 그래도 닫히지 않으면 파이프를 닫고 결과를 낸다.
+    //   남은 자손은 여기서 거두지 않는다(부모가 없어 트리로 못 찾는다) — 레인 프로세스 정리에 맡긴다. 유예 뒤의 출력은 판정에서 빠진다.
+    //   유예는 exit 뒤 마지막 출력부터 센다 — 부모가 끝난 뒤에도 출력이 이어지면 그때마다 다시 기다린다(#53 리뷰 S1).
+    child.on('exit', code => {
+      if (done || timedOut) return;
+      const close = () => {
+        if (done || timedOut) return;
+        try { child.stdout.destroy(); child.stderr.destroy(); } catch { /* 이미 닫힘 */ }
+        finish(code);
+      };
+      let grace = setTimeout(close, EXIT_GRACE_MS); grace.unref();
+      const rearm = () => { clearTimeout(grace); grace = setTimeout(close, EXIT_GRACE_MS); grace.unref(); };
+      child.stdout.on('data', rearm); child.stderr.on('data', rearm);
+    });
+  });
+}
+
+// o.serialRoot 가 있으면 그 프로젝트의 검사를 하나씩 돌린다(줄 선 잠금 "checks" · 기본 켬 · 프로젝트 블록 serial_checks: off 로 끈다).
+//   [2026-10-15 자동 이슈 #4] 같은 시험 DB 를 쓰는 작업 둘이 동시에 검사하다 서로 멈췄다. 기다리는 동안 이벤트 루프를 막지 않는다(stop 을 받는다).
+//   차례는 먼저 온 순서 · o.priority 0(사용자의 accept)이 1(나머지)을 앞지른다. o.label 은 줄에 보일 이름(검사 이름이 아니다).
+//   serial_checks: machine 이면 같은 줄을 PC 공용 폴더에 선다 — 같은 PC 의 다른 저장소 검사 · slot 명령과 번갈아 쓴다.
+//   잡은 이는 자식 환경에 HARNESS_SLOT_HELD(잠금 폴더)를 넘긴다 — 그 자식이 같은 줄에 다시 서면(slot 안의 batch · 검사 안의 slot) 교착하므로 줄 없이 돈다.
+function inQueue(o, fn) {
+  const S = require('./state'), base = slotBase(o.serialRoot), held = S.lockDir(o.serialRoot, 'checks', base);
+  if (holdsSlot(held)) return Promise.resolve().then(() => fn({ ...o, serialRoot: null, label: undefined }));
+  const meta = { repo: S.paths(o.serialRoot).root, timeout_ms: Math.max(1000, o.timeoutMs || CHECK_TIMEOUT_MS) };
+  return S.acquireQueued(o.serialRoot, 'checks', { priority: o.priority ?? 1, label: o.label || null, dir: base, meta }).then(async h => {
+    try { return await fn({ ...o, serialRoot: null, label: undefined, slotHeld: held }); } finally { h.release(); }
+  });
+}
+// 프로젝트 블록 serial_checks — on(기본 · 저장소마다 줄) | machine(PC 공용 줄) | off|false|no(줄 없음 → null). 여러 곳을 주면 값이 있는 첫 곳이 정한다(부른 체크아웃 → worktree).
+//   무엇이 무거운지는 프로젝트가 정한다 — 기본을 PC 줄로 하면 가벼운 저장소가 남의 긴 빌드 뒤에서 기다린다.
+function serialScope(...roots) {
+  for (const r of roots.filter(Boolean)) { const v = yamlString(r, 'serial_checks'); if (v) return /^(off|false|no)$/i.test(v) ? null : /^machine$/i.test(v) ? 'machine' : 'repo'; }
+  return 'repo';
+}
+function serialChecksOn(...roots) { return serialScope(...roots) !== null; }
+// 검사 줄의 잠금 · 번호표 폴더(lockDir 의 base) — machine 이면 PC 공용, 아니면 undefined(그 저장소의 locks).
+const slotBase = root => (serialScope(root) === 'machine' ? require('./resources').machineLocksDir() : undefined);
+// 이 프로세스가 그 줄을 이미 쥔 이의 자식인가 — 실경로로 비교한다(Windows 는 대소문자 · 짧은 이름 무시).
+const holdsSlot = held => !!process.env.HARNESS_SLOT_HELD && require('../hooks/_common').samePath(process.env.HARNESS_SLOT_HELD, held);
+
+// slot — 하네스 밖 무거운 명령(sln 빌드 · 이미지 빌드)을 검사 줄에 세워 돌린다. 차례가 오면 출력을 그대로 보이며 실행하고 끝나면 놓는다.
+//   [dev.pilot #85] 저장소를 넘는 무거운 일의 차례를 총괄이 손 장부와 GO 메시지로 넘겼다 — 총괄이 깨어 있을 때만 다음 차례가 됐다.
+//   잡기 · 놓기를 따로 부르는 짝은 두지 않는다 — 주인의 생존은 pid 와 시작 시각으로 보므로, CLI 가 끝나는 순간 잠금이 죽은 것으로 보인다.
+//   종료 코드는 명령의 것 그대로(하네스가 성패를 판정하지 않는다) · 상한을 넘으면 프로세스 트리를 끊고 124 · 실행하지 못하면 127.
+//   o: { cwd, label, timeoutMs, log, pollMs }
+async function runInSlot(root, argv, o) {
+  const S = require('./state'), opt = o || {}, log = opt.log || (x => process.stderr.write(x + '\n'));
+  const min = yamlNumber(root, 'check_timeout_min');
+  const timeoutMs = Math.max(1000, opt.timeoutMs || (min > 0 ? min * 60000 : CHECK_TIMEOUT_MS));
+  const scope = serialScope(root), base = slotBase(root);
+  let h = null, held = null;
+  if (!scope) log('[pilot] slot: serial_checks is off — running without the checks queue');
+  else {
+    held = S.lockDir(root, 'checks', base);
+    if (!holdsSlot(held)) {
+      let seen = '';
+      const label = `slot ${opt.label || path.basename(String(argv[0] || ''))}`;
+      h = await S.acquireQueued(root, 'checks', { priority: 1, label, dir: base, pollMs: opt.pollMs, meta: { repo: S.paths(root).root, kind: 'slot', timeout_ms: timeoutMs },
+        onWait: (n, owner) => { const now = `${n}|${owner ? owner.token : ''}`; if (now === seen) return; seen = now; log(`[pilot] slot: waiting (${Math.max(0, n - 1)} ahead) — now ${owner ? `${owner.label || 'pid ' + owner.pid}${owner.repo ? ' · ' + path.basename(owner.repo) : ''} (since ${owner.at})` : 'free'}`); } });
+    }
+  }
+  const spec = spawnSpec(argv);
+  return new Promise(resolve => {
+    let timedOut = false, done = false, child, timer;
+    // Ctrl+C · 종료 신호 · 터미널(콘솔) 닫힘: 기본 동작은 exit 훅 없이 끝나 자식(POSIX 는 분리된 프로세스 그룹)이 남는다 — 트리를 끊고 놓은 뒤 끝낸다.
+    const SIGS = ['SIGINT', 'SIGTERM', 'SIGHUP'];
+    const onSig = sig => { killTree(child && child.pid); if (h) h.release(); process.exit(sig === 'SIGINT' ? 130 : sig === 'SIGHUP' ? 129 : 143); };
+    const finish = code => { if (done) return; done = true; clearTimeout(timer); for (const x of SIGS) process.off(x, onSig); if (h) h.release(); resolve(code); };
+    for (const x of SIGS) process.on(x, onSig);
+    // POSIX 는 runCheck 처럼 분리해 띄운다 — 상한 초과 때 프로세스 그룹째(손자까지) 끊는다. Windows 는 taskkill /T 가 트리를 끊는다.
+    try { child = spawn(spec.cmd, spec.args, { cwd: opt.cwd || process.cwd(), env: { ...process.env, ...(held ? { HARNESS_SLOT_HELD: held } : {}) }, stdio: 'inherit', windowsHide: true, shell: spec.shell, detached: !IS_WIN }); }
+    catch (e) { log(`[pilot] slot: cannot run ${display(argv)}: ${e.message}`); return finish(127); }
+    timer = setTimeout(() => { timedOut = true; log(`[pilot] slot: ${display(argv)} ran past ${Math.round(timeoutMs / 60000)} min — stopping it`); killTree(child.pid); }, Math.min(timeoutMs, MAX_TIMER_MS));
+    child.on('error', e => { log(`[pilot] slot: cannot run ${display(argv)}: ${e.message}`); finish(127); });
+    child.on('close', code => finish(timedOut ? 124 : code == null ? 1 : code));
+  });
+}
+async function runAll(cwd, commands, o) {
+  if (o && o.serialRoot) return inQueue(o, q => runAll(cwd, commands, q));
+  const results = [];
+  // 항목은 argv 배열, 또는 { argv, shell, bin, label }(commandsForJudge 가 만든 대체 명령). o.label 은 줄 이름이라 검사 이름으로 넘기지 않는다.
+  for (const c of commands || []) {
+    if (Array.isArray(c)) results.push(await runCheck(cwd, c, { ...(o || {}), label: undefined }));
+    else results.push(await runCheck(cwd, c.argv, { ...(o || {}), shell: c.shell, bin: c.bin, label: c.label }));
+  }
+  return summarize(results);
+}
+// 실패한 검사는 한 번 더 돌린다 — 다시 돌려 통과하면 불안정(flaky)이다. 그 결과로 판정하고 불안정한 명령 이름을 돌려준다.
+//   [2026-10-03 실측] 코드 변경 없이 1 · 2 · 16 건 실패 후 통과 — 작업자가 없는 버그를 고치느라 이어 가기를 썼다. 모델 판정이 아니라 재실행이다.
+//   직렬이면 다시 돌리기까지 한 차례 안에서 한다(줄 뒤로 다시 서지 않는다).
+//   다시 돌렸으면 first(첫 실행 결과 · 출력 포함)도 돌려준다 — [dev.pilot #84] 판정은 재실행 결과로 바뀌어 "동시 실행에서만 실패" 한 첫 출력이 사라졌다.
+async function runJudged(cwd, commands, o) {
+  if (o && o.serialRoot) return inQueue(o, q => runJudged(cwd, commands, q));
+  const first = await runAll(cwd, commands, o);
+  if (first.ok || (o && o.rerun === false)) return { judged: first, flaky: [] };
+  const idx = first.results.map((r, i) => (r.ok || r.timed_out ? -1 : i)).filter(i => i >= 0);
+  if (!idx.length) return { judged: first, flaky: [] };
+  const again = await runAll(cwd, idx.map(i => commands[i]), o);
+  const results = first.results.slice(), flaky = [];
+  idx.forEach((i, k) => { results[i] = again.results[k]; if (again.results[k].ok) flaky.push(first.results[i].command); });
+  return { judged: summarize(results), flaky, first };
+}
+// 멈춘 테스트 떼어 내기 — 기준선에서 시간 초과된 검사의 멈춘 테스트를 언어 팩이 짚어 빼고 다시 돌린다(최대 4번).
+//   [2026-10-20 실측 · 음성 비서 Python 저장소] 오디오 장치를 기다리는 테스트 하나가 2% 지점에서 영원히 멈춰, 전체 pytest 가 매번 15분 상한에 걸렸다 —
+//   찾은 검사는 버려져 검사 없이 돌았고, 사용자가 준 검사였다면 작업이 끝날 수 없었다. 뺀 테스트는 보고서에 남긴다(조용히 빼지 않는다).
+//   → { argv, excluded: [테스트], result } · 떼어 낼 수 없으면 null
+//   o.serialRoot: 검사 줄(checks)을 서서 돈다(G2 #9 — 기준선의 떼어 내기가 다른 검사와 겹쳤다).
+async function isolateHangs(cwd, argv, o) {
+  if (o && o.serialRoot) return inQueue(o, q => isolateHangs(cwd, argv, q));
+  const hang = (o && o.hang) || require('./langs').hangFor(argv);   // o.hang: 테스트가 끼우는 가짜 러너
+  if (!hang) return null;
+  let cur = argv.slice();
+  const excluded = [];
+  for (let i = 0; i < 4; i++) {
+    const r = await runCheck(cwd, cur, { ...o, stallMs: o && o.stallMs != null ? o.stallMs : STALL_MS });
+    if (!r.timed_out) return excluded.length ? { argv: cur, excluded, result: r } : null;
+    const step = hang.next(cur, r.output);
+    if (!step) return null;
+    if (step.exclude) excluded.push(step.exclude);
+    cur = step.argv;
+  }
+  return null;
+}
+// ── 실패한 테스트 이름 ────────────────────────────────────────────────
+// [2026-10-25 C++ 저장소 실측] 실패 출력의 앞 1,500자가 vcpkg 잡음뿐이라 어느 테스트가 실패했는지 보고에 없었다 — 러너별 실패 줄에서 이름만 뽑는다.
+//   ctest(FAILED 목록 · ***Failed 줄) · GoogleTest · pytest · dotnet test · node(tap · spec ✖) · 이 저장소의 ❌ · jest ✕(Windows 는 ×) · vitest × · go. 중복 제거 · 최대 50개.
+//   [2026-10-29 감사 G2 #19] pytest 파라미터 id 에 공백이 있으면(test_p[a b]) 이름이 잘렸다 — 요약 줄의 " - 메시지" · 결과 단어 앞까지를 이름으로.
+const FAILED_MAX = 50;
+const dropMs = s => s.replace(/\s*\(\d+(?:\.\d+)?\s*m?s\)\s*$/, '').replace(/\s+\d+(?:\.\d+)?\s*m?s$/, '').trim();   // jest "(3 ms)" · vitest "3ms"
+function failedTests(text) {
+  const out = [], seen = new Set();
+  const add = n => { n = String(n || '').trim().slice(0, 200); if (n && !seen.has(n) && out.length < FAILED_MAX) { seen.add(n); out.push(n); } };
+  let ctestList = false, m;
+  for (const line of String(text || '').replace(ANSI, '').split(/\r?\n/)) {
+    if (out.length >= FAILED_MAX) break;
+    if (/^\s*The following tests FAILED:\s*$/.test(line)) { ctestList = true; continue; }
+    if (ctestList) { if ((m = /^\s*\d+\s+-\s+(.+?)\s+\([^()]*\)\s*$/.exec(line))) { add(m[1]); continue; } ctestList = false; }
+    if ((m = /\bTest\s+#\d+:\s+(\S+?)\s*\.*\s*\*{3}(?:Failed|Timeout|Exception|Not Run)/.exec(line))) add(m[1]);
+    else if ((m = /^\s*\[\s+FAILED\s+\]\s+(\S+)/.exec(line))) { const n = m[1].replace(/,$/, ''); if (/^[A-Za-z_]/.test(n) && n.includes('.')) add(n); }
+    else if ((m = /^(?:FAILED|ERROR)\s+(\S+::.+?)(?:\s+-\s.*)?\s*$/.exec(line)) || (m = /^(\S+::.+?)\s+(?:FAILED|ERROR)\b/.exec(line))) add(m[1]);
+    else if ((m = /^\s*(?:Failed|실패)\s+(\S.*?)\s+\[[^\]]*\]\s*$/.exec(line))) add(m[1]);
+    else if ((m = /^\s*not ok \d+\s*-?\s*(.+?)\s*$/.exec(line))) { if (!/#\s*(TODO|SKIP)\b/i.test(m[1])) add(m[1].replace(/\s+#.*$/, '')); }
+    else if ((m = /^\s*✖\s+(.+?)\s*$/.exec(line))) { if (!/^failing tests:?$/i.test(m[1])) add(dropMs(m[1])); }
+    else if ((m = /^\s*❌\s+(.+?)\s*$/.exec(line))) add(m[1].split(' — ')[0].split(/\s{2,}/)[0]);
+    else if ((m = /^\s*[✕×]\s+(.+?)\s*$/.exec(line))) add(dropMs(m[1]));
+    else if ((m = /^\s*--- FAIL:\s+(\S+)/.exec(line))) add(m[1]);
+  }
+  return out;
+}
+// failed_tests: 실패한 검사들의 실패 테스트 이름(합집합) · indeterminate: 실패한 검사가 모두 시간 초과로만 실패했다(판정할 수 없음 — 코드 탓인지 모른다).
+//   [2026-10-25 C++ 저장소 실측] 느린 시험 하나의 시간 초과가 일반 실패로 세어져 좋은 카드 10장이 되돌려졌다. judge 는 그대로 — 쓰는 쪽이 본다.
+function summarize(results) {
+  const bad = results.filter(r => !r.ok), names = [];
+  for (const r of bad) for (const n of failedTests(r.output)) if (!names.includes(n) && names.length < FAILED_MAX) names.push(n);
+  return { ok: results.every(r => r.ok), pass: results.reduce((a, r) => a + r.pass, 0), fail: results.reduce((a, r) => a + r.fail, 0), failed_tests: names, indeterminate: bad.length > 0 && bad.every(r => !!r.timed_out && !r.stalled), results };   // 출력이 멈춘 시험(stalled)은 판정 불가가 아니다
+}
+// 기록용(출력 제외).
+const brief = j => j && { ok: j.ok, pass: j.pass, fail: j.fail, failed_tests: j.failed_tests || [], indeterminate: !!j.indeterminate, results: j.results.map(r => ({ command: r.command, ok: r.ok, pass: r.pass, fail: r.fail, exit_code: r.exit_code, timed_out: r.timed_out, found: r.found })) };
+
+// 통과, 또는 기준선이 빨갔고 나빠지지 않음: 기준선에서 통과하던 명령은 여전히 통과 · 실패하던 명령의 실패 수는 늘지 않음.
+//   "나빠지지 않음" 은 저장소에 원래 있던(발견된) 검사에만 쓴다 — 사용자가 준 검사는 새 동작을 묘사하므로 기준선이 빨간 게
+//   당연하고, 거기에 "나빠지지 않음" 을 쓰면 아무것도 안 한 턴이 done 이 된다(opts.notWorse=false).
+//   "나빠지지 않음" 은 증명할 수 있을 때만(H3) — 명령마다:
+//     기준선 통과 → 지금도 통과 · 요약을 읽을 수 없으면(기준선이든 지금이든) 판정 불가 = 나빠짐 · 시간 초과가 새로 생김 = 나빠짐 ·
+//     요약은 0 fail 인데 exit≠0(기준선과 같은 상태가 아니면) = 설명 안 되는 실패 = 나빠짐 · fail 증가 · pass 감소 · 전체 수 감소(테스트 삭제) = 나빠짐.
+function worseThan(r, b) {
+  if (!b) return true;
+  if (b.ok) return !r.ok;
+  if (!r.found || !b.found) return true;
+  if (r.timed_out && !b.timed_out) return true;
+  const exitBad = x => x.exit_code !== 0;
+  if (r.fail === 0 && exitBad(r) && !(b.fail === 0 && b.exit_code === r.exit_code)) return true;
+  if (exitBad(r) && !exitBad(b)) return true;
+  return r.fail > b.fail || r.pass < b.pass || (r.pass + r.fail) < (b.pass + b.fail);
+}
+// [2026-10-29 감사 G2 #3] 실패 수만 비교해 레인이 Y 를 고치고 X 를 깨뜨리면(수는 같다) not_worse 로 합쳐졌다 — 양쪽에 실패한 시험 이름이 있으면
+//   기준선에 없던 이름이 새로 실패했는지도 본다. 한쪽에 이름이 없거나 목록이 상한(50)에 닿아 잘렸으면 이름으로 판정하지 않는다(수로만).
+function newlyFailing(current, baseline) {
+  const c = current.failed_tests || [], b = (baseline && baseline.failed_tests) || [];
+  if (!c.length || !b.length || c.length >= FAILED_MAX || b.length >= FAILED_MAX) return [];
+  const had = new Set(b);
+  return c.filter(n => !had.has(n));
+}
+function judge(current, baseline, opts) {
+  if (current.ok) return { verdict: 'pass', why: 'all checks pass' };
+  const allow = !opts || opts.notWorse !== false;
+  if (allow && baseline && !baseline.ok && baseline.results && baseline.results.length === current.results.length) {
+    const worse = current.results.some((r, i) => worseThan(r, baseline.results[i]));
+    const fresh = worse ? [] : newlyFailing(current, baseline);
+    if (fresh.length) return { verdict: 'fail', why: `${current.fail} failing — newly failing since before the task: ${fresh.slice(0, 10).join(', ')}`, newly_failing: fresh };
+    if (!worse) return { verdict: 'not_worse', why: `baseline was red — the checks were already failing before the task (baseline ${baseline.pass} pass / ${baseline.fail} fail); now ${current.pass} pass / ${current.fail} fail — not worse, but the checks do not prove this work` };
+  }
+  return { verdict: 'fail', why: `${current.fail} failing` };
+}
+
+// ── 실패 서명 · 발췌 ──────────────────────────────────────────────────
+const clean = l => l.replace(/\s*\(\d+(?:\.\d+)?m?s\)/g, '').replace(/\s+/g, ' ').trim();
+const HEADER = /^\s*(?:Uncaught\s+)?[A-Za-z_$][\w$]*(?:Error|Exception)(?:\s*\[[^\]]+\])?:|^E\s{2,}\S/;
+function firstAssertion(r) {
+  const lines = String(r.output || '').split(/\r?\n/);
+  for (let i = 0; i < lines.length; i++) {
+    if (!HEADER.test(lines[i])) continue;
+    const parts = [];
+    for (let j = i; j < lines.length && parts.length < 4; j++) {
+      const t = lines[j].trim();
+      if (j > i && /^at\s/.test(t)) break;
+      if (t) parts.push(clean(t));
+    }
+    return parts.join(' ').slice(0, 300);
+  }
+  const named = lines.find(l => /^\s*✖\s/.test(l) || /^not ok \d+/.test(l));
+  if (named) return clean(named);
+  if (r.timed_out) return 'TIMEOUT';
+  const last = lines.map(l => l.trim()).filter(Boolean).slice(-3).join(' | ');
+  return clean(last).slice(0, 300) || `exit ${r.exit_code}`;
+}
+function signature(judged) {
+  return JSON.stringify(judged.results.filter(r => !r.ok).map(r => [r.command, r.fail, firstAssertion(r)]));
+}
+function clip(text, head, tail) {
+  const s = String(text == null ? '' : text);
+  if (s.length <= head + tail) return s;
+  return s.slice(0, head) + `\n…[${s.length - head - tail} chars omitted]…\n` + s.slice(s.length - tail);
+}
+// 기록용 출력 가리기 — 쓰는 쪽에서 비밀을 가린다(board.maskSecrets · 없는 판이면 그대로).
+function maskOutput(s) { try { return require('../hooks/board').maskSecrets(s); } catch { return String(s || ''); } }
+// 실패한 검사의 기록용 요약 — [dev.pilot #84] batch 기록에 실패한 시험 이름만 남아, 원인을 보려면 같은 검사를 다시 돌려야 했다.
+//   run: 'first' | 'final' · tests: 실패한 시험(앞 20) · excerpt: 첫 실패 시험 이름 근처부터(없으면 꼬리) 4000자 · 비밀을 가린다 ·
+//   artifacts: 출력에 찍힌 TRX 경로(dotnet test --logger trx 의 "Results File:" · 한국어 SDK "결과 파일:") — 복사하지 않는다. 실패한 검사 20개까지.
+const EXCERPT_MAX = 4000;
+const TRX_RE = /^[ \t]*(?:Results File|결과 파일)[ \t]*:[ \t]*(.+?\.trx)[ \t]*\r?$/gim;
+function failureRecord(results, run) {
+  return (results || []).filter(r => !r.ok).slice(0, 20).map(r => {
+    const out = maskOutput(String(r.output || '').replace(ANSI, ''));
+    const tests = failedTests(out).slice(0, 20);
+    const at = tests.length ? out.indexOf(tests[0]) : -1;
+    const excerpt = at >= 0 ? out.slice(Math.max(0, at - 200), Math.max(0, at - 200) + EXCERPT_MAX) : out.slice(-EXCERPT_MAX);
+    return { command: r.command, run, exit_code: r.exit_code, timed_out: !!r.timed_out, pass: r.pass, fail: r.fail, tests, excerpt,
+      artifacts: [...new Set([...out.matchAll(TRX_RE)].map(m => m[1].trim()))].slice(0, 10) };
+  });
+}
+// 실패한 테스트 이름이 있으면 맨 앞에 — 출력 앞부분이 빌드 잡음이어도 무엇이 실패했는지 보인다.
+function failureExcerpt(judged) {
+  const bad = judged.results.filter(r => !r.ok);
+  const names = Array.isArray(judged.failed_tests) ? judged.failed_tests : [...new Set(bad.flatMap(r => failedTests(r.output)))].slice(0, FAILED_MAX);
+  return (names.length ? `failed tests: ${names.join(', ')}\n\n` : '') + bad.map(r =>
+    `### \`${r.command}\` — exit ${r.exit_code == null ? 'none' : r.exit_code}${r.timed_out ? ' (timed out)' : ''}${r.found ? ` · ${r.pass} pass / ${r.fail} fail` : ''}\n\`\`\`\n${clip(r.output, 1500, 2500).trim()}\n\`\`\``).join('\n\n');
+}
+
+module.exports = { lintArgv, syncLint, yamlNumber, yamlString, yamlList, yamlListOf, spawnSpec, CHECK_TIMEOUT_MS, splitCommand, display, isShellString, discover, repoKinds, programName, parseSummary,
+  runCheck, runAll, runJudged, inQueue, serialChecksOn, serialScope, runInSlot, failedTests, isolateHangs, STALL_MS, summarize, brief, judge, worseThan, signature, firstAssertion, failureExcerpt, failureRecord, maskOutput, clip, killTree, childEnv,
+  definitions, commandsForJudge, isNpmTest, npmTestScript, yamlTestCommandOf };

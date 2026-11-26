@@ -1,0 +1,24 @@
+{
+  "files.watcherExclude": {
+    "**/.harness-worktrees/**": true,
+    "**/.claude/worktrees/**": true
+  },
+  "search.exclude": {
+    "**/.harness-worktrees/**": true,
+    "**/.claude/worktrees/**": true
+  },
+  "git.detectWorktrees": false,
+  "git.repositoryScanIgnoredFolders": [
+    "node_modules",
+    ".harness-worktrees"
+  ],
+  "C_Cpp.files.exclude": {
+    "**/.harness-worktrees": true
+  },
+  "python.analysis.exclude": [
+    "**/node_modules",
+    "**/__pycache__",
+    "**/.*",
+    "**/.harness-worktrees/**"
+  ]
+}
