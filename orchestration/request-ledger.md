@@ -44,7 +44,7 @@
 | C-006 | orch (V-004c 권고) | schematic t18z | 전면 R17 100k → 10k (값만) | hardware/schematic/front (C-002 레인) | netcompare R17 값 1건, ERC 0, 커밋 | completed — 355ab3e (계약 v1.6 fb6629c), orch 재실행 front ERC 0 |
 | C-007 | orch | schematic t18z | 캐리어 5V 출력 22µF 1210 1개 추가, 전면 D1/D2 MPN SS24S-E3/61T | hardware/schematic/** (C-002 레인) | 의도 차이, ERC 0, 커밋 | completed — f651dfe (계약 v1.7 62145e8), orch 재실행 carrier ERC 0. 회로도 배선 기준 고정 |
 | R-010 | orch (단계 6 준비) | research t18s | PCBWay PCBA 제출 요건(BOM·CPL·Gerber·위탁 절차·조립 등급) + KiCad 내보내기 방법 | docs/research/r010-pcbway-submission.md | 항목표·P-004 체크리스트, 레인·커밋 | running |
-| C-008 | orch (P-003 요청) | schematic t18z | 라이브러리만: DC 잭 실크–외곽, MH1 courtyard ±12.45, MH1 받침 13.2□ F.Fab·금지 영역 | hardware/libraries/** (C-002 레인) | 시험판 DRC silk·courtyard, ERC 0, 커밋 | running |
+| C-008 | orch (P-003 요청) | schematic t18z | 라이브러리만: DC 잭 실크–외곽, MH1 courtyard ±12.45, MH1 받침 13.2□ F.Fab·금지 영역 | hardware/libraries/** (C-002 레인) | 시험판 DRC silk·courtyard, ERC 0, 커밋 | completed — 9a843ba, 시험판 DRC 위반 0(음성 시험 금지 영역 검출), PicoBlade J_ICR 여유 0 |
 | M-001e | orch | mechanical t18x | DF30 180°(센서 모듈 회전)·LED B1/B2 (±7.5,−16.5)·GH 6P ±0.3 이동 반영, 간섭 재검사 | mechanical/** (M-001 레인) | 간섭 결과, 커밋 | running |
 
 ## 운영 변경 (2026-11-26, 사용자 지시 · lead 전달)
