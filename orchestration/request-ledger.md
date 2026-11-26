@@ -21,7 +21,7 @@
 | G-001 | lead t18q (사용자 요청 2026-11-26) | schematic t18z | L-001·C-002를 KiCad 10 GUI로 보이게 진행, 단계별 스크린샷, GUI 단일 소유(pcb 금지 통지) | 스크린샷 C:/workspace_python/OpenHW/validation/runtime/kicad-gui/** (gitignore) | 창 뜸 즉시 보고 → lead 전달, ERC는 kicad-cli 종료 코드 | running (C-001b 뒤 L-001부터) |
 | F-003 | orch | firmware t18w | 계약 v1 DTS 패치 + 주야 전환 데몬(LTR-329 i2c-dev → ICR·IR LED·ISP IR 모드) + 패치 빌드·호스트 시험 | firmware/** | 빌드 종료 코드·해시, 호스트 시험 결과, 레인·커밋 | queued (F-002 기준 빌드 성공 뒤) |
 | M-001b | orch | mechanical t18x | 적층 갱신: 짝 BTB 높이 8.0 추정, 높이 매개변수화, DF30 모듈 자리 변수 | mechanical/** (M-001 레인) | z표·매개변수·간섭, 커밋 | completed — 커밋 fd9ed82. btb_h 8.0 기본(4.0/8.0 재생성 OK), 전체 39.9mm, 허용 높이 캐리어 윗면 ≤6.2·전면 아랫면 ≤5.2, 의도 외 간섭 0 |
-| P-002 | orch | pcb t190 | KiCad .kicad_dru·넷클래스·캐리어/전면 보드 외형(GUI 없이) | hardware/pcb/rules/**, hardware/pcb/outline/** | 파일·kicad-cli 결과, 레인·커밋 | running |
+| P-002 | orch | pcb t190 | KiCad .kicad_dru·넷클래스·캐리어/전면 보드 외형(GUI 없이) | hardware/pcb/rules/**, hardware/pcb/outline/** | 파일·kicad-cli 결과, 레인·커밋 | completed — 레인 t-20261126-163344-acdf 커밋 022c364. 외형 40×40·4층·넷클래스, orch 재실행 kicad-cli pcb drc carrier 0·front 0 |
 | V-002 | orch | review t191 | R-004 핵심 6주장 독립 검증(BTB 원품번·HCTL 치수 대조·짝 높이·DF30 핀·재고·전원 IC 정격) | validation/review-V002-R004.md | 판정표·영향, 레인·커밋 | running |
 
 ## 운영 변경 (2026-11-26, 사용자 지시 · lead 전달)
