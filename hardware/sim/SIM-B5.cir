@@ -1,0 +1,32 @@
+* SIM-001b
+.model pq6 pmos level=1 vto=-0.5 kp=13.4
+.model nq7 nmos level=1 vto=0.5 kp=4.0
+.model dsi D(IS=1e-14 N=1)
+Vcore core 0 1.89
+Rcore core c18 0.1
+Ven e0 0 PWL(0 0 1m 0 1.001m 1.71 6m 1.71 6.001m 0)
+Ren e0 en 93.75
+M6 cam g6i c18 c18 pq6
+Rg6 g6 g6i 15.2
+Cgs6 g6i c18 731p
+Cgd6 g6i cam 77p
+Db6 cam c18 dsi
+R17 c18 g6 10k
+M7 g6 en 0 0 nq7
+Cg7 en 0 55p
+Cd7 en g6 5.4p
+C18 cam c18e 1u
+R18e c18e 0 5m
+C11 cam 0 100n
+Rx1 cam 0 450
+
+.options reltol=1e-3 abstol=1e-9 vntol=1e-6 itl4=200
+.tran 1n 8m 0 20n uic
+.control
+set wr_singlescale
+set wr_vecnames
+run
+wrdata out.txt -i(Vcore) v(cam) v(en) v(g6)-v(c18)
+quit
+.endc
+.end

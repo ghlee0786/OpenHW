@@ -1,0 +1,71 @@
+{
+  "id": "SIM-B8",
+  "title": "센서 리셋 RC 시간과 전원 순서",
+  "owner": "firmware",
+  "circuit": {
+    "board": "front",
+    "refs": [
+      "R7",
+      "C10",
+      "D3",
+      "Q1",
+      "Q2",
+      "Q3",
+      "R4",
+      "R5",
+      "R6",
+      "C7",
+      "C8",
+      "C9"
+    ],
+    "schematic_commit": "656b50a"
+  },
+  "model": {
+    "source": "RC + 레벨 1 MOSFET 근사",
+    "url": "",
+    "license": "—",
+    "behavioral": true,
+    "basis": "회로 값 boards.py L180–190; DMG1012T DS31783; GC2053 사본 V1.1 VIH 0.7·VIF; X1 기동 최대 3 ms (YXC 사본)"
+  },
+  "criteria_commit": "7cab389",
+  "checks": [
+    {
+      "name": "리셋 해제 − 센서 전원 90 % 시각",
+      "op": ">=",
+      "limit": 0.0,
+      "unit": "s",
+      "value": 0.001341,
+      "corner": "AO3401A 레벨1 가정, 부하 30mA(가정)",
+      "pass": true
+    },
+    {
+      "name": "CAM_EN 하강 → CAM_RESET < 0.54 V",
+      "op": "<=",
+      "limit": 5e-05,
+      "unit": "s",
+      "value": 1.13837e-05,
+      "corner": "D3 BAT54WS",
+      "pass": true
+    },
+    {
+      "name": "전원 90 % 하강 − 리셋 하강",
+      "op": ">=",
+      "limit": 0.0,
+      "unit": "s",
+      "value": 0.000154708,
+      "corner": "같음",
+      "pass": true
+    }
+  ],
+  "verdict": "pass",
+  "waveforms": [
+    "hardware/sim/png/SIM-B8-reset.png"
+  ],
+  "netlist": "hardware/sim/SIM-B8.cir",
+  "tool": {
+    "name": "ngspice",
+    "version": "47",
+    "sha256": "22d5cae2bd32b2e39157a8d27bf457122f68285b72a9ebefdf41551b628233ab"
+  },
+  "notes": "기록만: 리셋 해제 1.35 ms (CAM_EN 뒤) vs X1 기동 최대 3 ms — GC2053 'MCLK 뒤 리셋 해제' 수치 요구는 미확인이라 판정 밖. 첫 I2C는 FW 가 CAM_EN 뒤 ≥5 ms | 가정: AO3401A 레벨1(vto −0.9, Ciss 645 pF — 데이터시트 미조사), 센서 레일 부하 30 mA"
+}

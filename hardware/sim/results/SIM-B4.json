@@ -1,0 +1,102 @@
+{
+  "id": "SIM-B4",
+  "title": "DRV8837 ICR 펄스 — 코일 전류·시간·극성",
+  "owner": "firmware",
+  "circuit": {
+    "board": "front",
+    "refs": [
+      "U2(front DRV8837)",
+      "R1",
+      "J2",
+      "CLA216"
+    ],
+    "schematic_commit": "656b50a"
+  },
+  "model": {
+    "source": "데이터시트 동작 모델 (H-브리지 스위치 + 진리표)",
+    "url": "https://www.ti.com/lit/ds/symlink/drv8837.pdf",
+    "license": "—",
+    "behavioral": true,
+    "basis": "TI SLVSBA4F p.8–9 §6.5–6.6, p.13 Table 7-1; 코일 20Ω ±10% 가정(계약 3.2절), 인덕턴스 미확인"
+  },
+  "criteria_commit": "7cab389",
+  "checks": [
+    {
+      "name": "코일 전류 (밤, 최대 모서리)",
+      "op": "<=",
+      "limit": 0.3,
+      "unit": "A",
+      "value": 0.287199,
+      "corner": "5.25V, 18Ω, rDS 0.28Ω",
+      "pass": true
+    },
+    {
+      "name": "코일 전류 (밤, 최소 모서리)",
+      "op": ">=",
+      "limit": 0.19,
+      "unit": "A",
+      "value": 0.212718,
+      "corner": "4.75V, 22Ω, rDS 0.33Ω",
+      "pass": true
+    },
+    {
+      "name": "펄스 시간 (|I|>50 %)",
+      "op": "between",
+      "limit": [
+        0.195,
+        0.205
+      ],
+      "unit": "s",
+      "value": 0.199999,
+      "corner": "min 모서리, 밤 펄스",
+      "pass": true
+    },
+    {
+      "name": "극성 밤 V(ICR_A)-V(ICR_B)",
+      "op": ">=",
+      "limit": 4.0,
+      "unit": "V",
+      "value": 4.6798,
+      "corner": "IN1=1 IN2=0, min 모서리",
+      "pass": true
+    },
+    {
+      "name": "극성 낮 V(ICR_A)-V(ICR_B)",
+      "op": "<=",
+      "limit": -4.0,
+      "unit": "V",
+      "value": -4.6798,
+      "corner": "IN1=0 IN2=1, min 모서리",
+      "pass": true
+    },
+    {
+      "name": "펄스 끝 10 ms 뒤 코일 전류 (코스트)",
+      "op": "<=",
+      "limit": 0.001,
+      "unit": "A",
+      "value": 4.67339e-18,
+      "corner": "코일 인덕턴스 미확인 → 저항 부하",
+      "pass": true
+    },
+    {
+      "name": "IN2 High − VIH 최대(0.5×2.856V)",
+      "op": ">=",
+      "limit": 0.1,
+      "unit": "V",
+      "value": 0.280398,
+      "corner": "VDDIO 1.71V, 출력 저항 93.75Ω, 100k 풀다운",
+      "pass": true
+    }
+  ],
+  "verdict": "pass",
+  "waveforms": [
+    "hardware/sim/png/SIM-B4-drv8837.png"
+  ],
+  "netlist": "hardware/sim/SIM-B4.cir",
+  "tool": {
+    "name": "ngspice",
+    "version": "47",
+    "sha256": "22d5cae2bd32b2e39157a8d27bf457122f68285b72a9ebefdf41551b628233ab"
+  },
+  "notes": "코스트 구간 최대 |I| 0.000 mA; IN2 High 1.708 V"
+}

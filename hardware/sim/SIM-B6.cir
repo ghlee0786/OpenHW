@@ -1,0 +1,28 @@
+* SIM-001b op
+.model dsi D(IS=1e-14 N=1)
+Vcore core 0 1.89
+Iq6 core cam 1u
+Db6 cam core dsi
+Rx1 cam 0 100k
+R9 cam sda 4.7k
+R10 cam scl 4.7k
+Rpd_d sda 0 51k
+Rpd_c scl 0 51k
+Ilk_d 0 sda 10u
+Ilk_c 0 scl 10u
+Vsd sda sd 0
+Ds_d sd srail dsi
+Vsc scl scx 0
+Ds_c scx srail dsi
+Rsr srail 0 10k
+R8 mclko mclk 22
+Rx1o mclko 0 1meg
+Vsm mclk smk 0
+Ds_m smk srail dsi
+
+.control
+op
+print v(sda) v(scl) v(cam) v(mclk) i(vsd) i(vsc) > out.txt
+quit
+.endc
+.end
