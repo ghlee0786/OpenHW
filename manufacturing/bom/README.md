@@ -11,7 +11,7 @@
 
 | 파일 | 출처 | sha256 |
 |---|---|---|
-| `inputs/bom-full.csv` | research R-008 레인 t-20261126-171912-e7d2 커밋 **da48f2a** `docs/research/bom-full.csv` (`git show`) | 6a217e3de413bf24438dffd96a36036853e03a14e245564b82ce544933e4be5c |
+| `inputs/bom-full.csv` | research R-008 레인 t-20261126-171912-e7d2 커밋 **9a5fbfb** `docs/research/bom-full.csv` (`git show`, R-012 전선 MPN 반영) | 9738121e9c01933115b5878f6485ebda92f1d54977f6240df696d5161e09fa02 |
 | `inputs/carrier-kicad-bom.csv` | 회로도 **c653eac** `hardware/schematic/carrier/carrier.kicad_sch`(sha256 1f7cb20b…62b0)를 `git show`로 꺼내 `kicad-cli sch export bom`으로 내보냄 | 3c597c2ec691b0ca3bfe4fe8e48ae14848c6cbaee718313650fe46eea7149a58 |
 | `inputs/front-kicad-bom.csv` | 같은 방법 (`front.kicad_sch` sha256 4bd5b354…1b304) | c4f429b83e7ae6de4293e304dfd6ebb0a37604c8a8f4c7fd24ce24466c8c0eab |
 
