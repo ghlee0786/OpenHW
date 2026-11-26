@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 HERE = os.path.dirname(os.path.abspath(__file__))
 NG = os.environ.get('NGSPICE', r'C:\Users\gh\tools\ngspice\47\Spice64\bin\ngspice_con.exe')
 CRITERIA_COMMIT = '64bde61'  # d00a3ac + A4(781961b) + 개정 1 ef3c0d0 + 개정 2 (R-021 GST40A12-P1J)
-SCH_COMMIT = '7760f38'  # C-019 (R2 78.7k / R3 10.7k, 전면 R20·C20·C21) — C-018 R6 6.04k 포함
+SCH_COMMIT = 'a2d878c'  # C-020 (S6 전면 R20·R5 100k, R21 1k, D4·D5 BAT54) — C-019 R2 78.7k/R3 10.7k·C20/C21, C-018 R6 6.04k 포함
 FB_R2, FB_R3 = 78.7e3, 10.7e3   # 캐리어 TPS54302 FB 분압 (C-019; C-018 까지 100k/13.3k)
 TOOL = {'name': 'ngspice', 'version': 'ngspice-47 (공식 SourceForge ng-spice-rework/47/ngspice-47_64.7z)',
         'sha256': '59225971… (7z, firmware 설치·검증 — orch O-81)', 'path': NG.replace('\\', '/')}
@@ -660,8 +660,12 @@ C18p c18 0 8.5u
 Ven en 0 PULSE(0 1 1m 1u 1u 1 2)
 R4 c33 pg 100k
 Sq3 pg 0 en 0 SQ
-R5 pg pgav 10k
-Rf20 pg pgio 1k
+* C-020 S6: Q1 게이트 R20 100k ∥ (R21 1k + D4 BAT54, 애노드 pgiod → 캐소드 pg), Q2 게이트 R5 100k ∥ D5 BAT54 (애노드 pg → 캐소드 pgav)
+R5 pg pgav 100k
+Df5 pg pgav DBAT
+Rf20 pg pgio 100k
+Rf21 pgio pgiod 1k
+Df4 pgiod pg DBAT
 Cf20 pgio iov 4.7n
 Mq1 iov pgio c33 c33 PAO
 Cg1 pgio c33 645p
@@ -694,6 +698,8 @@ Csd sdv 0 11.1u
 Rsd sdv 0 16.5
 R23 sdv 0 100k
 .model SQ SW(Ron=1 Roff=1e9 Vt=0.5)
+* BAT54WS: VF 0.32 V @ 10 mA (최대값에 맞춘 근사 — Diodes BAT54WS 데이터시트), CJ 10 pF
+.model DBAT D(IS=4e-8 N=1 RS=2 CJO=10p BV=30)
 .options method=gear
 .control
 set wr_singlescale
@@ -717,7 +723,7 @@ quit
     out.append(save('SIM-C3', '스위치 켬 순간 코어 레일 강하 (CAM_EN · SD0_PWR_EN)', 'carrier+front', ['front Q1', 'Q2', 'Q3', 'Q6', 'Q7', 'R18', 'C19', 'carrier Q2', 'R22', 'C21'],
         {'source': '레벨 1 MOSFET(전형) + 코어 레일 등가(가정)', 'url': DS['AO3401A'] + ' · ' + DS['DMG2305UX'] + ' · ' + DS['CORE'], 'license': '이 저장소 작성', 'behavioral': True,
          'basis': '코어 레일: 이상 전원 + 0.1 Ω(SIM-001b 와 같은 가정) + 로컬 C (코어 SCH 03 출력 C, DC 바이어스 감액 가정). 센서 레일 부하 30 mA, X1 450 Ω, SD 카드 10 µF·0.2 A (가정)'},
-        [chk('CAM_EN 켬: CORE_3V3 강하', '<=', 0.166, d33c, 'V', 'C-019: Q1 게이트 R20 1k + C20 4.7 nF, Q2 R5 10k + C21 4.7 nF (밀러)'),
+        [chk('CAM_EN 켬: CORE_3V3 강하', '<=', 0.166, d33c, 'V', 'C-020 S6: Q1 R20 100k ∥ (R21 1k + D4), Q2 R5 100k ∥ D5, C20·C21 4.7 nF (밀러)'),
          chk('CAM_EN 켬: CORE_1V8 강하 (C-018 R17 4.7k·R18·C19 4.7n)', '<=', 0.09, d18, 'V', ''),
          chk('SD0_PWR_EN 켬: CORE_3V3 강하', '<=', 0.166, d33s, 'V', 'R22 47k / C21 100 nF')],
         pngs, 'SIM-C3.cir', f'기준선 CORE_3V3 {b33:.3f} V, CORE_1V8 {b18:.3f} V (0.1 Ω 경로 강하 포함). 코어 쪽 실제 디커플링(SoC 주변 C)은 더 크므로 강하는 이보다 작을 수 있다.'))

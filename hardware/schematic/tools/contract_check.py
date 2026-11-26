@@ -9,7 +9,7 @@
 함께 (같은 실행): 두 보드 ERC --exit-code-violations, netcompare(기준 커밋 넷리스트 대비).
 
 usage:
-  python contract_check.py [--contract FILE] [--base 7760f38] [--md OUT.md] [--json OUT.json]
+  python contract_check.py [--contract FILE] [--base a2d878c] [--md OUT.md] [--json OUT.json]
   python contract_check.py --selftest          # 고장 주입: 계약 표 한 줄을 바꾼 사본마다 불일치가 늘어나는지
 종료 코드 = 계약 불일치 수 + ERC 실패 보드 수 + netcompare 차이 보드 수 (255 상한). --selftest 는 놓친 고장 수.
 """
@@ -196,6 +196,11 @@ def check(t, N):
         add('3.1', f'전면 Q1 게이트 직렬 {ref}', f'{ref} {val}', ' '.join(f'{r} {F.comps[r]}' for r in F.two_pin('CAM_PG', F.fn('Q1', 'G'))) or '없음')
     for q, ref, val in find(t, r'Q(\d) 게이트–드레인 (C\d+) ([\d.]+nF)'):
         add('3.1', f'전면 Q{q} 게이트–드레인 {ref}', f'{ref} {val}', ' '.join(f'{r} {F.comps[r]}' for r in F.two_pin(F.fn(f'Q{q}', 'G'), F.fn(f'Q{q}', 'D'))) or '없음')
+    # v1.16 S6: 저항 「Rn 값(넷A–넷B)」, 다이오드 「Dn BAT54(애노드 넷 → 캐소드 넷)」
+    for ref, val, a, b in find(t, r'(R\d+) ([\d.]+k)\(([A-Z0-9_]+)–([A-Z0-9_]+)\)'):
+        add('3.1', f'전면 {ref} {a}–{b}', f'{ref} {val}', ' '.join(f'{r} {F.comps[r]}' for r in F.two_pin(a, b) if r.startswith('R')) or '없음')
+    for ref, a, k in find(t, r'(D\d+) BAT54\(애노드 (\w+) → 캐소드 (\w+)\)'):
+        add('3.1', f'전면 {ref} 애노드/캐소드', f'{a}/{k}', f'{F.fn(ref, "A")}/{F.fn(ref, "K")}')
     for g, val in find(t, r'게이트 (CAM_1V8_G) = R17 ([\d.]+k)'):
         add('3.1', 'R17 값·넷', f'{val} ' + '-'.join(sorted(('CORE_1V8', g))), f'{F.comps.get("R17")} {"-".join(sorted({F.at("R17", 1), F.at("R17", 2)}))}')
     if find(t, r'전면 Q6 DMG2305UX'):
@@ -279,7 +284,7 @@ def netlists(tmp, sch_of):
 
 def main(argv):
     sys.stdout.reconfigure(encoding='utf-8')
-    contract = os.path.join(SCH, 'hw-fw-contract.md'); base = '7760f38'; md = js = None  # C-019 netlist baseline
+    contract = os.path.join(SCH, 'hw-fw-contract.md'); base = 'a2d878c'; md = js = None  # C-020 netlist baseline
     it = iter(argv)
     for a in it:
         if a == '--contract': contract = next(it)
@@ -356,6 +361,8 @@ FAULTS = [
     ('「스트링 A·B 실장」 문구 모두 삭제', '스트링 A·B 실장', '스트링 A 실장'),
     ('3.1 FB R3 10.7k → 13.3k', 'FB R2 78.7k / R3 10.7k', 'FB R2 78.7k / R3 13.3k'),
     ('3.1 Q2 게이트–드레인 C21 → C22', 'Q2 게이트–드레인 C21', 'Q2 게이트–드레인 C22'),
+    ('3.1 D5 극성 뒤집힘', 'D5 BAT54(애노드 CAM_PG → 캐소드 CAM_PG_AV)', 'D5 BAT54(애노드 CAM_PG_AV → 캐소드 CAM_PG)'),
+    ('3.1 R20 100k → 1k', 'R20 100k(CAM_PG–CAM_PG_IO)', 'R20 1k(CAM_PG–CAM_PG_IO)'),
     ('7절 SPARE1 → J7-3 → J7-4', '캐리어 20 → J7-3', '캐리어 20 → J7-4'),
 ]
 

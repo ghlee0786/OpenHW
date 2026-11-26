@@ -1,6 +1,6 @@
 {
- "head": "7760f38",
- "base": "7760f38",
+ "head": "a2d878c",
+ "base": "a2d878c",
  "checks": [
   {
    "sec": "4절",
@@ -2781,8 +2781,8 @@
   {
    "sec": "3.1",
    "item": "전면 Q1 게이트 직렬 R20",
-   "expected": "R20 1k",
-   "actual": "R20 1k",
+   "expected": "R20 100k",
+   "actual": "R20 100k",
    "ok": true,
    "info": false
   },
@@ -2799,6 +2799,46 @@
    "item": "전면 Q2 게이트–드레인 C21",
    "expected": "C21 4.7nF",
    "actual": "C21 4.7nF",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "3.1",
+   "item": "전면 R20 CAM_PG–CAM_PG_IO",
+   "expected": "R20 100k",
+   "actual": "R20 100k",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "3.1",
+   "item": "전면 R21 CAM_PG_IO–CAM_PG_IOD",
+   "expected": "R21 1k",
+   "actual": "R21 1k",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "3.1",
+   "item": "전면 R5 CAM_PG–CAM_PG_AV",
+   "expected": "R5 100k",
+   "actual": "R5 100k",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "3.1",
+   "item": "전면 D4 애노드/캐소드",
+   "expected": "CAM_PG_IOD/CAM_PG",
+   "actual": "CAM_PG_IOD/CAM_PG",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "3.1",
+   "item": "전면 D5 애노드/캐소드",
+   "expected": "CAM_PG/CAM_PG_AV",
+   "actual": "CAM_PG/CAM_PG_AV",
    "ok": true,
    "info": false
   },

@@ -10,7 +10,7 @@
    "U1",
    "J2(어댑터)"
   ],
-  "schematic_commit": "7760f38"
+  "schematic_commit": "a2d878c"
  },
  "model": {
   "source": "데이터시트 동작 모델 (어댑터·TPS26600·TPS54302 평균) + IR 부하 25 % 듀티 전류원",
