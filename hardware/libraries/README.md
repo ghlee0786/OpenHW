@@ -215,3 +215,15 @@ C-002 회로도·PCB 프로젝트에서는 이 폴더의 `openhw.kicad_sym`과 `
 
 - 스크립트 `tools/c004_libfix.py`.
 - `kicad-cli fp export svg --footprint BarrelJack_XKB_DC-005-5A-2.0_Horizontal -o <먼저 만든 폴더>` → 종료 0, SVG 생성 확인.
+
+## C-005 추가 (R-009 ⑨ · V-004b R6 · pcb 실크 요청)
+
+| 풋프린트 | 내용 |
+|---|---|
+| `BarrelJack_XKB_DC-005-5A-2.0_Horizontal` | 몸체 Fab·실크를 XKB X-DC-005-5A-2.0 Rev A1(2025-04-22) 14.0 × 9.0, 앞면 −13.6, 뒤끝 +0.4로 맞춤. courtyard (−13.85, −4.75)~(2.0, 6.7). 실크는 패드에서 ≥0.2. 패드는 C-004 그대로 |
+| `Hirose_DF30FC-24DS-0.4V_2x12_P0.4mm` | 실크를 패드에서 ≥0.2로 잘라냄 (랜드 같음) |
+| `L_Bourns_SRN6045TA` (**새로 만듦**) | KiCad 공식 사본. 실크만 잘라냄 (랜드 같음) |
+| `Everlight_ALS-PT19_1.7x0.8mm` (**새로 만듦**) | 패드 0.8×0.8 @ ±0.75, 몸체 1.7×0.8, 핀 1 = 콜렉터(실크 점 −1.45), Everlight DLS-0000039 Rev.8 (R-009 ⑨, 도면 sha256 448c33a1…9bed) |
+
+- 스크립트: `tools/c005_libfix.py`. 실크 자르기 함수는 축에 나란한 실크선만 다룬다(이 풋프린트들에는 사선이 없다).
+- 시험판 DRC: silk 위반 0(17.3절).

@@ -330,8 +330,8 @@
 |---|---|---|
 | 캐리어 | R13~R17 | SD 풀업 옵션 (코어 내부 풀업 기대) |
 | 캐리어 | C15·C16 | EPHY 센터탭 커패시터 (R-004 P6-주의) |
-| 전면 | C6 | AVDD 켜짐 지연 옵션 |
-| 전면 | C10 | RESET RC 옵션 (O-22) |
+| 전면 | C6 | AVDD 켜짐 지연 옵션 — **DNP 유지 필수**(실장하면 GC2053 9.3절 전원 끄는 순서 위반, V-004 R13) |
+| 전면 | R16 | CAM_RESET → GND 10k 자리 (C-004 R3). 실장하려면 ≥100k (V-004b R3) — **C10은 C-004에서 실장으로 바뀌어 이 목록에서 뺌** |
 | 전면 | Q4·R11 | 아날로그 조도 차선 (C15) |
 | 전면 | U5·R14·D_IR_B1·D_IR_B2·L2·D2·C16·C17 | IR 스트링 B (O-25) |
 
@@ -549,3 +549,84 @@
   - C7·C8·C20 DC 바이어스 곡선
   - XKB 도면과 몸체 외곽 대조
   - DMG2305UX 게이트가 CORE_3V3 풀업이라 꺼짐 때 VGS +1.5V (±8V 안, 정상)
+
+## 17. C-005 — R-009 · V-004b 반영 (2026-11-26)
+
+- **입력:**
+  - R-009 `docs/research/r009-bom-risks.md` ⑨·② (레인 `t-20261126-171912-e7d2`, `898ed80`)
+  - V-004b `validation/review-V004b-C004.md` (레인 `t-20261126-180645-0fa1`, `6404bf7`)
+  - orch O-34
+  - pcb P-003 실크 요청 (`f0edd7d`)
+- **방식:** 파일 생성기와 kicad-cli만 썼다. 참조 지정자는 그대로, `.kicad_pro`·`fp-lib-table`은 건드리지 않았다(O-30). 표제란 Rev 「C-005」.
+
+### 17.1 수정 대응
+
+| 출처 | 수정 | 보드 |
+|---|---|---|
+| O-34 | J2(CLA216 리드) → **Molex PicoBlade 53261-0271** `Connector_Molex:Molex_PicoBlade_53261-0271_1x02-1MP_P1.25mm_Horizontal` (공식 라이브러리, 3D 있음). 차선 JST SM02B-GHS-TB. 극성 주석: 핀 1 = ICR_A = 빨강(+) 가정 → IN1(IR_CUT)=1 펄스 = 필터 열림(야간), IN2(WH_PWM)=1 = 닫힘(주간). **G2 실물 확인 전 PCB 확정 금지**(하우징 길이 ≈4.0 PicoBlade / ≈5.75+레버 GH, 선 순서) | 전면 |
+| R-009 ⑨ | Q4 ALS-PT19(DNP) → 새 `openhw:Everlight_ALS-PT19_1.7x0.8mm` (0.8×0.8 @ ±0.75, 핀 1 = 콜렉터, Everlight DLS-0000039 Rev.8) | 전면 |
+| R-009 ⑨ · V-004b R6 | J2 DC 잭: 핀(2 = 5.90, 슬롯 1.0×3.5)은 C-004와 도면이 일치해 그대로 둠. **몸체를 14.0 × 9.0, 앞면 −13.6, 뒤끝 +0.4로 맞춤**(Fab·실크). courtyard를 패드 1·3까지 넓힘(−13.85~2.0 × −4.75~6.7). 실크는 패드에서 ≥0.2. 3D는 「대체 모델(6.0 피치)」로 descr에 주석 | 캐리어 |
+| pcb 실크 요청 | DF30(openhw) 실크를 패드에서 ≥0.2로 잘라냄. SRN6045는 공식 파일을 덮어쓰지 않고 **openhw 사본 `L_Bourns_SRN6045TA`** 를 만들어 실크만 고침 → L1·L2가 이 사본을 씀 | 전면 |
+| **V-004b N1** | Q6 게이트를 CAM_PG에서 떼어 새 넷 **CAM_1V8_G**에 연결. 새 R17 100k로 **CORE_1V8**(Q6 자기 소스)에 풀업하고, 새 **Q7 DMG1012T**(G = CAM_EN, S = GND, D = CAM_1V8_G)로 끌어내림(S401 패턴). → CAM_EN=0이면 VGS = 0V라 CORE_1V8/3V3이 오르는 순서와 상관없다 | 전면 |
+| V-004b R2 | X1 OE(핀 1) → **CAM_1V8**(VDD와 같은 넷). OE가 VDD보다 먼저 오르지 않고, CAM_EN 중간 전위와도 무관하다(분기 C5-2) | 전면 |
+| V-004b R5 | D7 → **SMBJ6.0A** (VRWM 6.0V > 5V 벅 최대 5.30V) | 캐리어 |
+| V-004b R8 | R11 핀 2 → **SD_PWR_GD**(B101 패턴). VGS −3.3V로 AO3401A 보증 영역 안 (τ 켤 때 4.7ms, 끌 때 14.7ms). FW: SD 전원을 다시 켜기 전 ≥250ms | 캐리어 |
+| V-004b R10 | D1·D2 MPN → **Vishay SSA24-M3/61T** (SMA) | 전면 |
+| V-004b R11 권고 | 새 **C22 10nF** USB_DET–GND 반영 (τ ≈ 0.67ms, 분기 C5-3) | 캐리어 |
+| V-004b R12 | F1 MPN → **Bel Fuse 0685T3000-01** (1206 Slow Blow 3A 63V) | 캐리어 |
+| V-004b README | 10절 DNP 목록 정정 (C10은 실장, R16 추가, C6 유지 이유) | — |
+
+### 17.2 넷리스트 차이 (C-004 `58eb49b` → C-005, `tools/netcompare.py`) — 의도한 것만
+
+- **캐리어 (부품 97 → 98, 넷 95 → 95, 차이 11):**
+  - 새 C22
+  - 값 변경: D7 SMBJ6.0A, F1
+  - 넷:
+    - SD_PWR_G(−R11)
+    - SD_PWR_GD(+R11)
+    - USB_DET(+C22)
+    - GND(+C22)
+- **전면 (부품 83 → 85, 넷 65 → 66, 차이 17):**
+  - 새 Q7 · R17
+  - 풋프린트 변경: J2(PicoBlade) · L1 · L2(openhw 사본) · Q4(ALS-PT19)
+  - 넷:
+    - 새 CAM_1V8_G(Q6.1 · Q7.3 · R17.2)
+    - CAM_PG(−Q6)
+    - CAM_EN(+Q7, −X1)
+    - CAM_1V8(+X1 핀 1)
+    - CORE_1V8(+R17)
+    - GND(+Q7)
+  - D1·D2 MPN은 필드라 넷리스트 차이에 안 나온다.
+
+### 17.3 검사 (verifiable 예)
+
+| 명령 | 결과 |
+|---|---|
+| `kicad-cli sch erc --severity-all --exit-code-violations` | 캐리어 **종료 0 · 위반 0**, 전면 **종료 0 · 위반 0** |
+| `kicad-cli sch export netlist` · `sch export svg` → `validation/runtime/kicad-gui/C-005/` | 두 보드 종료 0, 파일 생성 확인 |
+| 라이브러리 시험판 `kicad-cli pcb drc --severity-all` (openhw 풋프린트 11개, scratchpad) | 종료 0. **silk 위반 0** (DC 잭·DF30·SRN6045 사본·ALS-PT19 포함). 남은 것: DF30 clearance 22건(0.4mm 피치 0.17 < 0.2, pcb 간격 규칙 대상), 시험판 외곽 없음 1건 |
+| `kicad-cli fp export svg` (폴더를 먼저 만듦) | 종료 0, 11개 생성 |
+
+### 17.4 pcb용 변경 부품표
+
+| 보드 | 참조 | 상태 | 풋프린트 | 위치 힌트 |
+|---|---|---|---|---|
+| 캐리어 | J2 | 풋프린트 그래픽 갱신 (패드 그대로) | `openhw:BarrelJack_XKB_DC-005-5A-2.0_Horizontal` | 몸체 앞면 −13.6, courtyard 넓어짐 |
+| 캐리어 | C22 | 새로 | `Capacitor_SMD:C_0402_1005Metric` | USB_DET, BTB J1-14 가까이 |
+| 캐리어 | R11 | 연결 변경 (SD_PWR_G → SD_PWR_GD) | 그대로 | Q3 드레인 쪽 |
+| 캐리어 | D7 · F1 | 값/MPN만 | 그대로 | — |
+| 전면 | J2 | **풋프린트 교체** | `Connector_Molex:Molex_PicoBlade_53261-0271_1x02-1MP_P1.25mm_Horizontal` | CLA216 리드 출구 쪽, **G2 전 확정 금지** |
+| 전면 | Q4 (DNP) | 풋프린트 교체 | `openhw:Everlight_ALS-PT19_1.7x0.8mm` | 기존 자리 |
+| 전면 | L1 · L2 | 풋프린트 교체 (랜드 같음, 실크만) | `openhw:L_Bourns_SRN6045TA` | 기존 자리 |
+| 전면 | Q7 · R17 | 새로 | `Package_TO_SOT_SMD:SOT-523` · `R_0402` | Q6 게이트 옆 |
+| 전면 | X1 | 연결 변경 (핀 1 OE: CAM_EN → CAM_1V8) | 그대로 | — |
+| 전면 | DF30 J3 | 실크만 바뀜 (랜드 같음) | `openhw:Hirose_DF30FC-24DS-0.4V_2x12_P0.4mm` | — |
+
+### 17.5 분기
+
+| # | 분기점 | 선택 | 이유 | 차선책 |
+|---|---|---|---|---|
+| C5-1 | CLA216 리드 커넥터 | PicoBlade 53261-0271 (O-34) | R-009 도면 실측과 CLA214 사진 근거. 공식 풋프린트·3D가 있다 | JST SM02B-GHS-TB (G2 결과에 따라) |
+| C5-2 | X1 OE (V-004b R2) | OE = CAM_1V8 (VDD와 같은 넷) | OE가 VDD보다 먼저 오르는 문제가 구조적으로 사라지고, 부품이 늘지 않는다. CAM_1V8은 CAM_EN이 켤 때만 오른다 | 직렬 1k로 CAM_EN 유지 |
+| C5-3 | USB_DET 필터 (R11 권고) | 반영: C22 10nF | 66.7k 고임피던스 입력의 잡음을 줄인다. τ 0.67ms는 USB 연결 검출에 영향이 없다 | 미반영 (자리만) |
+| C5-4 | SRN6045 실크 | openhw 사본 (공식 파일 보존) | 지시: 공식 풋프린트 덮어쓰기 금지 | 공식 그대로 + pcb에서 실크 수동 정리 |
