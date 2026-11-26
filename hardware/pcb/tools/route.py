@@ -25,7 +25,7 @@ from scipy import ndimage
 G = 0.05
 CLR = 0.16
 HS_CLR = 0.30  # DRU hs_track_spacing
-EPS = 0.035
+EPS = 0.045
 VIA = {"dia": 0.65, "drill": 0.30}
 VIA_PWR = {"dia": 0.80, "drill": 0.40}
 LAYERS = ["F.Cu", "In1.Cu", "In2.Cu", "B.Cu"]
@@ -224,7 +224,7 @@ class Board:
                     hso = np.isin(o, list(self.hs_ids - set(own_ids)))
                     dh = ndimage.distance_transform_edt(~hso) * G
                     ok &= (dh >= HS_CLR + hw + EPS) | self.brk[L][sl]
-                passable[L] = ok[inner] | own[inner]
+                passable[L] = ok[inner]  # 자기 구리는 원래 장애물이 아님 — 패드 위 예외를 두면 굵은 트랙이 이웃 패드를 덮는다(P-003 DRC)
             viaok &= (d >= CLR + vrad + EPS)[inner]
         hv = ndimage.distance_transform_edt(~self.hardvia[sl]) * G
         hl = ndimage.distance_transform_edt(~self.holes[sl]) * G
@@ -380,6 +380,8 @@ def main():
     geom = json.load(open(sys.argv[1], encoding="utf-8"))
     board_name = sys.argv[2]
     B = Board(geom)
+    import thermal  # 배선 전 열 구리(LED 애노드 영역·노출 패드·열 비아, EP 둘레 GND 비아) — 이후 배선이 피한다
+    th_zones, th_masks = thermal.pre_route(B, board_name, LAYERS, CLR, EPS, G)
     padmap = {(p["ref"], p["num"]): p for p in B.pads}
     report = {"pairs": [], "nets": {}}
 
@@ -706,7 +708,7 @@ def main():
 
     if len(sys.argv) > 4 and sys.argv[4] == "pairs":  # 디버그: 쌍만
         json.dump({"tracks": B.tracks, "vias": B.vias, "failed": B.failed, "report": report,
-                "areas": [{"name": "DP_BRK", "layer": ln, "rect": list(r)} for i in infos for ln, r in i["brk"]] + tune_areas}, open(sys.argv[3], "w", encoding="utf-8"), ensure_ascii=False, indent=1)
+                "areas": [{"name": "DP_BRK", "layer": ln, "rect": list(r)} for i in infos for ln, r in i["brk"]] + tune_areas, "zones": th_zones, "masks": th_masks}, open(sys.argv[3], "w", encoding="utf-8"), ensure_ascii=False, indent=1)
         return
     # 2) 단선 넷 (GND 제외, 쌍 넷의 남은 패드 포함)
     pair_nets = {x for p in PAIRS[board_name] for x in (p[1], p[2])}
@@ -716,6 +718,42 @@ def main():
             nets.setdefault(p["net"], []).append(p)
     order = sorted((n for n in nets if n != "/GND" and len(nets[n]) > 1),
                    key=lambda n: (netclass(n)["name"] not in ("PWR_12V_IN", "PWR_5V", "PWR_12V_IR"), len(nets[n])))
+
+    def connect(net, nxt, widths, layers, vtype, margin, cap):
+        """패드 nxt 를 그 넷의 이미 이어진 구리(나무)에 잇는다. 성공하면 True."""
+        own = {B.netid[net]}
+        tree_cells = set()
+        for L in range(4):
+            rs, cs = np.nonzero(B.occ[L] == B.netid[net])
+            tree_cells |= {(L, r, c) for r, c in zip(rs, cs)}
+        mine = pad_cells(nxt, layers)
+        tree_cells -= mine
+        if not tree_cells:
+            return False
+        tc = np.array([(r, c) for _, r, c in tree_cells])
+        pr, pc = B.cell(*nxt["pos"])
+        k = int(np.argmin((tc[:, 0] - pr) ** 2 + (tc[:, 1] - pc) ** 2))
+        near = (int(tc[k, 0]), int(tc[k, 1]))
+        for w in widths:
+            win = B.window([(pr, pc), near], margin)
+            passable, viaok = B.free_maps(win, own, w / 2, vtype["dia"] / 2, layers)
+            r0, r1, c0, c1 = win
+            starts = {(L, r - r0, c - c0) for L, r, c in mine if r0 <= r <= r1 and c0 <= c <= c1}
+            targets = {(L, r - r0, c - c0) for L, r, c in tree_cells if L in layers and r0 <= r <= r1 and c0 <= c <= c1}
+            path = B.astar(win, starts, targets, passable, viaok, layers, cap=cap) if starts and targets else None
+            if not path:
+                continue
+            segs = B.corners([(L, r + r0, c + c0, d) for L, r, c, d in path])
+            for kk, (L, cells) in enumerate(segs):
+                pts = [B.xy(*p) for p in cells]
+                for a, b in zip(pts[:-1], pts[1:]):
+                    B.add_track(net, L, a, b, w)
+                if kk < len(segs) - 1:
+                    B.add_via(net, pts[-1], vtype)
+            return True
+        return False
+
+    retry = []
     for net in order:
         nc = netclass(net)
         pads = nets[net]
@@ -742,47 +780,26 @@ def main():
         todo = [p for p in pads if p not in tree_pads]
         ok_n, fail_n = 0, 0
         while todo:
-            tree_cells = set()
-            for L in range(4):
-                rs, cs = np.nonzero(B.occ[L] == B.netid[net])
-                tree_cells |= {(L, r, c) for r, c in zip(rs, cs)}
             # 나무에서 가장 가까운 패드
             tpos = [p["pos"] for p in tree_pads] + [t["a"] for t in B.tracks if t["net"] == net] + [t["b"] for t in B.tracks if t["net"] == net]
             nxt = min(todo, key=lambda p: min(math.dist(p["pos"], q) for q in tpos))
             todo.remove(nxt)
-            near = min(tpos, key=lambda q: math.dist(nxt["pos"], q))
-            done = False
-            for w in widths:
-                hw = w / 2
-                win = B.window([B.cell(*nxt["pos"]), B.cell(*near)], 4.0)
-                passable, viaok = B.free_maps(win, own, hw, vtype["dia"] / 2, layers)
-                r0, r1, c0, c1 = win
-                starts = {(L, r - r0, c - c0) for L, r, c in pad_cells(nxt, layers) if r0 <= r <= r1 and c0 <= c <= c1}
-                mine = pad_cells(nxt, layers)
-                targets = {(L, r - r0, c - c0) for L, r, c in tree_cells if L in layers and r0 <= r <= r1 and c0 <= c <= c1
-                           and (L, r, c) not in mine}
-                path = B.astar(win, starts, targets, passable, viaok, layers)
-                if not path:
-                    continue
-                segs = B.corners([(L, r + r0, c + c0, d) for L, r, c, d in path])
-                for k, (L, cells) in enumerate(segs):
-                    pts = [B.xy(*p) for p in cells]
-                    if k == 0:
-                        pts[0] = tuple(nxt["pos"]) if math.dist(pts[0], nxt["pos"]) < 1.2 else pts[0]
-                    for a, b in zip(pts[:-1], pts[1:]):
-                        B.add_track(net, L, a, b, w)
-                    if k < len(segs) - 1:
-                        B.add_via(net, pts[-1], vtype)
-                done = True
-                break
-            if done:
+            if connect(net, nxt, widths, layers, vtype, 4.0, 200_000):
                 ok_n += 1
                 tree_pads.append(nxt)
             else:
                 fail_n += 1
-                B.failed.append(f"{net} {nxt['ref']}.{nxt['num']}")
+                retry.append((net, nxt, widths[-1:], layers, vtype))
         report["nets"][net] = {"ok": ok_n, "fail": fail_n}
         print(f"{net:22s} {nc['name']:10s} 연결 {ok_n} 실패 {fail_n}")
+    # 2차: 실패한 연결을 넓은 창(10mm)·큰 상한·최소 폭으로 다시
+    for net, nxt, widths, layers, vtype in retry:
+        if connect(net, nxt, widths, layers, vtype, 10.0, 1_500_000):
+            report["nets"][net]["ok"] += 1
+            report["nets"][net]["fail"] -= 1
+            print(f"2차 연결 {net} {nxt['ref']}.{nxt['num']}")
+        else:
+            B.failed.append(f"{net} {nxt['ref']}.{nxt['num']}")
 
     # 3) GND 비아 (SMD GND 패드마다)
     gnd_ok = gnd_fail = 0
@@ -793,23 +810,26 @@ def main():
                 continue
             L = LAYERS.index(p["layers"][0])
             win = B.window([B.cell(*p["pos"])], 1.6)
-            passable, viaok = B.free_maps(win, {gid}, 0.15, VIA["dia"] / 2, [L])
+            passable, viaok = B.free_maps(win, {gid}, 0.10, VIA["dia"] / 2, [L])
             r0, r1, c0, c1 = win
-            starts = {(L, r - r0, c - c0) for L2, r, c in pad_cells(p, [L])}
+            starts = {(L, r - r0, c - c0) for L2, r, c in pad_cells(p, [L]) if r0 <= r <= r1 and c0 <= c <= c1}
             targets = {(L, r, c) for r, c in zip(*np.nonzero(viaok & passable[L]))}
-            path = B.astar(win, starts, targets, passable, viaok, [L]) if targets else None
+            path = B.astar(win, starts, targets, passable, viaok, [L]) if targets and starts else None
             if not path:
                 gnd_fail += 1
                 continue
             cells = B.corners([(Lx, r + r0, c + c0, d) for Lx, r, c, d in path])[0][1]
-            pts = [tuple(p["pos"])] + [B.xy(*q) for q in cells[1:]]
+            pts = [B.xy(*q) for q in cells]  # 첫 칸은 패드 안 (패드 중심에서 직선을 긋지 않는다)
+            if len(pts) == 1:
+                pts = pts * 2
             for a, b in zip(pts[:-1], pts[1:]):
-                B.add_track("/GND", L, a, b, 0.3)
+                B.add_track("/GND", L, a, b, 0.2)
             B.add_via("/GND", pts[-1], VIA)
             gnd_ok += 1
     print(f"GND 패드 비아 {gnd_ok} · 자리 없음 {gnd_fail} (면 채움에 맡김)")
     out = {"tracks": B.tracks, "vias": B.vias, "failed": B.failed, "report": report,
-                "areas": [{"name": "DP_BRK", "layer": ln, "rect": list(r)} for i in infos for ln, r in i["brk"]] + tune_areas}
+                "areas": [{"name": "DP_BRK", "layer": ln, "rect": list(r)} for i in infos for ln, r in i["brk"]] + tune_areas,
+                "zones": th_zones, "masks": th_masks}
     json.dump(out, open(sys.argv[3], "w", encoding="utf-8"), ensure_ascii=False, indent=1)
     print(f"트랙 {len(B.tracks)} · 비아 {len(B.vias)} · 실패 {len(B.failed)}")
 

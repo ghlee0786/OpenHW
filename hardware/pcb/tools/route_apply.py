@@ -58,6 +58,38 @@ def main():
         s.SetLayerPair(pcbnew.F_Cu, pcbnew.B_Cu)
         s.SetNet(nets[v["net"]])
         b.Add(s)
+    # 열 구리(thermal.py): 넷 영역(우선순위 1, 패드 직결)과 마스크 개구
+    for d in list(b.GetDrawings()):
+        if d.GetLayer() in (pcbnew.F_Mask, pcbnew.B_Mask) and d.GetShape() == pcbnew.SHAPE_T_RECT:
+            b.Delete(d)
+    for z in list(b.Zones()):
+        if not z.GetIsRuleArea() and z.GetZoneName().startswith("THERMAL_"):
+            b.Delete(z)
+    for k, zd in enumerate(r.get("zones", [])):
+        net = b.FindNet(zd["net"])
+        z = pcbnew.ZONE(b)
+        z.SetLayer(CU[zd["layer"]])
+        z.SetNet(net)
+        z.SetZoneName(f"THERMAL_{k}")
+        z.SetAssignedPriority(zd["priority"])
+        z.SetLocalClearance(MM(0.2))
+        z.SetMinThickness(MM(0.2))
+        z.SetPadConnection(pcbnew.ZONE_CONNECTION_FULL)
+        x0, y0, x1, y1 = zd["rect"]
+        ol = z.Outline()
+        ol.NewOutline()
+        for x, y in ((x0, y0), (x1, y0), (x1, y1), (x0, y1)):
+            ol.Append(MM(x), MM(y))
+        b.Add(z)
+    for m in r.get("masks", []):
+        s = pcbnew.PCB_SHAPE(b, pcbnew.SHAPE_T_RECT)
+        x0, y0, x1, y1 = m["rect"]
+        s.SetStart(V((x0, y0)))
+        s.SetEnd(V((x1, y1)))
+        s.SetFilled(True)
+        s.SetWidth(0)
+        s.SetLayer(pcbnew.B_Mask if m["layer"] == "B.Mask" else pcbnew.F_Mask)
+        b.Add(s)
     bb = b.GetBoardEdgesBoundingBox()
     for name, lid in CU.items():
         z = pcbnew.ZONE(b)

@@ -1,7 +1,7 @@
 {
     "$schema": "https://schemas.kicad.org/drc.v1.json",
     "coordinate_units": "mm",
-    "date": "2026-11-26T20:40:43",
+    "date": "2026-11-26T21:52:39",
     "ignored_checks": [
         {
             "description": "Footprint has no courtyard defined",
@@ -37,20 +37,20 @@
             "description": "Missing connection between items",
             "items": [
                 {
-                    "description": "패드 3 [/CAM_IOVDD]의 Q1 위B.Cu",
+                    "description": "패드 1 [/CORE_1V8]의 R15 위B.Cu",
                     "pos": {
-                        "x": 96.9375,
-                        "y": 104.0
+                        "x": 88.280866,
+                        "y": 111.298254
                     },
-                    "uuid": "f4875308-d11e-4679-a3f8-c593d0aa9707"
+                    "uuid": "08351077-debc-45e0-b1c8-bc65b86e6985"
                 },
                 {
-                    "description": "패드 1 [/CAM_IOVDD]의 C7 위F.Cu",
+                    "description": "패드 1 [/CORE_1V8]의 TP3 위B.Cu",
                     "pos": {
-                        "x": 93.719867,
-                        "y": 111.360622
+                        "x": 82.258478,
+                        "y": 101.288338
                     },
-                    "uuid": "f3fb8470-6c74-4c34-ae72-37edb92d69dc"
+                    "uuid": "643d41a4-f030-4bac-9967-e806a7bd5e41"
                 }
             ],
             "severity": "error",
@@ -60,20 +60,20 @@
             "description": "Missing connection between items",
             "items": [
                 {
-                    "description": "패드 1 [/CAM_IOVDD]의 TP6 위B.Cu",
+                    "description": "배선 [/CORE_1V8] on B.Cu, 길이 1.5000 mm",
                     "pos": {
-                        "x": 99.041189,
-                        "y": 116.976809
+                        "x": 95.35,
+                        "y": 88.55
                     },
-                    "uuid": "0179b52e-4407-4431-b60c-fe78f7191df7"
+                    "uuid": "668bd5ea-683b-4918-8799-b616aa98e887"
                 },
                 {
-                    "description": "패드 14 [/CAM_IOVDD]의 J3 위F.Cu",
+                    "description": "패드 1 [/CORE_1V8]의 Q4 위F.Cu",
                     "pos": {
-                        "x": 99.8,
-                        "y": 114.08
+                        "x": 82.25,
+                        "y": 95.5
                     },
-                    "uuid": "83ecf604-1b74-4bcd-ad24-50c5de9890e8"
+                    "uuid": "7a7a0d07-0ded-4903-b311-373a041986b4"
                 }
             ],
             "severity": "error",
@@ -83,20 +83,20 @@
             "description": "Missing connection between items",
             "items": [
                 {
-                    "description": "패드 14 [/CAM_IOVDD]의 J3 위F.Cu",
+                    "description": "패드 1 [/CORE_1V8]의 R17 위B.Cu",
                     "pos": {
-                        "x": 99.8,
-                        "y": 114.08
+                        "x": 97.148311,
+                        "y": 114.954696
                     },
-                    "uuid": "83ecf604-1b74-4bcd-ad24-50c5de9890e8"
+                    "uuid": "32af46c3-19e1-45f1-8a0d-5e1ac4909669"
                 },
                 {
-                    "description": "패드 1 [/CAM_IOVDD]의 C7 위F.Cu",
+                    "description": "패드 2 [/CORE_1V8]의 Q6 위B.Cu",
                     "pos": {
-                        "x": 93.719867,
-                        "y": 111.360622
+                        "x": 95.0625,
+                        "y": 111.05
                     },
-                    "uuid": "f3fb8470-6c74-4c34-ae72-37edb92d69dc"
+                    "uuid": "cb6acc91-8e6c-452e-95b5-a8a5925759db"
                 }
             ],
             "severity": "error",
@@ -106,35 +106,127 @@
             "description": "Missing connection between items",
             "items": [
                 {
-                    "description": "패드 53 [/GND]의 J1 위B.Cu",
+                    "description": "패드 2 [/IRB_M]의 D_IR_B2 위F.Cu",
                     "pos": {
-                        "x": 94.25,
-                        "y": 86.2
+                        "x": 105.25,
+                        "y": 116.5
                     },
-                    "uuid": "0a69fecb-c89d-4eac-adf9-363dbf2f4c7f"
+                    "uuid": "1d519f7f-5828-46d1-9c21-525374747ea1"
                 },
+                {
+                    "description": "패드 1 [/IRB_M]의 D_IR_B1 위F.Cu",
+                    "pos": {
+                        "x": 92.5,
+                        "y": 117.625
+                    },
+                    "uuid": "cfac10e2-5bf8-4b54-8c5a-543f81ca8fcc"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "패드 2 [/IRB_SET]의 D_IR_B1 위F.Cu",
+                    "pos": {
+                        "x": 94.75,
+                        "y": 116.5
+                    },
+                    "uuid": "54d6294b-fdfe-4a3d-af62-797fe6067b71"
+                },
+                {
+                    "description": "배선 [/IRB_SET] on F.Cu, 길이 1.9799 mm",
+                    "pos": {
+                        "x": 110.6,
+                        "y": 108.9
+                    },
+                    "uuid": "9040e45b-01ec-473d-b9be-fce9ede091ad"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "패드 1 [/CAM_EN]의 R7 위F.Cu",
+                    "pos": {
+                        "x": 92.209289,
+                        "y": 111.416744
+                    },
+                    "uuid": "2f304441-d2d8-4bb0-8c27-20dcc947cda0"
+                },
+                {
+                    "description": "패드 1 [/CAM_EN]의 Q3 위B.Cu",
+                    "pos": {
+                        "x": 93.204769,
+                        "y": 108.388484
+                    },
+                    "uuid": "8a583ed1-ea34-461d-8074-9735b772156c"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "배선 [/CAM_RESET] on F.Cu, 길이 1.2500 mm",
+                    "pos": {
+                        "x": 92.85,
+                        "y": 112.3
+                    },
+                    "uuid": "2bee48f2-a474-403b-8741-0dcfeeea63a9"
+                },
+                {
+                    "description": "패드 1 [/CAM_RESET]의 C10 위F.Cu",
+                    "pos": {
+                        "x": 95.15,
+                        "y": 112.278493
+                    },
+                    "uuid": "a236d7cf-c98a-449e-99e4-1e8e0bedddba"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "패드 1 [/CAM_AVDD]의 C8 위F.Cu",
+                    "pos": {
+                        "x": 104.830727,
+                        "y": 111.873389
+                    },
+                    "uuid": "5e9f862b-f523-4dc6-b8b1-588fde4466fc"
+                },
+                {
+                    "description": "비아 [/CAM_AVDD] on F.Cu - B.Cu",
+                    "pos": {
+                        "x": 100.1,
+                        "y": 111.6
+                    },
+                    "uuid": "55b29a69-fb00-4f8d-939d-73cbffc8286b"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
                 {
                     "description": "패드 55 [/GND]의 J1 위B.Cu",
                     "pos": {
                         "x": 93.75,
                         "y": 86.2
                     },
-                    "uuid": "f116fc98-3593-49a0-9586-60af2a3021f3"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "패드 2 [/GND]의 R11 위F.Cu",
-                    "pos": {
-                        "x": 94.444131,
-                        "y": 89.677809
-                    },
-                    "uuid": "767d6294-1fc2-4e79-b465-e0bc22faa2ba"
+                    "uuid": "1211813d-aee2-480f-b542-d241321d3581"
                 },
                 {
                     "description": "패드 53 [/GND]의 J1 위B.Cu",
@@ -142,7 +234,7 @@
                         "x": 94.25,
                         "y": 86.2
                     },
-                    "uuid": "0a69fecb-c89d-4eac-adf9-363dbf2f4c7f"
+                    "uuid": "62474b5e-5ad3-45cb-9d2f-26b47b5c9cfe"
                 }
             ],
             "severity": "error",
@@ -152,20 +244,20 @@
             "description": "Missing connection between items",
             "items": [
                 {
-                    "description": "패드 47 [/GND]의 J1 위B.Cu",
+                    "description": "패드 2 [/GND]의 R16 위F.Cu",
                     "pos": {
-                        "x": 95.75,
-                        "y": 86.2
+                        "x": 93.806167,
+                        "y": 112.60021
                     },
-                    "uuid": "ff122ac3-84fc-4255-a7af-ab7fb1c39fa7"
+                    "uuid": "feb0b014-621f-4724-ab87-0201508df5a8"
                 },
                 {
-                    "description": "패드 53 [/GND]의 J1 위B.Cu",
+                    "description": "패드 2 [/GND]의 Q7 위B.Cu",
                     "pos": {
-                        "x": 94.25,
-                        "y": 86.2
+                        "x": 94.81442,
+                        "y": 115.830852
                     },
-                    "uuid": "0a69fecb-c89d-4eac-adf9-363dbf2f4c7f"
+                    "uuid": "e257e67f-b03b-483b-a387-92f009b1c1d0"
                 }
             ],
             "severity": "error",
@@ -175,20 +267,20 @@
             "description": "Missing connection between items",
             "items": [
                 {
-                    "description": "패드 45 [/GND]의 J1 위B.Cu",
+                    "description": "구역 'AUTO_GND_F.Cu' [/GND] on F.Cu, 우선순위 0",
                     "pos": {
-                        "x": 96.25,
-                        "y": 86.2
+                        "x": 79.95,
+                        "y": 79.95
                     },
-                    "uuid": "f69a0b0c-57fa-4e84-9209-08d1e027e4b1"
+                    "uuid": "17d34a0e-f888-450c-bdc0-d885c2b51673"
                 },
                 {
-                    "description": "패드 47 [/GND]의 J1 위B.Cu",
+                    "description": "패드 2 [/GND]의 R16 위F.Cu",
                     "pos": {
-                        "x": 95.75,
-                        "y": 86.2
+                        "x": 93.806167,
+                        "y": 112.60021
                     },
-                    "uuid": "ff122ac3-84fc-4255-a7af-ab7fb1c39fa7"
+                    "uuid": "feb0b014-621f-4724-ab87-0201508df5a8"
                 }
             ],
             "severity": "error",
@@ -197,21 +289,21 @@
         {
             "description": "Missing connection between items",
             "items": [
+                {
+                    "description": "구역 'AUTO_GND_B.Cu' [/GND] on B.Cu, 우선순위 0",
+                    "pos": {
+                        "x": 79.95,
+                        "y": 79.95
+                    },
+                    "uuid": "3271a34e-13e2-4db1-be07-9833245fd89b"
+                },
                 {
                     "description": "패드 46 [/GND]의 J1 위B.Cu",
                     "pos": {
                         "x": 96.25,
                         "y": 90.2
                     },
-                    "uuid": "843a2dc4-1d21-465d-8a5b-193cf53979d5"
-                },
-                {
-                    "description": "구역 'AUTO_GND_B.Cu' [/GND] on B.Cu, 우선순위 0",
-                    "pos": {
-                        "x": 79.95,
-                        "y": 79.95
-                    },
-                    "uuid": "f2468b93-103c-44a4-a5b9-3f9d47257827"
+                    "uuid": "03a8ebed-8116-4932-9f79-d39c7cd8a885"
                 }
             ],
             "severity": "error",
@@ -226,7 +318,7 @@
                         "x": 79.95,
                         "y": 79.95
                     },
-                    "uuid": "f2468b93-103c-44a4-a5b9-3f9d47257827"
+                    "uuid": "3271a34e-13e2-4db1-be07-9833245fd89b"
                 },
                 {
                     "description": "패드 38 [/GND]의 J1 위B.Cu",
@@ -234,30 +326,7 @@
                         "x": 98.25,
                         "y": 90.2
                     },
-                    "uuid": "c8abf4b3-27de-4ded-84f7-d1db7b243ebd"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "패드 23 [/GND]의 J3 위F.Cu",
-                    "pos": {
-                        "x": 97.8,
-                        "y": 109.92
-                    },
-                    "uuid": "6345121d-d690-438c-96a0-fcc941069c06"
-                },
-                {
-                    "description": "패드 21 [/GND]의 J3 위F.Cu",
-                    "pos": {
-                        "x": 98.2,
-                        "y": 109.92
-                    },
-                    "uuid": "087401e9-e92a-4aa1-9e08-056e89ab3300"
+                    "uuid": "68658da1-982b-492c-9e6c-faf6372616c9"
                 }
             ],
             "severity": "error",
@@ -272,7 +341,7 @@
                         "x": 98.2,
                         "y": 109.92
                     },
-                    "uuid": "087401e9-e92a-4aa1-9e08-056e89ab3300"
+                    "uuid": "019eba6b-4cf4-4767-ba44-68801c1224e2"
                 },
                 {
                     "description": "패드 19 [/GND]의 J3 위F.Cu",
@@ -280,7 +349,7 @@
                         "x": 98.6,
                         "y": 109.92
                     },
-                    "uuid": "814b487b-47c5-4389-b084-fc9131417214"
+                    "uuid": "049d23c7-d456-49f3-9dea-e7ee279221a7"
                 }
             ],
             "severity": "error",
@@ -289,44 +358,21 @@
         {
             "description": "Missing connection between items",
             "items": [
+                {
+                    "description": "패드 20 [/GND]의 J3 위F.Cu",
+                    "pos": {
+                        "x": 98.6,
+                        "y": 114.08
+                    },
+                    "uuid": "31ec54c3-6e17-4344-8e3b-26dc2f926819"
+                },
                 {
                     "description": "패드 22 [/GND]의 J3 위F.Cu",
                     "pos": {
                         "x": 98.2,
                         "y": 114.08
                     },
-                    "uuid": "7f72c581-dc2d-4bfb-bc80-7d6d4fa2698b"
-                },
-                {
-                    "description": "패드 20 [/GND]의 J3 위F.Cu",
-                    "pos": {
-                        "x": 98.6,
-                        "y": 114.08
-                    },
-                    "uuid": "46883ab0-9691-433b-accf-f59c90976340"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "패드 38 [/GND]의 J1 위B.Cu",
-                    "pos": {
-                        "x": 98.25,
-                        "y": 90.2
-                    },
-                    "uuid": "c8abf4b3-27de-4ded-84f7-d1db7b243ebd"
-                },
-                {
-                    "description": "패드 36 [/GND]의 J1 위B.Cu",
-                    "pos": {
-                        "x": 98.75,
-                        "y": 90.2
-                    },
-                    "uuid": "41e56a1b-8348-47e6-8d15-c4b4f8e9fde3"
+                    "uuid": "a753ea63-3b7d-4ddf-b736-90f4f976dae8"
                 }
             ],
             "severity": "error",
@@ -341,7 +387,7 @@
                         "x": 98.6,
                         "y": 114.08
                     },
-                    "uuid": "46883ab0-9691-433b-accf-f59c90976340"
+                    "uuid": "31ec54c3-6e17-4344-8e3b-26dc2f926819"
                 },
                 {
                     "description": "패드 18 [/GND]의 J3 위F.Cu",
@@ -349,30 +395,7 @@
                         "x": 99.0,
                         "y": 114.08
                     },
-                    "uuid": "0b6b3031-8648-424e-8210-3ead4c4a452d"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "패드 20 [/GND]의 J3 위F.Cu",
-                    "pos": {
-                        "x": 98.6,
-                        "y": 114.08
-                    },
-                    "uuid": "46883ab0-9691-433b-accf-f59c90976340"
-                },
-                {
-                    "description": "패드 2 [/GND]의 C11 위B.Cu",
-                    "pos": {
-                        "x": 98.688423,
-                        "y": 113.408401
-                    },
-                    "uuid": "a35abae3-2e34-4361-92b6-f4ed61d869ea"
+                    "uuid": "b8655091-e43e-4576-bbe9-ed20f91cc4a5"
                 }
             ],
             "severity": "error",
@@ -387,7 +410,30 @@
                         "x": 98.75,
                         "y": 86.2
                     },
-                    "uuid": "7c6a1f72-5a36-4535-9ac3-2f68c636612a"
+                    "uuid": "daa9621e-ac03-46ca-95d2-9b015d0fc304"
+                },
+                {
+                    "description": "패드 33 [/GND]의 J1 위B.Cu",
+                    "pos": {
+                        "x": 99.25,
+                        "y": 86.2
+                    },
+                    "uuid": "274f31ca-b2ab-4f85-a9a0-d82f4edfb6a5"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "패드 35 [/GND]의 J1 위B.Cu",
+                    "pos": {
+                        "x": 98.75,
+                        "y": 86.2
+                    },
+                    "uuid": "daa9621e-ac03-46ca-95d2-9b015d0fc304"
                 },
                 {
                     "description": "패드 45 [/GND]의 J1 위B.Cu",
@@ -395,7 +441,7 @@
                         "x": 96.25,
                         "y": 86.2
                     },
-                    "uuid": "f69a0b0c-57fa-4e84-9209-08d1e027e4b1"
+                    "uuid": "5f229eb4-53cb-4fe6-af07-637b9ef9fa23"
                 }
             ],
             "severity": "error",
@@ -404,90 +450,21 @@
         {
             "description": "Missing connection between items",
             "items": [
-                {
-                    "description": "패드 17 [/GND]의 J3 위F.Cu",
-                    "pos": {
-                        "x": 99.0,
-                        "y": 109.92
-                    },
-                    "uuid": "662c375d-3e3f-4630-aa83-0735b4874560"
-                },
-                {
-                    "description": "패드 19 [/GND]의 J3 위F.Cu",
-                    "pos": {
-                        "x": 98.6,
-                        "y": 109.92
-                    },
-                    "uuid": "814b487b-47c5-4389-b084-fc9131417214"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "패드 18 [/GND]의 J3 위F.Cu",
-                    "pos": {
-                        "x": 99.0,
-                        "y": 114.08
-                    },
-                    "uuid": "0b6b3031-8648-424e-8210-3ead4c4a452d"
-                },
-                {
-                    "description": "구역 'AUTO_GND_F.Cu' [/GND] on F.Cu, 우선순위 0",
-                    "pos": {
-                        "x": 79.95,
-                        "y": 79.95
-                    },
-                    "uuid": "48dab80a-a1f0-4878-85cd-3a93dab2514d"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "패드 33 [/GND]의 J1 위B.Cu",
-                    "pos": {
-                        "x": 99.25,
-                        "y": 86.2
-                    },
-                    "uuid": "e512b7ab-1799-4382-8be9-2593539257e5"
-                },
-                {
-                    "description": "패드 35 [/GND]의 J1 위B.Cu",
-                    "pos": {
-                        "x": 98.75,
-                        "y": 86.2
-                    },
-                    "uuid": "7c6a1f72-5a36-4535-9ac3-2f68c636612a"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "패드 32 [/GND]의 J1 위B.Cu",
-                    "pos": {
-                        "x": 99.75,
-                        "y": 90.2
-                    },
-                    "uuid": "7a106b13-c7c6-419e-83bd-77510e8167b7"
-                },
                 {
                     "description": "패드 36 [/GND]의 J1 위B.Cu",
                     "pos": {
                         "x": 98.75,
                         "y": 90.2
                     },
-                    "uuid": "41e56a1b-8348-47e6-8d15-c4b4f8e9fde3"
+                    "uuid": "9287ff1e-dc7b-4771-9e8d-f037e047c4cd"
+                },
+                {
+                    "description": "패드 38 [/GND]의 J1 위B.Cu",
+                    "pos": {
+                        "x": 98.25,
+                        "y": 90.2
+                    },
+                    "uuid": "68658da1-982b-492c-9e6c-faf6372616c9"
                 }
             ],
             "severity": "error",
@@ -496,90 +473,21 @@
         {
             "description": "Missing connection between items",
             "items": [
+                {
+                    "description": "패드 36 [/GND]의 J1 위B.Cu",
+                    "pos": {
+                        "x": 98.75,
+                        "y": 90.2
+                    },
+                    "uuid": "9287ff1e-dc7b-4771-9e8d-f037e047c4cd"
+                },
                 {
                     "description": "패드 32 [/GND]의 J1 위B.Cu",
                     "pos": {
                         "x": 99.75,
                         "y": 90.2
                     },
-                    "uuid": "7a106b13-c7c6-419e-83bd-77510e8167b7"
-                },
-                {
-                    "description": "패드 26 [/GND]의 J1 위B.Cu",
-                    "pos": {
-                        "x": 101.25,
-                        "y": 90.2
-                    },
-                    "uuid": "bdb7c226-593e-434e-84f9-be4ac399b772"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "패드 10 [/GND]의 J3 위F.Cu",
-                    "pos": {
-                        "x": 100.6,
-                        "y": 114.08
-                    },
-                    "uuid": "7a9023ef-ccc0-4c3d-8fca-0912b1b383cf"
-                },
-                {
-                    "description": "패드 8 [/GND]의 J3 위F.Cu",
-                    "pos": {
-                        "x": 101.0,
-                        "y": 114.08
-                    },
-                    "uuid": "2ae46dc3-d8e5-456c-97af-13102b6241ff"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "패드 26 [/GND]의 J1 위B.Cu",
-                    "pos": {
-                        "x": 101.25,
-                        "y": 90.2
-                    },
-                    "uuid": "bdb7c226-593e-434e-84f9-be4ac399b772"
-                },
-                {
-                    "description": "패드 20 [/GND]의 J1 위B.Cu",
-                    "pos": {
-                        "x": 102.75,
-                        "y": 90.2
-                    },
-                    "uuid": "4a5ae07f-df12-4b8a-afa3-173774aea9f6"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "패드 6 [/GND]의 J3 위F.Cu",
-                    "pos": {
-                        "x": 101.4,
-                        "y": 114.08
-                    },
-                    "uuid": "c713d64a-a688-48aa-9522-5066c71f0b41"
-                },
-                {
-                    "description": "패드 8 [/GND]의 J3 위F.Cu",
-                    "pos": {
-                        "x": 101.0,
-                        "y": 114.08
-                    },
-                    "uuid": "2ae46dc3-d8e5-456c-97af-13102b6241ff"
+                    "uuid": "88aa490d-7883-48e5-83ee-39bf3e001cc4"
                 }
             ],
             "severity": "error",
@@ -594,15 +502,15 @@
                         "x": 79.95,
                         "y": 79.95
                     },
-                    "uuid": "48dab80a-a1f0-4878-85cd-3a93dab2514d"
+                    "uuid": "17d34a0e-f888-450c-bdc0-d885c2b51673"
                 },
                 {
-                    "description": "패드 6 [/GND]의 J3 위F.Cu",
+                    "description": "패드 18 [/GND]의 J3 위F.Cu",
                     "pos": {
-                        "x": 101.4,
+                        "x": 99.0,
                         "y": 114.08
                     },
-                    "uuid": "c713d64a-a688-48aa-9522-5066c71f0b41"
+                    "uuid": "b8655091-e43e-4576-bbe9-ed20f91cc4a5"
                 }
             ],
             "severity": "error",
@@ -612,12 +520,35 @@
             "description": "Missing connection between items",
             "items": [
                 {
-                    "description": "패드 14 [/GND]의 J1 위B.Cu",
+                    "description": "패드 26 [/GND]의 J1 위B.Cu",
                     "pos": {
-                        "x": 104.25,
+                        "x": 101.25,
                         "y": 90.2
                     },
-                    "uuid": "f910d6a5-7f47-4aae-bcaf-7db52eec9840"
+                    "uuid": "50637faf-8ecb-4b03-9a79-964bdf802090"
+                },
+                {
+                    "description": "패드 32 [/GND]의 J1 위B.Cu",
+                    "pos": {
+                        "x": 99.75,
+                        "y": 90.2
+                    },
+                    "uuid": "88aa490d-7883-48e5-83ee-39bf3e001cc4"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "패드 26 [/GND]의 J1 위B.Cu",
+                    "pos": {
+                        "x": 101.25,
+                        "y": 90.2
+                    },
+                    "uuid": "50637faf-8ecb-4b03-9a79-964bdf802090"
                 },
                 {
                     "description": "패드 20 [/GND]의 J1 위B.Cu",
@@ -625,7 +556,7 @@
                         "x": 102.75,
                         "y": 90.2
                     },
-                    "uuid": "4a5ae07f-df12-4b8a-afa3-173774aea9f6"
+                    "uuid": "a966627b-0b91-43b0-8769-0dba61af3d46"
                 }
             ],
             "severity": "error",
@@ -635,43 +566,43 @@
             "description": "Missing connection between items",
             "items": [
                 {
-                    "description": "패드 7 [/GND]의 J1 위B.Cu",
+                    "description": "패드 2 [/GND]의 J3 위F.Cu",
                     "pos": {
-                        "x": 105.75,
-                        "y": 86.2
+                        "x": 102.2,
+                        "y": 114.08
                     },
-                    "uuid": "3ca389fe-e5c5-45c6-ab17-975b815eadbf"
+                    "uuid": "3177c312-e0c9-4686-98af-bdbdd4c55b09"
                 },
+                {
+                    "description": "패드 6 [/GND]의 J3 위F.Cu",
+                    "pos": {
+                        "x": 101.4,
+                        "y": 114.08
+                    },
+                    "uuid": "7a4a4b48-fa90-448d-8384-672bec080a02"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
                 {
                     "description": "패드 13 [/GND]의 J1 위B.Cu",
                     "pos": {
                         "x": 104.25,
                         "y": 86.2
                     },
-                    "uuid": "fe0a31b5-4eef-46d7-a939-8064c4b62046"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
+                    "uuid": "7b45b47f-b0f2-471a-b38a-1cccdae6b8b2"
+                },
                 {
                     "description": "패드 7 [/GND]의 J1 위B.Cu",
                     "pos": {
                         "x": 105.75,
                         "y": 86.2
                     },
-                    "uuid": "3ca389fe-e5c5-45c6-ab17-975b815eadbf"
-                },
-                {
-                    "description": "패드 8 [/GND]의 J1 위B.Cu",
-                    "pos": {
-                        "x": 105.75,
-                        "y": 90.2
-                    },
-                    "uuid": "3a29fdae-722a-4dcb-a8d9-1256c851b249"
+                    "uuid": "cfa7ffff-f22a-48e6-acec-ba888d382f3b"
                 }
             ],
             "severity": "error",
@@ -680,44 +611,21 @@
         {
             "description": "Missing connection between items",
             "items": [
-                {
-                    "description": "패드 8 [/GND]의 J1 위B.Cu",
-                    "pos": {
-                        "x": 105.75,
-                        "y": 90.2
-                    },
-                    "uuid": "3a29fdae-722a-4dcb-a8d9-1256c851b249"
-                },
-                {
-                    "description": "구역 'AUTO_GND_B.Cu' [/GND] on B.Cu, 우선순위 0",
-                    "pos": {
-                        "x": 79.95,
-                        "y": 79.95
-                    },
-                    "uuid": "f2468b93-103c-44a4-a5b9-3f9d47257827"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "패드 8 [/GND]의 J1 위B.Cu",
-                    "pos": {
-                        "x": 105.75,
-                        "y": 90.2
-                    },
-                    "uuid": "3a29fdae-722a-4dcb-a8d9-1256c851b249"
-                },
                 {
                     "description": "패드 14 [/GND]의 J1 위B.Cu",
                     "pos": {
                         "x": 104.25,
                         "y": 90.2
                     },
-                    "uuid": "f910d6a5-7f47-4aae-bcaf-7db52eec9840"
+                    "uuid": "b5ddf82e-4c95-491e-bc21-2cd2627d769f"
+                },
+                {
+                    "description": "패드 20 [/GND]의 J1 위B.Cu",
+                    "pos": {
+                        "x": 102.75,
+                        "y": 90.2
+                    },
+                    "uuid": "a966627b-0b91-43b0-8769-0dba61af3d46"
                 }
             ],
             "severity": "error",
@@ -727,296 +635,20 @@
             "description": "Missing connection between items",
             "items": [
                 {
-                    "description": "패드 1 [/LIGHT_SENSE]의 R11 위F.Cu",
+                    "description": "구역 'AUTO_GND_B.Cu' [/GND] on B.Cu, 우선순위 0",
                     "pos": {
-                        "x": 93.424131,
-                        "y": 89.677809
+                        "x": 79.95,
+                        "y": 79.95
                     },
-                    "uuid": "29fff455-1d1a-420e-886d-ac4965b45917"
+                    "uuid": "3271a34e-13e2-4db1-be07-9833245fd89b"
                 },
                 {
-                    "description": "패드 1 [/LIGHT_SENSE]의 TP16 위B.Cu",
+                    "description": "패드 2 [/GND]의 C17 위B.Cu",
                     "pos": {
-                        "x": 98.010815,
-                        "y": 93.102421
+                        "x": 111.610236,
+                        "y": 105.761394
                     },
-                    "uuid": "921394a2-e774-4902-a6eb-6bc4da07dd1f"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "패드 1 [/LIGHT_SENSE]의 R11 위F.Cu",
-                    "pos": {
-                        "x": 93.424131,
-                        "y": 89.677809
-                    },
-                    "uuid": "29fff455-1d1a-420e-886d-ac4965b45917"
-                },
-                {
-                    "description": "패드 2 [/LIGHT_SENSE]의 Q4 위F.Cu",
-                    "pos": {
-                        "x": 83.75,
-                        "y": 95.5
-                    },
-                    "uuid": "4304dd18-92ba-45f5-b86d-a76e3b7233f8"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "패드 1 [/LIGHT_SENSE]의 TP16 위B.Cu",
-                    "pos": {
-                        "x": 98.010815,
-                        "y": 93.102421
-                    },
-                    "uuid": "921394a2-e774-4902-a6eb-6bc4da07dd1f"
-                },
-                {
-                    "description": "패드 17 [/LIGHT_SENSE]의 J1 위B.Cu",
-                    "pos": {
-                        "x": 103.25,
-                        "y": 86.2
-                    },
-                    "uuid": "df16e1b8-b5ec-4d68-a457-c9a0174fa9a2"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "패드 1 [/CAM_RESET]의 TP9 위B.Cu",
-                    "pos": {
-                        "x": 86.873695,
-                        "y": 116.272894
-                    },
-                    "uuid": "707a5ec8-b7c0-400e-a6c7-debd7b53f5e9"
-                },
-                {
-                    "description": "패드 1 [/CAM_RESET]의 R16 위F.Cu",
-                    "pos": {
-                        "x": 92.786167,
-                        "y": 112.60021
-                    },
-                    "uuid": "fcf03ce6-1443-439b-916f-51bb1e8c6125"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "패드 2 [/CAM_RESET]의 R7 위F.Cu",
-                    "pos": {
-                        "x": 92.209289,
-                        "y": 110.396744
-                    },
-                    "uuid": "3f719be5-fbaa-4546-8229-561f404f69b2"
-                },
-                {
-                    "description": "패드 1 [/CAM_RESET]의 R16 위F.Cu",
-                    "pos": {
-                        "x": 92.786167,
-                        "y": 112.60021
-                    },
-                    "uuid": "fcf03ce6-1443-439b-916f-51bb1e8c6125"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "패드 2 [/CAM_RESET]의 D3 위B.Cu",
-                    "pos": {
-                        "x": 92.75,
-                        "y": 109.95
-                    },
-                    "uuid": "bd185fc2-ed2e-4da1-b4cd-f4a9c1f61c0e"
-                },
-                {
-                    "description": "패드 2 [/CAM_RESET]의 R7 위F.Cu",
-                    "pos": {
-                        "x": 92.209289,
-                        "y": 110.396744
-                    },
-                    "uuid": "3f719be5-fbaa-4546-8229-561f404f69b2"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "패드 1 [/CAM_RESET]의 R16 위F.Cu",
-                    "pos": {
-                        "x": 92.786167,
-                        "y": 112.60021
-                    },
-                    "uuid": "fcf03ce6-1443-439b-916f-51bb1e8c6125"
-                },
-                {
-                    "description": "패드 1 [/CAM_RESET]의 C10 위F.Cu",
-                    "pos": {
-                        "x": 95.15,
-                        "y": 112.278493
-                    },
-                    "uuid": "0d2f3a86-1df5-4d5d-8c30-3431378f8f38"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "패드 24 [/CAM_RESET]의 J3 위F.Cu",
-                    "pos": {
-                        "x": 97.8,
-                        "y": 114.08
-                    },
-                    "uuid": "6e48fdb8-3cd9-460d-9c2e-657a231ff482"
-                },
-                {
-                    "description": "패드 1 [/CAM_RESET]의 C10 위F.Cu",
-                    "pos": {
-                        "x": 95.15,
-                        "y": 112.278493
-                    },
-                    "uuid": "0d2f3a86-1df5-4d5d-8c30-3431378f8f38"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "패드 3 [/CAM_AVDD]의 Q2 위B.Cu",
-                    "pos": {
-                        "x": 97.858326,
-                        "y": 107.726299
-                    },
-                    "uuid": "8fdece52-04b8-47af-a20b-0adfd8446894"
-                },
-                {
-                    "description": "패드 16 [/CAM_AVDD]의 J3 위F.Cu",
-                    "pos": {
-                        "x": 99.4,
-                        "y": 114.08
-                    },
-                    "uuid": "eb639e44-ba71-48c0-91a1-99479cb11914"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "패드 1 [/CAM_AVDD]의 C8 위F.Cu",
-                    "pos": {
-                        "x": 98.106538,
-                        "y": 115.415992
-                    },
-                    "uuid": "7d7ec043-ebec-4f86-9a01-5088c1fbe593"
-                },
-                {
-                    "description": "패드 1 [/CAM_AVDD]의 TP5 위B.Cu",
-                    "pos": {
-                        "x": 96.486017,
-                        "y": 117.851039
-                    },
-                    "uuid": "337c4240-8dd6-4d79-8151-5a6d5b28b0f2"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "패드 16 [/CAM_AVDD]의 J3 위F.Cu",
-                    "pos": {
-                        "x": 99.4,
-                        "y": 114.08
-                    },
-                    "uuid": "eb639e44-ba71-48c0-91a1-99479cb11914"
-                },
-                {
-                    "description": "패드 1 [/CAM_AVDD]의 C8 위F.Cu",
-                    "pos": {
-                        "x": 98.106538,
-                        "y": 115.415992
-                    },
-                    "uuid": "7d7ec043-ebec-4f86-9a01-5088c1fbe593"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "패드 12 [/CAM_AVDD]의 J3 위F.Cu",
-                    "pos": {
-                        "x": 100.2,
-                        "y": 114.08
-                    },
-                    "uuid": "e04c2aeb-9759-467e-92a1-c8ff0aebb84c"
-                },
-                {
-                    "description": "패드 16 [/CAM_AVDD]의 J3 위F.Cu",
-                    "pos": {
-                        "x": 99.4,
-                        "y": 114.08
-                    },
-                    "uuid": "eb639e44-ba71-48c0-91a1-99479cb11914"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "패드 1 [/CAM_AVDD]의 C9 위F.Cu",
-                    "pos": {
-                        "x": 100.351981,
-                        "y": 115.432473
-                    },
-                    "uuid": "ec38557e-2904-446f-be5b-8d140d8d9851"
-                },
-                {
-                    "description": "패드 12 [/CAM_AVDD]의 J3 위F.Cu",
-                    "pos": {
-                        "x": 100.2,
-                        "y": 114.08
-                    },
-                    "uuid": "e04c2aeb-9759-467e-92a1-c8ff0aebb84c"
+                    "uuid": "5550704e-72ca-4f94-8ca8-41bd8495e031"
                 }
             ],
             "severity": "error",
@@ -1031,15 +663,15 @@
                         "x": 94.0,
                         "y": 85.125
                     },
-                    "uuid": "451f26a3-3a1b-4b39-8246-7eb829e5534a"
+                    "uuid": "8a963f5a-1315-4042-8f10-ecea019f28de"
                 },
                 {
-                    "description": "패드 2 [/IRA_M]의 D_IR_A2 위F.Cu",
+                    "description": "비아 [/IRA_M] on F.Cu - B.Cu",
                     "pos": {
-                        "x": 103.75,
-                        "y": 84.0
+                        "x": 100.8,
+                        "y": 82.6
                     },
-                    "uuid": "3a83455d-a538-439d-9183-608378190fcc"
+                    "uuid": "252ac5c2-4df3-425e-af50-1c30ee3cabc7"
                 }
             ],
             "severity": "error",
@@ -1048,90 +680,21 @@
         {
             "description": "Missing connection between items",
             "items": [
-                {
-                    "description": "패드 2 [/IRA_M]의 D_IR_A2 위F.Cu",
-                    "pos": {
-                        "x": 106.0,
-                        "y": 84.0
-                    },
-                    "uuid": "50ec84ee-29e8-4a33-ba3d-de7376efde2c"
-                },
-                {
-                    "description": "패드 2 [/IRA_M]의 D_IR_A2 위F.Cu",
-                    "pos": {
-                        "x": 106.0,
-                        "y": 82.875
-                    },
-                    "uuid": "0c5165fc-d60c-4c6b-9a67-7a767d67c308"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "패드 1 [/IRA_SET]의 U4 위B.Cu",
-                    "pos": {
-                        "x": 82.525,
-                        "y": 98.975
-                    },
-                    "uuid": "0041a032-76e6-41e7-a41f-e65c100a8527"
-                },
-                {
-                    "description": "패드 2 [/IRA_SET]의 R13 위B.Cu",
-                    "pos": {
-                        "x": 91.895512,
-                        "y": 96.75
-                    },
-                    "uuid": "c2b3994c-5bf4-4bed-99bc-c1844f6576db"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "패드 2 [/IRA_SET]의 D_IR_A1 위F.Cu",
-                    "pos": {
-                        "x": 91.75,
-                        "y": 84.0
-                    },
-                    "uuid": "16276361-f550-46b3-94e4-1cc101180905"
-                },
                 {
                     "description": "패드 1 [/IRA_SET]의 TP13 위B.Cu",
                     "pos": {
                         "x": 88.877966,
                         "y": 83.8084
                     },
-                    "uuid": "fc335fb1-a43f-4213-bb43-5b5253532a8d"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "패드 2 [/IRA_SET]의 R13 위B.Cu",
-                    "pos": {
-                        "x": 91.895512,
-                        "y": 96.75
-                    },
-                    "uuid": "c2b3994c-5bf4-4bed-99bc-c1844f6576db"
+                    "uuid": "59d644cd-2ba1-443b-a8d2-12163d8b80e4"
                 },
                 {
-                    "description": "패드 2 [/IRA_SET]의 D_IR_A1 위F.Cu",
+                    "description": "배선 [/IRA_SET] on F.Cu, 길이 0.2121 mm",
                     "pos": {
-                        "x": 91.75,
-                        "y": 84.0
+                        "x": 82.9,
+                        "y": 94.95
                     },
-                    "uuid": "16276361-f550-46b3-94e4-1cc101180905"
+                    "uuid": "1373a218-7141-4fe0-ab54-3dbd45ce3398"
                 }
             ],
             "severity": "error",
@@ -1141,20 +704,20 @@
             "description": "Missing connection between items",
             "items": [
                 {
-                    "description": "패드 2 [/IRA_SET]의 D_IR_A1 위F.Cu",
+                    "description": "배선 [/ICR_B] on F.Cu, 길이 1.9000 mm",
                     "pos": {
-                        "x": 94.0,
-                        "y": 84.0
+                        "x": 117.05,
+                        "y": 99.8
                     },
-                    "uuid": "d5cb32cf-fe0e-41a3-90d6-e470a0b00354"
+                    "uuid": "eecd35a7-a5e0-466d-a8f7-8ff166f1f80a"
                 },
                 {
-                    "description": "패드 2 [/IRA_SET]의 D_IR_A1 위F.Cu",
+                    "description": "패드 3 [/ICR_B]의 U2 위B.Cu",
                     "pos": {
-                        "x": 94.0,
-                        "y": 82.875
+                        "x": 117.23646,
+                        "y": 98.972706
                     },
-                    "uuid": "87aa9870-d3b7-47c7-9909-361c6adfa6ec"
+                    "uuid": "bd9ca2d4-231f-4260-99c1-d3d7874fe9cc"
                 }
             ],
             "severity": "error",
@@ -1163,90 +726,21 @@
         {
             "description": "Missing connection between items",
             "items": [
+                {
+                    "description": "패드 1 [/CAM_1V8]의 C18 위B.Cu",
+                    "pos": {
+                        "x": 97.181652,
+                        "y": 106.626854
+                    },
+                    "uuid": "0f82b437-53ba-43ad-9f50-a0cdaa04dcf5"
+                },
                 {
                     "description": "패드 3 [/CAM_1V8]의 Q6 위B.Cu",
                     "pos": {
                         "x": 96.9375,
                         "y": 112.0
                     },
-                    "uuid": "08831f59-9597-4037-b523-4668705c3283"
-                },
-                {
-                    "description": "패드 1 [/CAM_1V8]의 C11 위B.Cu",
-                    "pos": {
-                        "x": 98.688423,
-                        "y": 114.368401
-                    },
-                    "uuid": "a5120e78-b6a8-4edb-b16d-b650bf2fef23"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "패드 1 [/CAM_1V8]의 R9 위F.Cu",
-                    "pos": {
-                        "x": 99.293539,
-                        "y": 89.707541
-                    },
-                    "uuid": "aa1bf87b-3f0c-42c4-bfb4-efe2850b19a4"
-                },
-                {
-                    "description": "패드 1 [/CAM_1V8]의 R10 위F.Cu",
-                    "pos": {
-                        "x": 96.412469,
-                        "y": 89.734359
-                    },
-                    "uuid": "ebb2b8fd-3252-447b-a80a-292da2a20c99"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "패드 1 [/CAM_1V8]의 X1 위B.Cu",
-                    "pos": {
-                        "x": 100.164147,
-                        "y": 112.498079
-                    },
-                    "uuid": "ac03c7d3-dc91-465b-80a4-35efc97dec16"
-                },
-                {
-                    "description": "패드 1 [/CAM_1V8]의 C11 위B.Cu",
-                    "pos": {
-                        "x": 98.688423,
-                        "y": 114.368401
-                    },
-                    "uuid": "a5120e78-b6a8-4edb-b16d-b650bf2fef23"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "패드 4 [/CAM_1V8]의 X1 위B.Cu",
-                    "pos": {
-                        "x": 101.364147,
-                        "y": 112.498079
-                    },
-                    "uuid": "398a2add-1061-4124-9ca0-3755dfe073d9"
-                },
-                {
-                    "description": "패드 1 [/CAM_1V8]의 X1 위B.Cu",
-                    "pos": {
-                        "x": 100.164147,
-                        "y": 112.498079
-                    },
-                    "uuid": "ac03c7d3-dc91-465b-80a4-35efc97dec16"
+                    "uuid": "6705b299-a8fd-4df8-b124-f6c09671186e"
                 }
             ],
             "severity": "error",
@@ -1258,18 +752,18 @@
                 {
                     "description": "패드 1 [/CAM_1V8]의 C18 위B.Cu",
                     "pos": {
-                        "x": 102.850338,
-                        "y": 110.802688
+                        "x": 97.181652,
+                        "y": 106.626854
                     },
-                    "uuid": "6dc25d49-119b-4c4b-b0a2-225d3b36a0a1"
+                    "uuid": "0f82b437-53ba-43ad-9f50-a0cdaa04dcf5"
                 },
                 {
-                    "description": "패드 4 [/CAM_1V8]의 X1 위B.Cu",
+                    "description": "배선 [/CAM_1V8] on F.Cu, 길이 9.4045 mm",
                     "pos": {
-                        "x": 101.364147,
-                        "y": 112.498079
+                        "x": 106.15,
+                        "y": 96.65
                     },
-                    "uuid": "398a2add-1061-4124-9ca0-3755dfe073d9"
+                    "uuid": "09965233-5d01-4c4f-870d-4717a7455d97"
                 }
             ],
             "severity": "error",
@@ -1279,66 +773,20 @@
             "description": "Missing connection between items",
             "items": [
                 {
-                    "description": "패드 1 [/CAM_1V8]의 TP23 위B.Cu",
+                    "description": "패드 1 [/CAM_1V8]의 X1 위B.Cu",
                     "pos": {
-                        "x": 111.220287,
-                        "y": 103.949525
+                        "x": 101.65,
+                        "y": 112.75
                     },
-                    "uuid": "f2de7048-8c14-482a-aca2-7e4746ffa9f4"
+                    "uuid": "299c9227-1d14-4452-850c-a3bd72fa08f7"
                 },
                 {
-                    "description": "패드 1 [/CAM_1V8]의 C18 위B.Cu",
+                    "description": "배선 [/CAM_1V8] on B.Cu, 길이 2.2627 mm",
                     "pos": {
-                        "x": 102.850338,
-                        "y": 110.802688
+                        "x": 97.6,
+                        "y": 112.25
                     },
-                    "uuid": "6dc25d49-119b-4c4b-b0a2-225d3b36a0a1"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "패드 1 [/CAM_1V8]의 TP23 위B.Cu",
-                    "pos": {
-                        "x": 111.220287,
-                        "y": 103.949525
-                    },
-                    "uuid": "f2de7048-8c14-482a-aca2-7e4746ffa9f4"
-                },
-                {
-                    "description": "패드 1 [/CAM_1V8]의 R9 위F.Cu",
-                    "pos": {
-                        "x": 99.293539,
-                        "y": 89.707541
-                    },
-                    "uuid": "aa1bf87b-3f0c-42c4-bfb4-efe2850b19a4"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "패드 1 [/CAM_I2C2_SCL]의 TP18 위B.Cu",
-                    "pos": {
-                        "x": 88.926733,
-                        "y": 91.306836
-                    },
-                    "uuid": "998cbfd3-cdcc-41ad-a9da-78a2279f1928"
-                },
-                {
-                    "description": "패드 4 [/CAM_I2C2_SCL]의 U3 위F.Cu",
-                    "pos": {
-                        "x": 82.4,
-                        "y": 99.3
-                    },
-                    "uuid": "c7de5f39-351c-43a8-9dad-df769578876a"
+                    "uuid": "bf61abd4-88c0-4c06-ba5b-0a3fe8367203"
                 }
             ],
             "severity": "error",
@@ -1353,15 +801,15 @@
                         "x": 97.432469,
                         "y": 89.734359
                     },
-                    "uuid": "335d50b0-f2b5-4335-9dc4-610fa2ff9ef1"
+                    "uuid": "840a2951-cfd2-4859-b2dd-e2c383f2a9af"
                 },
                 {
                     "description": "패드 1 [/CAM_I2C2_SCL]의 TP18 위B.Cu",
                     "pos": {
-                        "x": 88.926733,
-                        "y": 91.306836
+                        "x": 92.773385,
+                        "y": 102.958062
                     },
-                    "uuid": "998cbfd3-cdcc-41ad-a9da-78a2279f1928"
+                    "uuid": "c7a02c8e-7c8a-4422-87e9-e65f55a08d99"
                 }
             ],
             "severity": "error",
@@ -1371,618 +819,20 @@
             "description": "Missing connection between items",
             "items": [
                 {
-                    "description": "패드 3 [/CAM_I2C2_SCL]의 J3 위F.Cu",
+                    "description": "패드 5 [/FRONT_2V8]의 U1 위B.Cu",
                     "pos": {
-                        "x": 101.8,
-                        "y": 109.92
+                        "x": 95.7,
+                        "y": 94.8625
                     },
-                    "uuid": "52d7b466-f2ef-4fd1-96d8-817bf1e0c587"
+                    "uuid": "f4e4c4ee-bdc3-47c7-a7e9-2aa67a5ec4f5"
                 },
-                {
-                    "description": "패드 2 [/CAM_I2C2_SCL]의 R10 위F.Cu",
-                    "pos": {
-                        "x": 97.432469,
-                        "y": 89.734359
-                    },
-                    "uuid": "335d50b0-f2b5-4335-9dc4-610fa2ff9ef1"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "패드 9 [/CAM_I2C2_SCL]의 J1 위B.Cu",
-                    "pos": {
-                        "x": 105.25,
-                        "y": 86.2
-                    },
-                    "uuid": "96bca5e0-31e4-4302-9520-1485be9fd984"
-                },
-                {
-                    "description": "패드 2 [/CAM_I2C2_SCL]의 R10 위F.Cu",
-                    "pos": {
-                        "x": 97.432469,
-                        "y": 89.734359
-                    },
-                    "uuid": "335d50b0-f2b5-4335-9dc4-610fa2ff9ef1"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "패드 1 [/CAM_EN]의 TP8 위B.Cu",
-                    "pos": {
-                        "x": 86.19217,
-                        "y": 118.636436
-                    },
-                    "uuid": "f8ac5028-dde2-4c21-a780-86e13943c899"
-                },
-                {
-                    "description": "패드 1 [/CAM_EN]의 D3 위B.Cu",
-                    "pos": {
-                        "x": 92.75,
-                        "y": 112.05
-                    },
-                    "uuid": "e858d8e9-23e9-4e1a-9eed-19c07357b0d8"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "패드 1 [/CAM_EN]의 R7 위F.Cu",
-                    "pos": {
-                        "x": 92.209289,
-                        "y": 111.416744
-                    },
-                    "uuid": "0a3a071e-b74a-4648-a020-f3894132576b"
-                },
-                {
-                    "description": "패드 1 [/CAM_EN]의 D3 위B.Cu",
-                    "pos": {
-                        "x": 92.75,
-                        "y": 112.05
-                    },
-                    "uuid": "e858d8e9-23e9-4e1a-9eed-19c07357b0d8"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "패드 1 [/CAM_EN]의 R7 위F.Cu",
-                    "pos": {
-                        "x": 92.209289,
-                        "y": 111.416744
-                    },
-                    "uuid": "0a3a071e-b74a-4648-a020-f3894132576b"
-                },
-                {
-                    "description": "패드 1 [/CAM_EN]의 Q3 위B.Cu",
-                    "pos": {
-                        "x": 93.204769,
-                        "y": 108.388484
-                    },
-                    "uuid": "0a865b3a-7ab2-419e-96f5-d2a60464b7ce"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "패드 1 [/CAM_EN]의 Q3 위B.Cu",
-                    "pos": {
-                        "x": 93.204769,
-                        "y": 108.388484
-                    },
-                    "uuid": "0a865b3a-7ab2-419e-96f5-d2a60464b7ce"
-                },
-                {
-                    "description": "패드 1 [/CAM_EN]의 R6 위B.Cu",
-                    "pos": {
-                        "x": 93.268763,
-                        "y": 103.545699
-                    },
-                    "uuid": "60719c20-5e07-4c01-9c83-8e577f38a7f5"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "패드 1 [/CAM_EN]의 R6 위B.Cu",
-                    "pos": {
-                        "x": 93.268763,
-                        "y": 103.545699
-                    },
-                    "uuid": "60719c20-5e07-4c01-9c83-8e577f38a7f5"
-                },
-                {
-                    "description": "패드 48 [/CAM_EN]의 J1 위B.Cu",
-                    "pos": {
-                        "x": 95.75,
-                        "y": 90.2
-                    },
-                    "uuid": "cc8804bf-92a5-40b3-88bd-f0bca05e5ae1"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "패드 1 [/CAM_EN]의 Q7 위B.Cu",
-                    "pos": {
-                        "x": 95.81442,
-                        "y": 115.830852
-                    },
-                    "uuid": "505df595-cd8c-4630-86d6-cd4522983f7e"
-                },
-                {
-                    "description": "패드 1 [/CAM_EN]의 D3 위B.Cu",
-                    "pos": {
-                        "x": 92.75,
-                        "y": 112.05
-                    },
-                    "uuid": "e858d8e9-23e9-4e1a-9eed-19c07357b0d8"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "패드 1 [/IRB_M]의 D_IR_B1 위F.Cu",
-                    "pos": {
-                        "x": 92.5,
-                        "y": 117.625
-                    },
-                    "uuid": "4433258a-30c6-4272-b7b8-423b25fbdfaf"
-                },
-                {
-                    "description": "패드 2 [/IRB_M]의 D_IR_B2 위F.Cu",
-                    "pos": {
-                        "x": 105.25,
-                        "y": 116.5
-                    },
-                    "uuid": "4f99e91d-e581-4719-b2fe-dce3e842f15e"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "패드 2 [/IRB_M]의 D_IR_B2 위F.Cu",
-                    "pos": {
-                        "x": 107.5,
-                        "y": 116.5
-                    },
-                    "uuid": "4a2a6817-d69c-4919-95d0-20abcd794440"
-                },
-                {
-                    "description": "패드 2 [/IRB_M]의 D_IR_B2 위F.Cu",
-                    "pos": {
-                        "x": 107.5,
-                        "y": 115.375
-                    },
-                    "uuid": "0850eab1-b097-4d90-9ead-386459df090e"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "패드 2 [/IRB_SET]의 D_IR_B1 위F.Cu",
-                    "pos": {
-                        "x": 92.5,
-                        "y": 115.375
-                    },
-                    "uuid": "e4017d74-f992-4f40-8b32-9b7368a5c44b"
-                },
-                {
-                    "description": "패드 2 [/IRB_SET]의 D_IR_B1 위F.Cu",
-                    "pos": {
-                        "x": 92.5,
-                        "y": 116.5
-                    },
-                    "uuid": "458b34aa-820c-4da5-9d71-11e0e813754f"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "패드 2 [/IRB_SET]의 D_IR_B1 위F.Cu",
-                    "pos": {
-                        "x": 94.75,
-                        "y": 116.5
-                    },
-                    "uuid": "f4eccaeb-860f-4570-a040-527fe8a464b1"
-                },
-                {
-                    "description": "패드 2 [/IRB_SET]의 R14 위B.Cu",
-                    "pos": {
-                        "x": 110.0,
-                        "y": 107.5375
-                    },
-                    "uuid": "88191891-3825-4e9f-9354-bf356a5ac589"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "패드 1 [/IRB_SET]의 U5 위B.Cu",
-                    "pos": {
-                        "x": 113.525,
-                        "y": 109.975
-                    },
-                    "uuid": "4c8267bf-f21b-4c0c-a392-ecfb612e0aec"
-                },
-                {
-                    "description": "패드 2 [/IRB_SET]의 R14 위B.Cu",
-                    "pos": {
-                        "x": 110.0,
-                        "y": 107.5375
-                    },
-                    "uuid": "88191891-3825-4e9f-9354-bf356a5ac589"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "패드 2 [/ICR_A]의 U2 위B.Cu",
-                    "pos": {
-                        "x": 117.23646,
-                        "y": 98.472706
-                    },
-                    "uuid": "a0585c31-71ff-49a0-b951-e6e690073d3d"
-                },
-                {
-                    "description": "패드 1 [/ICR_A]의 J2 위F.Cu",
-                    "pos": {
-                        "x": 118.195,
-                        "y": 99.375
-                    },
-                    "uuid": "fea79721-12b2-4b7f-8338-7862593d4017"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "패드 1 [/ICR_A]의 TP10 위B.Cu",
-                    "pos": {
-                        "x": 118.64278,
-                        "y": 96.070683
-                    },
-                    "uuid": "0aae901d-368e-4650-8d0c-57b16daeedb1"
-                },
-                {
-                    "description": "패드 2 [/ICR_A]의 U2 위B.Cu",
-                    "pos": {
-                        "x": 117.23646,
-                        "y": 98.472706
-                    },
-                    "uuid": "a0585c31-71ff-49a0-b951-e6e690073d3d"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "패드 1 [/ICR_B]의 TP11 위B.Cu",
-                    "pos": {
-                        "x": 116.243231,
-                        "y": 96.079747
-                    },
-                    "uuid": "99f6198a-cf58-4bbd-b88a-89a5fac21885"
-                },
-                {
-                    "description": "패드 3 [/ICR_B]의 U2 위B.Cu",
-                    "pos": {
-                        "x": 117.23646,
-                        "y": 98.972706
-                    },
-                    "uuid": "8d6b0789-5972-495f-9c02-ee7045ac7b6c"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "패드 3 [/ICR_B]의 U2 위B.Cu",
-                    "pos": {
-                        "x": 117.23646,
-                        "y": 98.972706
-                    },
-                    "uuid": "8d6b0789-5972-495f-9c02-ee7045ac7b6c"
-                },
-                {
-                    "description": "패드 2 [/ICR_B]의 J2 위F.Cu",
-                    "pos": {
-                        "x": 118.195,
-                        "y": 100.625
-                    },
-                    "uuid": "0b415fdd-ff1d-45ae-91ff-1813debd8f0a"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "패드 1 [/IRB_K]의 L2 위B.Cu",
-                    "pos": {
-                        "x": 113.9884,
-                        "y": 103.513233
-                    },
-                    "uuid": "b688ea59-c655-4820-93e0-3c16a193fe49"
-                },
-                {
-                    "description": "패드 1 [/IRB_K]의 D_IR_B2 위F.Cu",
-                    "pos": {
-                        "x": 107.5,
-                        "y": 117.625
-                    },
-                    "uuid": "9d68b692-bab4-44fa-9b42-320ed43ebe4a"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "패드 1 [/IRA_K]의 L1 위B.Cu",
-                    "pos": {
-                        "x": 81.99922,
-                        "y": 92.404827
-                    },
-                    "uuid": "3af60304-b084-4a01-8f16-a4389c026e8e"
-                },
-                {
-                    "description": "패드 1 [/IRA_K]의 D_IR_A2 위F.Cu",
-                    "pos": {
-                        "x": 106.0,
-                        "y": 85.8
-                    },
-                    "uuid": "57c0267c-f81f-4237-b160-7582c17a5626"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "패드 1 [/CORE_1V8]의 Q4 위F.Cu",
-                    "pos": {
-                        "x": 82.25,
-                        "y": 95.5
-                    },
-                    "uuid": "3dba68ce-ec82-4282-87d1-c4c1e3290e42"
-                },
-                {
-                    "description": "패드 1 [/CORE_1V8]의 R15 위B.Cu",
-                    "pos": {
-                        "x": 88.280866,
-                        "y": 111.298254
-                    },
-                    "uuid": "80e37dd6-584f-420e-a489-49fdc2ab9fa4"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "패드 1 [/CORE_1V8]의 TP3 위B.Cu",
-                    "pos": {
-                        "x": 83.87031,
-                        "y": 87.759362
-                    },
-                    "uuid": "20e48d7b-cc17-439b-8941-bbda0ef15ce1"
-                },
-                {
-                    "description": "패드 1 [/CORE_1V8]의 Q4 위F.Cu",
-                    "pos": {
-                        "x": 82.25,
-                        "y": 95.5
-                    },
-                    "uuid": "3dba68ce-ec82-4282-87d1-c4c1e3290e42"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "패드 51 [/CORE_1V8]의 J1 위B.Cu",
-                    "pos": {
-                        "x": 94.75,
-                        "y": 86.2
-                    },
-                    "uuid": "f7853f90-6d19-40b0-811d-e293841158d1"
-                },
-                {
-                    "description": "패드 1 [/CORE_1V8]의 TP3 위B.Cu",
-                    "pos": {
-                        "x": 83.87031,
-                        "y": 87.759362
-                    },
-                    "uuid": "20e48d7b-cc17-439b-8941-bbda0ef15ce1"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "패드 2 [/CORE_1V8]의 Q6 위B.Cu",
-                    "pos": {
-                        "x": 95.0625,
-                        "y": 111.05
-                    },
-                    "uuid": "f9f8bcc2-3b40-4772-a44a-e2953888f567"
-                },
-                {
-                    "description": "패드 1 [/CORE_1V8]의 R15 위B.Cu",
-                    "pos": {
-                        "x": 88.280866,
-                        "y": 111.298254
-                    },
-                    "uuid": "80e37dd6-584f-420e-a489-49fdc2ab9fa4"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "패드 49 [/CORE_1V8]의 J1 위B.Cu",
-                    "pos": {
-                        "x": 95.25,
-                        "y": 86.2
-                    },
-                    "uuid": "3e5921ce-e6ed-4399-b79d-2eb1ee253957"
-                },
-                {
-                    "description": "패드 51 [/CORE_1V8]의 J1 위B.Cu",
-                    "pos": {
-                        "x": 94.75,
-                        "y": 86.2
-                    },
-                    "uuid": "f7853f90-6d19-40b0-811d-e293841158d1"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "패드 1 [/CORE_1V8]의 R17 위B.Cu",
-                    "pos": {
-                        "x": 97.240368,
-                        "y": 115.683596
-                    },
-                    "uuid": "f84993ad-4d63-417e-bcfb-4f4b210aa4a7"
-                },
-                {
-                    "description": "패드 2 [/CORE_1V8]의 Q6 위B.Cu",
-                    "pos": {
-                        "x": 95.0625,
-                        "y": 111.05
-                    },
-                    "uuid": "f9f8bcc2-3b40-4772-a44a-e2953888f567"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "패드 1 [/CORE_1V8]의 R12 위B.Cu",
-                    "pos": {
-                        "x": 106.927262,
-                        "y": 95.895425
-                    },
-                    "uuid": "58a3a155-105b-4b4b-8476-d49eea36e8b5"
-                },
-                {
-                    "description": "패드 49 [/CORE_1V8]의 J1 위B.Cu",
-                    "pos": {
-                        "x": 95.25,
-                        "y": 86.2
-                    },
-                    "uuid": "3e5921ce-e6ed-4399-b79d-2eb1ee253957"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
                 {
                     "description": "패드 1 [/FRONT_2V8]의 U3 위F.Cu",
                     "pos": {
                         "x": 82.4,
                         "y": 100.7
                     },
-                    "uuid": "0bc628d3-3ca9-4a64-a8c8-100ee360012d"
-                },
-                {
-                    "description": "패드 5 [/FRONT_2V8]의 U1 위B.Cu",
-                    "pos": {
-                        "x": 95.7,
-                        "y": 94.8625
-                    },
-                    "uuid": "27492eec-d3d1-4f9d-a432-92a0af73a2ba"
+                    "uuid": "e92b2603-0b02-4b35-847e-81b37c19937c"
                 }
             ],
             "severity": "error",
@@ -1991,136 +841,21 @@
         {
             "description": "Missing connection between items",
             "items": [
-                {
-                    "description": "패드 5 [/FRONT_2V8]의 U1 위B.Cu",
-                    "pos": {
-                        "x": 95.7,
-                        "y": 94.8625
-                    },
-                    "uuid": "27492eec-d3d1-4f9d-a432-92a0af73a2ba"
-                },
-                {
-                    "description": "패드 1 [/FRONT_2V8]의 C5 위B.Cu",
-                    "pos": {
-                        "x": 95.312937,
-                        "y": 93.108344
-                    },
-                    "uuid": "8e748f8b-fcdf-4839-bc78-64559eee1f20"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "패드 1 [/FRONT_2V8]의 C12 위B.Cu",
-                    "pos": {
-                        "x": 100.608754,
-                        "y": 97.615052
-                    },
-                    "uuid": "d13093b5-c93c-4189-83e7-4fa4a1b7088e"
-                },
-                {
-                    "description": "패드 1 [/FRONT_2V8]의 C13 위B.Cu",
-                    "pos": {
-                        "x": 100.670855,
-                        "y": 95.269556
-                    },
-                    "uuid": "34033c82-ad7c-4ccc-ad16-6d8f55499420"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "패드 1 [/FRONT_2V8]의 C13 위B.Cu",
-                    "pos": {
-                        "x": 100.670855,
-                        "y": 95.269556
-                    },
-                    "uuid": "34033c82-ad7c-4ccc-ad16-6d8f55499420"
-                },
-                {
-                    "description": "패드 5 [/FRONT_2V8]의 U1 위B.Cu",
-                    "pos": {
-                        "x": 95.7,
-                        "y": 94.8625
-                    },
-                    "uuid": "27492eec-d3d1-4f9d-a432-92a0af73a2ba"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "패드 1 [/FRONT_2V8]의 C13 위B.Cu",
-                    "pos": {
-                        "x": 100.670855,
-                        "y": 95.269556
-                    },
-                    "uuid": "34033c82-ad7c-4ccc-ad16-6d8f55499420"
-                },
                 {
                     "description": "패드 1 [/FRONT_2V8]의 C2 위B.Cu",
                     "pos": {
-                        "x": 107.035961,
-                        "y": 93.728618
+                        "x": 106.862271,
+                        "y": 93.243267
                     },
-                    "uuid": "1661edfe-b847-4aa3-afc5-76e16e4a6f8f"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "패드 1 [/FRONT_2V8]의 TP2 위B.Cu",
-                    "pos": {
-                        "x": 111.129323,
-                        "y": 96.452703
-                    },
-                    "uuid": "c98717d8-6d5e-4128-929b-4fa109a01bf6"
+                    "uuid": "53d761eb-12fe-488d-9245-faba5ad6f837"
                 },
                 {
-                    "description": "패드 1 [/FRONT_2V8]의 R1 위B.Cu",
+                    "description": "배선 [/FRONT_2V8] on B.Cu, 길이 0.4950 mm",
                     "pos": {
-                        "x": 113.969617,
-                        "y": 98.364854
+                        "x": 101.25,
+                        "y": 95.85
                     },
-                    "uuid": "ca5c6181-be7e-4c65-8e71-63954bfc1631"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "패드 1 [/FRONT_2V8]의 TP2 위B.Cu",
-                    "pos": {
-                        "x": 111.129323,
-                        "y": 96.452703
-                    },
-                    "uuid": "c98717d8-6d5e-4128-929b-4fa109a01bf6"
-                },
-                {
-                    "description": "패드 1 [/FRONT_2V8]의 C2 위B.Cu",
-                    "pos": {
-                        "x": 107.035961,
-                        "y": 93.728618
-                    },
-                    "uuid": "1661edfe-b847-4aa3-afc5-76e16e4a6f8f"
+                    "uuid": "8f4930c1-fb54-4cac-bd5a-74803b0c3f73"
                 }
             ],
             "severity": "error",
@@ -2135,38 +870,15 @@
                         "x": 113.969617,
                         "y": 98.364854
                     },
-                    "uuid": "ca5c6181-be7e-4c65-8e71-63954bfc1631"
+                    "uuid": "41d47a50-8c46-49d8-86db-f010e841de67"
                 },
                 {
-                    "description": "패드 8 [/FRONT_2V8]의 U2 위B.Cu",
+                    "description": "배선 [/FRONT_2V8] on B.Cu, 길이 2.1500 mm",
                     "pos": {
-                        "x": 115.33646,
-                        "y": 97.972706
+                        "x": 115.1,
+                        "y": 97.85
                     },
-                    "uuid": "edb01070-81c0-4730-91db-1ca1cf4dfe0b"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "패드 3 [/CAM_I2C2_SDA]의 U3 위F.Cu",
-                    "pos": {
-                        "x": 83.6,
-                        "y": 99.3
-                    },
-                    "uuid": "65970428-2ad7-4768-b499-0c4d561f4b3a"
-                },
-                {
-                    "description": "패드 1 [/CAM_I2C2_SDA]의 TP17 위B.Cu",
-                    "pos": {
-                        "x": 97.965884,
-                        "y": 96.281885
-                    },
-                    "uuid": "02395a18-0ffe-4771-818b-63b8776f01c5"
+                    "uuid": "eff9dc0a-bf88-4142-b0f6-e32fbff7e023"
                 }
             ],
             "severity": "error",
@@ -2181,7 +893,7 @@
                         "x": 97.965884,
                         "y": 96.281885
                     },
-                    "uuid": "02395a18-0ffe-4771-818b-63b8776f01c5"
+                    "uuid": "0ec34b01-f904-4857-8fc6-8a5c67748eac"
                 },
                 {
                     "description": "패드 2 [/CAM_I2C2_SDA]의 R9 위F.Cu",
@@ -2189,7 +901,7 @@
                         "x": 100.313539,
                         "y": 89.707541
                     },
-                    "uuid": "5c403946-b7d3-4a23-ab0b-e67e9aec2fd8"
+                    "uuid": "c2245bec-cd53-468f-897a-9de961cef595"
                 }
             ],
             "severity": "error",
@@ -2199,20 +911,20 @@
             "description": "Missing connection between items",
             "items": [
                 {
-                    "description": "패드 1 [/CAM_I2C2_SDA]의 J3 위F.Cu",
+                    "description": "패드 1 [/12V_IR]의 TP19 위B.Cu",
                     "pos": {
-                        "x": 102.2,
-                        "y": 109.92
+                        "x": 86.069144,
+                        "y": 118.615453
                     },
-                    "uuid": "6e43b46f-b10e-42f0-bf57-6cd80a27caf3"
+                    "uuid": "951df2a2-3398-4e3b-b092-78c3965aea35"
                 },
                 {
-                    "description": "패드 1 [/CAM_I2C2_SDA]의 TP17 위B.Cu",
+                    "description": "패드 1 [/12V_IR]의 D2 위B.Cu",
                     "pos": {
-                        "x": 97.965884,
-                        "y": 96.281885
+                        "x": 99.5,
+                        "y": 117.5
                     },
-                    "uuid": "02395a18-0ffe-4771-818b-63b8776f01c5"
+                    "uuid": "a9e35264-ea09-40af-8316-2f427f816a65"
                 }
             ],
             "severity": "error",
@@ -2222,20 +934,20 @@
             "description": "Missing connection between items",
             "items": [
                 {
-                    "description": "패드 11 [/CAM_I2C2_SDA]의 J1 위B.Cu",
+                    "description": "패드 8 [/12V_IR]의 U4 위B.Cu",
                     "pos": {
-                        "x": 104.75,
-                        "y": 86.2
+                        "x": 86.475,
+                        "y": 98.975
                     },
-                    "uuid": "f5b227a6-f796-44a8-9faf-d15da1f244a8"
+                    "uuid": "a998722d-e108-4fa5-b49e-d710c8ba0514"
                 },
                 {
-                    "description": "패드 2 [/CAM_I2C2_SDA]의 R9 위F.Cu",
+                    "description": "패드 1 [/12V_IR]의 R13 위B.Cu",
                     "pos": {
-                        "x": 100.313539,
-                        "y": 89.707541
+                        "x": 88.970512,
+                        "y": 96.75
                     },
-                    "uuid": "5c403946-b7d3-4a23-ab0b-e67e9aec2fd8"
+                    "uuid": "a321183c-3c2b-4d3a-ad13-be6ba08ecd0b"
                 }
             ],
             "severity": "error",
@@ -2245,20 +957,20 @@
             "description": "Missing connection between items",
             "items": [
                 {
-                    "description": "패드 1 [/CAM_MCLK]의 TP7 위B.Cu",
+                    "description": "배선 [/12V_IR] on B.Cu, 길이 1.8500 mm",
                     "pos": {
-                        "x": 100.865994,
-                        "y": 114.626302
+                        "x": 86.9,
+                        "y": 106.85
                     },
-                    "uuid": "5306df9e-af70-4f6d-8500-713aba41fd99"
+                    "uuid": "2d787aad-7146-4e20-8455-87c198bbf0b5"
                 },
                 {
-                    "description": "패드 4 [/CAM_MCLK]의 J3 위F.Cu",
+                    "description": "패드 1 [/12V_IR]의 C15 위B.Cu",
                     "pos": {
-                        "x": 101.8,
-                        "y": 114.08
+                        "x": 86.660447,
+                        "y": 100.736249
                     },
-                    "uuid": "8d549574-2fe5-4807-a090-4d33c74ad612"
+                    "uuid": "40afbb84-b729-4e08-8356-8fac1a4b9168"
                 }
             ],
             "severity": "error",
@@ -2268,20 +980,20 @@
             "description": "Missing connection between items",
             "items": [
                 {
-                    "description": "패드 4 [/CAM_MCLK]의 J3 위F.Cu",
+                    "description": "패드 1 [/12V_IR]의 C16 위B.Cu",
                     "pos": {
-                        "x": 101.8,
-                        "y": 114.08
+                        "x": 104.783374,
+                        "y": 111.749527
                     },
-                    "uuid": "8d549574-2fe5-4807-a090-4d33c74ad612"
+                    "uuid": "f8a32bad-9aca-4c20-9e4d-b615d526770a"
                 },
                 {
-                    "description": "패드 2 [/CAM_MCLK]의 R8 위B.Cu",
+                    "description": "패드 1 [/12V_IR]의 R14 위B.Cu",
                     "pos": {
-                        "x": 106.385,
-                        "y": 111.35048
+                        "x": 110.0,
+                        "y": 110.4625
                     },
-                    "uuid": "9e37fb9f-71ba-499a-8920-85afa8170a64"
+                    "uuid": "dd9b5319-8416-445e-887a-2bfaa775ac3c"
                 }
             ],
             "severity": "error",
@@ -2290,90 +1002,21 @@
         {
             "description": "Missing connection between items",
             "items": [
+                {
+                    "description": "배선 [/CORE_3V3] on B.Cu, 길이 0.4500 mm",
+                    "pos": {
+                        "x": 94.4,
+                        "y": 103.75
+                    },
+                    "uuid": "50f250e7-8bac-4141-88b2-2b69abad18a7"
+                },
                 {
                     "description": "패드 1 [/CORE_3V3]의 TP4 위B.Cu",
                     "pos": {
-                        "x": 82.153303,
-                        "y": 101.27549
+                        "x": 88.881105,
+                        "y": 91.502921
                     },
-                    "uuid": "2a582796-b77e-472d-aff9-9faccfbac0c0"
-                },
-                {
-                    "description": "패드 1 [/CORE_3V3]의 R4 위B.Cu",
-                    "pos": {
-                        "x": 93.24621,
-                        "y": 105.763728
-                    },
-                    "uuid": "ee63a31e-d75e-4043-848a-4c06133e9fe7"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "패드 1 [/CORE_3V3]의 R4 위B.Cu",
-                    "pos": {
-                        "x": 93.24621,
-                        "y": 105.763728
-                    },
-                    "uuid": "ee63a31e-d75e-4043-848a-4c06133e9fe7"
-                },
-                {
-                    "description": "패드 2 [/CORE_3V3]의 Q2 위B.Cu",
-                    "pos": {
-                        "x": 95.983326,
-                        "y": 106.776299
-                    },
-                    "uuid": "37049ff9-4acc-48cf-9a61-5f7ec9e576c3"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "패드 57 [/CORE_3V3]의 J1 위B.Cu",
-                    "pos": {
-                        "x": 93.25,
-                        "y": 86.2
-                    },
-                    "uuid": "4bbde37e-e1c0-4058-9c8b-dd07494132b7"
-                },
-                {
-                    "description": "패드 59 [/CORE_3V3]의 J1 위B.Cu",
-                    "pos": {
-                        "x": 92.75,
-                        "y": 86.2
-                    },
-                    "uuid": "4339717f-da9b-496e-88e9-941fcf2c75b6"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "패드 57 [/CORE_3V3]의 J1 위B.Cu",
-                    "pos": {
-                        "x": 93.25,
-                        "y": 86.2
-                    },
-                    "uuid": "4bbde37e-e1c0-4058-9c8b-dd07494132b7"
-                },
-                {
-                    "description": "패드 2 [/CORE_3V3]의 Q1 위B.Cu",
-                    "pos": {
-                        "x": 95.0625,
-                        "y": 103.05
-                    },
-                    "uuid": "d13b764b-3682-4bb3-b120-c14f68a8367c"
+                    "uuid": "fb114768-3658-4a32-a1c3-b983515f70f1"
                 }
             ],
             "severity": "error",
@@ -2388,61 +1031,15 @@
                         "x": 95.0625,
                         "y": 103.05
                     },
-                    "uuid": "d13b764b-3682-4bb3-b120-c14f68a8367c"
+                    "uuid": "9396cfb3-7b45-4a3e-94b5-c456c7c1053e"
                 },
                 {
-                    "description": "패드 1 [/CORE_3V3]의 R4 위B.Cu",
+                    "description": "배선 [/CORE_3V3] on B.Cu, 길이 0.0707 mm",
                     "pos": {
-                        "x": 93.24621,
-                        "y": 105.763728
+                        "x": 107.05,
+                        "y": 103.8
                     },
-                    "uuid": "ee63a31e-d75e-4043-848a-4c06133e9fe7"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "패드 2 [/CORE_3V3]의 Q2 위B.Cu",
-                    "pos": {
-                        "x": 95.983326,
-                        "y": 106.776299
-                    },
-                    "uuid": "37049ff9-4acc-48cf-9a61-5f7ec9e576c3"
-                },
-                {
-                    "description": "패드 1 [/CORE_3V3]의 C6 위B.Cu",
-                    "pos": {
-                        "x": 99.702431,
-                        "y": 107.6838
-                    },
-                    "uuid": "3369a26d-4f84-437d-8d07-f1e60d700e52"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "패드 4 [/IR_CTRL]의 U4 위B.Cu",
-                    "pos": {
-                        "x": 82.525,
-                        "y": 97.025
-                    },
-                    "uuid": "3f528040-a7b3-48c4-b3ce-09e19a04d6b8"
-                },
-                {
-                    "description": "패드 1 [/IR_CTRL]의 TP15 위B.Cu",
-                    "pos": {
-                        "x": 100.06951,
-                        "y": 102.912541
-                    },
-                    "uuid": "b3a37336-d8d7-4f53-bbc9-defed410a91a"
+                    "uuid": "5e628a02-2ab2-44e4-8e0a-1d41dbb6be50"
                 }
             ],
             "severity": "error",
@@ -2454,64 +1051,18 @@
                 {
                     "description": "패드 3 [/IR_CTRL]의 Q5 위B.Cu",
                     "pos": {
-                        "x": 109.394525,
-                        "y": 104.07085
+                        "x": 107.5,
+                        "y": 107.355
                     },
-                    "uuid": "c24012dd-6107-490c-b686-a381a7340f66"
+                    "uuid": "333b1610-bd05-4c54-bc98-f0072bdbc4ed"
                 },
                 {
                     "description": "패드 1 [/IR_CTRL]의 TP15 위B.Cu",
                     "pos": {
-                        "x": 100.06951,
-                        "y": 102.912541
+                        "x": 100.0904,
+                        "y": 103.528372
                     },
-                    "uuid": "b3a37336-d8d7-4f53-bbc9-defed410a91a"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "패드 4 [/IR_CTRL]의 U5 위B.Cu",
-                    "pos": {
-                        "x": 113.525,
-                        "y": 108.025
-                    },
-                    "uuid": "8151a551-2498-4366-8c71-e063aa7c4e6b"
-                },
-                {
-                    "description": "패드 3 [/IR_CTRL]의 Q5 위B.Cu",
-                    "pos": {
-                        "x": 109.394525,
-                        "y": 104.07085
-                    },
-                    "uuid": "c24012dd-6107-490c-b686-a381a7340f66"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "패드 1 [/IR_CUT]의 R2 위B.Cu",
-                    "pos": {
-                        "x": 108.29323,
-                        "y": 95.096353
-                    },
-                    "uuid": "cff2299c-d6b0-4b74-9030-388025747f2a"
-                },
-                {
-                    "description": "패드 34 [/IR_CUT]의 J1 위B.Cu",
-                    "pos": {
-                        "x": 99.25,
-                        "y": 90.2
-                    },
-                    "uuid": "f8014a3d-f4b4-40dc-be33-95c313fb8d64"
+                    "uuid": "1a61bd23-92b1-444c-939b-b9d015c4aba1"
                 }
             ],
             "severity": "error",
@@ -2526,15 +1077,15 @@
                         "x": 115.33646,
                         "y": 98.972706
                     },
-                    "uuid": "4016bbba-55d0-4545-b1ff-e42836cf0b1a"
+                    "uuid": "71b8b7e9-7b50-4ec4-93b6-b80567fb8300"
                 },
                 {
                     "description": "패드 1 [/IR_CUT]의 R2 위B.Cu",
                     "pos": {
-                        "x": 108.29323,
-                        "y": 95.096353
+                        "x": 106.78323,
+                        "y": 94.586353
                     },
-                    "uuid": "cff2299c-d6b0-4b74-9030-388025747f2a"
+                    "uuid": "9e67f746-dd59-48b6-a0c2-8f9fe6ae650a"
                 }
             ],
             "severity": "error",
@@ -2544,35 +1095,12 @@
             "description": "Missing connection between items",
             "items": [
                 {
-                    "description": "패드 1 [/VIN]의 U1 위B.Cu",
+                    "description": "배선 [/VIN] on B.Cu, 길이 2.4000 mm",
                     "pos": {
-                        "x": 95.7,
-                        "y": 97.1375
+                        "x": 90.35,
+                        "y": 86.9
                     },
-                    "uuid": "bf35faa7-32f0-43d2-8e8b-b4e402a4f8c4"
-                },
-                {
-                    "description": "패드 3 [/VIN]의 U1 위B.Cu",
-                    "pos": {
-                        "x": 93.8,
-                        "y": 97.1375
-                    },
-                    "uuid": "c5a3c96a-43c2-47c0-9fa8-c0369b108f4b"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "패드 41 [/VIN]의 J1 위B.Cu",
-                    "pos": {
-                        "x": 97.25,
-                        "y": 86.2
-                    },
-                    "uuid": "f0d3e7bb-6520-4689-95f5-a98cc5d149ef"
+                    "uuid": "51d3de6f-a66f-4aa7-9f28-2795a07c121f"
                 },
                 {
                     "description": "패드 43 [/VIN]의 J1 위B.Cu",
@@ -2580,53 +1108,7 @@
                         "x": 96.75,
                         "y": 86.2
                     },
-                    "uuid": "dcaf0510-1491-451d-bb75-b1c35b60c003"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "패드 39 [/VIN]의 J1 위B.Cu",
-                    "pos": {
-                        "x": 97.75,
-                        "y": 86.2
-                    },
-                    "uuid": "7b328c1d-a822-4456-bc15-483bb573c6ab"
-                },
-                {
-                    "description": "패드 41 [/VIN]의 J1 위B.Cu",
-                    "pos": {
-                        "x": 97.25,
-                        "y": 86.2
-                    },
-                    "uuid": "f0d3e7bb-6520-4689-95f5-a98cc5d149ef"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "패드 37 [/VIN]의 J1 위B.Cu",
-                    "pos": {
-                        "x": 98.25,
-                        "y": 86.2
-                    },
-                    "uuid": "ed7ce7f9-e80a-4926-8f72-a3116b9bc323"
-                },
-                {
-                    "description": "패드 39 [/VIN]의 J1 위B.Cu",
-                    "pos": {
-                        "x": 97.75,
-                        "y": 86.2
-                    },
-                    "uuid": "7b328c1d-a822-4456-bc15-483bb573c6ab"
+                    "uuid": "0a85616e-ab93-4ba7-a9f3-d2d25b09fc26"
                 }
             ],
             "severity": "error",
@@ -2641,107 +1123,15 @@
                         "x": 99.738213,
                         "y": 92.61742
                     },
-                    "uuid": "187d82a5-d64d-4d1f-bf3f-eac1df30443c"
-                },
-                {
-                    "description": "패드 1 [/VIN]의 U1 위B.Cu",
-                    "pos": {
-                        "x": 95.7,
-                        "y": 97.1375
-                    },
-                    "uuid": "bf35faa7-32f0-43d2-8e8b-b4e402a4f8c4"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "패드 1 [/VIN]의 C1 위B.Cu",
-                    "pos": {
-                        "x": 99.738213,
-                        "y": 92.61742
-                    },
-                    "uuid": "187d82a5-d64d-4d1f-bf3f-eac1df30443c"
-                },
-                {
-                    "description": "패드 37 [/VIN]의 J1 위B.Cu",
-                    "pos": {
-                        "x": 98.25,
-                        "y": 86.2
-                    },
-                    "uuid": "ed7ce7f9-e80a-4926-8f72-a3116b9bc323"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "패드 1 [/VIN]의 C4 위B.Cu",
-                    "pos": {
-                        "x": 109.53968,
-                        "y": 94.401463
-                    },
-                    "uuid": "0bbfaee6-85e1-4f01-9264-890fbaad964f"
+                    "uuid": "ca6217e5-dc98-4793-beed-f8bfed2cb15e"
                 },
                 {
                     "description": "패드 1 [/VIN]의 C3 위B.Cu",
                     "pos": {
-                        "x": 110.784211,
-                        "y": 91.231723
+                        "x": 94.31134,
+                        "y": 92.806522
                     },
-                    "uuid": "e8e18782-3b86-44f2-ad1e-a731136ee18c"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "패드 1 [/VIN]의 C4 위B.Cu",
-                    "pos": {
-                        "x": 109.53968,
-                        "y": 94.401463
-                    },
-                    "uuid": "0bbfaee6-85e1-4f01-9264-890fbaad964f"
-                },
-                {
-                    "description": "패드 1 [/VIN]의 C1 위B.Cu",
-                    "pos": {
-                        "x": 99.738213,
-                        "y": 92.61742
-                    },
-                    "uuid": "187d82a5-d64d-4d1f-bf3f-eac1df30443c"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "패드 1 [/VIN]의 TP1 위B.Cu",
-                    "pos": {
-                        "x": 112.918688,
-                        "y": 91.028679
-                    },
-                    "uuid": "fe3dbb4a-5cb6-4d13-9339-2a2887750c15"
-                },
-                {
-                    "description": "패드 1 [/VIN]의 C3 위B.Cu",
-                    "pos": {
-                        "x": 110.784211,
-                        "y": 91.231723
-                    },
-                    "uuid": "e8e18782-3b86-44f2-ad1e-a731136ee18c"
+                    "uuid": "18b690fc-39a2-41ae-a913-bc014fc9143d"
                 }
             ],
             "severity": "error",
@@ -2756,751 +1146,15 @@
                         "x": 117.23646,
                         "y": 97.972706
                     },
-                    "uuid": "5a7a135a-3c4b-41ab-9001-6b496a7d0b79"
+                    "uuid": "b747ded1-1302-4b4e-926e-26b6889ec239"
                 },
                 {
-                    "description": "패드 1 [/VIN]의 TP1 위B.Cu",
+                    "description": "패드 1 [/VIN]의 C1 위B.Cu",
                     "pos": {
-                        "x": 112.918688,
-                        "y": 91.028679
+                        "x": 99.738213,
+                        "y": 92.61742
                     },
-                    "uuid": "fe3dbb4a-5cb6-4d13-9339-2a2887750c15"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "패드 5 [/WH_PWM]의 J1 위B.Cu",
-                    "pos": {
-                        "x": 106.25,
-                        "y": 86.2
-                    },
-                    "uuid": "20455e94-eb5a-420a-a16b-e9b4a38ea4d7"
-                },
-                {
-                    "description": "패드 1 [/WH_PWM]의 R3 위B.Cu",
-                    "pos": {
-                        "x": 110.28323,
-                        "y": 92.836353
-                    },
-                    "uuid": "2a8db389-4cd0-4a4c-ab12-121b0b9be924"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "패드 1 [/WH_PWM]의 R3 위B.Cu",
-                    "pos": {
-                        "x": 110.28323,
-                        "y": 92.836353
-                    },
-                    "uuid": "2a8db389-4cd0-4a4c-ab12-121b0b9be924"
-                },
-                {
-                    "description": "패드 5 [/WH_PWM]의 U2 위B.Cu",
-                    "pos": {
-                        "x": 115.33646,
-                        "y": 99.472706
-                    },
-                    "uuid": "7b409ccf-b1d8-492a-a38d-7b7edaedc98c"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "패드 2 [/ICR_NSLEEP]의 R1 위B.Cu",
-                    "pos": {
-                        "x": 113.969617,
-                        "y": 97.344854
-                    },
-                    "uuid": "c162518b-4137-4260-a7ec-bb594ac9880c"
-                },
-                {
-                    "description": "패드 7 [/ICR_NSLEEP]의 U2 위B.Cu",
-                    "pos": {
-                        "x": 115.33646,
-                        "y": 98.472706
-                    },
-                    "uuid": "1e4f21da-a115-4b04-97b6-980f3adb5a8e"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "패드 1 [/CAM_1V8_G]의 Q6 위B.Cu",
-                    "pos": {
-                        "x": 95.0625,
-                        "y": 112.95
-                    },
-                    "uuid": "8a798e67-e2e2-48d1-96c9-e866355839bf"
-                },
-                {
-                    "description": "패드 3 [/CAM_1V8_G]의 Q7 위B.Cu",
-                    "pos": {
-                        "x": 95.31442,
-                        "y": 114.540852
-                    },
-                    "uuid": "805770ce-e9d3-4264-bb92-e0e5b9d8aed8"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "패드 3 [/CAM_1V8_G]의 Q7 위B.Cu",
-                    "pos": {
-                        "x": 95.31442,
-                        "y": 114.540852
-                    },
-                    "uuid": "805770ce-e9d3-4264-bb92-e0e5b9d8aed8"
-                },
-                {
-                    "description": "패드 2 [/CAM_1V8_G]의 R17 위B.Cu",
-                    "pos": {
-                        "x": 97.240368,
-                        "y": 114.663596
-                    },
-                    "uuid": "fbd1ebd3-4d40-4d19-9bef-87d665d87d7a"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "패드 5 [/12V_IR]의 J4 위B.Cu",
-                    "pos": {
-                        "x": 86.095,
-                        "y": 107.075
-                    },
-                    "uuid": "8d6f877b-be1d-4710-85f2-c11a00e04c7d"
-                },
-                {
-                    "description": "패드 1 [/12V_IR]의 D1 위B.Cu",
-                    "pos": {
-                        "x": 89.600312,
-                        "y": 107.655054
-                    },
-                    "uuid": "17d7002f-74cd-4754-a428-fe049ab0ccac"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "패드 5 [/12V_IR]의 J4 위B.Cu",
-                    "pos": {
-                        "x": 86.095,
-                        "y": 107.075
-                    },
-                    "uuid": "8d6f877b-be1d-4710-85f2-c11a00e04c7d"
-                },
-                {
-                    "description": "패드 2 [/12V_IR]의 J4 위B.Cu",
-                    "pos": {
-                        "x": 86.095,
-                        "y": 110.825
-                    },
-                    "uuid": "6950af13-7d06-47b2-9d80-df908efce817"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "패드 1 [/12V_IR]의 C15 위B.Cu",
-                    "pos": {
-                        "x": 86.660447,
-                        "y": 100.736249
-                    },
-                    "uuid": "b1964003-ce8c-4058-9e6c-4e4054046776"
-                },
-                {
-                    "description": "패드 8 [/12V_IR]의 U4 위B.Cu",
-                    "pos": {
-                        "x": 86.475,
-                        "y": 98.975
-                    },
-                    "uuid": "db4e7f98-7884-40f3-93e8-78cb4e0c79bc"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "패드 1 [/12V_IR]의 C15 위B.Cu",
-                    "pos": {
-                        "x": 86.660447,
-                        "y": 100.736249
-                    },
-                    "uuid": "b1964003-ce8c-4058-9e6c-4e4054046776"
-                },
-                {
-                    "description": "패드 5 [/12V_IR]의 J4 위B.Cu",
-                    "pos": {
-                        "x": 86.095,
-                        "y": 107.075
-                    },
-                    "uuid": "8d6f877b-be1d-4710-85f2-c11a00e04c7d"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "패드 1 [/12V_IR]의 R13 위B.Cu",
-                    "pos": {
-                        "x": 88.970512,
-                        "y": 96.75
-                    },
-                    "uuid": "757878af-c948-4d32-9bb2-9cf71f3c4b44"
-                },
-                {
-                    "description": "패드 1 [/12V_IR]의 C14 위B.Cu",
-                    "pos": {
-                        "x": 88.775,
-                        "y": 94.0
-                    },
-                    "uuid": "a97e1062-ab15-4a87-ae63-6d3237ef9424"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "패드 1 [/12V_IR]의 R13 위B.Cu",
-                    "pos": {
-                        "x": 88.970512,
-                        "y": 96.75
-                    },
-                    "uuid": "757878af-c948-4d32-9bb2-9cf71f3c4b44"
-                },
-                {
-                    "description": "패드 8 [/12V_IR]의 U4 위B.Cu",
-                    "pos": {
-                        "x": 86.475,
-                        "y": 98.975
-                    },
-                    "uuid": "db4e7f98-7884-40f3-93e8-78cb4e0c79bc"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "패드 1 [/12V_IR]의 D2 위B.Cu",
-                    "pos": {
-                        "x": 104.196292,
-                        "y": 117.680628
-                    },
-                    "uuid": "9d722b7e-df73-48c0-8569-c1bf0f5955c4"
-                },
-                {
-                    "description": "패드 1 [/12V_IR]의 TP19 위B.Cu",
-                    "pos": {
-                        "x": 113.050194,
-                        "y": 116.183412
-                    },
-                    "uuid": "a961c8a8-e152-4a51-b9e9-3bfa4dbf91c2"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "패드 1 [/12V_IR]의 D2 위B.Cu",
-                    "pos": {
-                        "x": 104.196292,
-                        "y": 117.680628
-                    },
-                    "uuid": "9d722b7e-df73-48c0-8569-c1bf0f5955c4"
-                },
-                {
-                    "description": "패드 1 [/12V_IR]의 D1 위B.Cu",
-                    "pos": {
-                        "x": 89.600312,
-                        "y": 107.655054
-                    },
-                    "uuid": "17d7002f-74cd-4754-a428-fe049ab0ccac"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "패드 1 [/12V_IR]의 C16 위B.Cu",
-                    "pos": {
-                        "x": 107.427802,
-                        "y": 109.187366
-                    },
-                    "uuid": "cd6a0638-a951-4d1a-a2e2-483a5ca3684a"
-                },
-                {
-                    "description": "패드 1 [/12V_IR]의 R14 위B.Cu",
-                    "pos": {
-                        "x": 110.0,
-                        "y": 110.4625
-                    },
-                    "uuid": "ba699190-5973-4ab7-bf2e-ba1923c6b4e6"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "패드 1 [/12V_IR]의 R14 위B.Cu",
-                    "pos": {
-                        "x": 110.0,
-                        "y": 110.4625
-                    },
-                    "uuid": "ba699190-5973-4ab7-bf2e-ba1923c6b4e6"
-                },
-                {
-                    "description": "패드 8 [/12V_IR]의 U5 위B.Cu",
-                    "pos": {
-                        "x": 117.475,
-                        "y": 109.975
-                    },
-                    "uuid": "a7deeed9-c2fa-483b-9dae-be6cd2024aa9"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "패드 1 [/12V_IR]의 C17 위B.Cu",
-                    "pos": {
-                        "x": 110.650236,
-                        "y": 105.761394
-                    },
-                    "uuid": "caf5eb56-f445-485a-b666-ac1595633e73"
-                },
-                {
-                    "description": "패드 1 [/12V_IR]의 C16 위B.Cu",
-                    "pos": {
-                        "x": 107.427802,
-                        "y": 109.187366
-                    },
-                    "uuid": "cd6a0638-a951-4d1a-a2e2-483a5ca3684a"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "패드 1 [/12V_IR]의 TP19 위B.Cu",
-                    "pos": {
-                        "x": 113.050194,
-                        "y": 116.183412
-                    },
-                    "uuid": "a961c8a8-e152-4a51-b9e9-3bfa4dbf91c2"
-                },
-                {
-                    "description": "패드 1 [/12V_IR]의 R14 위B.Cu",
-                    "pos": {
-                        "x": 110.0,
-                        "y": 110.4625
-                    },
-                    "uuid": "ba699190-5973-4ab7-bf2e-ba1923c6b4e6"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "패드 3 [/MCLK_OSC]의 X1 위B.Cu",
-                    "pos": {
-                        "x": 101.364147,
-                        "y": 110.998079
-                    },
-                    "uuid": "80fa30a2-4a59-46d8-b835-e05f0c57bb4c"
-                },
-                {
-                    "description": "패드 1 [/MCLK_OSC]의 R8 위B.Cu",
-                    "pos": {
-                        "x": 105.365,
-                        "y": 111.35048
-                    },
-                    "uuid": "f7a23326-0c35-42c6-8dc7-e8edcee0b00f"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "패드 1 [/CAM_PG_AV]의 Q2 위B.Cu",
-                    "pos": {
-                        "x": 95.983326,
-                        "y": 108.676299
-                    },
-                    "uuid": "6dfce821-f279-4bd7-bc5c-40579b580955"
-                },
-                {
-                    "description": "패드 2 [/CAM_PG_AV]의 C6 위B.Cu",
-                    "pos": {
-                        "x": 99.702431,
-                        "y": 106.7238
-                    },
-                    "uuid": "8a1cf9e8-b4e1-4d94-b95c-c38972b3dae7"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "패드 2 [/CAM_PG_AV]의 C6 위B.Cu",
-                    "pos": {
-                        "x": 99.702431,
-                        "y": 106.7238
-                    },
-                    "uuid": "8a1cf9e8-b4e1-4d94-b95c-c38972b3dae7"
-                },
-                {
-                    "description": "패드 2 [/CAM_PG_AV]의 R5 위B.Cu",
-                    "pos": {
-                        "x": 99.960358,
-                        "y": 105.167065
-                    },
-                    "uuid": "566b1824-dbde-471c-ac79-06cbe0d3bc6f"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "패드 2 [/CAM_PG]의 R4 위B.Cu",
-                    "pos": {
-                        "x": 93.24621,
-                        "y": 104.743728
-                    },
-                    "uuid": "1c47f05f-3cb4-4f1a-af95-a8662e3375c8"
-                },
-                {
-                    "description": "패드 3 [/CAM_PG]의 Q3 위B.Cu",
-                    "pos": {
-                        "x": 92.704769,
-                        "y": 107.098484
-                    },
-                    "uuid": "6b5b6ffd-8316-4d98-b18d-1fafd8498c5b"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "패드 1 [/CAM_PG]의 Q1 위B.Cu",
-                    "pos": {
-                        "x": 95.0625,
-                        "y": 104.95
-                    },
-                    "uuid": "c6333a78-3535-4eee-b4fa-fc98833e42be"
-                },
-                {
-                    "description": "패드 2 [/CAM_PG]의 R4 위B.Cu",
-                    "pos": {
-                        "x": 93.24621,
-                        "y": 104.743728
-                    },
-                    "uuid": "1c47f05f-3cb4-4f1a-af95-a8662e3375c8"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "패드 1 [/CAM_PG]의 Q1 위B.Cu",
-                    "pos": {
-                        "x": 95.0625,
-                        "y": 104.95
-                    },
-                    "uuid": "c6333a78-3535-4eee-b4fa-fc98833e42be"
-                },
-                {
-                    "description": "패드 1 [/CAM_PG]의 R5 위B.Cu",
-                    "pos": {
-                        "x": 98.940358,
-                        "y": 105.167065
-                    },
-                    "uuid": "fe0f85dc-7865-45d6-adc6-00f636802ced"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "패드 15 [/IR_PWM]의 J1 위B.Cu",
-                    "pos": {
-                        "x": 103.75,
-                        "y": 86.2
-                    },
-                    "uuid": "451783c7-6679-4f1c-a8d7-9f26fd648390"
-                },
-                {
-                    "description": "패드 2 [/IR_PWM]의 R12 위B.Cu",
-                    "pos": {
-                        "x": 106.927262,
-                        "y": 94.875425
-                    },
-                    "uuid": "3638c0e2-8d5a-4a44-a7e2-35dc6301784b"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "패드 1 [/IR_PWM]의 Q5 위B.Cu",
-                    "pos": {
-                        "x": 108.104525,
-                        "y": 104.57085
-                    },
-                    "uuid": "b2e6d563-d87e-4d9d-9c5e-bdfdb1cd2b03"
-                },
-                {
-                    "description": "패드 1 [/IR_PWM]의 TP14 위B.Cu",
-                    "pos": {
-                        "x": 108.759359,
-                        "y": 96.875599
-                    },
-                    "uuid": "791d41ad-8b69-461e-9369-1764a69085d4"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "패드 1 [/IR_PWM]의 TP14 위B.Cu",
-                    "pos": {
-                        "x": 108.759359,
-                        "y": 96.875599
-                    },
-                    "uuid": "791d41ad-8b69-461e-9369-1764a69085d4"
-                },
-                {
-                    "description": "패드 2 [/IR_PWM]의 R12 위B.Cu",
-                    "pos": {
-                        "x": 106.927262,
-                        "y": 94.875425
-                    },
-                    "uuid": "3638c0e2-8d5a-4a44-a7e2-35dc6301784b"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "패드 2 [/IRB_SW]의 D2 위B.Cu",
-                    "pos": {
-                        "x": 104.196292,
-                        "y": 113.680628
-                    },
-                    "uuid": "b6229153-3cee-4d0d-b95b-25d1e2a90ac5"
-                },
-                {
-                    "description": "패드 6 [/IRB_SW]의 U5 위B.Cu",
-                    "pos": {
-                        "x": 117.475,
-                        "y": 108.675
-                    },
-                    "uuid": "f058cccf-3da5-4467-b256-483d5fa8924f"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "패드 6 [/IRB_SW]의 U5 위B.Cu",
-                    "pos": {
-                        "x": 117.475,
-                        "y": 108.675
-                    },
-                    "uuid": "f058cccf-3da5-4467-b256-483d5fa8924f"
-                },
-                {
-                    "description": "패드 5 [/IRB_SW]의 U5 위B.Cu",
-                    "pos": {
-                        "x": 117.475,
-                        "y": 108.025
-                    },
-                    "uuid": "1dbcf782-6a9f-48be-a143-0f44a31993e5"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "패드 2 [/IRB_SW]의 L2 위B.Cu",
-                    "pos": {
-                        "x": 118.1384,
-                        "y": 103.513233
-                    },
-                    "uuid": "d954fcd3-3c1d-4205-b500-9add50d72717"
-                },
-                {
-                    "description": "패드 5 [/IRB_SW]의 U5 위B.Cu",
-                    "pos": {
-                        "x": 117.475,
-                        "y": 108.025
-                    },
-                    "uuid": "1dbcf782-6a9f-48be-a143-0f44a31993e5"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "패드 1 [/IRA_SW]의 TP12 위B.Cu",
-                    "pos": {
-                        "x": 84.69722,
-                        "y": 101.143039
-                    },
-                    "uuid": "de4e5ed5-53e0-4b27-8800-3a1afcb8c38b"
-                },
-                {
-                    "description": "패드 6 [/IRA_SW]의 U4 위B.Cu",
-                    "pos": {
-                        "x": 86.475,
-                        "y": 97.675
-                    },
-                    "uuid": "a9993186-8ba7-427b-800e-d8a6272c5778"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "패드 1 [/IRA_SW]의 TP12 위B.Cu",
-                    "pos": {
-                        "x": 84.69722,
-                        "y": 101.143039
-                    },
-                    "uuid": "de4e5ed5-53e0-4b27-8800-3a1afcb8c38b"
-                },
-                {
-                    "description": "패드 2 [/IRA_SW]의 D1 위B.Cu",
-                    "pos": {
-                        "x": 89.600312,
-                        "y": 103.655054
-                    },
-                    "uuid": "ec52b198-0234-404a-98c7-c97caf27bc33"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "패드 5 [/IRA_SW]의 U4 위B.Cu",
-                    "pos": {
-                        "x": 86.475,
-                        "y": 97.025
-                    },
-                    "uuid": "d99449d9-05f7-4713-9331-9bfab22c38a4"
-                },
-                {
-                    "description": "패드 2 [/IRA_SW]의 L1 위B.Cu",
-                    "pos": {
-                        "x": 86.14922,
-                        "y": 92.404827
-                    },
-                    "uuid": "64c34834-077d-4adb-b471-605a55bad8d5"
+                    "uuid": "ca6217e5-dc98-4793-beed-f8bfed2cb15e"
                 }
             ],
             "severity": "error",
@@ -3515,61 +1169,15 @@
                         "x": 86.475,
                         "y": 97.675
                     },
-                    "uuid": "a9993186-8ba7-427b-800e-d8a6272c5778"
+                    "uuid": "1dde8cba-8dd4-4b4c-a8c2-45bd9f689485"
                 },
                 {
-                    "description": "패드 5 [/IRA_SW]의 U4 위B.Cu",
+                    "description": "배선 [/IRA_SW] on B.Cu, 길이 1.6971 mm",
                     "pos": {
-                        "x": 86.475,
-                        "y": 97.025
+                        "x": 87.55,
+                        "y": 101.35
                     },
-                    "uuid": "d99449d9-05f7-4713-9331-9bfab22c38a4"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "패드 4 [/SPARE1]의 J4 위B.Cu",
-                    "pos": {
-                        "x": 86.095,
-                        "y": 108.325
-                    },
-                    "uuid": "64f402be-b3e5-491f-9731-13e91de23a5d"
-                },
-                {
-                    "description": "패드 1 [/SPARE1]의 TP22 위B.Cu",
-                    "pos": {
-                        "x": 90.043191,
-                        "y": 110.484115
-                    },
-                    "uuid": "b172fba7-a8b5-40a4-b265-6c9a386348b0"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "패드 3 [/ALS_INT_RSV]의 J4 위B.Cu",
-                    "pos": {
-                        "x": 86.095,
-                        "y": 109.575
-                    },
-                    "uuid": "6bb10b8e-2eb0-417a-b947-e7c9f60dcf43"
-                },
-                {
-                    "description": "패드 2 [/ALS_INT_RSV]의 R15 위B.Cu",
-                    "pos": {
-                        "x": 88.280866,
-                        "y": 110.278254
-                    },
-                    "uuid": "2fa03e56-18fa-4755-9711-6a42207bab20"
+                    "uuid": "2b7c5b88-745c-4ff1-be27-94f7653bbd23"
                 }
             ],
             "severity": "error",
@@ -3577,6 +1185,52 @@
         }
     ],
     "violations": [
+        {
+            "description": "공간거리 위반 (규칙 'fab_copper_clearance' 공간거리 0.1600 mm; 실제값 0.1527 mm)",
+            "items": [
+                {
+                    "description": "배선 [/VIN] on B.Cu, 길이 0.0500 mm",
+                    "pos": {
+                        "x": 93.55,
+                        "y": 96.55
+                    },
+                    "uuid": "4ccd9f93-2640-4636-af4a-f67446857100"
+                },
+                {
+                    "description": "패드 2 [/GND]의 U1 위B.Cu",
+                    "pos": {
+                        "x": 94.75,
+                        "y": 97.1375
+                    },
+                    "uuid": "be7f1034-48b1-467e-a77c-2e4c4df51b30"
+                }
+            ],
+            "severity": "error",
+            "type": "clearance"
+        },
+        {
+            "description": "공간거리 위반 (규칙 'fab_copper_clearance' 공간거리 0.1600 mm; 실제값 0.1548 mm)",
+            "items": [
+                {
+                    "description": "배선 [/VIN] on B.Cu, 길이 0.0500 mm",
+                    "pos": {
+                        "x": 95.95,
+                        "y": 97.75
+                    },
+                    "uuid": "61bd74bf-7aae-43b5-a358-2ed96932ca35"
+                },
+                {
+                    "description": "패드 2 [/GND]의 U1 위B.Cu",
+                    "pos": {
+                        "x": 94.75,
+                        "y": 97.1375
+                    },
+                    "uuid": "be7f1034-48b1-467e-a77c-2e4c4df51b30"
+                }
+            ],
+            "severity": "error",
+            "type": "clearance"
+        },
         {
             "description": "불완전한 영역에 대한 열 방출 연결 (레이어 B.Cu; 구역 최소 스포크 수 2; 실제 1)",
             "items": [
@@ -3586,7 +1240,30 @@
                         "x": 79.95,
                         "y": 79.95
                     },
-                    "uuid": "f2468b93-103c-44a4-a5b9-3f9d47257827"
+                    "uuid": "3271a34e-13e2-4db1-be07-9833245fd89b"
+                },
+                {
+                    "description": "패드 2 [/GND]의 R3 위B.Cu",
+                    "pos": {
+                        "x": 111.30323,
+                        "y": 92.836353
+                    },
+                    "uuid": "5365ef70-387d-441f-b6a4-155b9a38b78f"
+                }
+            ],
+            "severity": "error",
+            "type": "starved_thermal"
+        },
+        {
+            "description": "불완전한 영역에 대한 열 방출 연결 (레이어 B.Cu; 구역 최소 스포크 수 2; 실제 1)",
+            "items": [
+                {
+                    "description": "구역 'AUTO_GND_B.Cu' [/GND] on B.Cu, 우선순위 0",
+                    "pos": {
+                        "x": 79.95,
+                        "y": 79.95
+                    },
+                    "uuid": "3271a34e-13e2-4db1-be07-9833245fd89b"
                 },
                 {
                     "description": "패드 2 [/GND]의 J1 위B.Cu",
@@ -3594,41 +1271,80 @@
                         "x": 107.25,
                         "y": 90.2
                     },
-                    "uuid": "3a70ec8b-1c5f-4b26-a4c0-919097aa5ff2"
+                    "uuid": "b5861b12-05fb-43d7-a5c9-f3c0d6e92a30"
                 }
             ],
             "severity": "error",
             "type": "starved_thermal"
         },
         {
-            "description": "Isolated copper fill",
+            "description": "불완전한 영역에 대한 열 방출 연결 (레이어 B.Cu; 구역 최소 스포크 수 2; 실제 1)",
             "items": [
                 {
-                    "description": "구역 'AUTO_GND_In2.Cu' [/GND] on GND_PWR, 우선순위 0",
+                    "description": "구역 'AUTO_GND_B.Cu' [/GND] on B.Cu, 우선순위 0",
                     "pos": {
                         "x": 79.95,
                         "y": 79.95
                     },
-                    "uuid": "d497447c-dcd6-4427-b470-949a958e72d0"
+                    "uuid": "3271a34e-13e2-4db1-be07-9833245fd89b"
+                },
+                {
+                    "description": "패드 2 [/GND]의 C5 위B.Cu",
+                    "pos": {
+                        "x": 109.123989,
+                        "y": 94.164577
+                    },
+                    "uuid": "9029e0d3-4afb-4a64-839e-b5838935daf7"
                 }
             ],
-            "severity": "warning",
-            "type": "isolated_copper"
+            "severity": "error",
+            "type": "starved_thermal"
         },
         {
-            "description": "Isolated copper fill",
+            "description": "불완전한 영역에 대한 열 방출 연결 (레이어 B.Cu; 구역 최소 스포크 수 2; 실제 1)",
             "items": [
                 {
-                    "description": "구역 'AUTO_GND_In1.Cu' [/GND] on GND, 우선순위 0",
+                    "description": "구역 'AUTO_GND_B.Cu' [/GND] on B.Cu, 우선순위 0",
                     "pos": {
                         "x": 79.95,
                         "y": 79.95
                     },
-                    "uuid": "4163cfb5-f513-43b9-8f83-7f7b0b1b07ca"
+                    "uuid": "3271a34e-13e2-4db1-be07-9833245fd89b"
+                },
+                {
+                    "description": "패드 2 [/GND]의 R2 위B.Cu",
+                    "pos": {
+                        "x": 107.80323,
+                        "y": 94.586353
+                    },
+                    "uuid": "188b8dee-bcf4-45ea-b201-ef2422266b52"
                 }
             ],
-            "severity": "warning",
-            "type": "isolated_copper"
+            "severity": "error",
+            "type": "starved_thermal"
+        },
+        {
+            "description": "불완전한 영역에 대한 열 방출 연결 (레이어 B.Cu; 구역 최소 스포크 수 2; 실제 1)",
+            "items": [
+                {
+                    "description": "구역 'AUTO_GND_B.Cu' [/GND] on B.Cu, 우선순위 0",
+                    "pos": {
+                        "x": 79.95,
+                        "y": 79.95
+                    },
+                    "uuid": "3271a34e-13e2-4db1-be07-9833245fd89b"
+                },
+                {
+                    "description": "패드 2 [/GND]의 C2 위B.Cu",
+                    "pos": {
+                        "x": 107.822271,
+                        "y": 93.243267
+                    },
+                    "uuid": "48d6d6c4-c6ca-4b03-9373-507d68f0de09"
+                }
+            ],
+            "severity": "error",
+            "type": "starved_thermal"
         }
     ]
 }
