@@ -1,8 +1,8 @@
 (export
 	(version "E")
 	(design
-		(source "C:\\workspace_python\\OpenHW\\.harness-worktrees\\t-20261126-165741-b193\\hardware\\schematic\\carrier\\carrier.kicad_sch")
-		(date "2026-11-26T22:34:04")
+		(source "C:\\workspace_python\\OpenHW\\.harness-worktrees\\t-20261127-025035-86d8\\hardware\\schematic\\carrier\\carrier.kicad_sch")
+		(date "2026-11-27T02:53:56")
 		(tool "Eeschema 10.0.8")
 		(sheet
 			(number "1")
@@ -11,8 +11,8 @@
 			(title_block
 				(title "OpenHW carrier board (rear) - reCamera Core 2002 J2 mate")
 				(company "OpenHW PoC")
-				(rev "C-011")
-				(date "2026-11-26")
+				(rev "C-013")
+				(date "2026-11-27")
 				(source "carrier.kicad_sch")
 				(comment
 					(number "1")
