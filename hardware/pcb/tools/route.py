@@ -706,6 +706,10 @@ def main():
             if need < 0.3:
                 continue
             segs = with_bumps(i, need)
+            if not segs and need > 0.9:  # 다 못 맞추면 레인 skew 한도(DRU csi skew 1.0) 안으로만: need − 0.9
+                segs = with_bumps(i, need - 0.9)
+                if segs:
+                    need -= 0.9
             if not segs:
                 print(f"쌍 {i['name']}: 길이 맞춤 자리 없음 (모자람 {need:.2f} mm)")
                 continue
