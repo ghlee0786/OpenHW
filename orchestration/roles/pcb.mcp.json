@@ -6,8 +6,9 @@
         "C:/Users/gh/.local/share/openhw-tools/kicad-mcp/server.py"
       ],
       "env": {
-        "KICAD_ROOT": "C:/Program Files/KiCad/10.0",
-        "KICAD_MCP_ENABLE_SCH_EDIT": "0"
+        "KICAD_ROOT": "C:/Users/gh/AppData/Local/Programs/KiCad/10.0",
+        "KICAD_MCP_ENABLE_SCH_EDIT": "0",
+        "PYTHONIOENCODING": "utf-8"
       }
     }
   }
