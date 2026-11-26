@@ -56,7 +56,7 @@
 | C-011 | orch (O-47) | schematic t18z | C-010 되돌림(git revert 21175f3), 계약 v1.10 | hardware/schematic/carrier (C-002 레인) | c653eac와 차이 0, ERC 0, 커밋 | completed — 32e9ed9(revert)·83728da (계약 v1.10 4d5d49e), orch netcompare 재실행 차이 0(99/95·85/66)·carrier ERC 0. 회로도 배선 기준 83728da |
 | F-004b | orch (O-50) | firmware t18w | 원인 J 회피 재변환·호스트 모의 검증 1회(같은 원인 4회째, 사용자 허가) — 합격 기준 먼저 기록 | firmware/** (F-004 레인) | 기준 커밋, 합격 시 해시·시험·빌드 / 불합격 시 D 마감 근거 | completed(불합격 → D 마감, O-53) — 기준 2da6706(K0~K5 변환 전) → 그래프 7b6f254(K0 등가 최대차 0) → cvimodel f9920f9e… verify rc=1 → f855b4a. K1 11/21·K2 0.842·K3 0.000·K4 11/21 실패, K5 ok. 하강 비교: Slice는 맞음(cos 0.999), 헤드 1158_Reshape obj 채널 0 → 원인 J 판정 정정, 실제 원인 K(헤드 출력 하강) 후보. 모델 출하 안 함(models-candidate만), 이미지 out-f004 그대로 |
 | P-004 | orch (O-54) | pcb t190 | P-003 계속(DRC 0·미연결 0) → 제조 산출물(R-010 16항, 업로드 없음), 배치 고정 STEP 먼저 | hardware/pcb/** (P-003 레인) | DRC 종료 0, 차동 길이표, 산출물·sha256, 커밋 | running — STEP 1차 aebd293(carrier 28bc7f39…·front 4e9b783b…, orch 해시 일치, 6ecfa85 배치) → M-003 전달. 3D 모델 없음: J3·J5·L1·Q3/Q4(캐리어), X1·Q3/Q5/Q7(전면) — mechanical 대체 블록 |
-| V-005 | orch (O-55) | review t191 | PCB 독립 감수: DRC·D-003 #21/#28/#29/#31·절연 패드 + 실크스크린(양면) + 사람 확인 HTML | docs/review/, validation/runtime/v005 (새 레인) | 항목·verifiable·근거·수정 요청, 커밋 | running |
+| V-005 | orch (O-55) | review t191 | PCB 독립 감수: DRC·D-003 #21/#28/#29/#31·절연 패드 + 실크스크린(양면) + 사람 확인 HTML | docs/review/, validation/runtime/v005 (새 레인) | 항목·verifiable·근거·수정 요청, 커밋 | running — 1차(6ecfa85) 불합격: 레인 t-20261127-013426-7699 3bb48ee, 판정표 A1~A13·B1~B9, RQ-1~13 → P-004b. 통과: 회로도 일치·적층/선폭·임피던스 계산(IPC-2141A 약 102.6/89.7Ω)·CSI 길이·O-43 패드·패드 위 실크 0. 사람 확인 HTML validation/runtime/v005/6ecfa85/(H1·H2·H4·H5 사용자 확인 전). 보고 hc send는 review 셸이 메모리 압박으로 중단 → orch가 커밋에서 직접 회수. 최종은 pcb 완료 커밋에서 run_v005.sh |
 | R-014 | orch | research t18s | KiCad 10 IPC API·실시간 MCP 조사(설치 목록만) | docs/research/r014-kicad-live-mcp.md (새 레인) | 근거·결론, 커밋 | completed — 레인 t-20261127-013426-192c 955edcd. 원인 = kicad_common.json api.enable_server=false(orch 확인), 설치된 iQreu/kicad-mcp(kipy 0.9.0)로 실시간 PCB 편집 가능 — 새 MCP 불필요. 필요: C1 KiCad API 켜기+재시작(설정 변경 → 사용자 결정), C2 pcb가 자기 레인 보드를 열기. 한계: 회로도·DRC·라우터는 IPC 없음(KiCad 11) |
 | R-015 | orch | research t18s | Fusion Electronics KiCad 가져오기·DRC 교차 검토 가능 여부 | docs/research/r015-fusion-electronics.md (새 레인) | 근거·결론, 커밋 | completed — 같은 레인 9af8aba. KiCad 가져오기는 v7+ 표기뿐(10 미확인)·규칙/차동 손실 미확인 → 전기 교차 검토에 안 씀(O-58), 기구는 STEP. 라이선스: 개인용은 company environments 금지 → 사용자 확인 필요 |
 | M-003 | orch (O-56) | mechanical t18x | 외함 설계: KiCad STEP 기준, #25 벽·#26 방열·PMMA 창+흑색 폼, 3D 프린트 시제품 | mechanical/** (새 레인) | F3D·STEP·STL·도면·렌더·간섭 수치, 커밋 | 1차 completed — 레인 t-20261127-013549-8089 d74012a·8261d9b(orch 해시 확인 f3d 61414b1e·STEP a26cc967·HOUSING a9c41c21·FRONT_COVER 32472a17). 외형 51.75×69.5×69.9, PETG+Al 옆판, 창 4장 분리, 간섭: 외함 충돌 0, USB-C 플러그↔캐리어 판 9.72 → O-61. 열: 옆판→공기 약 55 K/W 병목(가정, 차선 핀 옆판/금속 외함 K32, 실측). LED 안쪽 각 7.2°/8.1° < M-001e 14.7°(I3, 차선 K13). 2차: pcb 배치 고정 STEP·J3 수정 뒤 재검사 |
@@ -137,6 +137,10 @@
 | O-60 | lead 사전 결정: G-002에서 kicad MCP가 칸 시작 때 IPC 없음으로 굳어 있으면 | 보고 기다리지 않고 orch가 pcb 칸 재시작 — 진행분 커밋 확인 → hc kill → 같은 sessionId 95e7dda5 --resume·같은 레인·같은 MCP 설정 → hc get 실행 확인 | 새 세션 중복 시작 방지, 멈추지 않음 | 재시작 뒤에도 IPC 실패면 원인 기록·스크립트 헤드리스 편집+스크린샷(#33 차선) |
 | O-61 | M-003 간섭: USB-C J3 셸 앞면이 판 가장자리보다 안쪽(pcb 6ecfa85: J3 B.Cu 90°, 위치 −15.805, courtyard x −19.98 vs 외곽 −20.0 — orch 확인), 데이터시트는 셸 0.49 밖 → 플러그 오버몰드가 판 모서리에 걸려 완전 삽입 불가 우려 | pcb가 J3를 −X로 옮겨 셸 앞면을 데이터시트 기준(판 가장자리 밖 0.49)에 맞춤, 관련 배선 수정, STEP 재커밋 → mechanical 2차 간섭 재검사 | 커넥터 맞물림이 기능 조건 | 판 외곽에 J3 앞 노치(따냄) |
 | O-62 | F-004c K-2: 첫 오차 층이 백본 앞(1183_Conv)이라 '그 층부터 BF16' = 사실상 전체 | 전체 BF16(firmware 선택, orch 승인) | 합격 기준 충족, 라이선스 Apache-2.0 유지 | quantize_table로 1183_Conv 이후만 BF16(FPS 부족 시 bring-up에서) |
+| O-63 | V-005 RQ-6 MDI RX 쌍 안 차 7.223(보정 자리 없음) | 목표 0 유지 — 꼬임 밖 보정, 안 되면 ESD·RJ45 주변 부품 이동까지 해 본 뒤에만 보고 | #28 쌍 안 0을 먼저 지킴, 부품 이동은 되돌릴 수 있음 | 근거 문헌(PHY 레이아웃 지침) 인용한 MDI 한정 상한으로 #28 변경(lead) |
+| O-64 | V-005 RQ-11 실크–마스크 개구 0.15 미만 252곳(KiCad DRC는 0건) | DRU 0.15 유지, 선폭 0.15로 바꾼 뒤 다시 재서 개구 둘레 0.15 안 실크를 스크립트로 잘라냄 | 규칙을 낮추지 않고 사용자 요구(잘림 없음)를 여유 있게 지킴 | DRU를 PCBWay 공개 기준(겹침 금지)으로 낮춤 — 사용자 확인 시 |
+| O-65 | V-005 RQ-13/H2 실크 글자 0(참조 지정자를 Fab로 옮긴 방침) | 사용자 감수 항목(글자·획·숨김·겹침·방향)이 글자를 전제하므로 참조 지정자를 실크에 둠 — 1.0/0.2, 자리 없는 부품만 Fab·조립도, 목록 기록 | lead 전달 사용자 지시 3) | 글자 없이 조립도로 대신(사용자 H2 결정 시) |
+| O-66 | V-005 RQ-12 외곽 실크 간격 문턱(PCBWay 수치 없음) | 0.30mm(CNC 외형 ±0.2 + 0.1, 검토자 문턱) — J2·J3·J4 실크 줄임 | 공차로 깎이는 실크 방지 | 0.20 |
 
 ## 발주 패키지 직전 정리 목록
 - [ ] 회로도 표시 겹침: 캐리어 J2 옆 12V_IN_RAW 라벨, D3 PWR_LED 라벨, J1 품번 문자 (O-32)
@@ -160,3 +164,5 @@
 - [x] KiCad API 켜기 — lead 처리(D-003 #33, 백업 .bak-20261127-lead) → G-002
 - [ ] (사용자 확인 대기) Fusion 라이선스 종류·만료(R-015: 개인용은 company environments 금지, tool-status.md에 만료 안내 기록)
 - [ ] bring-up: BF16 cvimodel 보드 로드·실검출·FPS(BF16은 INT8보다 느림 — 부족하면 O-62 차선), sscma-node 프레임 행 정렬
+- [ ] V-005 사람 확인(verifiable 아니오) H1 1번 핀·극성 표시, H4 개구 둘레 깎인 표시, H5 보드 끝 커넥터 실크 — 최종 커밋 HTML로 사용자 확인
+- [ ] D-003 #31 문구 'ESD→RJ45 약 5mm' → RX 약 8.4·TX 약 5mm(V-005 A11) — lead
