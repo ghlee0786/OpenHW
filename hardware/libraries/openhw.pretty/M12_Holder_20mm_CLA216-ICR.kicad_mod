@@ -3,7 +3,7 @@
 	(generator "pcbnew")
 	(generator_version "10.0")
 	(layer "F.Cu")
-	(descr "Commonlands CLA216-ICR M12 holder: 2x NPTH 1.8 at 20.0 spacing (R-007: spacing 20.0, hole ref 1.7; screw M1.6, ISO 273 medium clearance 1.8). Derived from Antmicro ov9281-camera-board antmicro-footprints:Camera_Lens_20mm (ea69666, Apache-2.0); artwork removed; Arducam properties replaced (V-003 8).")
+	(descr "Commonlands CLA216-ICR M12 holder: 2x NPTH 1.8 at 20.0 spacing (R-007: spacing 20.0, hole ref 1.7; screw M1.6, ISO 273 medium clearance 1.8). Derived from Antmicro ov9281-camera-board antmicro-footprints:Camera_Lens_20mm (ea69666, Apache-2.0); artwork removed; Arducam properties replaced (V-003 8). C-008: courtyard x +-12.45 (ears +-12.2 + 0.25, R-007); sensor pedestal 13.2 sq (M-001d K11, h 0.75, bonded, no copper - O-39) as F.Fab + footprint keepout SENSOR_PEDESTAL.")
 	(tags "M12 S-mount lens holder ICR CLA216 20mm")
 	(property "Reference" "REF**"
 		(at -1.2475 8.836 0)
@@ -265,8 +265,8 @@
 		(uuid "e634bddb-151d-42ad-a803-00ca0c84fa07")
 	)
 	(fp_rect
-		(start -13.5 -9.5)
-		(end 13.5 9.5)
+		(start -12.45 -9.5)
+		(end 12.45 9.5)
 		(stroke
 			(width 0.05)
 			(type solid)
@@ -311,6 +311,17 @@
 			(justify left bottom)
 		)
 	)
+	(fp_rect
+		(start -6.6 -6.6)
+		(end 6.6 6.6)
+		(stroke
+			(width 0.1)
+			(type dash)
+		)
+		(fill no)
+		(layer "F.Fab")
+		(uuid "fd25381c-06c6-4692-8b86-7d6cadae2922")
+	)
 	(pad "" np_thru_hole circle
 		(at -10.0 0)
 		(size 1.8 1.8)
@@ -324,6 +335,37 @@
 		(drill 1.8)
 		(layers "*.Cu" "*.Mask")
 		(uuid "42d1fde1-ff3b-4d94-8377-5be65f882c43")
+	)
+	(zone
+		(layers "F.Cu")
+		(uuid "b5a4109b-d65d-4047-91ac-0f255add1f00")
+		(name "SENSOR_PEDESTAL")
+		(hatch edge 0.5)
+		(connect_pads
+			(clearance 0)
+		)
+		(min_thickness 0.25)
+		(keepout
+			(tracks allowed)
+			(vias allowed)
+			(pads allowed)
+			(copperpour allowed)
+			(footprints not_allowed)
+		)
+		(placement
+			(enabled no)
+			(sheetname "")
+		)
+		(fill
+			(thermal_gap 0.5)
+			(thermal_bridge_width 0.5)
+			(island_removal_mode 0)
+		)
+		(polygon
+			(pts
+				(xy -6.6 -6.6) (xy 6.6 -6.6) (xy 6.6 6.6) (xy -6.6 6.6)
+			)
+		)
 	)
 	(embedded_fonts no)
 )

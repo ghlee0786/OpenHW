@@ -111,7 +111,7 @@ FIXED = {
         # J_ICR (M-001d x +15…+19, y ±3): GH 2P 자리 보류 — PicoBlade 53261-0271로 바뀔 예정(O-34, C-005), G2 실물 확인 전 확정 금지
         # → PicoBlade courtyard 6.89×9.56: 윗면 어디에도 자리 없음(MH1 courtyard ±13.55가 홀더 귀 ±12.2보다 1.35 넓음).
         #   패드–외곽 0.4를 지키는 자리에 두고 MH1 courtyard 겹침 1건을 미결로 드러낸다 (O-34, 라이브러리 courtyard 축소 요청)
-        "J2": ("crt", "F", "-X", (12.95, -4.78, 19.84, 4.78)),
+        "J2": ("crt", "F", "-X", (12.65, -4.78, 19.54, 4.78)),  # C-008: MH1 courtyard ±12.45 → x 12.65부터 (여유 0, O-34 G2 전 확정 금지)
     },
 }
 
@@ -121,7 +121,8 @@ FREE = {
         # 보드 간 GH 6P (−X, 입구 −X), 디버그 UART(뒷면 −X), 버튼·표시 LED(뒷면 +X)
         ("J6", "B", (-16.5, -11.0), "-X"),
         ("SW1", "B", (14.5, -6.0), None), ("SW2", "B", (14.5, 4.0), None),
-        ("D4", "B", (14.5, -10.5), None), ("D5", "B", (14.5, 8.0), None),
+        # D4·D5 = 이더넷 MDI ESD (EPHY_TX±·RX±) → RJ45 핀(뒷면 THT, y −13.7…−16.2) 바로 안쪽 윗면 (커넥터 → ESD → 나머지)
+        ("D4", "F", (4.5, -12.0), None), ("D5", "F", (-6.5, -12.0), None),
         ("D3", "B", (17.5, -14.5), None), ("D6", "B", (17.5, 9.0), None),
         # 전원 입력 사슬 (윗면, DC 잭 위 연장부) → eFuse → 벅 → J1 5V 핀(13.8, 0.25…−1.25)
         ("F1", "F", (16.0, -31.5), None), ("Q1", "F", (14.0, -26.0), None), ("D1", "F", (9.5, -31.5), None),
@@ -197,6 +198,11 @@ def crt_box(fp):
     layer = pcbnew.B_CrtYd if fp.IsFlipped() else pcbnew.F_CrtYd
     sh = fp.GetCourtyard(layer)
     bb = sh.BBox() if sh.OutlineCount() else fp.GetBoundingBox(False)
+    bb = pcbnew.BOX2I(bb.GetOrigin(), bb.GetSize())
+    silk = pcbnew.B_SilkS if fp.IsFlipped() else pcbnew.F_SilkS
+    for g in fp.GraphicalItems():  # 실크 그래픽(1번 핀 점 등)이 courtyard 밖으로 나오면 그만큼 넓힌다
+        if g.GetLayer() == silk:
+            bb.Merge(g.GetBoundingBox())
     (x0, y1), (x1, y0) = O(bb.GetOrigin()), O(bb.GetEnd())
     return (min(x0, x1), min(y0, y1), max(x0, x1), max(y0, y1))
 
