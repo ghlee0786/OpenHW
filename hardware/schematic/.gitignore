@@ -3,3 +3,4 @@
 *.lck
 _autosave-*
 *-backups/
+tools/c002-gen-report.json

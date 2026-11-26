@@ -31,12 +31,53 @@
   - 전원 입력 핀이 있는데 구동원이 없는 넷에는 **PWR_FLAG**를 자동으로 단다.
     - 캐리어: 12V_IN · GND · SD_PWR_3V3
     - 전면: 12V_IR · CORE_1V8 · GND · VIN
-  - 선(wire)은 쓰지 않는다. 그래서 그림은 부품 격자 배치이고, 연결은 라벨 이름으로 읽는다.
+  - (C-002 초안) 선(wire) 없이 부품 격자 배치였다. C-002b부터 기능 블록 배치 + 블록 안 배선이다(2A절).
 - **BTB 60핀 넷:** Seeed B101/S401 넷리스트(인터페이스 사실, Apache-2.0)를 읽어 계약 4·5절 이름 규칙으로 바꿔 만들었다. 손으로 옮겨 적지 않았다. 대조 결과는 6절에 있다.
 - **GUI(G-001):** KiCad 10.0.8 회로도 편집기로 두 프로젝트를 열어 확인했고, GUI에서 ERC도 돌렸다(9절 스크린샷).
   - 편집은 「파일 생성 → GUI로 불러 확인」 방식이다. GUI에서 저장하지 않았다.
   - 실험적 MCP 회로도 편집은 쓰지 않았다(KICAD_MCP_ENABLE_SCH_EDIT=0).
 - **다음 편집:** 사람이 GUI에서 고치면 그 파일이 원본이 된다. 생성기를 다시 돌리면 GUI 편집을 덮어쓰므로, 그 뒤에는 생성기를 쓰지 않는다.
+
+## 2A. C-002b 가독성 정리 (lead 분기 O-28)
+
+- **방식:** 시트 하나 안에 기능 블록을 둔다. 계층 시트로 나누지 않은 이유는 로컬 라벨이 `/시트/넷`으로 바뀌어 넷 이름이 달라지기 때문이다(분기 C2b-1).
+  - 블록마다 점선 틀, 제목, 주석 1~2줄(전압·전류·계약 절)을 둔다.
+  - 부품은 블록 안에 신호 순서대로 놓는다.
+  - 블록 글자는 「Malgun Gothic」으로 지정했다. KiCad 기본 글꼴에는 한글이 없다.
+- **블록:**
+  - 캐리어: 코어 BTB · 12V 입력·보호 · 5V 강압 · 12V_IR eFuse · USB-C · microSD · 이더넷 · FPC·디버그·버튼·LED · 시험점 · PWR_FLAG
+  - 전면: 코어 BTB · 전면 3.3V LDO · ICR · 센서 DF30·24MHz·전원 스위치 · 조도·I2C 풀업 · IR LED 2스트링 · FPC · 시험점 · PWR_FLAG
+- **배선 규칙:**
+  - **블록 안에서만 쓰이는 넷**(전원 넷 제외)은 짧은 직교 배선으로 잇는다. 넷 이름을 지키려고 라벨을 하나 남긴다. → 캐리어 11넷(선 25개), 전면 5넷(선 12개).
+  - 블록 사이 넷과 전원 넷(GND·12V_IN·5V_SYS·12V_IR·CORE_3V3·CORE_1V8·FRONT_3V3·VIN·SD_PWR_3V3·CHASSIS)은 핀마다 라벨을 둔다.
+  - 배선이 다른 넷의 핀·선·NC 핀에 닿으면 생성기가 그 넷 전체를 라벨 방식으로 되돌린다. 우연히 이어지는 일을 막기 위해서다.
+  - 아래 넷리스트 비교가 최종 판정이다.
+- **참조 지정자:** 바꾸지 않았다(R1, U3 …, PCB 재연결 기준).
+- **동일성 증명 (verifiable 예):**
+  - 정리 전 = 커밋 `276fc89`의 `carrier.net`·`front.net`. 정리 후 = 이 커밋의 넷리스트.
+  - 비교 스크립트: `tools/netcompare.py`
+    - 부품마다 (참조, 값, 풋프린트)를 비교한다.
+    - 넷마다 (이름, 핀 집합)을 비교한다.
+    - 넷 이름의 시트 경로 접두어(`/`)만 무시한다.
+    - 같으면 종료 0, 다르면 1.
+
+| 비교 | 부품 | 넷 | 차이 | 종료 코드 |
+|---|---|---|---|---|
+| `python tools/netcompare.py <276fc89>/carrier.net carrier/carrier.net` | 91 / 91 | 93 / 93 | **0** | 0 |
+| `python tools/netcompare.py <276fc89>/front.net front/front.net` | 78 / 78 | 64 / 64 | **0** | 0 |
+| 음성 시험: front.net 사본에서 R1 값 하나와 C14 핀 하나를 바꿔 비교 | — | — | 3건 검출 | 1 |
+
+- **ERC:** `kicad-cli sch erc --severity-all --exit-code-violations` → 캐리어 종료 0·위반 0, 전면 종료 0·위반 0.
+- **그림 (verifiable 아니오, 사용자·lead 확인용):** `kicad-cli sch export svg` (종료 0, 파일 생성 확인)
+  - `C:/workspace_python/OpenHW/validation/runtime/kicad-gui/C-002b/carrier.svg` · `front.svg`
+  - 미리보기 PNG: `carrier-preview.png` · `front-preview.png` · `*-preview-topleft.png`
+- **GUI는 쓰지 않았다** (O-27, 소유권 pcb).
+
+| # | 분기점 | 선택 | 이유 | 차선책 |
+|---|---|---|---|---|
+| C2b-1 | 계층 시트 vs 시트 안 블록 | 시트 안 블록 | 넷 이름(넷클래스 패턴·PCB 재연결)이 그대로 남는다 | 계층 시트 + 전역 라벨(넷 이름 유지는 되지만 시트 경로가 바뀐다) |
+| C2b-2 | 블록 안 연결 | 자동 직교 배선 + 이름 라벨 1개, 충돌하면 라벨 방식 | 넷 동일성을 기계로 보장한다 | 사람이 GUI에서 배선 (pcb가 소유권을 돌려준 뒤) |
+| C2b-3 | 한글 글꼴 | Malgun Gothic (Windows 기본) | KiCad 기본 스트로크 글꼴에 한글이 없다 | 블록 주석을 영문으로 |
 
 ## 3. 넷 이름 규칙 (P-002 넷클래스 패턴 · 계약 이름)
 
@@ -345,3 +386,58 @@
 4. CLA216 ICR 케이블 헤더 계열과 코일 극성
 5. OT7EL89 랜드(지금은 SiT 2.0×1.6 풋프린트)
 6. TE 84952 정격(R-004는 1A로 기록)
+
+## 15. C-003 — V-003 지적 반영 (2026-11-26)
+
+- **방식:** 파일 편집과 kicad-cli만 썼다. GUI는 쓰지 않았다(O-27).
+- **커밋 구분:** C-002b(`4dc59dc`, 넷 동일)와 C-003(이 커밋, 의도한 변경만)을 나눴다.
+
+### 15.1 바뀐 것
+
+| 항목 | 내용 |
+|---|---|
+| 라이브러리 | `hardware/libraries/README.md` 「C-003 수정」 — BTB courtyard·실크, AL8860 Diodes 권장 랜드(새 풋프린트), DRV8837 3D 경로(새 풋프린트), M12 홀더 속성·구멍 |
+| 회로도 (전면) | U4·U5 → `openhw:Diodes_MSOP-8EP_3x3mm_P0.65mm_EP1.7x2.0mm_AL8860` · U2 → `openhw:Texas_DSG0008A_WSON-8-1EP_2x2mm_P0.5mm_EP0.9x1.6mm` |
+| 회로도 (두 보드) | 보드 간 연결을 FFC 10P(TE 1-84952-0)에서 **JST GH 6P (SM06B-GHS-TB)** 로 바꿈 (캐리어 J7, 전면 J4, 기호 `Conn_01x06_MountingPin`). 대칭 핀: 1 GND · 2 12V_IR · 3 SPARE1 · 4 ALS_INT_RSV · 5 12V_IR · 6 GND · MP GND |
+| 프로젝트 (O-30) | 두 보드 `.kicad_pro`의 `net_settings`에 P-002 넷클래스와 패턴을 넣음 (원본 `t-20261126-171922-251f/hardware/pcb/rules/netclasses.json`, sha256 c6c272f9…441b).<br>`fp-lib-table`에 `OpenHW_Mech` (`${KIPRJMOD}/../../pcb/lib/OpenHW_Mech.pretty`) 추가.<br>**이 커밋 뒤로 `.kicad_pro`·`fp-lib-table`은 pcb 소유** |
+| 주석 | 전면 IR 블록에 O-31 열 상한(스트링 평균 ≤1.6W = IR_PWM 듀티 ≤25%, FW가 강제)을 적음. 회로는 바꾸지 않음(Rs 0.1Ω 유지) |
+
+### 15.2 넷리스트 차이 (C-002b `4dc59dc` → C-003, `tools/netcompare.py`) — 의도한 변경만
+
+- **캐리어 (차이 9):**
+  - J7 값·풋프린트 교체
+  - 넷 4개의 J7 핀 번호가 바뀜:
+    - GND: J7 1·4·7·10 → 1·6
+    - 12V_IR: J7 2·3·8·9 → 2·5
+    - SPARE1: J7 5 → 3
+    - ALS_INT_RSV: J7 6 → 4
+  - 그 밖의 부품·핀은 그대로다.
+- **전면 (차이 12):**
+  - J4 교체, 넷 4개는 캐리어와 같은 방식으로 바뀜
+  - U2·U4·U5 풋프린트 교체(값과 핀 연결은 그대로)
+- 부품 수(91/78)와 넷 수(93/64)는 그대로다.
+
+### 15.3 검사 (verifiable 예)
+
+| 명령 | 캐리어 | 전면 |
+|---|---|---|
+| `kicad-cli sch erc --severity-all --exit-code-violations` | 종료 0 · 위반 0 | 종료 0 · 위반 0 |
+| `kicad-cli sch export netlist --format kicadsexpr` | 종료 0 | 종료 0 |
+| `kicad-cli sch export svg` → `validation/runtime/kicad-gui/C-003/` | 종료 0 · `carrier.svg` 생성 확인 | 종료 0 · `front.svg` 생성 확인 |
+
+### 15.4 분기
+
+| # | 분기점 | 선택 | 이유 | 차선책 |
+|---|---|---|---|---|
+| C3-1 | 12V_IR 보드 간 전원 (TE 84953/84952 사양: 「Signal application only, 1 ampere maximum for single circuit」 — V-003 ⑥) | **FFC를 없애고 JST GH 6P 하나로 전원·신호를 함께 보냄.** 12V_IR 2접점, GND 2접점, 대칭 배치 | JST GH 데이터시트(eGH, sha256 b1dcb317…b722) 「Current rating: 1.0 A AC/DC (AWG #26)」, 50V. 2스트링 최악 1.22A → 접점당 0.61A(61%). 스트링 B DNP면 0.31A. 커넥터·케이블 하나. 가로형 SMD로 높이가 낮다(부품 높이는 pcb가 M-001b와 대조) | **② FFC 10P는 신호용으로 두고 12V_IR만 JST PH 2P(S2B-PH-SM4-TB) 전원 커넥터로 분리:** 「Current rating: 2 A AC/DC (AWG #24)」, 100V (ePH, sha256 447624f4…0b96). 1.22A/2A = 61%. 커넥터·케이블이 2개가 된다. ③ 전원 정격이 있는 FFC/FPC 커넥터 — 정격 자료를 찾지 못해 보류 |
+| C3-2 | GH 6P 핀 배치 | 대칭(1↔6 GND, 2↔5 12V_IR, 3↔4 예비 신호) | 케이블 방향(1:1 또는 뒤집힘)과 상관없이 전원과 GND가 바뀌지 않는다. 뒤집히면 1.8V 예비선 둘만 서로 바뀐다 | 비대칭 + 케이블 방향 고정 |
+| C3-3 | M12 홀더 PCB 구멍 | NPTH Ø1.8, 간격 20.0 | 홀더 쪽 구멍 Ø1.7(R-007 참고값)에 M1.6 셀프태핑 나사를 PCB 뒤에서 넣는다고 보고, ISO 273 medium 여유 1.8을 씀 | Ø1.7 (ISO 273 fine) · Ø2.0 (coarse) — 실물 조립 뒤 |
+| C3-4 | AL8860 랜드 | 공식 풋프린트에서 파생해 Diodes 권장 랜드로 (공식 파일은 그대로) | V-003 ② 권고 | 공식 EP1.5x1.8 그대로 |
+| C3-5 | DRV8837 3D | 공식 랜드를 복사하고 3D 경로만 바꿈 | 공식 STEP 파일이 설치본에 없다 | 공식 풋프린트 + PCB에서 3D 경로 직접 지정 |
+
+- **남은 확인 (pcb·실물):**
+  1. GH 6P 위치와 높이(M-001b 제한)
+  2. 케이블 길이와 AWG26 전압강하(1.22A × 왕복 약 0.2m)
+  3. 인접 접점 동시 통전 감액 자료 없음
+  4. CLA216 나사 규격(실물)
+  5. DF30 풋프린트 간격 규칙(라이브러리 README)
