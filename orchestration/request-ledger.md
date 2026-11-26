@@ -29,11 +29,12 @@
 | V-003 | orch (단계 4 독립 검토) | review t191 | L-001 라이브러리 핀·패드 데이터시트 원문 대조 | validation/review-V003-L001.md | 부품별 판정표, 영향, kicad-cli 결과, 레인·커밋 | running |
 | M-001d | orch | mechanical t18x | R-007 수치 반영, 받침+블록 2.03 > CLA216 공동 약 1.2 간섭 해소(스페이서/컷아웃/재배치 비교), 초점 BFL 재계산 | mechanical/** (M-001 레인) | z표·충돌 0 목표·선택 근거, 커밋 | completed — 커밋 c05bb28. K15 받침 0.75+스페이서 1.5, 실제 충돌 0, 전체 53.3mm, 칼라 광차단, PCB 허용 높이표 §3.6 |
 | P-003 | orch (단계 5) | pcb t190 | 캐리어·전면 보드 배치·배선·DRC·STEP (GUI 소유권 schematic→pcb, 창 닫힘 확인 후) | hardware/schematic/<보드>/*.kicad_pcb, hardware/pcb/** | DRC 종료 코드·미연결, 차동 길이표, STEP sha256, 스크린샷, 레인·커밋 | running |
-| R-008 | orch | research t18s | 회로도 BOM 내보내기 → 견적용 전체 BOM + R-004와 차이표 | docs/research/bom-full.csv, r008-bom-diff.md | 21열·행 수, 차이표, 미확정 MPN, 레인·커밋 | running |
+| R-008 | orch | research t18s | 회로도 BOM 내보내기 → 견적용 전체 BOM + R-004와 차이표 | docs/research/bom-full.csv, r008-bom-diff.md | 21열·행 수, 차이표, 미확정 MPN, 레인·커밋 | completed — 레인 t-20261126-171912-e7d2 커밋 dbafdc8, 92행·21열(orch 확인), kicad-cli bom 0/0, 미확정 10건 |
 | V-004 | orch (단계 4 독립 검토) | review t191 | C-002 회로 독립 검토(전원·보호·구동·I2C·PHY·USB·BTB·FPC) | validation/review-V004-C002.md | 판정표·수정안, ERC 재실행, 레인·커밋 | running (기준 276fc89, C-003 변경분은 나중에 추가 절) |
 | V-003 결과 | — | review t191 | (완료) L-001 독립 대조 | validation/review-V003-L001.md | — | completed — 레인 t-20261126-165808-da7a 커밋 e0cbdea. 전면 -B는 B.Cu 뒤집기+180°만 맞음, AL8860 EP 랜드·BTB courtyard·M12 홀더 속성/구멍·DRV8837 3D·FFC 1A 신호 전용 지적 |
 | C-003 | orch (V-003 반영) | schematic t18z | 라이브러리 수정(BTB courtyard·실크, AL8860 파생 랜드, M12 홀더 Ø1.7·속성, DRV8837 3D) + 12V_IR 커넥터 정격 재검토 | hardware/libraries/**, hardware/schematic/** (C-002 레인) | ERC 0 유지, 의도 변경만 차이, 커밋 | running |
 | C-002b | lead O-28 | schematic t18z | 회로도 가독성 정리(기능 블록 계층 시트·주석), 참조 지정자 불변 | hardware/schematic/** (C-002 레인) | 넷리스트 동일 증명, ERC 0, SVG 경로, 커밋 | running (C-003과 별도 커밋) |
+| R-009 | orch | research t18s | BOM 미확정·재고 위험 해소(AC 코드·CLA216 짝 커넥터·SRN6045·C15849·VSMA 재고·풋프린트 치수 대조) | docs/research/r009-bom-risks.md (+bom-full.csv 비고) | 6항목 결론, 21열 유지, 커밋 | running (C-003/C-002b 뒤 R-008b BOM 재내보내기 예정) |
 
 ## 운영 변경 (2026-11-26, 사용자 지시 · lead 전달)
 - 의견 묻지 않고 진행: 사람 쪽 미정값은 D-003(lead 레인 t-20261126-144135-5470 docs/decisions/D-003-working-defaults.md, 커밋 8ac5ce5) 값으로 확정 취급. 새 갈림길은 기본값 선택 → 아래 「분기 기록」에 분기점·선택·이유·차선책 → lead 요약 보고. 문제 시 해당 행으로 돌아가 차선책.
