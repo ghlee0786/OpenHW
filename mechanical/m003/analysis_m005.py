@@ -75,6 +75,6 @@ if __name__ == '__main__':
                 ('%.1f K/W' % (r['R_hs'] / cons)) if cons else '—', ds, r['I'], r['S'], r40['I'] + 40.0, '충족' if ok else '미달',
                 d['x_out_max'] - d['x_out_min'] + tb + H, memo))
     out.append('')
-    out.append('- 선택 (params.py hs_*): Fischer SK 444 75 SA 를 %.0f 로 절단. 계산 R 은 목표 8 을 조금 넘고(미달), 데이터시트 보정 R 은 충족. 안 공기 상승은 목표 안. 차선 = CNC H3.' % L_SEL)
+    out.append('- 선택 (params.py hs_*): Fischer SK 444 75 SA 를 %.0f 로 절단. R 목표 미달 (+4%%, 계산 R 기준 — 데이터시트 보정 R 은 참고, 판정 아님). 안 공기 상승은 목표 안. 실측으로 확정, 넘으면 CNC H3 (orch O-78).' % L_SEL)
     open(os.path.join(HERE, 'analysis_m005.md'), 'w', encoding='utf-8').write(chr(10).join(out) + chr(10))
     print(chr(10).join(out))
