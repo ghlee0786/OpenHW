@@ -46,7 +46,7 @@
 | R-010 | orch (단계 6 준비) | research t18s | PCBWay PCBA 제출 요건(BOM·CPL·Gerber·위탁 절차·조립 등급) + KiCad 내보내기 방법 | docs/research/r010-pcbway-submission.md | 항목표·P-004 체크리스트, 레인·커밋 | running |
 | C-008 | orch (P-003 요청) | schematic t18z | 라이브러리만: DC 잭 실크–외곽, MH1 courtyard ±12.45, MH1 받침 13.2□ F.Fab·금지 영역 | hardware/libraries/** (C-002 레인) | 시험판 DRC silk·courtyard, ERC 0, 커밋 | completed — 9a843ba, 시험판 DRC 위반 0(음성 시험 금지 영역 검출), PicoBlade J_ICR 여유 0 |
 | M-001e | orch | mechanical t18x | DF30 180°(센서 모듈 회전)·LED B1/B2 (±7.5,−16.5)·GH 6P ±0.3 이동 반영, 간섭 재검사 | mechanical/** (M-001 레인) | 간섭 결과, 커밋 | completed — 1504c93. DF30 180°는 모델 변경 없음, B1/B2 가림 각 감소, GH 하니스 27.4mm(35mm 유지), 실제 충돌 0, K23 케이블 핀 반전 발견 |
-| C-009 | orch (O-41) | schematic t18z | 전면 J4 핀 3·4 넷 맞바꿈(직선 GH 케이블), 계약 v1.8 | hardware/schematic/front (C-002 레인) | netcompare 2넷, ERC 0, 커밋 | running |
+| C-009 | orch (O-41) | schematic t18z | 전면 J4 핀 3·4 넷 맞바꿈(직선 GH 케이블), 계약 v1.8 | hardware/schematic/front (C-002 레인) | netcompare 2넷, ERC 0, 커밋 | completed — c653eac (계약 v1.8 2dde4a2), orch 재실행 front ERC 0. 회로도 배선 기준 c653eac |
 
 ## 운영 변경 (2026-11-26, 사용자 지시 · lead 전달)
 - 의견 묻지 않고 진행: 사람 쪽 미정값은 D-003(lead 레인 t-20261126-144135-5470 docs/decisions/D-003-working-defaults.md, 커밋 8ac5ce5) 값으로 확정 취급. 새 갈림길은 기본값 선택 → 아래 「분기 기록」에 분기점·선택·이유·차선책 → lead 요약 보고. 문제 시 해당 행으로 돌아가 차선책.
