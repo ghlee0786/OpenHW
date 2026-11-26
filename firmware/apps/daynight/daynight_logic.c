@@ -110,8 +110,10 @@ int dn_plan(dn_mode to, dn_action out[DN_PLAN_MAX])
         out[n++] = DN_ACT_IR_PWM_SET;
         out[n++] = DN_ACT_ISP_NIGHT;
     } else {
-        out[n++] = DN_ACT_IR_PWM_OFF;
+        /* 끌 때는 EN(부하 스위치·eFuse SHDN) 먼저: cvi_pwm 이 duty==period 를 period-1 로 깎아
+         * PWM 만으로는 완전한 High(끔)가 안 된다(F-003 미확인 2). EN 을 끊어야 확실히 꺼진다. */
         out[n++] = DN_ACT_IR_EN_OFF;
+        out[n++] = DN_ACT_IR_PWM_OFF;
         out[n++] = DN_ACT_ICR_DAY;
         out[n++] = DN_ACT_ISP_DAY;
     }

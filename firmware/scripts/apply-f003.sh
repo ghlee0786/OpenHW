@@ -17,11 +17,15 @@ command -v cygpath >/dev/null && FW="$(cygpath -w "$FW")"
 docker run --rm -v "$VOL":/work -v "$FW":/fw:ro --workdir /work/src "$IMAGE" bash -c '
   set -e
   id builder >/dev/null 2>&1 || useradd -m -u 1000 -s /bin/bash builder
+  # 적용한 패치 이름을 .openhw-applied 에 남긴다(뒤 패치가 같은 파일을 고치면 역적용 시험으로는 판정이 안 된다)
+  touch .openhw-applied
   for p in /fw/patches/reCamera-OS/*.patch; do
-    if patch -p1 -R --dry-run -s -f < "$p" >/dev/null 2>&1; then
-      echo "이미 적용됨: $(basename $p)"
+    n=$(basename "$p")
+    if grep -qx "$n" .openhw-applied; then
+      echo "이미 적용됨: $n"
     else
-      patch -p1 --forward < "$p"
+      patch -p1 --forward --no-backup-if-mismatch < "$p"
+      echo "$n" >> .openhw-applied
     fi
   done
   D=external/br2-external/openhw-daynight/src

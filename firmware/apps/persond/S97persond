@@ -1,0 +1,7 @@
+#!/bin/sh
+# openhw-persond — mosquitto(S50)·sscma-node(S91) 뒤에 시작한다
+case "$1" in
+  start) start-stop-daemon -S -b -m -p /var/run/persond.pid -x /usr/bin/persond -- /etc/openhw/persond.conf ;;
+  stop) start-stop-daemon -K -p /var/run/persond.pid -s TERM ;;
+  restart) "$0" stop; sleep 1; "$0" start ;;
+esac
