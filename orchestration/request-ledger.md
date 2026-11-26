@@ -35,7 +35,7 @@
 | C-003 | orch (V-003 반영) | schematic t18z | 라이브러리 수정(BTB courtyard·실크, AL8860 파생 랜드, M12 홀더 Ø1.7·속성, DRV8837 3D) + 12V_IR 커넥터 정격 재검토 | hardware/libraries/**, hardware/schematic/** (C-002 레인) | ERC 0 유지, 의도 변경만 차이, 커밋 | completed — 08d0a3e·7f69f63(최종). 보드 간 FFC→JST GH 6P(C3-1), AL8860·DRV8837 파생, M12 Ø1.8, orch ERC 재실행 0/0 |
 | C-002b | lead O-28 | schematic t18z | 회로도 가독성 정리(기능 블록 계층 시트·주석), 참조 지정자 불변 | hardware/schematic/** (C-002 레인) | 넷리스트 동일 증명, ERC 0, SVG 경로, 커밋 | completed — 4dc59dc, orch netcompare 재실행 차이 0(91/93·78/64). SVG는 C-003 기준 재출력 요청 |
 | R-009 | orch | research t18s | BOM 미확정·재고 위험 해소(AC 코드·CLA216 짝 커넥터·SRN6045·C15849·VSMA 재고·풋프린트 치수 대조) | docs/research/r009-bom-risks.md (+bom-full.csv 비고) | 6항목 결론, 21열 유지, 커밋 | running (C-003/C-002b 뒤 R-008b BOM 재내보내기 예정) |
-| M-002 | orch (P-003 Q3·Q4·Q5) | mechanical t18x | 캐리어 외형(40×54 vs 45×45)·FFC −X 경로·IR LED 열 접촉 자리 | mechanical/** (M-001 레인) | 외형·좌표·FFC 길이·열 자리, 커밋 | running |
+| M-002 | orch (P-003 Q3·Q4·Q5) | mechanical t18x | 캐리어 외형(40×54 vs 45×45)·FFC −X 경로·IR LED 열 접촉 자리 | mechanical/** (M-001 레인) | 외형·좌표·FFC 길이·열 자리, 커밋 | completed — 커밋 3f7ceee. 캐리어 40×54·전면 40×40, (+17,−17) 구멍 삭제, GH 6P 하니스 35mm, LED 열 경로 패드→Al 기둥→방열판→외함 (실측 판정) |
 
 ## 운영 변경 (2026-11-26, 사용자 지시 · lead 전달)
 - 의견 묻지 않고 진행: 사람 쪽 미정값은 D-003(lead 레인 t-20261126-144135-5470 docs/decisions/D-003-working-defaults.md, 커밋 8ac5ce5) 값으로 확정 취급. 새 갈림길은 기본값 선택 → 아래 「분기 기록」에 분기점·선택·이유·차선책 → lead 요약 보고. 문제 시 해당 행으로 돌아가 차선책.
