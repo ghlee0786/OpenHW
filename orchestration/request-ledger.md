@@ -103,7 +103,7 @@
 | R-023 | orch | research t18s | BOM 갱신 C-020: D4·D5 BAT54WS, R21 1k, R5·R20 100k | bom-full·PCBWay BOM (새 레인) | make_pcbway_bom 0, 커밋 | completed — 레인 t-20261127-060023-2ca0 6ae4eed: D3–D5 BAT54WS C124205, 10k×3·100k×7·1k×2 갱신, make_pcbway_bom 종료 0(orch 재실행 0) |
 | SIM-001e | lead → orch (O-98) | firmware t18w | L3 IR 끔 구간 링잉 개선 1회: 원인 노드 → (a) LED 병렬 C (b) SW RC 스너버 (c) 끔 처리 비교, 기존 통과 항목 악화 0인 안 → C-021 | hardware/sim (새 레인) | 기준 먼저 커밋, 종료 코드, 변경 표 | completed — 레인 t-20261127-061121-2cf0 기준 a3529ae → 8591271: 원인 L–접합 용량 공진·LED 순방향 꼬리(001b "발광 아님" 정정), 후보 8종 중 c1 LED 양단 10k 블리더만 악화 0 통과, c1 넣은 전체 L1~L10 pass(orch 재실행 종료 0 — 재실행이 결과 파일 9개를 덮어써 orch가 git restore로 되돌림, 미커밋 0) → C-021 |
 | C-021 | orch (O-99) | schematic t18z | 전면 IR 스트링 양단 10k 블리더 2개, 계약 v1.17 | hardware/schematic (새 레인) | ERC 0·contract_check 0, 커밋 | completed — 레인 t-20261127-062731-6d2e 613cf14(+04ac5cd): 전면 R22·R23 10k 1%(IR 스트링 양단), 계약 v1.17(S3 정정). orch 재실행 contract_check 0(레인 변경 0). 대조 스크립트가 회로도 값 "10k 1%"의 첫 토큰만 비교하게 바뀜 — 계약 칸은 원래 값만 적어 허용 오차는 대조 대상이 아니었음(검사 약화 아님, 기록) |
-| R-024 | orch | research t18s | BOM C-021: R22·R23 10k 1% 0402 | bom-full·PCBWay BOM (새 레인) | make_pcbway_bom 0, 커밋 | running |
+| R-024 | orch | research t18s | BOM C-021: R22·R23 10k 1% 0402 | bom-full·PCBWay BOM (새 레인) | make_pcbway_bom 0, 커밋 | completed — 레인 t-20261127-063202-e8f3 6463619: R22·R23 10k 1% C25744, bom-full 101행, make_pcbway_bom 종료 0(orch가 scratch 사본으로 재실행 0) |
 | SIM-001f | orch (O-99) | firmware t18w | C-021 613cf14로 SIM-L 전체 정식 재실행(schematic_commit 613cf14) | hardware/sim (새 레인) | 종료 0, 커밋 | running |
 
 ## 운영 변경 (2026-11-26, 사용자 지시 · lead 전달)
