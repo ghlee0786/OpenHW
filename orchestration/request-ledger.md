@@ -82,6 +82,8 @@
 | R-020 | orch (VD-001 4) | research t18s | 임피던스·차동 길이/skew·전원 IPC-2152 전류·전압 강하 계산 스크립트, 열 연결 | docs/research/r020 (새 레인) | 한도 초과 수 종료 코드, 커밋 | running |
 | M-007 | orch (VD-001 5) | mechanical t18x | 대체 3D 모델·전체 조립 STEP 틀·간섭/틈/플러그/광축/LED 가림/BTB 기계 판정·렌더 | mechanical/** (M-006 레인) | 실패 수 종료 코드, 커밋 | running |
 | V-006 | orch (VD-001 2·3·6) | review t191 | 완화↔D-003 대조·R-010 16항 자동 검사·VD-001 HTML 생성기 | docs/review, validation/runtime/vd001 (새 레인) | 고장 주입 시험, 커밋 | running |
+| SIM-001a | orch (O-80, VD-001 7) | schematic t18z | ngspice 격리 설치(1회) + 전원 경로 시뮬: TPS26600·TPS54302·LDO/레일·기동 순서 — 기준 먼저 커밋 | hardware/sim (새 레인) + C:/Users/gh/tools/ngspice | 파형·수치·판정 JSON, 커밋 | queued(C-014 뒤) |
+| SIM-001b | orch (O-80, VD-001 7) | firmware t18w | AL8860×2·DRV8837 ICR·Q6/Q7 역급전·I2C 상승/리셋 RC 시뮬 — 기준 먼저 커밋 | hardware/sim (새 레인) | 파형·수치·판정 JSON, 커밋 | queued(F-008 뒤) |
 
 ## 운영 변경 (2026-11-26, 사용자 지시 · lead 전달)
 - 의견 묻지 않고 진행: 사람 쪽 미정값은 D-003(lead 레인 t-20261126-144135-5470 docs/decisions/D-003-working-defaults.md, 커밋 8ac5ce5) 값으로 확정 취급. 새 갈림길은 기본값 선택 → 아래 「분기 기록」에 분기점·선택·이유·차선책 → lead 요약 보고. 문제 시 해당 행으로 돌아가 차선책.
@@ -178,6 +180,7 @@
 | O-78 | M-005: 기성 압출 SK 444 71mm는 같은 식 R 8.4 K/W(목표 ≤8 미달 +4%), 안 공기 21.8K(≤25 충족), 데이터시트 보정 R 7.3 | PoC 기본값 SK 444(목표 R는 '미달'로 기록, 통과 주장 안 함) — 상위 목표(안 공기 ≤25K)는 같은 식으로 충족, bring-up 열 실측(F-006 8절 판정)으로 확정, 넘으면 CNC H3(설계 완료) | 비용 US$1,884(미확인)→약 US$21+판, 차선이 이미 준비됨 | CNC H3 |
 | O-79 | 사용자 설치 허가(F-007 목록 ffmpeg·mosquitto-clients·OpenSSH) | ffmpeg/ffprobe만 설치. OpenSSH는 Windows 내장 있음, mosquitto-clients는 장치 1883 루프백 전용(#30)이라 ssh 파이프로 충분 → 설치 안 함 | 필요한 것만 설치(되돌리기 쉬움) | 필요해지면 mosquitto 격리 설치 |
 | G1/G2' | 사용자 결정 2026-11-27: 실물 구매 안 함(D-003 #24) | G1·G2 실물 게이트를 문서 게이트(R-019)+STEP 교차(M-006)로 대체, R-019 통과가 PCB 발주 조건, 남는 위험은 첫 PCBA bring-up 확인 항목(F-005 절차서) | 사용자 결정 | — |
+| O-80 | 사용자 지시 갱신: VD-001 7) SIM-001 추가, 제조사·비용 일은 최후로 미룸, git 커밋·병합·push·PR 사용자 허용(lead batch+push) | SIM을 전원 경로(schematic, ngspice 설치 1회)와 부하·제어(firmware, 같은 경로) 둘로 나눔, 결과 JSON 형식 공통. 비용(R-017 계열) 중단, PCBWay 항목 배정·보고에서 뺌 | 칸 여유와 회로 지식, 설치 중복 방지 | 한 칸(schematic)이 전부 |
 
 ## 발주 패키지 직전 정리 목록
 - [ ] 회로도 표시 겹침: 캐리어 J2 옆 12V_IN_RAW 라벨, D3 PWR_LED 라벨, J1 품번 문자 (O-32)
