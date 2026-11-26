@@ -90,8 +90,8 @@
 | F-009 | orch (O-83) | firmware t18w | DTS·daynight에서 ALS_INT GPIO 사용 제거(있으면), 호스트 시험 재실행 | firmware/** (새 레인) | 시험 종료 0, 커밋 | queued(SIM-001b 뒤) |
 | M-008 | orch (O-85) | mechanical t18x | G2 수정값: CLA216 방향 정정 후 전면 부품 간섭·리드 경로, DF30 11.55 반영 J3 새 좌표 — PCB용 좌표 표 | mechanical/m008 (M-006 레인) | 좌표 표·간섭 결과, 커밋 | completed — 969d169: CLA216 코일 +Y·리드 +X, DF30 (0,−11.55) KiCad (100,111.55), 전면 F1–F6·금지 영역 표, 재검사 남은 겹침 3(R9–R11, F1–F3로 해소) |
 | P-004c | orch (O-86) | pcb t190 | C-016 반영·M-008 배치(F1–F6·금지 영역)·O-61·3D 모델 연결·규칙 완화 정리(ignore 4 해제·0.14→0.15·u2 0.20→0.30·DP_BRK/TUNE 기록)·CPL 원점/회전 | hardware/pcb/** (P-003 레인) | DRC 0·parity 0·V-006 relax 0, 커밋 | running |
-| C-017 | orch (O-87) | schematic t18z | SIM-001b 수정: CAM_1V8 돌입(1k+10nF)·ILIM R6 6.98k·CAM_1V8 블리더 10k, 계약 v1.13(IIC2 내부 풀업 금지) | hardware/schematic/** (b9cd) | ERC 0·contract_check 0, 커밋 | running |
-| R-021 | orch | research t18s | bom-full·PCBWay BOM 갱신: C-016(J2 제외·R15 삭제·TP24) + C-017 부품 | docs/research/bom-full.csv, manufacturing/bom (새 레인) | make_pcbway_bom 종료 0, 커밋 | queued(C-017 뒤) |
+| C-017 | orch (O-87) | schematic t18z | SIM-001b 수정: CAM_1V8 돌입(1k+10nF)·ILIM R6 6.98k·CAM_1V8 블리더 10k, 계약 v1.13(IIC2 내부 풀업 금지) | hardware/schematic/** (b9cd) | ERC 0·contract_check 0, 커밋 | completed — b9cd f0745ed(+5cbd1f3): 전면 R18 1k·C19 10nF(CAM_1V8 밀러 소프트스타트)·R19 10k 블리더, 캐리어 R6 6.98k, 계약 v1.13(IIC2 내부 풀업 금지). orch 재실행 contract_check 0·selftest 0(20). 충돌 발견: 과부하 중 12V 합계 ≈2.44A > 어댑터 2.08A(8.06k로도 2.20A) → O-88 |
+| R-021 | orch | research t18s | bom-full·PCBWay BOM 갱신: C-016(J2 제외·R15 삭제·TP24) + C-017(R6 6.98k·R18·R19·C19) + O-88 12V 3A 어댑터 선정 | docs/research/bom-full.csv, manufacturing/bom (새 레인) | make_pcbway_bom 종료 0, 커밋 | queued(C-017 뒤) |
 
 ## 운영 변경 (2026-11-26, 사용자 지시 · lead 전달)
 - 의견 묻지 않고 진행: 사람 쪽 미정값은 D-003(lead 레인 t-20261126-144135-5470 docs/decisions/D-003-working-defaults.md, 커밋 8ac5ce5) 값으로 확정 취급. 새 갈림길은 기본값 선택 → 아래 「분기 기록」에 분기점·선택·이유·차선책 → lead 요약 보고. 문제 시 해당 행으로 돌아가 차선책.
@@ -197,6 +197,7 @@
 | O-85 | R-019 G2 불통과: ① CLA216 코일 하우징 20.3이 구멍 축과 직각(±Y)인데 기준 모델은 같은 X축 ② S401 홀더 축→DF30 11.55 vs 우리 12.0 | G2 수정이 PCB 배치에 걸리므로 mechanical M-008을 M-007·REN-001보다 먼저 → 좌표 표를 pcb에 전달·반영 → V-005 최종·M-007 재검사. G1은 문서 통과(미확인은 bring-up) | 광축·간섭은 실물 확인이 없으니 문서 값대로 맞춰야 함 | bring-up에서 스페이서·심으로 보정 |
 | O-86 | V-006: D-003 기록 없는 완화(ignore 5종·CSI/MDI 폭 0.14·DP_BRK/DP_TUNE·u2 열 비아 0.20) | footprint_filters_mismatch ignore만 유지(제조 무관, D-003 기록), 나머지 ignore 4종 해제 후 원인 수정, 폭 0.15 복귀, u2 비아 0.30, DP_BRK/DP_TUNE은 탈출 구간 한정 완화로 유지하되 영역·이유를 lead가 D-003에 기록. CPL은 왼쪽 아래 원점·0~360°(보조 원점은 STEP용 유지) | 기록 없는 완화 0, 제조 규칙과 무관한 lint만 기록하고 남김 | 남는 항목은 수·이유와 함께 D-003 |
 | O-87 | SIM-001b fail 4 | S1 CAM_1V8 1k+10nF, S2 ILIM R6 6.98k(≈1.72A), S4 CAM_1V8 10k 블리더 → C-017 후 firmware 재시뮬. S3 끔 구간 링잉은 기준을 바꾸지 않고 '불합격·발광 아님 근거'로 남김 → bring-up 확인 | 결과 본 뒤 기준 변경 금지, 같은 모델로 검증된 수정 채택 | S2 차선: 12V_IR +22µF / 그대로 실측 |
+| O-88 | C-017/SIM-001a: 12V_IR 과부하(eFuse 제한) + 벅 입력이면 12V 합계 ≈2.44A(R6 8.06k여도 2.20A) > 어댑터 GST25A12 2.08A — 계약 12절 '과부하 때 합계 ≤ 어댑터 정격'과 충돌, 정상 최악도 여유 12%뿐(#10) | 가상 설계 기본값을 12V 3A급 어댑터로(같은 DC 잭 규격, 공개 데이터시트 있는 무료 확인 가능 품번 — research가 고름), 계약·BOM 갱신, SIM-001a는 3A 어댑터 기준 판정 + 2.08A 결과도 기록. ILIM은 6.98k 유지 | ILIM을 낮추면 정상 동작(맥놀이 평균 96%)이 끊김, 어댑터 교체는 보드 변경 없음 | 2.08A 유지 + 펌웨어로 두 스트링 위상 엇갈림(피크 감소) |
 
 ## 발주 패키지 직전 정리 목록
 - [ ] 회로도 표시 겹침: 캐리어 J2 옆 12V_IN_RAW 라벨, D3 PWR_LED 라벨, J1 품번 문자 (O-32)
