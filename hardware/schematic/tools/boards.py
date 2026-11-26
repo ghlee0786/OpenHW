@@ -101,10 +101,10 @@ for i, n in enumerate(['SDIO_CMD', 'SDIO_D0', 'SDIO_D1', 'SDIO_D2', 'SDIO_D3']):
     R(s, f'R{13+i}', '47k', 'SD_PWR_3V3', n, dnp=True)
 s.add('U4', 'Power_Protection:TPD4E05U06DQA', 'TPD4E05U06DQA', 'Package_SON:USON-10_2.5x1.0mm_P0.5mm', {'1': 'SDIO_CLK', '2': 'SDIO_CMD', '4': 'SDIO_D0', '5': 'SDIO_D1', '3': 'GND', '8': 'GND'})
 s.add('U5', 'Power_Protection:TPD4E05U06DQA', 'TPD4E05U06DQA', 'Package_SON:USON-10_2.5x1.0mm_P0.5mm', {'1': 'SDIO_D2', '2': 'SDIO_D3', '4': 'SDIO_CD', '3': 'GND', '8': 'GND'})
-s.block('ETH','이더넷 HR911105A (내장 마그네틱)',['EPHY MDI 100R (MDI_100) · 센터탭 C15/C16 DNP (R-004 P6)','C-010/O-46: RJ45 쪽 P/N 반전 (J5 1·2·3·6 = TX−·TX+·RX−·RX+ 넷) — 자동 극성 전제, 미지원 시 100M 고정(FW)','실드 CHASSIS = 1M || 1nF/2kV → GND'],cols=4)
+s.block('ETH','이더넷 HR911105A (내장 마그네틱)',['EPHY MDI 100R (MDI_100) · 센터탭 C15/C16 DNP (R-004 P6)','실드 CHASSIS = 1M || 1nF/2kV → GND'],cols=4)
 # --- Ethernet HR911105A (EPHY MDI direct, CT caps DNP per R-004 P6)
 s.add('J5', 'Connector:RJ45_Hanrun_HR911105A_Horizontal', 'HR911105A', 'Connector_RJ:RJ45_Hanrun_HR911105A_Horizontal',
-      {'1': 'EPHY_TXN', '2': 'EPHY_TXP', '3': 'EPHY_RXN', '6': 'EPHY_RXP', '4': 'MDI_TCT', '5': 'MDI_RCT', '8': 'GND', 'SH': 'CHASSIS'},
+      {'1': 'EPHY_TXP', '2': 'EPHY_TXN', '3': 'EPHY_RXP', '6': 'EPHY_RXN', '4': 'MDI_TCT', '5': 'MDI_RCT', '8': 'GND', 'SH': 'CHASSIS'},
       fields={'MPN': 'HanRun HR911105A (LCSC C12074)', 'Note': 'LED pins 9-12 unused; pin 8 per KiCad symbol (power)'})
 C(s, 'C15', '100nF', 'MDI_TCT', 'GND', dnp=True); C(s, 'C16', '100nF', 'MDI_RCT', 'GND', dnp=True)
 s.add('D4', 'Device:D_TVS', 'UDD32C03L01', 'Diode_SMD:D_SOD-323', {'1': 'EPHY_TXP', '2': 'EPHY_TXN'})
