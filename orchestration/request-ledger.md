@@ -197,3 +197,4 @@
 - [ ] (사람 확인) C-013 회로도 겹침 앞뒤 PNG validation/runtime/kicad-gui/C-013/index.html — verifiable 아니오
 - [ ] (사람 확인) JST GAM-322(28AWG GH 리드) 정격 — 브라우저로 열어 ≥0.61A/접점 확인되면 하니스를 기성 리드(AGHGH28K51)로(O-77)
 - [ ] bring-up 열 실측: 방열판 SK 444(R 계산 8.4 > 목표 8) — F-006 8절 판정 넘으면 CNC H3(O-78)
+- [ ] (사용자 결정 — 설치) F-007 bring-up PC 도구 실행에 필요: ffmpeg/ffprobe(이 PC엔 다른 프로젝트 경로에만), mosquitto-clients(직접 구독 시), OpenSSH 클라이언트 — 설치는 사용자 결정
