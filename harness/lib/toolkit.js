@@ -27,10 +27,6 @@ const CATALOG = [
     why: '현장 크래시 덤프(.dmp) 분석 — cdb · !analyze -v · MSVC/PDB', install: 'github.com/svnscha/mcp-windbg 안내대로(Python 3.10+ · Debugging Tools for Windows)', url: 'https://github.com/svnscha/mcp-windbg', risk: '덤프에 고객 데이터가 섞인다 — PII 제거를 켠다' },
   { id: 'playwright-mcp', kind: 'mcp', tier: 'now', stacks: ['web'], has: { mcp: /playwright/i },
     why: '웹 UI 탐색 · 시나리오 확인(--caps=testing 이면 회귀 시험 코드로)', install: 'claude mcp add playwright -- npx -y @playwright/mcp --isolated', url: 'https://github.com/microsoft/playwright-mcp', risk: '세션이 여럿이면 --isolated' },
-  { id: 'flaui-mcp', kind: 'mcp', tier: 'try', stacks: ['wpf'], when: 'windows', has: { mcp: /flaui/i, skill: /wpf-(site-)?ui-test/i },
-    why: 'WPF · Win32 화면을 Playwright 처럼(UIA 스냅숏의 ref 로 클릭 · 입력 · 창 목록)', install: 'github.com/shanselman/FlaUI-MCP 릴리스를 받아 claude mcp add flaui -- <폴더>/FlaUI.Mcp.exe', url: 'https://github.com/shanselman/FlaUI-MCP', risk: '실제 데스크톱을 조작한다 — 한 번에 하나만 · 관리자 권한 앱은 조작하지 못한다' },
-  { id: 'wpf-visual-tree-mcp', kind: 'mcp', tier: 'try', stacks: ['wpf'], when: 'windows', has: { mcp: /wpf-?visual-?tree/i, skill: /wpf-(site-)?ui-test/i },
-    why: 'UIA 에 안 보이는 WPF 요소 · 표 값 · 바인딩 오류를 데이터로 확인(.NET Framework 4.7.2+ · .NET 8+)', install: 'github.com/faze79/WPFVisualTreeMcp 릴리스를 받아 claude mcp add wpf-visual-tree -- <폴더>/server/WpfVisualTreeMcp.Server.exe', url: 'https://github.com/faze79/WPFVisualTreeMcp', risk: '대상 프로세스에 DLL 을 주입한다 — 시험 빌드에만' },
   { id: 'context7', kind: 'mcp', tier: 'now', stacks: ['*'], has: { mcp: /context7/i },
     why: '라이브러리 · 프레임워크의 최신 문서 조회', install: 'claude mcp add context7 -- npx -y @upstash/context7-mcp', url: 'https://github.com/upstash/context7' },
   { id: 'codex-plugin-cc', kind: 'plugin', tier: 'try', stacks: ['*'], has: { plugin: /codex/i },
@@ -96,11 +92,7 @@ function stacks(root) {
   const s = new Set(require('./langs').detect(root));
   for (const f of buildFiles(root)) {
     const base = path.basename(f);
-    if (/\.(csproj|vbproj|fsproj)$/i.test(base)) {
-      s.add('dotnet');
-      // WPF: SDK 형식 UseWPF · 옛 형식 ProjectTypeGuids(60dc8134)
-      if (!s.has('wpf')) { try { if (/<UseWPF>\s*true\s*<|60dc8134-eba5-43b8-bcc9-bb4bc16c2548/i.test(fs.readFileSync(path.join(root, f), 'utf8'))) s.add('wpf'); } catch { /* 못 읽음 */ } }
-    }
+    if (/\.(csproj|vbproj|fsproj)$/i.test(base)) s.add('dotnet');
     if (/\.pro$/i.test(base)) { s.add('cpp'); s.add('qt'); }
     if (base === 'CMakeLists.txt') { s.add('cpp'); if (!s.has('qt')) { try { if (/find_package\s*\(\s*Qt[56]?\b|Qt[56]::/i.test(fs.readFileSync(path.join(root, f), 'utf8'))) s.add('qt'); } catch { /* 못 읽음 */ } } }
     if (base === 'package.json' && !s.has('web')) { const pj = readJson(path.join(root, f)) || {}; if (/"(react|vue|svelte|next|vite|@angular\/core|@playwright\/test)"/.test(JSON.stringify({ ...pj.dependencies, ...pj.devDependencies }))) s.add('web'); }
