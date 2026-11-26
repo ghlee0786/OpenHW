@@ -189,7 +189,7 @@ f.add('D3', 'Device:D_Schottky', 'BAT54WS', 'Diode_SMD:D_SOD-323', {'1': 'CAM_EN
 R(f, 'R16', '10k', 'CAM_RESET', 'GND', dnp=True)
 f.add('Q6', 'Transistor_FET:Q_PMOS_GSD', 'DMG2305UX', 'Package_TO_SOT_SMD:SOT-23', {'1': 'CAM_1V8_G', '2': 'CORE_1V8', '3': 'CAM_1V8'}, fields={'MPN': 'Diodes DMG2305UX', 'Note': 'CAM_1V8 switch (V-004 R1, O-33): RDS(on) <=200mR @ VGS -1.8V, VGS(th) -0.5..-0.9V (DS36196 Rev 8-2); AO3401A unsuitable'})
 C(f, 'C18', '1uF', 'CAM_1V8', 'GND')
-R(f, 'R17', '100k', 'CORE_1V8', 'CAM_1V8_G')
+R(f, 'R17', '10k', 'CORE_1V8', 'CAM_1V8_G')
 f.add('Q7', 'Transistor_FET:DMG1012T', 'DMG1012T', 'Package_TO_SOT_SMD:SOT-523', {'1': 'CAM_EN', '2': 'GND', '3': 'CAM_1V8_G'}, fields={'Note': 'V-004b N1: Q6 gate pulled to its own source (CORE_1V8), driven by CAM_EN (S401 pattern)'})
 # MCLK 24MHz (OT7EL89, OE=CAM_EN, supply CORE_1V8 always-on)
 f.add('X1', 'Oscillator:ASE-xxxMHz', 'OT7EL89CJI-111YLC-24M', 'Oscillator:Oscillator_SMD_SiT_PQFN-4Pin_2.0x1.6mm',
