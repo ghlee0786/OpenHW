@@ -218,3 +218,4 @@
 - [ ] (사용자 진행) PCBWay 문의 전송 — 사용자 로그인 완료, 초안 붙여 넣기(lead 안내), 회신 반영처는 초안 표
 - [~] (lead D-003 #41: 켜지 않음 — 다른 프로젝트 컨테이너 재시작 영향) Docker Desktop이 꺼져 있음(2026-11-27, OpenHW 칸이 끈 것 아님) — 켜도 되는지. 필요한 일: F-008 컨테이너 재시험, 이후 이미지 빌드·호스트 시험
 - [x] F-008 컨테이너 재시험 — lead: Docker 켠 상태 유지, --memory 상한·OpenHW 컨테이너만으로 실행 허용 → firmware
+- [x] ngspice 47 공용 설치: C:/Users/gh/tools/ngspice/47/Spice64/bin/ngspice_con.exe — SourceForge ng-spice-rework/47 ngspice-47_64.7z md5 550f3a5a…(게시값 일치, orch 재확인), 로컬 sha256 59225971…, -v 확인(orch). py7zr 0.22.0 C:/Users/gh/tools/py7zr-venv(확인용)
