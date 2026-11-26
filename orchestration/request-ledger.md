@@ -22,7 +22,7 @@
 | F-003 | orch | firmware t18w | 계약 v1 DTS 패치 + 주야 전환 데몬(LTR-329 i2c-dev → ICR·IR LED·ISP IR 모드) + 패치 빌드·호스트 시험 | firmware/** | 빌드 종료 코드·해시, 호스트 시험 결과, 레인·커밋 | queued (F-002 기준 빌드 성공 뒤) |
 | M-001b | orch | mechanical t18x | 적층 갱신: 짝 BTB 높이 8.0 추정, 높이 매개변수화, DF30 모듈 자리 변수 | mechanical/** (M-001 레인) | z표·매개변수·간섭, 커밋 | completed — 커밋 fd9ed82. btb_h 8.0 기본(4.0/8.0 재생성 OK), 전체 39.9mm, 허용 높이 캐리어 윗면 ≤6.2·전면 아랫면 ≤5.2, 의도 외 간섭 0 |
 | P-002 | orch | pcb t190 | KiCad .kicad_dru·넷클래스·캐리어/전면 보드 외형(GUI 없이) | hardware/pcb/rules/**, hardware/pcb/outline/** | 파일·kicad-cli 결과, 레인·커밋 | completed — 레인 t-20261126-163344-acdf 커밋 022c364. 외형 40×40·4층·넷클래스, orch 재실행 kicad-cli pcb drc carrier 0·front 0 |
-| V-002 | orch | review t191 | R-004 핵심 6주장 독립 검증(BTB 원품번·HCTL 치수 대조·짝 높이·DF30 핀·재고·전원 IC 정격) | validation/review-V002-R004.md | 판정표·영향, 레인·커밋 | running |
+| V-002 | orch | review t191 | R-004 핵심 6주장 독립 검증(BTB 원품번·HCTL 치수 대조·짝 높이·DF30 핀·재고·전원 IC 정격) | validation/review-V002-R004.md | 판정표·영향, 레인·커밋 | completed — 레인 t-20261126-163344-e260 커밋 51489c5. ①③④⑤ 일치, ② 부분(패드 0.25 vs 0.30·몸체 폭), ⑥ TPS26600 연결 조건부 → O-21~O-23 |
 | C-002 | orch (단계 4) | schematic t18z | 캐리어·전면 보드 회로도(KiCad GUI), ERC·netlist | hardware/schematic/carrier/**, hardware/schematic/front/** (*.kicad_sch·*.kicad_pro) | 두 보드 ERC 종료 코드, netlist, 핀↔계약 대조표, 스크린샷 목록, 레인·커밋 | running |
 
 ## 운영 변경 (2026-11-26, 사용자 지시 · lead 전달)
@@ -54,3 +54,6 @@
 | O-18 | GC2053 조달 (칩 공인 유통 없음) | S401 보드의 BXF4677 모듈(DF30 24P)을 전면 보드에 꽂는 안 잠정 | IQ 그대로, 칩 실장 위험 없음 | O-3 차선 순서(GC4653 → CAM-GC2083) · M12·ICR 병용은 R-006 판정 |
 | O-19 | F-002 재시작 (메모리 부족 중단) | 기존 볼륨 이어서 make -j4, slot --timeout-min 240 안에서 docker run --rm, 시작 조건 = wsl -d docker-desktop free -m available ≥ 8GB (lead 정정 2026-11-26: 호스트 여유 메모리는 VM 페이지 캐시라 기준 아님, 다른 컨테이너 28개 합 1.5GB로 원인 아님 — orch 첫 판단 오류) | 같은 원인 반복 방지 | -j2 → 그래도 OOM이면 근거와 보고 / WSL2 직접 빌드(F5 차선) |
 | O-20 | KiCad 프로젝트 위치 | 보드마다 hardware/schematic/<carrier|front>/ 에 프로젝트, *.kicad_sch·*.kicad_pro=schematic, *.kicad_pcb=pcb(P-003에서 이동) | KiCad는 회로도·PCB가 같은 프로젝트 폴더여야 동기화됨 | hardware/pcb/<보드>/ 에 프로젝트 |
+| O-21 | TPS26600 EN 연결 (V-002 ⑥: UVLO 핀 GPIO 사용은 데이터시트 밖) | GPIO→SHDN+10k 풀다운, UVLO=IN, ILIM 10k(약 1.2A), dVdT 22nF, 계약 v1.2 | 14.25~16.7V 입력에서 의도치 않게 켜지는 위험 제거 | 부하스위치 IC로 교체 |
+| O-22 | 전면 보드 센서 모듈 주변 (V-002 ④) | RESET RC 자리, IOVDD 3.3V 공급, I2C2 상시 1.8V 풀업(역급전 근거 기록), DF30 번호는 실물 도통 확인 | CAM_EN=0에서도 LTR-329 폴링 유지, 전원 순서 위험 완화 | LTR-329는 CAM_EN=1일 때만 폴링(FW 규칙) |
+| O-23 | 짝 BTB 패드 폭 (V-002 ②) | 원품 SUNGTECH(B301 파생) 0.25mm 유지, HCTL 차이는 코트야드 안 허용, O-17 게이트에 1번 핀 방향·VIN 핀 정격 확인 추가 | 코어 원품과 맞는 치수 우선 | HCTL 권장 0.30 |
