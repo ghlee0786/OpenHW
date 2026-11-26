@@ -49,9 +49,9 @@ def main(src, dst, size=416):
     nodes = []
 
     def sl(name, a, b):
-        i64(name + "_s", [a])
-        i64(name + "_e", [b])
-        nodes.append(helper.make_node("Slice", [out.name, name + "_s", name + "_e", "oh_axes"], [name]))
+        i64(name + "_start", [a])
+        i64(name + "_end", [b])
+        nodes.append(helper.make_node("Slice", [out.name, name + "_start", name + "_end", "oh_axes"], [name]))
 
     sl("oh_xy", 0, 2)
     sl("oh_wh", 2, 4)

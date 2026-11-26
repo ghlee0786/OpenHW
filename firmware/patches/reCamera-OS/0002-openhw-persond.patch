@@ -1,0 +1,52 @@
+diff -ruN a/external/br2-external/Config.in b/external/br2-external/Config.in
+--- a/external/br2-external/Config.in
++++ b/external/br2-external/Config.in
+@@ -9,3 +9,4 @@
+ source "$BR2_EXTERNAL_BR2EXT_PATH/wpa_supplicant_s1g/Config.in"
+ source "$BR2_EXTERNAL_BR2EXT_PATH/morse_cli/Config.in"
+ source "$BR2_EXTERNAL_BR2EXT_PATH/openhw-daynight/Config.in"
++source "$BR2_EXTERNAL_BR2EXT_PATH/openhw-persond/Config.in"
+diff -ruN a/external/br2-external/openhw-persond/Config.in b/external/br2-external/openhw-persond/Config.in
+--- a/external/br2-external/openhw-persond/Config.in
++++ b/external/br2-external/openhw-persond/Config.in
+@@ -0,0 +1,7 @@
++config BR2_PACKAGE_OPENHW_PERSOND
++    bool "openhw-persond"
++    default y
++    select BR2_PACKAGE_MOSQUITTO
++    select BR2_PACKAGE_JSON_C
++    help
++      OpenHW 사람 감지 이벤트 데몬 (sscma-node 결과 → MQTT 이벤트, RTSP 노드).
+diff -ruN a/external/br2-external/openhw-persond/openhw-persond.mk b/external/br2-external/openhw-persond/openhw-persond.mk
+--- a/external/br2-external/openhw-persond/openhw-persond.mk
++++ b/external/br2-external/openhw-persond/openhw-persond.mk
+@@ -0,0 +1,29 @@
++################################################################################
++#
++# openhw-persond — 소스는 firmware/apps/persond, 모델은 firmware/models 변환 결과
++# (apply-f004.sh 가 src/ 로 복사)
++#
++################################################################################
++
++OPENHW_PERSOND_VERSION = 1.0
++OPENHW_PERSOND_SITE = $(BR2_EXTERNAL_BR2EXT_PATH)/openhw-persond/src
++OPENHW_PERSOND_SITE_METHOD = local
++OPENHW_PERSOND_LICENSE = Proprietary (model: YOLOX Apache-2.0)
++OPENHW_PERSOND_DEPENDENCIES = mosquitto json-c
++
++define OPENHW_PERSOND_BUILD_CMDS
++	$(TARGET_MAKE_ENV) $(MAKE) -C $(@D) CC="$(TARGET_CC)" CFLAGS="$(TARGET_CFLAGS)" persond
++endef
++
++define OPENHW_PERSOND_INSTALL_TARGET_CMDS
++	$(INSTALL) -D -m 0755 $(@D)/persond $(TARGET_DIR)/usr/bin/persond
++	$(INSTALL) -D -m 0644 $(@D)/persond.conf $(TARGET_DIR)/etc/openhw/persond.conf
++	$(INSTALL) -D -m 0755 $(@D)/S97persond $(TARGET_DIR)/etc/init.d/S97persond
++	# 모델은 검증을 통과한 것만 apply-f004.sh 가 넣는다. 없으면 설치하지 않는다
++	if [ -f $(@D)/yolox_nano_person_416_int8_cv181x.cvimodel ]; then \
++		$(INSTALL) -D -m 0644 $(@D)/yolox_nano_person_416_int8_cv181x.cvimodel \
++			$(TARGET_DIR)/usr/share/openhw/models/yolox_nano_person_416_int8_cv181x.cvimodel; \
++	fi
++endef
++
++$(eval $(generic-package))
