@@ -16,6 +16,12 @@ STEP="${1:-all}"
 # CPUSET: 빌드 컨테이너가 쓸 CPU. SDK Makefile 은 NPROC := $(shell nproc) 이라 cpuset 으로 -j 가 정해진다(소스 수정 없음).
 CPU_OPT=()
 [ -n "${CPUSET:-}" ] && CPU_OPT=(--cpuset-cpus "$CPUSET")
+# MEM: 빌드 컨테이너 메모리 상한(orch O-29). 넘으면 컨테이너가 OOM(137)으로 끝난다.
+[ -n "${MEM:-}" ] && CPU_OPT+=(--memory "$MEM" --memory-swap "$MEM")
+# JLEVEL: buildroot 패키지별 병렬도. .config 의 BR2_JLEVEL=0 은 getconf _NPROCESSORS_ONLN(cpuset 무시, 32)+1 이라
+# nodejs(V8) 가 ninja -j33 으로 돈다(원인 D). make 명령줄 변수는 MAKEFLAGS 로 하위 make 에 넘어가 .config 값을 덮는다.
+MAKE_VARS=""
+[ -n "${JLEVEL:-}" ] && MAKE_VARS="BR2_JLEVEL=$JLEVEL"
 
 clone() {
   docker volume create "$VOL" >/dev/null
@@ -43,8 +49,8 @@ set -e
 git config --global --add safe.directory "*"
 echo ">>> 1. Git submodule update..."
 git submodule update --init --recursive --depth 1
-echo ">>> 2. make '"$TARGET"'"
-make '"$TARGET"'
+echo ">>> 2. make '"$TARGET $MAKE_VARS"'"
+make '"$TARGET $MAKE_VARS"'
 EOF
     chmod +x /tmp/inner.sh
     sudo -E -u builder HOME=/work/home /tmp/inner.sh'
