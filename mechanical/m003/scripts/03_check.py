@@ -2,7 +2,7 @@
 맞닿는 면은 빼고(areCoincidentFacesIncluded=False) 부피가 있는 겹침만 센다. 결과를 m003/interference.txt 로 쓴다."""
 import adsk.core, adsk.fusion
 
-BASE = r"C:\workspace_python\OpenHW\.harness-worktrees\t-20261127-013549-8089\mechanical\m003"
+BASE = r"C:\workspace_python\OpenHW\.harness-worktrees\t-20261127-040816-30c6\mechanical\m003"
 # 기준 중 이번 외함으로 대체된 것 (같은 자리 중복 또는 M-003에서 바뀐 것)
 SUPERSEDED = {'CARRIER_40x54', 'FRONT_40x40', 'WINDOW_PMMA', 'LIGHT_COLLAR', 'AL_SPREADER_TAB_PX',
               'THERMAL_PILLAR_A', 'THERMAL_PILLAR_B', 'INS_PAD_A', 'INS_PAD_B1', 'INS_PAD_B2'}

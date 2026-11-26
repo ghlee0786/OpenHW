@@ -64,6 +64,9 @@ ax.add_patch(Circle((0, 0), d['lens_win_d'] / 2 + 0.2, **K)); ax.add_patch(Circl
 xi0, xi1, ry = d['x_in_min'], d['x_in_max'], d['rib_y']
 ax.add_patch(Rectangle((xi0, ry), xi1 - xi0, d['y_in_hi'] + 1 - ry, **K))
 ax.add_patch(Rectangle((xi0, d['b_pocket_y0']), xi1 - xi0, -ry - d['b_pocket_y0'], **K))
+if d.get('b_ext'):
+    ex0, ex1, ey0 = d['b_ext']
+    ax.add_patch(Rectangle((ex0, ey0), ex1 - ex0, d['b_pocket_y0'] - ey0, **K)); label(ax, ex0, ey0 - 2.6, 'B 창 연장 x %.1f…%.1f, y %.1f (J5 V4)' % (ex0, ex1, ey0))
 (ax0, ax1), (ay0, ay1) = d['als_in']
 ax.add_patch(Rectangle((ax0 - 1.1, ay0 - 1.1), ax1 - ax0 + 2.2, ay1 - ay0 + 2.7, **K))
 for (x, y) in d['cov_screws']:

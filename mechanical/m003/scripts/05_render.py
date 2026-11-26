@@ -2,7 +2,7 @@
 화면 위쪽 = +Y (센서 세로), 광축 +Z = 앞. 기준 중복·대체된 바디와 플러그 블록은 숨긴다(끝나면 되돌림)."""
 import adsk.core, adsk.fusion, os
 
-OUT = r"C:\workspace_python\OpenHW\.harness-worktrees\t-20261127-013549-8089\mechanical\m003\render"
+OUT = r"C:\workspace_python\OpenHW\.harness-worktrees\t-20261127-040816-30c6\mechanical\m003\render"
 HIDE = ('CARRIER_40x54', 'FRONT_40x40', 'WINDOW_PMMA', 'LIGHT_COLLAR', 'AL_SPREADER_TAB_PX', 'THERMAL_PILLAR', 'INS_PAD_',
         'KEEPIN', 'HARNESS_CORRIDOR', 'ENVELOPE', 'DF30_SITE', 'J_ICR')
 EXPLODE = {'FRONT_COVER': (0, 0, 45), 'LENS_WIN_PMMA': (0, 0, 70), 'WIN_A_PMMA': (0, 0, 70), 'WIN_B_PMMA': (0, 0, 70),
