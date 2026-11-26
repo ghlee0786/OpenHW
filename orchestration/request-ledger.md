@@ -40,7 +40,8 @@
 | V-004b | orch | review t191 | C-004 수정분 재검토 | validation/review-V004b-C004.md | 판정표, 레인·커밋 | completed — 6404bf7. ERC 0/0, 의도 밖 변경 0, 해소 R3·R4·R6·R7·R9·R11·R13·K1~K4·MODE, 부분/신규 N1(Q6 게이트 순서)·R2·R5·R8·R10·R12 |
 | R-008b | orch | research t18s | C-004 58eb49b 기준 BOM 재내보내기 + 남은 MPN 확인(RT9013-28GB·F1·C1·L1·SS24·22µF DC 바이어스·XKB 외곽·GH 케이블) | docs/research/bom-full.csv (R-008 레인) | 차이표, 21열, 커밋 | running (b3b376a 기준) |
 | C-005 | orch | schematic t18z | R-009·V-004b 반영: 전면 J2 PicoBlade(O-34), ALS-PT19 풋프린트, DC 잭 대조, V-004b 미해소 | hardware/schematic/**, hardware/libraries/** | ERC 0, 의도 차이, 부품표 | completed — b3b376a (계약 v1.5 a2b4945), orch 재실행 ERC 0/0, carrier 98·front 85부품, 라이브러리 silk 0 |
-| V-004c | orch | review t191 | C-005 수정분 재검토(N1 Q6 게이트·OE·SMBJ6.0A·R11·SSA24·F1·계약 v1.5) | validation/review-V004c-C005.md | 판정표, 레인·커밋 | running |
+| V-004c | orch | review t191 | C-005 수정분 재검토(N1 Q6 게이트·OE·SMBJ6.0A·R11·SSA24·F1·계약 v1.5) | validation/review-V004c-C005.md | 판정표, 레인·커밋 | completed — 레인 t-20261126-183643-3f9e 커밋 9b24181. 전부 해소, ERC 0/0, 의도 밖 변경 0. 권고 R17 10k → C-006 |
+| C-006 | orch (V-004c 권고) | schematic t18z | 전면 R17 100k → 10k (값만) | hardware/schematic/front (C-002 레인) | netcompare R17 값 1건, ERC 0, 커밋 | running |
 
 ## 운영 변경 (2026-11-26, 사용자 지시 · lead 전달)
 - 의견 묻지 않고 진행: 사람 쪽 미정값은 D-003(lead 레인 t-20261126-144135-5470 docs/decisions/D-003-working-defaults.md, 커밋 8ac5ce5) 값으로 확정 취급. 새 갈림길은 기본값 선택 → 아래 「분기 기록」에 분기점·선택·이유·차선책 → lead 요약 보고. 문제 시 해당 행으로 돌아가 차선책.
@@ -88,6 +89,7 @@
 | O-33 | I2C2 풀업 전원 (V-004 R1: 상시 CORE_1V8 → 꺼진 센서로 역급전·버스 클램프, O-8 복귀) | O-22 차선 채택: 풀업·X1 VDD를 스위칭 CAM_1V8로(VGS −1.8V 규정 P-FET), LTR-329는 CAM_EN=1일 때만 폴링(FW 규칙) | GC2053 역급전 허용 근거 없음 | LIGHT_SENSE ADC 차선(D-003 #7 차선 경로) |
 | O-34 | CLA216 리드 짝 커넥터 (계열 미확정, DocSend 미열람) | Molex PicoBlade 53261-0271 1안 | 도면 실측(칼라·레버 없음·비율)과 CLA214 사진 근거, LCSC 재고 | JST GH SM02B-GHS-TB / G2 실물 확인 전 PCB 확정 금지 |
 | O-35 | PCB 저속 넷 배선 방식 (pcb 결정 요청, de797f0) | 사용자 결정 대기 — 그동안 공통(고속 차동·BTB 탈출·전원·귀환) 진행, 공통 끝날 때까지 답 없으면 (B) 스크립트 배선 | (A) Freerouting+Java 21은 외부 도구 설치라 사용자 결정 | (A) 혼합 자동 배선 — lead가 사용자에게 (A) 권고로 올림, 승인 시 조건: 사용자 홈 아래 격리 설치(PATH·시스템 Java 불변)·버전/해시 기록·결과는 DRC·검토 대상, 최적 주장 금지 / (C) 사람 GUI 배선 |
+| O-36 | Q6 게이트 풀업 R17 값 (V-004c 선택 권고) | 10k | τ 81µs→8µs로 1V8 빠른 상승 시 순간 켜짐 방지, 값만 바뀌어 배선 영향 없음 | 100k 유지(S401 원값) |
 
 ## 발주 패키지 직전 정리 목록
 - [ ] 회로도 표시 겹침: 캐리어 J2 옆 12V_IN_RAW 라벨, D3 PWR_LED 라벨, J1 품번 문자 (O-32)
