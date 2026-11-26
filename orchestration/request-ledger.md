@@ -25,8 +25,9 @@
 | V-002 | orch | review t191 | R-004 핵심 6주장 독립 검증(BTB 원품번·HCTL 치수 대조·짝 높이·DF30 핀·재고·전원 IC 정격) | validation/review-V002-R004.md | 판정표·영향, 레인·커밋 | completed — 레인 t-20261126-163344-e260 커밋 51489c5. ①③④⑤ 일치, ② 부분(패드 0.25 vs 0.30·몸체 폭), ⑥ TPS26600 연결 조건부 → O-21~O-23 |
 | C-002 | orch (단계 4) | schematic t18z | 캐리어·전면 보드 회로도(KiCad GUI), ERC·netlist | hardware/schematic/carrier/**, hardware/schematic/front/** (*.kicad_sch·*.kicad_pro) | 두 보드 ERC 종료 코드, netlist, 핀↔계약 대조표, 스크린샷 목록, 레인·커밋 | running |
 | M-001c | orch | mechanical t18x | 적층 갱신: CIL093·센서 블록 받침·CLA216 전면 고정·IR LED 4위치·광차단·창 거리 | mechanical/** (M-001 레인) | z표·IR 좌표·광차단 안·간섭, 커밋 | completed — 커밋 4dc801d. 전체 43.1mm, IR LED A1/A2 실장·B1/B2 DNP 좌표, 광차단 링, 충돌 후보 FPC↔홀더 벽 1건(K12 홈/스페이서), 렌즈 치수 미확인 |
-| R-007 | orch | research t18s | 기구 도면 수치: CIL093 외형, CLA216 공동·구멍, VSMA1085400 패키지, DF30 결합 높이, BXF4677 블록 | docs/research/r007-mech-dims.md | 5항목 수치표, 레인·커밋 | running |
+| R-007 | orch | research t18s | 기구 도면 수치: CIL093 외형, CLA216 공동·구멍, VSMA1085400 패키지, DF30 결합 높이, BXF4677 블록 | docs/research/r007-mech-dims.md | 5항목 수치표, 레인·커밋 | completed — 레인 t-20261126-165815-3a00 커밋 4f0a8ab. CIL093·CLA216 공동 14.1□ 깊이 약 1.2·VSMA1085400 높이 2.445·DF30 0.9 |
 | V-003 | orch (단계 4 독립 검토) | review t191 | L-001 라이브러리 핀·패드 데이터시트 원문 대조 | validation/review-V003-L001.md | 부품별 판정표, 영향, kicad-cli 결과, 레인·커밋 | running |
+| M-001d | orch | mechanical t18x | R-007 수치 반영, 받침+블록 2.03 > CLA216 공동 약 1.2 간섭 해소(스페이서/컷아웃/재배치 비교), 초점 BFL 재계산 | mechanical/** (M-001 레인) | z표·충돌 0 목표·선택 근거, 커밋 | running |
 
 ## 운영 변경 (2026-11-26, 사용자 지시 · lead 전달)
 - 의견 묻지 않고 진행: 사람 쪽 미정값은 D-003(lead 레인 t-20261126-144135-5470 docs/decisions/D-003-working-defaults.md, 커밋 8ac5ce5) 값으로 확정 취급. 새 갈림길은 기본값 선택 → 아래 「분기 기록」에 분기점·선택·이유·차선책 → lead 요약 보고. 문제 시 해당 행으로 돌아가 차선책.
