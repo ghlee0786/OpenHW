@@ -1,0 +1,83 @@
+(footprint "MountingHole_M1.6_NPTH"
+	(version 20260206)
+	(generator "pcbnew")
+	(generator_version "10.0")
+	(layer "F.Cu")
+	(descr "M1.6 stack screw clearance hole 1.8mm NPTH, copper keepout 4.0mm (P-002)")
+	(property "Reference" "REF"
+		(at 0 -2.6 0)
+		(layer "F.Fab")
+		(uuid "d757f4b3-9aa5-4424-87d0-2c1389f87b3d")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "Value" "M1.6"
+		(at 0 2.6 0)
+		(layer "F.Fab")
+		(uuid "9a1f432b-a0f2-44f0-bb2c-8e02ad52f31a")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "Datasheet" ""
+		(at 0 0 0)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "8d2692e1-14cc-4c13-a0d1-0520df1cacb0")
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+		)
+	)
+	(property "Description" ""
+		(at 0 0 0)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "a977f28c-3519-4fd1-91fb-8ffe5b5acd75")
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+		)
+	)
+	(attr exclude_from_pos_files exclude_from_bom)
+	(duplicate_pad_numbers_are_jumpers no)
+	(fp_circle
+		(center 0 0)
+		(end 2 0)
+		(stroke
+			(width 0.05)
+			(type solid)
+		)
+		(fill no)
+		(layer "B.CrtYd")
+		(uuid "63e4f03a-6c25-40e6-950a-e5783bd15283")
+	)
+	(fp_circle
+		(center 0 0)
+		(end 2 0)
+		(stroke
+			(width 0.05)
+			(type solid)
+		)
+		(fill no)
+		(layer "F.CrtYd")
+		(uuid "c6860fd1-e6a5-4b81-a4ea-f5abf1aa6bc6")
+	)
+	(pad "" np_thru_hole circle
+		(at 0 0)
+		(size 1.8 1.8)
+		(drill 1.8)
+		(layers "*.Cu" "*.Mask")
+		(uuid "2e64ef11-e0ea-489e-952e-b9b17169d2f7")
+	)
+	(embedded_fonts no)
+)

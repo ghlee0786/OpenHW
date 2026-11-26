@@ -60,6 +60,15 @@ def main():
             data["keepouts"].append({"name": z.GetZoneName(), "layers": [n for n, lid in CU if z.IsOnLayer(lid)],
                                      "polys": poly_points(z.Outline()), "tracks": z.GetDoNotAllowTracks(),
                                      "vias": z.GetDoNotAllowVias()})
+    # V-005b RQ-14: 풋프린트 실크 선 둘레 0.15(+반올림 0.05)는 비아 금지 — 실크가 비아 위(구멍 위)에 인쇄되지 않게
+    for fp in list(b.GetFootprints()):
+        for g in fp.GraphicalItems():
+            if g.GetClass() != "PCB_SHAPE" or g.GetLayer() not in (pcbnew.F_SilkS, pcbnew.B_SilkS):
+                continue
+            ps = pcbnew.SHAPE_POLY_SET()
+            g.TransformShapeToPolygon(ps, g.GetLayer(), pcbnew.FromMM(0.20), pcbnew.FromMM(0.01), pcbnew.ERROR_OUTSIDE)
+            data["keepouts"].append({"name": f"SILK_{fp.GetReference()}", "layers": [], "polys": poly_points(ps),
+                                     "tracks": False, "vias": True})
     json.dump(data, open(sys.argv[2], "w", encoding="utf-8"))
     print(f"pads {len(data['pads'])} · locked tracks {len(data['tracks'])} · vias {len(data['vias'])} · keepouts {len(data['keepouts'])}")
 

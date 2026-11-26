@@ -39,7 +39,7 @@ def pre_route(B, board_name, LAYERS, CLR, EPS, G):
     for p in B.pads:
         pads_by_ref.setdefault(p["ref"], []).append(p)
 
-    def free_for(net_id, x, y, rad, layers=(0, 1, 2, 3)):
+    def free_for(net_id, x, y, rad, layers=(0, 1, 2, 3), holes=True):
         r, c = B.cell(x, y)
         m = int((rad + CLR + EPS) / G) + 1
         for L in layers:
@@ -52,7 +52,7 @@ def pre_route(B, board_name, LAYERS, CLR, EPS, G):
         if np.any(B.hardvia[r - mv:r + mv + 1, c - mv:c + mv + 1]):  # 비아 둘레 전체가 금지 영역 밖
             return False
         h = int((rad + 0.25 + 0.2) / G) + 1
-        if np.any(B.holes[r - h:r + h + 1, c - h:c + h + 1]):
+        if holes and np.any(B.holes[r - h:r + h + 1, c - h:c + h + 1]):
             return False
         return True
 
@@ -100,12 +100,28 @@ def pre_route(B, board_name, LAYERS, CLR, EPS, G):
         x0, y0 = max(top[0], bot[0]) + 0.5, max(top[1], bot[1]) + 0.5
         x1, y1 = min(top[2], bot[2]) - 0.5, min(top[3], bot[3]) - 0.5
         n = 0
+        got = []
         for x in np.arange(x0, x1 + 1e-6, 0.8):
             for y in np.arange(y0, y1 + 1e-6, 0.8):
                 if in_any_pad(x, y, 0.45) or not free_for(nid, x, y, TVIA["dia"] / 2):
                     continue
                 B.add_via(net, (round(float(x), 4), round(float(y), 4)), TVIA)
+                got.append((x, y))
                 n += 1
+        # V-005 RQ-9 (D-003 #29 LED당 4개): 0.8 격자로 4개가 안 나오면(B LED 2개) 0.2 격자에서 이미 둔 비아와 0.9 이상 떨어진 자리를 더한다
+        if n < 4:
+            for x in np.arange(x0, x1 + 1e-6, 0.2):
+                for y in np.arange(y0, y1 + 1e-6, 0.2):
+                    if n >= 4:
+                        break
+                    # 구멍 간격은 사각 창(0.75) 대신 모든 비아 중심 거리 0.9(구멍 0.3 → 가장자리 0.6)로 본다
+                    if any((x - v["pos"][0]) ** 2 + (y - v["pos"][1]) ** 2 < 0.9 ** 2 for v in B.vias):
+                        continue
+                    if in_any_pad(x, y, 0.45) or not free_for(nid, x, y, TVIA["dia"] / 2, holes=False):
+                        continue
+                    B.add_via(net, (round(float(x), 4), round(float(y), 4)), TVIA)
+                    got.append((x, y))
+                    n += 1
         print(f"열: {ref} 애노드 {net} 윗면 영역 + 아랫면 노출 패드 {tuple(round(v, 2) for v in tp)} · 열 비아 {n}")
 
     # 2) GND EP 둘레 비아

@@ -92,13 +92,20 @@ FIXED = {
         "J5": ("crt", "B", "-Y", (-12.0, -34.0, 7.09, -11.61)),
         "J2": ("crt", "B", "-Y", (8.41, -34.0, 20.0, -17.91)),
         "J4": ("crt", "B", "+Y", (-7.9, 2.4, 7.9, 20.19)),
-        "J3": ("crt", "B", "-X", (-20.0, -5.37, -10.49, 5.37)),
+        # O-61: HRO TYPE-C-31-M-12 데이터시트는 셸 앞면이 판 가장자리 밖 0.49(위치 핀→가장자리 5.79).
+        #   courtyard 앞변을 외곽(−20.0)에 맞추면 셸이 0.51 안쪽 → 플러그 오버몰드가 판 모서리에 닿음(mechanical 간섭 9.72 mm³). −X로 1.0 내보냄
+        "J3": ("crt", "B", "-X", (-21.0, -5.37, -11.49, 5.37)),
         # GH 6P, M-002 K20 (−19.0…−13.5, −30.5…−19.0). 실제 courtyard 6.49×12.05가 구멍 (−17,−17) 금지 원에 0.28 걸려 −Y로 0.3 내림
         "J7": ("crt", "F", "-X", (-19.0, -30.8, -13.5, -19.3)),
         # 이더넷 ESD: 북쪽에서 남쪽으로 들어오는 J1 쪽 MDI 쌍의 왼쪽(서쪽)이 P → 1번 핀(P) 서쪽 = 회전 0°. RJ45 핀 줄(y −13.66) 바로 위.
         # (RJ45 쪽은 TX+/RX+ 가 동쪽이라 ESD→RJ45 구간은 P/N 이 한 번 꼬여야 함 — 180°로 돌리면 J1 쪽 진입 공간이 없어 실패, orch 보고)
-        "D4": ("F", 0.0, (4.5, -11.6)),
-        "D5": ("F", 0.0, (-6.5, -11.6)),
+        # V-005 RQ-6: ESD(분로 TVS) x 를 꼬임 두 선 길이가 같아지는 자리로 — RJ45 핀 3·6(RX)·1·2(TX)가 서로 다른 줄·거리라
+        #   D5 x −6.5 에서는 D5.1→J5.3 8.36mm · D5.2→J5.6 2.33mm(쌍 안 7.2mm 차). D5 −1.0: 4.83/4.86, D4 3.87: 4.82/4.83 (패드 ±1.05, J5 핀 좌표로 계산)
+        "D4": ("F", 0.0, (3.87, -11.6)),
+        "D5": ("F", 0.0, (-1.0, -11.6)),
+        # USBLC6: 관통형 핀 6(DP)·4(DN)가 동쪽(J1 쪽)을 보게 0° — 180°면 J1 쪽 쌍이 TP8·TP9·USB-C 쪽(서쪽)으로 돌아 들어가 TP9 위를 지났음(P-003 DRC 단락)
+        #   x −8.5→−9.2: 0°에서 동쪽 쌍 탈출점(핀+1.5mm)이 C13 패드(SD_PWR_3V3 디커플링)에 막혀 USB 쌍 실패 → 서쪽으로 0.7
+        "U3": ("F", 0.0, (-9.2, 2.0)),
     },
     "front": {
         "J1": ("B", 180.0, (0.0, 11.8)),
@@ -137,7 +144,6 @@ FREE = {
         ("D7", "F", (12.0, -15.0), None),  # C-004: 5V_SYS TVS — 벅 출력 쪽 (+X 띠는 3.8mm라 SMB 4.6이 안 들어감)
         ("C11", "F", (-1.0, -15.5), None),
         # USB (J1 1·3번 → 뒷면 USB-C −X): ESD·CC 저항은 USB-C 다리 안쪽 윗면
-        ("U3", "F", (-8.5, 2.0), None),
         # O-49: USB 테스트점은 U3 ↔ USB-C 사이 선 위(가지선 0) — 배선기 CHAIN 이 U3 → TP → J3 순서로 잇는다
         ("TP8", "F", (-11.5, 1.0), None), ("TP9", "F", (-11.5, 3.0), None),
         # microSD ESD·전원 스위치 (J4 뒷면 +Y 가운데)
@@ -197,9 +203,16 @@ RULE_AREAS = {
 }
 
 
+SILK_BOARD = None  # build() 가 정한다
+
+
 def load_fp(fpid):
     lib, name = fpid.split(":", 1)
     path = LIBS.get(lib, STD / f"{lib}.pretty")
+    # O-74b: 보드별 실크 사본(silk_lib.py, fp-lib-table 이 같은 별칭으로 가리킴)이 있으면 그것 — FPID 그대로
+    shadow = ROOT / "hardware/pcb/lib/silk" / str(SILK_BOARD) / f"{lib}.pretty"
+    if (shadow / f"{name}.kicad_mod").exists():
+        path = shadow
     fp = pcbnew.FootprintLoad(str(path), name)
     if fp is None:
         raise SystemExit(f"풋프린트 없음: {fpid}")
@@ -355,6 +368,8 @@ class Placer:
 
 
 def build(board_name):
+    global SILK_BOARD
+    SILK_BOARD = board_name
     comps, nets = netlist(board_name)
     out = ROOT / f"hardware/schematic/{board_name}/{board_name}.kicad_pcb"
     board = pcbnew.LoadBoard(str(TEMPLATE / board_name / f"{board_name}.kicad_pcb"))

@@ -94,13 +94,15 @@
 # 이 영역 안: 쌍 간격 상한 = 영역 폭, 쌍 서로·다른 고속 트랙 간격 = 제조 최소 0.16. 영역 밖 규칙은 그대로. 비결합 길이는 아래 mdi 6mm 에 포함.
 # 비결합: 꼬임 구간의 P·N 단선(각 약 1~6mm)이 쌍 전체 비결합 길이에 더해진다 → 꼬임 구간에 걸린 MDI 쌍만
 #  상한 = 구간 밖 6mm + 꼬임 구간 단선 실측 합(P-003 DRC 보고서에 쌍별 값). 처음 값 20mm(O-47 승인 범위, V-005 검토 대상).
+# V-005 RQ-7: intersectsArea 는 조금만 걸친 트랙 전체에 완화를 적용해 영역 밖 3.557mm 로 샜다 → enclosedByArea(영역 안에 다 든 항목만).
+#  배선기 적용 단계(route_apply.py)가 영역 경계(선폭 반 + 0.01 안쪽)에서 트랙을 나눠, 안쪽 조각만 이 규칙을 받는다.
 (rule "mdi_twist_pair"
-  (condition "A.hasNetclass('MDI_100') && A.intersectsArea('DP_TWIST')")
+  (condition "A.hasNetclass('MDI_100') && A.enclosedByArea('DP_TWIST')")
   (constraint diff_pair_gap (min 0.15mm) (max 7.0mm))
   (constraint diff_pair_uncoupled (max 20mm)))
 
 (rule "mdi_twist_spacing"
-  (condition "A.hasNetclass('MDI_100') && A.Type == 'Track' && B.Type == 'Track' && A.intersectsArea('DP_TWIST')")
+  (condition "A.hasNetclass('MDI_100') && A.Type == 'Track' && B.Type == 'Track' && A.enclosedByArea('DP_TWIST')")
   (constraint clearance (min 0.16mm)))
 
 # ---- 전원 (IPC-2221 외층 ΔT10℃ 계산 이상, netclasses.md §3) ----

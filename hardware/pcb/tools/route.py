@@ -240,6 +240,12 @@ class Board:
                     hso = np.isin(o, list(self.hs_ids - set(own_ids)))
                     dh = ndimage.distance_transform_edt(~hso) * G
                     ok &= (dh >= HS_CLR + hw + EPS) | self.brk[L][sl]
+                    if L == 2 and not (set(own_ids) & self.hs_ids):
+                        # V-005 RQ-8: In2(GND_PWR)는 B.Cu 고속선의 기준면 — 그 아래(트랙 가장자리에서 3h ≈ 0.6mm)로 신호를 지나가지 않게
+                        o3 = self.occ[3][sl]
+                        hs3 = self.trk[3][sl] & np.isin(o3, list(self.hs_ids))
+                        if hs3.any():
+                            ok &= (ndimage.distance_transform_edt(~hs3) * G >= 0.6 + hw)
                 passable[L] = ok[inner]  # 자기 구리는 원래 장애물이 아님 — 패드 위 예외를 두면 굵은 트랙이 이웃 패드를 덮는다(P-003 DRC)
             viaok &= (d >= CLR + vrad + EPS)[inner]
         hv = ndimage.distance_transform_edt(~self.hardvia[sl]) * G
@@ -533,6 +539,15 @@ def main():
             win = B.window([c0, c1], 5.0)
             passable, viaok = B.free_maps(win, own, hw, VIA["dia"] / 2, layers, hs=True, own_tracks_block=True)
             r0, _, cc0, _ = win
+            ends_ = {(q["ref"], q["num"]) for q in (P0, N0, P1, N1)}
+            for q in B.pads:
+                if q["net"] in (pn, nn) and (q["ref"], q["num"]) not in ends_:
+                    for L_, rr_, cc_ in pad_cells(q, layers):
+                        m_ = int((hw + CLR + EPS) / G) + 1
+                        a0, a1 = max(rr_ - r0 - m_, 0), max(rr_ - r0 + m_ + 1, 0)
+                        b0, b1 = max(cc_ - cc0 - m_, 0), max(cc_ - cc0 + m_ + 1, 0)
+                        if L_ in passable:
+                            passable[L_][a0:a1, b0:b1] = False
             for (pa, pb, X), Ls in (((P0, N0, S_far), sL), ((P1, N1, E_far), eL)):  # 패드 → 탈출점 직사각형 열기
                 cs_ = [B.cell(*pa["pos"]), B.cell(*pb["pos"]), B.cell(*X)]
                 rr0, rr1 = min(c[0] for c in cs_) - r0 - 2, max(c[0] for c in cs_) - r0 + 3
@@ -696,7 +711,7 @@ def main():
             i["lens"], i["nvias"] = draw_pair(i)
             print(f"쌍 {i['name']}: 길이 맞춤 +{need:.2f} mm")
     # 쌍 안 길이 보정: 짧은 선에만 짝 반대쪽으로 45° 굴곡 (꺾임 방향 차이로 생긴 P/N 길이차 — 45°마다 약 2·반간격·tan22.5°)
-    INTRA = {"CSI_100": 0.15, "USB_90": 0.15, "MDI_100": 1.27}
+    INTRA = {"CSI_100": 0.1, "USB_90": 0.1, "MDI_100": 0.1}  # V-005 RQ-5·6: 쌍 안 차 목표 0 (판정 ≤0.1)
     tune_areas = []
     def intra_tune(i, short, partner, need, lim):
         """짧은 넷(short)의 이 쌍 트랙 직선에 굴곡을 넣어 need 만큼 늘린다. 남은 차를 돌려준다."""
@@ -739,7 +754,8 @@ def main():
                 for tt in np.linspace(0, 1, 30):
                     rr, cc = B.cell(x0 + (x1 - x0) * tt, y0 + (y1 - y0) * tt)
                     blk = B.occ[L, rr - mrg:rr + mrg + 1, cc - mrg:cc + mrg + 1]
-                    if np.any((blk != 0) & (blk != B.netid[short]) & (blk != pid)):
+                    tb = B.trk[L, rr - mrg:rr + mrg + 1, cc - mrg:cc + mrg + 1]
+                    if np.any((blk != 0) & (blk != B.netid[short]) & ~((blk == pid) & tb)):
                         ok = False
                         break
                 if not ok:
@@ -851,7 +867,9 @@ def main():
             r0, r1, c0, c1 = win
             starts = {(L, r - r0, c - c0) for L, r, c in mine if r0 <= r <= r1 and c0 <= c <= c1}
             ok_st = {s for s in starts if passable[s[0]][s[1], s[2]]}  # 간격을 만족하는 패드 칸에서 출발(가장자리 출발로 이웃 패드 간격 위반 방지)
-            starts = ok_st or starts
+            if not ok_st:  # 이 폭으로는 패드에서 간격을 지키며 나올 수 없다 → 다음(더 가는) 폭 (V-005 RQ-3: VIN 1.5mm 가 U1.2 GND 와 0.155)
+                continue
+            starts = ok_st
             targets = {(L, r - r0, c - c0) for L, r, c in tree_cells if L in layers and r0 <= r <= r1 and c0 <= c <= c1}
             path = B.astar(win, starts, targets, passable, viaok, layers, cap=cap) if starts and targets else None
             if not path:
@@ -946,7 +964,7 @@ def main():
             if p["net"] != "/GND" or p["drill"]:
                 continue
             L = LAYERS.index(p["layers"][0])
-            win = B.window([B.cell(*p["pos"])], 1.6)
+            win = B.window([B.cell(*p["pos"])], 2.4)
             passable, viaok = B.free_maps(win, {gid}, 0.10, VIA["dia"] / 2, [L])
             r0, r1, c0, c1 = win
             starts = {(L, r - r0, c - c0) for L2, r, c in pad_cells(p, [L]) if r0 <= r <= r1 and c0 <= c <= c1}
@@ -982,6 +1000,28 @@ def main():
             B.add_via("/GND", pts[-1], VIA)
             gnd_ok += 1
     print(f"GND 패드 비아 {gnd_ok} · 자리 없음 {gnd_fail} (면 채움에 맡김)")
+    # 3b) GND 이음 비아 (V-005 RQ-2): 외층 GND 채움이 트랙 사이에서 섬으로 갈라져 미연결로 남던 것 — 1.5mm 격자 빈자리마다
+    #     GND 비아를 두어 외층 섬을 In1(GND 전면)에 잇는다. 다른 구리 · 구멍 · 비아 금지 영역 간격은 free_maps 그대로.
+    if "/GND" in B.netid:
+        gid = B.netid["/GND"]
+        win = (0, B.ny - 1, 0, B.nx - 1)
+        _, viaok = B.free_maps(win, {gid}, 0.10, VIA["dia"] / 2, [0, 3])
+        step = int(round(1.5 / G))
+        n_st = 0
+        # 래스터 반올림 여유: 외곽(DRU fab_copper_to_edge 0.40)과 비아 금지 영역(외함 · 구멍 keepout)에서 비아 가장자리까지 0.1 더 띄운다
+        #   (첫 실행: 외곽 0.375 위반 31 · keepout 안 3 — P-003 전면 DRC)
+        de = ndimage.distance_transform_edt(B.occ[0] != -3) * G
+        dh = ndimage.distance_transform_edt(~B.hardvia) * G
+        vr = VIA["dia"] / 2
+        for r in range(step // 2, B.ny, step):
+            for c in range(step // 2, B.nx, step):
+                # de 는 외곽 띠(외곽에서 0.40 − CLR 안쪽까지 -3) 경계로부터 거리 → 외곽까지 = de + (0.40 − CLR)
+                if de[r, c] + (0.40 - CLR) < 0.40 + vr + 0.1 or dh[r, c] < vr + 0.1:
+                    continue
+                if viaok[r, c] and not any(B.trk[L, r, c] for L in range(4)):
+                    B.add_via("/GND", B.xy(r, c), VIA)
+                    n_st += 1
+        print(f"GND 이음 비아 {n_st}")
     for tname, tnets, r in twist_rects:
         info = next((i for i in infos if i["P"] in tnets), None)
         if not info:

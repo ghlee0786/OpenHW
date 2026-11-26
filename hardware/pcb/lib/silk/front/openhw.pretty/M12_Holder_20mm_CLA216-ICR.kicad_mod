@@ -1,0 +1,371 @@
+(footprint "M12_Holder_20mm_CLA216-ICR"
+	(version 20260206)
+	(generator "pcbnew")
+	(generator_version "10.0")
+	(layer "F.Cu")
+	(descr "Commonlands CLA216-ICR M12 holder: 2x NPTH 1.8 at 20.0 spacing (R-007: spacing 20.0, hole ref 1.7; screw M1.6, ISO 273 medium clearance 1.8). Derived from Antmicro ov9281-camera-board antmicro-footprints:Camera_Lens_20mm (ea69666, Apache-2.0); artwork removed; Arducam properties replaced (V-003 8). C-008: courtyard x +-12.45 (ears +-12.2 + 0.25, R-007); sensor pedestal 13.2 sq (M-001d K11, h 0.75, bonded, no copper - O-39) as F.Fab + footprint keepout SENSOR_PEDESTAL.")
+	(tags "M12 S-mount lens holder ICR CLA216 20mm")
+	(property "Reference" "REF"
+		(at -1.2475 8.836 0)
+		(layer "F.SilkS")
+		(hide yes)
+		(uuid "c6a159a9-1f0c-4380-937d-5a3136aa73f4")
+		(effects
+			(font
+				(size 0.7 0.7)
+				(thickness 0.15)
+			)
+			(justify left bottom)
+		)
+	)
+	(property "Value" "M12_Holder_20mm_CLA216-ICR"
+		(at -19 10 0)
+		(layer "F.Fab")
+		(uuid "26f43993-b94a-448f-9678-3caf09b9edf5")
+		(effects
+			(font
+				(size 0.7 0.7)
+				(thickness 0.15)
+			)
+			(justify left bottom)
+		)
+	)
+	(property "Datasheet" "https://commonlands.com/products/ir-cut-off-filter-switcher-m12-cla216"
+		(at 0 0 180)
+		(layer "B.Fab")
+		(hide yes)
+		(uuid "13e44c27-9d92-4064-99dc-d61d0d4412c5")
+		(effects
+			(font
+				(size 1.27 1.27)
+				(thickness 0.15)
+			)
+			(justify mirror)
+		)
+	)
+	(property "Description" "Commonlands CLA216-ICR M12 holder with IR-cut switcher; mounting holes 20.0 apart (R-007, holder hole ref dia 1.7); PCB NPTH 1.8 = ISO 273 medium clearance for M1.6"
+		(at 0 0 180)
+		(layer "B.Fab")
+		(hide yes)
+		(uuid "42ab601b-2ea3-45d3-a3b3-c920eb76ec5c")
+		(effects
+			(font
+				(size 1.27 1.27)
+				(thickness 0.15)
+			)
+			(justify mirror)
+		)
+	)
+	(property "Author" "Antmicro"
+		(at 0 0 180)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "fa90cd6f-b8da-40a3-b7dc-4662fde23271")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "License" "Apache-2.0"
+		(at 0 0 180)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "e62b559c-566b-48af-aed2-fd4182508b46")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "MPN" "CLA216-ICR"
+		(at 0 0 180)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "84b86547-45ed-4b4d-8d62-dea1345a01c9")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "Manufacturer" "Commonlands"
+		(at 0 0 180)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "03aa5464-4ae7-474e-8f39-6fe996d73894")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(sheetname "/")
+	(sheetfile "ov9281-dual-camera-board.kicad_sch")
+	(duplicate_pad_numbers_are_jumpers no)
+	(fp_line
+		(start -10 -2)
+		(end -7.6 -2)
+		(stroke
+			(width 0.15)
+			(type solid)
+		)
+		(layer "Dwgs.User")
+		(uuid "2f543e4c-c31c-4e74-a0fe-748e58b1f228")
+	)
+	(fp_line
+		(start -10 2)
+		(end -7.6 2)
+		(stroke
+			(width 0.15)
+			(type solid)
+		)
+		(layer "Dwgs.User")
+		(uuid "6721d928-6daf-4aa5-a28f-82eb6b9ad383")
+	)
+	(fp_line
+		(start -8.7 -8.7)
+		(end 8.7 -8.7)
+		(stroke
+			(width 0.15)
+			(type solid)
+		)
+		(layer "Dwgs.User")
+		(uuid "9fdddb13-810d-4da8-b6fe-ff285df1b13f")
+	)
+	(fp_line
+		(start -8.7 8.7)
+		(end -8.7 -8.7)
+		(stroke
+			(width 0.15)
+			(type solid)
+		)
+		(layer "Dwgs.User")
+		(uuid "bb7963e2-4685-49b3-9e06-4555af5caaef")
+	)
+	(fp_line
+		(start 8.7 -8.7)
+		(end 8.7 8.7)
+		(stroke
+			(width 0.15)
+			(type solid)
+		)
+		(layer "Dwgs.User")
+		(uuid "946b97b8-c674-4597-abf4-c54ab36693b1")
+	)
+	(fp_line
+		(start 8.7 8.7)
+		(end -8.7 8.7)
+		(stroke
+			(width 0.15)
+			(type solid)
+		)
+		(layer "Dwgs.User")
+		(uuid "696c3c0c-27d5-45d9-aa65-72216d49178a")
+	)
+	(fp_line
+		(start 10 -2)
+		(end 7.6 -2)
+		(stroke
+			(width 0.15)
+			(type solid)
+		)
+		(layer "Dwgs.User")
+		(uuid "21bf4f2a-3ea7-45bc-a29f-d63a2577e999")
+	)
+	(fp_line
+		(start 10 2)
+		(end 7.6 2)
+		(stroke
+			(width 0.15)
+			(type solid)
+		)
+		(layer "Dwgs.User")
+		(uuid "bef9ff3d-4520-484c-a0c0-013d9d080205")
+	)
+	(fp_arc
+		(start -10 2)
+		(mid -12 0)
+		(end -10 -2)
+		(stroke
+			(width 0.15)
+			(type solid)
+		)
+		(layer "Dwgs.User")
+		(uuid "4e3ead22-0ce6-4ef9-a5dd-1666f13ce6cd")
+	)
+	(fp_arc
+		(start 10 -2)
+		(mid 12 0)
+		(end 10 2)
+		(stroke
+			(width 0.15)
+			(type solid)
+		)
+		(layer "Dwgs.User")
+		(uuid "22651264-ba07-4fb4-99cc-482bf747742c")
+	)
+	(fp_circle
+		(center 0 0)
+		(end 4 0)
+		(stroke
+			(width 0.15)
+			(type solid)
+		)
+		(fill no)
+		(layer "Dwgs.User")
+		(uuid "70162c48-f9f0-4e99-9bff-df04caf6b31b")
+	)
+	(fp_circle
+		(center 0 0)
+		(end 7 0)
+		(stroke
+			(width 0.15)
+			(type solid)
+		)
+		(fill no)
+		(layer "Dwgs.User")
+		(uuid "c0ca38c4-86ce-420e-998e-2a2b7f9703bf")
+	)
+	(fp_circle
+		(center 0 0)
+		(end 7.85 0)
+		(stroke
+			(width 0.15)
+			(type solid)
+		)
+		(fill no)
+		(layer "Dwgs.User")
+		(uuid "f41c58da-63b2-42b1-b036-685ef2ba1390")
+	)
+	(fp_circle
+		(center -10 0)
+		(end -8.4 0)
+		(stroke
+			(width 0.05)
+			(type solid)
+		)
+		(fill no)
+		(layer "B.CrtYd")
+		(uuid "ca6d03bb-422a-408c-aee8-e974b57a07a1")
+	)
+	(fp_circle
+		(center 10 0)
+		(end 11.5 0)
+		(stroke
+			(width 0.05)
+			(type solid)
+		)
+		(fill no)
+		(layer "B.CrtYd")
+		(uuid "edabf243-504d-4b8e-8a6f-c6d08fc77916")
+	)
+	(fp_rect
+		(start -12.45 -9.5)
+		(end 12.45 9.5)
+		(stroke
+			(width 0.05)
+			(type solid)
+		)
+		(fill no)
+		(layer "F.CrtYd")
+		(uuid "339a4b4c-0836-458b-a8de-51b60b247174")
+	)
+	(fp_rect
+		(start -6.6 -6.6)
+		(end 6.6 6.6)
+		(stroke
+			(width 0.1)
+			(type dash)
+		)
+		(fill no)
+		(layer "F.Fab")
+		(uuid "5ae19542-014b-49da-9646-776789f35a80")
+	)
+	(fp_text user "${REFERENCE}"
+		(at -13.5 11.65 0)
+		(layer "F.Fab")
+		(uuid "09c356bd-43e3-4885-bf25-5605d337e156")
+		(effects
+			(font
+				(size 0.7 0.7)
+				(thickness 0.15)
+			)
+			(justify left bottom)
+		)
+	)
+	(fp_text user "Author: Antmicro"
+		(at -13.5 12.85 0)
+		(layer "F.Fab")
+		(uuid "2df34921-673e-45a9-ab8c-63e6a6af4051")
+		(effects
+			(font
+				(size 0.7 0.7)
+				(thickness 0.15)
+			)
+			(justify left bottom)
+		)
+	)
+	(fp_text user "License: Apache-2.0"
+		(at -13.5 14.05 0)
+		(layer "F.Fab")
+		(uuid "088fbe06-0a4e-429c-9b22-069a71f65a44")
+		(effects
+			(font
+				(size 0.7 0.7)
+				(thickness 0.15)
+			)
+			(justify left bottom)
+		)
+	)
+	(pad "" np_thru_hole circle
+		(at -10 0)
+		(size 1.8 1.8)
+		(drill 1.8)
+		(layers "*.Cu" "*.Mask")
+		(uuid "63c84378-44a4-4914-8772-f1a3d56270d6")
+	)
+	(pad "" np_thru_hole circle
+		(at 10 0)
+		(size 1.8 1.8)
+		(drill 1.8)
+		(layers "*.Cu" "*.Mask")
+		(uuid "1e419265-a8d7-4963-8581-0e03b96ffab8")
+	)
+	(zone
+		(layer "F.Cu")
+		(uuid "4f6f7ac5-f591-411b-9a53-25415eb0986d")
+		(name "SENSOR_PEDESTAL")
+		(hatch edge 0.5)
+		(connect_pads
+			(clearance 0)
+		)
+		(min_thickness 0.25)
+		(keepout
+			(tracks allowed)
+			(vias allowed)
+			(pads allowed)
+			(copperpour allowed)
+			(footprints not_allowed)
+		)
+		(placement
+			(enabled no)
+			(sheetname "")
+		)
+		(fill
+			(thermal_gap 0.5)
+			(thermal_bridge_width 0.5)
+			(island_removal_mode 0)
+		)
+		(polygon
+			(pts
+				(xy -6.6 -6.6) (xy 6.6 -6.6) (xy 6.6 6.6) (xy -6.6 6.6)
+			)
+		)
+	)
+	(embedded_fonts no)
+)

@@ -17,6 +17,28 @@ def V(p):
     return pcbnew.VECTOR2I(MM(p[0]), MM(p[1]))
 
 
+def split_at(t, rects):
+    """V-005 RQ-7: DP_TWIST 영역(같은 층) 경계를 넘는 트랙을 (경계 − 선폭/2 − 0.01) 선에서 나눈다.
+    안쪽 조각은 영역 안에 다 들어(enclosedByArea) 꼬임 규칙을, 바깥 조각은 일반 규칙을 받는다."""
+    (ax, ay), (bx, by) = t["a"], t["b"]
+    ts = {0.0, 1.0}
+    m = t["w"] / 2 + 0.01
+    for L, (x0, y0, x1, y1) in rects:
+        if L != t["layer"]:
+            continue
+        x0, y0, x1, y1 = x0 + m, y0 + m, x1 - m, y1 - m
+        for c, p0, d, lo, hi, q0, e in ((x0, ax, bx - ax, y0, y1, ay, by - ay), (x1, ax, bx - ax, y0, y1, ay, by - ay),
+                                         (y0, ay, by - ay, x0, x1, ax, bx - ax), (y1, ay, by - ay, x0, x1, ax, bx - ax)):
+            if abs(d) < 1e-9:
+                continue
+            u = (c - p0) / d
+            if 1e-4 < u < 1 - 1e-4 and lo - 1e-6 <= q0 + u * e <= hi + 1e-6:
+                ts.add(u)
+    us = sorted(ts)
+    pt = [(ax + u * (bx - ax), ay + u * (by - ay)) for u in us]
+    return list(zip(pt[:-1], pt[1:]))
+
+
 def main():
     path, rpath = sys.argv[1], sys.argv[2]
     b = pcbnew.LoadBoard(path)
@@ -41,14 +63,16 @@ def main():
             ol.Append(MM(x), MM(y))
         b.Add(z)
     nets = {n: b.FindNet(n) for n in {t["net"] for t in r["tracks"]} | {v["net"] for v in r["vias"]} | {"/GND"}}
+    twist = [(a["layer"], a["rect"]) for a in r.get("areas", []) if a["name"] == "DP_TWIST"]
     for t in r["tracks"]:
-        s = pcbnew.PCB_TRACK(b)
-        s.SetStart(V(t["a"]))
-        s.SetEnd(V(t["b"]))
-        s.SetWidth(MM(t["w"]))
-        s.SetLayer(CU[t["layer"]])
-        s.SetNet(nets[t["net"]])
-        b.Add(s)
+        for pa, pb in split_at(t, twist):
+            s = pcbnew.PCB_TRACK(b)
+            s.SetStart(V(pa))
+            s.SetEnd(V(pb))
+            s.SetWidth(MM(t["w"]))
+            s.SetLayer(CU[t["layer"]])
+            s.SetNet(nets[t["net"]])
+            b.Add(s)
     for v in r["vias"]:
         s = pcbnew.PCB_VIA(b)
         s.SetPosition(V(v["pos"]))
