@@ -1,8 +1,8 @@
 (export
 	(version "E")
 	(design
-		(source "C:\\workspace_python\\OpenHW\\.harness-worktrees\\t-20261127-062731-6d2e\\hardware\\schematic\\front\\front.kicad_sch")
-		(date "2026-11-27T06:28:42")
+		(source "C:\\workspace_python\\OpenHW\\.harness-worktrees\\t-20261127-081137-acef\\hardware\\schematic\\front\\front.kicad_sch")
+		(date "2026-11-27T08:13:09")
 		(tool "Eeschema 10.0.8")
 		(sheet
 			(number "1")
@@ -11,7 +11,7 @@
 			(title_block
 				(title "OpenHW front (sensor) board - reCamera Core 2002 J1 mate")
 				(company "OpenHW PoC")
-				(rev "C-021")
+				(rev "C-022")
 				(date "2026-11-27")
 				(source "front.kicad_sch")
 				(comment
@@ -1986,14 +1986,14 @@
 		(comp
 			(ref "J2")
 			(value "CLA216 lead solder pads 2P 2.54mm")
-			(footprint "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical")
+			(footprint "openhw:CLA216_ICR_SolderPads_1x02_P2.54mm")
 			(fields
 				(field
 					(name "MPN") "- (solder pads only, no header fitted; excluded from BOM/CPL)")
 				(field
 					(name "Note") "C-016/O-84: CLA216 leads soldered directly (connector family not identifiable from official data). pin1 (square pad) = ICR_A = red(+) assumed: IN1=1 pulse -> filter open (night), IN2=1 -> closed (day); polarity check on hardware")
 				(field
-					(name "Footprint") "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical")
+					(name "Footprint") "openhw:CLA216_ICR_SolderPads_1x02_P2.54mm")
 				(field
 					(name "Datasheet")
 				)

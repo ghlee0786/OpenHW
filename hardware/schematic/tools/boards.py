@@ -166,7 +166,7 @@ f.add('U2', 'Driver_Motor:DRV8837', 'DRV8837DSGR', 'openhw:Texas_DSG0008A_WSON-8
 R(f, 'R1', '10k', 'FRONT_2V8', 'ICR_NSLEEP')
 C(f, 'C3', '10uF', 'VIN', 'GND', 'Capacitor_SMD:C_0603_1608Metric'); C(f, 'C4', '100nF', 'VIN', 'GND'); C(f, 'C5', '100nF', 'FRONT_2V8', 'GND')
 R(f, 'R2', '100k', 'IR_CUT', 'GND'); R(f, 'R3', '100k', 'WH_PWM', 'GND')
-f.add('J2', 'Connector_Generic:Conn_01x02', 'CLA216 lead solder pads 2P 2.54mm', 'Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical',
+f.add('J2', 'Connector_Generic:Conn_01x02', 'CLA216 lead solder pads 2P 2.54mm', 'openhw:CLA216_ICR_SolderPads_1x02_P2.54mm',
       {'1': 'ICR_A', '2': 'ICR_B'}, in_bom=False,
       fields={'MPN': '- (solder pads only, no header fitted; excluded from BOM/CPL)', 'Note': 'C-016/O-84: CLA216 leads soldered directly (connector family not identifiable from official data). pin1 (square pad) = ICR_A = red(+) assumed: IN1=1 pulse -> filter open (night), IN2=1 -> closed (day); polarity check on hardware'})
 f.add('MH1', 'Mechanical:MountingHole', 'CLA216-ICR M12 holder', 'openhw:M12_Holder_20mm_CLA216-ICR', {}, fields={'MPN': 'Commonlands CLA216-ICR'})
