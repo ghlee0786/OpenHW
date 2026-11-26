@@ -1,0 +1,18 @@
+* SIM-001b
+Vdd vdd 0 1.71
+Rp vdd bus 4935.0
+Cb bus 0 6.549559496252637e-11
+Vd d 0 PULSE(1 0 1u 1n 1n 10u 20u)
+Sd bus 0 d 0 sod
+.model sod sw vt=0.5 vh=0.01 ron=50 roff=1g
+
+.options reltol=1e-3 abstol=1e-9 vntol=1e-6 itl4=200
+.tran 1n 12u 0 2n uic
+.control
+set wr_singlescale
+set wr_vecnames
+run
+wrdata out.txt v(bus)
+quit
+.endc
+.end
