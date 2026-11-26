@@ -54,6 +54,7 @@
 | C-010 | orch (O-46) | schematic t18z | 캐리어 RJ45 쪽 MDI P/N 맞바꿈(ESD 뒤 넷), 계약 v1.9 | hardware/schematic/carrier (C-002 레인) | 의도 차이, ERC 0, 커밋 | completed — 21175f3 (계약 v1.9 f6d188e), J5 핀 1·2·3·6 = TXN·TXP·RXN·RXP, orch 재실행 carrier ERC 0. 회로도 배선 기준 21175f3 |
 | R-013 | orch (O-46) | research t18s | SG2002 EPHY 10BASE-T 자동 극성·Auto MDI-X 근거 | docs/research/r013-ephy-polarity.md | 근거(쪽/줄), 커밋 | completed — 레인 t-20261126-222823-c868 커밋 5e456c5. Auto MDI-X 지원(TRM 18.2.2), 10BASE-T 자동 극성 근거 없음 → O-47 |
 | C-011 | orch (O-47) | schematic t18z | C-010 되돌림(git revert 21175f3), 계약 v1.10 | hardware/schematic/carrier (C-002 레인) | c653eac와 차이 0, ERC 0, 커밋 | completed — 32e9ed9(revert)·83728da (계약 v1.10 4d5d49e), orch netcompare 재실행 차이 0(99/95·85/66)·carrier ERC 0. 회로도 배선 기준 83728da |
+| F-004b | orch (O-50) | firmware t18w | 원인 J 회피 재변환·호스트 모의 검증 1회(같은 원인 4회째, 사용자 허가) — 합격 기준 먼저 기록 | firmware/** (F-004 레인) | 기준 커밋, 합격 시 해시·시험·빌드 / 불합격 시 D 마감 근거 | running |
 
 ## 운영 변경 (2026-11-26, 사용자 지시 · lead 전달)
 - 의견 묻지 않고 진행: 사람 쪽 미정값은 D-003(lead 레인 t-20261126-144135-5470 docs/decisions/D-003-working-defaults.md, 커밋 8ac5ce5) 값으로 확정 취급. 새 갈림길은 기본값 선택 → 아래 「분기 기록」에 분기점·선택·이유·차선책 → lead 요약 보고. 문제 시 해당 행으로 돌아가 차선책.
@@ -115,6 +116,7 @@
 | O-47 | O-46 재판단 (R-013: EPHY 10BASE-T 자동 극성 근거 없음, 자동 협상 FLP도 극성 의존, O-8 복귀) | O-46 차선 채택: 회로도 표준 배정으로 되돌리고(C-011) PCB에서 ESD→RJ45 약 5mm 구간 쌍 비아로 P/N 교차, 그 구간 한정 규칙 예외 | 기능 위험(링크 실패) 제거가 국소 규칙 예외보다 중요 | 첫 보드 T1~T4 링크 시험으로 확인 후 회로도 반전 |
 | O-48 | P-003 배선기가 Claude 백그라운드 셸에서 메모리 압박으로 강제 종료(b7ab29a) | F-002 방식: hc 칸 1개에서 일반 프로그램 실행·포그라운드 hc wait·단계별 중간 저장, pcb에 칸 1개 허용 | 같은 원인 반복 방지(검증된 방법) | 보드별로 나눠 짧게 실행 |
 | O-49 | USB 쌍 비결합 21.5mm > 12 (시험점 가지선·단선·보정 굴곡) | TP8·TP9를 USB 선 위 바로 붙인 패드로(가지선 0), 상한 12mm 유지 | 규칙 완화 없이 원인 제거 | V-005에서 상한 재검토 |
+| O-50 | 사용자 결정 2026-11-27(lead): F-004 모델 경로 A 허가 | 원인 J 회피 재변환 1회만, 합격 기준(ONNX 대비 점수 차·IoU·검출 수)을 결과 전에 기록, 실패 시 D로 마감(5회째 없음). 네트워크 노출 닫힘 유지 | 사용자 허가 범위 그대로 | D: 모델 없이 마감·bring-up 뒤로 |
 
 ## 발주 패키지 직전 정리 목록
 - [ ] 회로도 표시 겹침: 캐리어 J2 옆 12V_IN_RAW 라벨, D3 PWR_LED 라벨, J1 품번 문자 (O-32)
