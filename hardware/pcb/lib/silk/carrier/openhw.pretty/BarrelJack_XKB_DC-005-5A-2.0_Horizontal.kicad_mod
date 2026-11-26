@@ -5,10 +5,10 @@
 	(layer "F.Cu")
 	(descr "XKB DC-005-5A-2.0 DC jack 5.5x2.1, THT right angle. Pin spacing per XKB drawing Rev A1 as read by V-004 R6: 1-2 5.90, pin 3 at 3.0 / 4.70, slots 1.0x3.5. Derived from KiCad Connector_BarrelJack:BarrelJack_Horizontal (body outline kept, verify vs XKB drawing). Body per XKB X-DC-005-5A-2.0 Rev A1 2025-04-22: 14.0 x 9.0, front -13.6, rear +0.4 (R-009). 3D model is the KiCad generic 6.0-pitch jack (substitute). Silk keeps 0.2 inside a board edge at body front x=-13.6 (C-008).")
 	(tags "Power Jack")
-	(property "Reference" "J2"
+	(property "Reference" "REF**"
 		(at -8.45 5.75 0)
-		(layer "F.Fab")
-		(uuid "fc891d9b-bd53-4bd1-a9b4-b2b72f95a0bc")
+		(layer "F.SilkS")
+		(uuid "9bf4c2b1-46be-40db-91e7-9fc26926aecf")
 		(effects
 			(font
 				(size 1 1)
@@ -16,10 +16,10 @@
 			)
 		)
 	)
-	(property "Value" "DC-005-5A-2.0"
+	(property "Value" "BarrelJack_XKB_DC-005-5A-2.0_Horizontal"
 		(at -6.2 -5.5 0)
 		(layer "F.Fab")
-		(uuid "e365aca7-8f4a-4dfb-9c4a-4f191ca34682")
+		(uuid "36cd9c58-69dd-4a8e-b29b-80a4380254e8")
 		(effects
 			(font
 				(size 1 1)
@@ -32,7 +32,7 @@
 		(unlocked yes)
 		(layer "F.Fab")
 		(hide yes)
-		(uuid "0220985a-c2a2-4261-9941-aaf75d8a2f9d")
+		(uuid "fa324262-db12-4de0-a0d2-f47dbc316e7b")
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -45,31 +45,7 @@
 		(unlocked yes)
 		(layer "F.Fab")
 		(hide yes)
-		(uuid "100932e0-d384-448a-a62e-cdeeb9fa9b8e")
-		(effects
-			(font
-				(size 1.27 1.27)
-				(thickness 0.15)
-			)
-		)
-	)
-	(property "MPN" "XKB DC-005-5A-2.0 (LCSC C381116)"
-		(at 0 0 0)
-		(layer "F.Fab")
-		(hide yes)
-		(uuid "f2db3772-01de-41eb-98ca-3bc73f504f06")
-		(effects
-			(font
-				(size 1.27 1.27)
-				(thickness 0.15)
-			)
-		)
-	)
-	(property "Note" "C-004 R6: dedicated footprint 1-2 5.90, pin3 3.0/4.70, slot 1.0x3.5"
-		(at 0 0 0)
-		(layer "F.Fab")
-		(hide yes)
-		(uuid "efbe1afc-8a9a-4ca5-877c-7d3e731607c7")
+		(uuid "e2934d77-4f75-422f-87da-6b5ca4b814db")
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -79,66 +55,16 @@
 	)
 	(attr through_hole)
 	(duplicate_pad_numbers_are_jumpers no)
-	(fp_line
-		(start -13.3 4.61)
-		(end -5.38 4.61)
-		(stroke
-			(width 0.15)
-			(type solid)
-		)
-		(layer "F.SilkS")
-		(uuid "195c81ed-84fb-4f42-969f-39c652e2c355")
-	)
-	(fp_line
-		(start -0.619824 4.61)
-		(end 0.51 4.61)
-		(stroke
-			(width 0.15)
-			(type solid)
-		)
-		(layer "F.SilkS")
-		(uuid "5ef6652b-7a16-44e3-a23c-ad35c0cf1496")
-	)
-	(fp_line
-		(start 0.51 -4.489464)
-		(end 0.51 -2.380089)
-		(stroke
-			(width 0.15)
-			(type solid)
-		)
-		(layer "F.SilkS")
-		(uuid "b2b8472c-ff4d-4808-8cac-70292919f6ba")
-	)
-	(fp_line
-		(start 0.51 2.380089)
-		(end 0.51 4.61)
-		(stroke
-			(width 0.15)
-			(type solid)
-		)
-		(layer "F.SilkS")
-		(uuid "d7f9c82d-07e4-4564-9505-658d8b1b94f7")
-	)
-	(fp_rect
-		(start -13.85 -4.75)
-		(end 2 6.7)
-		(stroke
-			(width 0.05)
-			(type solid)
-		)
-		(fill no)
-		(layer "F.CrtYd")
-		(uuid "5a553ede-cc11-4a03-ac67-e35d2639abaf")
-	)
-	(fp_line
-		(start -13.3 -4.61)
-		(end 0.51 -4.61)
-		(stroke
-			(width 0.15)
-			(type solid)
-		)
+	(fp_text user "${REFERENCE}"
+		(at -3 -2.95 0)
 		(layer "F.Fab")
-		(uuid "113c3d1c-a3cd-49c9-b2ef-1676cae8ba72")
+		(uuid "81e747e0-4946-4f17-a33f-e0465332937e")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
 	)
 	(fp_rect
 		(start -13.6 -4.5)
@@ -149,44 +75,84 @@
 		)
 		(fill no)
 		(layer "F.Fab")
-		(uuid "b5bd4a02-d020-4726-b7ed-124ea4cbef61")
+		(uuid "b55ac6f1-ea8d-4394-86d6-47eb384637f0")
 	)
-	(fp_text user "${REFERENCE}"
-		(at -3 -2.95 0)
-		(layer "F.Fab")
-		(uuid "4ac0a9e4-cef3-44ea-abb3-7a8913bf6ce7")
-		(effects
-			(font
-				(size 1 1)
-				(thickness 0.15)
-			)
+	(fp_rect
+		(start -13.85 -4.75)
+		(end 2.0 6.7)
+		(stroke
+			(width 0.05)
+			(type solid)
 		)
+		(fill no)
+		(layer "F.CrtYd")
+		(uuid "2449a5ea-ba4a-4eaa-9a02-9999e733925e")
+	)
+	(fp_line
+		(start -13.3 4.61)
+		(end -5.38 4.61)
+		(stroke
+			(width 0.15)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(uuid "a2953dd9-dbe5-4c3b-b827-41bc91649005")
+	)
+	(fp_line
+		(start -0.619824 4.61)
+		(end 0.51 4.61)
+		(stroke
+			(width 0.15)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(uuid "36da7b35-ca68-45da-ba41-b48a8e3facdd")
+	)
+	(fp_line
+		(start 0.51 -4.489464)
+		(end 0.51 -2.380089)
+		(stroke
+			(width 0.15)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(uuid "0ef1b6e0-7861-4f8c-a541-e20e7d4ecb58")
+	)
+	(fp_line
+		(start 0.51 2.380089)
+		(end 0.51 4.61)
+		(stroke
+			(width 0.15)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(uuid "75568b50-7090-4de5-b306-799d49290268")
 	)
 	(pad "1" thru_hole rect
 		(at 0 0)
 		(size 3.5 4.2)
-		(drill oval 1 3.5)
+		(drill oval 1.0 3.5)
 		(layers "*.Cu" "*.Mask")
 		(remove_unused_layers no)
-		(uuid "c8d6c75b-6699-4140-8a6a-8c85f8f648f7")
+		(uuid "612a7b3c-694b-4b8c-9db9-df1de65505ed")
 	)
 	(pad "2" thru_hole roundrect
 		(at -5.9 0)
-		(size 3 4.2)
-		(drill oval 1 3.5)
+		(size 3.0 4.2)
+		(drill oval 1.0 3.5)
 		(layers "*.Cu" "*.Mask")
 		(remove_unused_layers no)
 		(roundrect_rratio 0.25)
-		(uuid "43c9b535-f4c6-472c-be7e-f5b7d09ee8e4")
+		(uuid "7d51c881-82dc-4cee-accc-b6ff7fba8db5")
 	)
 	(pad "3" thru_hole roundrect
-		(at -3 4.7)
+		(at -3.0 4.7)
 		(size 4.2 3.5)
-		(drill oval 3.5 1)
+		(drill oval 3.5 1.0)
 		(layers "*.Cu" "*.Mask")
 		(remove_unused_layers no)
 		(roundrect_rratio 0.25)
-		(uuid "c8cfd840-d662-424c-b0b4-dd99bf9ccfbb")
+		(uuid "e6fa3427-1bd4-4771-845f-bf8f39594a3e")
 	)
 	(embedded_fonts no)
 	(model "${KICAD10_3DMODEL_DIR}/Connector_BarrelJack.3dshapes/BarrelJack_Horizontal.step"

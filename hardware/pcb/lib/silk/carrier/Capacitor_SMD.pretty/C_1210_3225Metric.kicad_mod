@@ -1,14 +1,12 @@
 (footprint "C_1210_3225Metric"
 	(version 20260206)
-	(generator "pcbnew")
-	(generator_version "10.0")
+	(generator "kicad-footprint-generator")
 	(layer "F.Cu")
 	(descr "Capacitor SMD 1210 (3225 Metric), square (rectangular) end terminal, IPC-7351 nominal, (Body size source: IPC-SM-782 page 76, https://www.pcb-3d.com/wordpress/wp-content/uploads/ipc-sm-782a_amendment_1_and_2.pdf)")
 	(tags "capacitor")
-	(property "Reference" "REF"
+	(property "Reference" "REF**"
 		(at 0 -2.3 0)
 		(layer "F.SilkS")
-		(uuid "2c427aee-6ef1-43e0-81ac-50f668fc9d55")
 		(effects
 			(font
 				(size 1 1)
@@ -19,7 +17,6 @@
 	(property "Value" "C_1210_3225Metric"
 		(at 0 2.3 0)
 		(layer "F.Fab")
-		(uuid "40420e12-6872-4d4b-9f6d-d3a94aa5dd94")
 		(effects
 			(font
 				(size 1 1)
@@ -27,33 +24,10 @@
 			)
 		)
 	)
-	(property "Datasheet" ""
-		(at 0 0 0)
-		(layer "F.Fab")
-		(hide yes)
-		(uuid "2654578b-300b-495e-9258-9b853a463cc7")
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-		)
-	)
-	(property "Description" ""
-		(at 0 0 0)
-		(layer "F.Fab")
-		(hide yes)
-		(uuid "21989f1a-fffd-4088-b33b-955cfaa977c5")
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-		)
-	)
 	(property "KiLib_Generator" "SMD_2terminal_chip_molded"
 		(at 0 0 0)
 		(layer "F.SilkS")
 		(hide yes)
-		(uuid "59378eeb-a7b0-487f-99a0-b73e3d247ac3")
 		(effects
 			(font
 				(size 1 1)
@@ -71,7 +45,7 @@
 			(type solid)
 		)
 		(layer "F.SilkS")
-		(uuid "31473312-da58-47b7-8d2e-56402a9f3773")
+		(uuid "3c4e636e-ee38-4513-a478-c8d6233456c9")
 	)
 	(fp_line
 		(start -0.671181 1.36)
@@ -81,7 +55,7 @@
 			(type solid)
 		)
 		(layer "F.SilkS")
-		(uuid "0c2f408a-0fb8-4f89-bff2-e4b4bd44fedd")
+		(uuid "2a32cdf6-99f4-4655-a43f-b62e03e9fee6")
 	)
 	(fp_rect
 		(start -2.3 -1.6)
@@ -92,7 +66,6 @@
 		)
 		(fill no)
 		(layer "F.CrtYd")
-		(uuid "4b4d1646-3f9b-4fcc-859c-0f22c5a29170")
 	)
 	(fp_rect
 		(start -1.6 -1.25)
@@ -103,12 +76,10 @@
 		)
 		(fill no)
 		(layer "F.Fab")
-		(uuid "b3bff7e0-99a3-4798-afc1-4203ff06c184")
 	)
 	(fp_text user "${REFERENCE}"
 		(at 0 0 0)
 		(layer "F.Fab")
-		(uuid "63baeb97-af37-4a72-99ca-2ab4d6cd8ffa")
 		(effects
 			(font
 				(size 0.8 0.8)
@@ -121,14 +92,12 @@
 		(size 1.15 2.7)
 		(layers "F.Cu" "F.Mask" "F.Paste")
 		(roundrect_rratio 0.217391)
-		(uuid "32e98be5-4dae-4368-8ddd-fe69c8518d33")
 	)
 	(pad "2" smd roundrect
 		(at 1.475 0)
 		(size 1.15 2.7)
 		(layers "F.Cu" "F.Mask" "F.Paste")
 		(roundrect_rratio 0.217391)
-		(uuid "97efdaf6-0563-4273-b466-4c7b4b9aa2e2")
 	)
 	(embedded_fonts no)
 	(model "${KICAD10_3DMODEL_DIR}/Capacitor_SMD.3dshapes/C_1210_3225Metric.step"

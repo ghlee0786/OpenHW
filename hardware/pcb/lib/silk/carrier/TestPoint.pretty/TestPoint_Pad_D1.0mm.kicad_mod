@@ -5,10 +5,10 @@
 	(layer "F.Cu")
 	(descr "SMD pad as test Point, diameter 1.0mm")
 	(tags "test point SMD pad")
-	(property "Reference" "REF"
+	(property "Reference" "REF**"
 		(at 0 -1.448 0)
 		(layer "F.SilkS")
-		(uuid "4da2d09f-0e3c-41ae-9e7a-2f0e7637a3a4")
+		(uuid "ed08342a-eaee-43e9-b96e-1dd00b47763e")
 		(effects
 			(font
 				(size 1 1)
@@ -19,7 +19,7 @@
 	(property "Value" "TestPoint_Pad_D1.0mm"
 		(at 0 1.55 0)
 		(layer "F.Fab")
-		(uuid "e16e87a5-7135-4a2c-814d-77bca9dbd8b2")
+		(uuid "a41410ba-6764-40d3-8271-3889cd1f68dc")
 		(effects
 			(font
 				(size 1 1)
@@ -32,7 +32,7 @@
 		(unlocked yes)
 		(layer "F.Fab")
 		(hide yes)
-		(uuid "34a4b7d3-35b5-445a-9c4e-13d0c841288c")
+		(uuid "bbd00a64-0ad7-4134-9e20-451eedc76ac1")
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -45,7 +45,7 @@
 		(unlocked yes)
 		(layer "F.Fab")
 		(hide yes)
-		(uuid "fd417d9a-85fb-41b9-b7dd-df381e173b92")
+		(uuid "a133e317-3bd7-4ca7-93e3-03b03f97dc95")
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -64,23 +64,12 @@
 		)
 		(fill no)
 		(layer "F.CrtYd")
-		(uuid "3a7a5bc8-88f5-45e1-96ce-9b7e2aec6cf7")
-	)
-	(fp_circle
-		(center 0 0)
-		(end 0 0.7)
-		(stroke
-			(width 0.15)
-			(type solid)
-		)
-		(fill no)
-		(layer "F.Fab")
-		(uuid "f8682d77-9ce0-4d4c-a71f-1f82443a4d5f")
+		(uuid "f02f025d-d308-4e0d-bc6c-e230724bf915")
 	)
 	(fp_text user "${REFERENCE}"
 		(at 0 -1.45 0)
 		(layer "F.Fab")
-		(uuid "7a663de7-ebf6-4f1f-92dd-987506e43f68")
+		(uuid "ecb9d95d-c3e5-4a80-b7be-d742b8cad331")
 		(effects
 			(font
 				(size 1 1)
@@ -92,7 +81,7 @@
 		(at 0 0)
 		(size 1 1)
 		(layers "F.Cu" "F.Mask")
-		(uuid "cd172515-6073-4074-8400-0290da7a7418")
+		(uuid "bab732e9-e79a-410d-8a2b-e7d9e8d299bb")
 	)
 	(embedded_fonts no)
 )

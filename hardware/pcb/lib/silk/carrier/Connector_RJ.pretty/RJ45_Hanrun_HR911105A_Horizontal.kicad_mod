@@ -5,10 +5,10 @@
 	(layer "F.Cu")
 	(descr "1 Port RJ45 8P8C receptacle, shielded, with magnetics, through hole, 2 LEDs, tab down, http://www.hanrun.com/public/upload/down/2020/09-11/cc11be56d66bb63d5f1eeb85492439c0.pdf")
 	(tags "RJ45 Magjack ethernet")
-	(property "Reference" "REF"
+	(property "Reference" "REF**"
 		(at 4.44 -5 0)
 		(layer "F.SilkS")
-		(uuid "f6278493-bc21-46c4-a185-b5d41be64134")
+		(uuid "52ee1736-ce5d-46c6-a5b2-1e50bd721285")
 		(effects
 			(font
 				(size 1 1)
@@ -19,7 +19,7 @@
 	(property "Value" "RJ45_Hanrun_HR911105A_Horizontal"
 		(at 4.44 18.5 0)
 		(layer "F.Fab")
-		(uuid "18aedbcd-4a43-4d17-8a35-b44551e5b78a")
+		(uuid "2a234c9b-1fe2-448b-9a78-15320e1a25a8")
 		(effects
 			(font
 				(size 1 1)
@@ -32,7 +32,7 @@
 		(unlocked yes)
 		(layer "F.Fab")
 		(hide yes)
-		(uuid "f0100f33-56cc-4167-91c2-615145c27389")
+		(uuid "987d3197-8215-4739-bc2c-13047c747c75")
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -45,7 +45,7 @@
 		(unlocked yes)
 		(layer "F.Fab")
 		(hide yes)
-		(uuid "9da3e672-d064-4a4a-b044-18b54cb2e14b")
+		(uuid "fd777f5a-418c-45a4-b734-6dee37fdb85b")
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -63,7 +63,7 @@
 			(type default)
 		)
 		(layer "F.SilkS")
-		(uuid "39ee1dc6-33c6-41f4-9f4a-5081d1be17a5")
+		(uuid "e44d54f8-9d09-4d18-bf97-4a6971cd5479")
 	)
 	(fp_line
 		(start -3.69 -4.15)
@@ -73,7 +73,7 @@
 			(type solid)
 		)
 		(layer "F.SilkS")
-		(uuid "d02d8eb1-c121-4a4c-8ddc-02afbaec8cc5")
+		(uuid "3bfd815e-869e-44a6-8f40-9d08846cf586")
 	)
 	(fp_line
 		(start -3.69 -4.15)
@@ -83,7 +83,7 @@
 			(type solid)
 		)
 		(layer "F.SilkS")
-		(uuid "e87c8cd3-e7a8-41d8-8126-060120e7c394")
+		(uuid "6e6959ee-f62f-4740-86a5-791f1b56fe85")
 	)
 	(fp_line
 		(start -3.69 4.93)
@@ -93,7 +93,7 @@
 			(type solid)
 		)
 		(layer "F.SilkS")
-		(uuid "26e5b0f4-515e-44ac-a55d-2caf4fadf848")
+		(uuid "c5d29902-85c0-408f-980b-9e3618b1618c")
 	)
 	(fp_line
 		(start 12.57 -4.15)
@@ -103,7 +103,7 @@
 			(type solid)
 		)
 		(layer "F.SilkS")
-		(uuid "e25c42c7-c95a-4fcb-ba94-c9873e773512")
+		(uuid "1b4503d7-3bc8-48a5-b70d-34235a3426c3")
 	)
 	(fp_line
 		(start 12.57 4.93)
@@ -113,7 +113,7 @@
 			(type solid)
 		)
 		(layer "F.SilkS")
-		(uuid "8ceb3958-9a4e-4af4-8473-e2d10db6e43b")
+		(uuid "6ea38f08-1517-48bc-b945-f2f52e728d18")
 	)
 	(fp_line
 		(start -5.06 2.57)
@@ -123,7 +123,7 @@
 			(type solid)
 		)
 		(layer "F.CrtYd")
-		(uuid "abb57b30-1c6b-4671-abd0-2fa7fd6530d5")
+		(uuid "646dd0b5-ce69-4dcd-8d2f-badd70613321")
 	)
 	(fp_line
 		(start -5.06 2.57)
@@ -133,7 +133,7 @@
 			(type solid)
 		)
 		(layer "F.CrtYd")
-		(uuid "0c42f3e9-bb82-42f4-bac8-ad35b7fcf5b7")
+		(uuid "86f46502-9294-4191-bed6-11814a6f4edf")
 	)
 	(fp_line
 		(start -5.06 4.05)
@@ -143,7 +143,7 @@
 			(type solid)
 		)
 		(layer "F.CrtYd")
-		(uuid "64ae444d-b9c6-4c1a-8f0c-7fa6c47f8a21")
+		(uuid "17ea85c7-7890-478c-97d2-68aa3008f339")
 	)
 	(fp_line
 		(start -4.08 -4.54)
@@ -153,7 +153,7 @@
 			(type solid)
 		)
 		(layer "F.CrtYd")
-		(uuid "e877c74c-5430-454a-a425-ad6cbe773378")
+		(uuid "ae1cfe9a-723d-44f9-a592-5e9ecb79ef27")
 	)
 	(fp_line
 		(start -4.08 -4.54)
@@ -163,7 +163,7 @@
 			(type solid)
 		)
 		(layer "F.CrtYd")
-		(uuid "955382ac-9b2e-4335-bd05-857bb072adb1")
+		(uuid "842f528a-2541-41ea-974b-91b48bd2f83e")
 	)
 	(fp_line
 		(start -4.08 5.03)
@@ -173,7 +173,7 @@
 			(type solid)
 		)
 		(layer "F.CrtYd")
-		(uuid "10af05af-82d6-48e6-b281-364213c80d52")
+		(uuid "5398fa6a-ee79-4a70-aebe-07b855f6ecac")
 	)
 	(fp_line
 		(start -4.08 17.76)
@@ -183,7 +183,7 @@
 			(type solid)
 		)
 		(layer "F.CrtYd")
-		(uuid "86d895f6-f025-4da1-a506-ad1d41238f5a")
+		(uuid "1ba9fc8f-d04e-44c7-9354-640aa8dfc49e")
 	)
 	(fp_line
 		(start 12.96 -4.54)
@@ -193,7 +193,7 @@
 			(type solid)
 		)
 		(layer "F.CrtYd")
-		(uuid "36795a89-8677-43f2-80f5-02540a1775c8")
+		(uuid "74212fb9-ef00-463e-b703-a27dfabdcd9f")
 	)
 	(fp_line
 		(start 12.96 5.03)
@@ -203,7 +203,7 @@
 			(type solid)
 		)
 		(layer "F.CrtYd")
-		(uuid "41015cb9-747e-4d23-ae89-593a09cfd859")
+		(uuid "281b69a5-2c77-4b11-a4a2-ab2de929ed2a")
 	)
 	(fp_line
 		(start 13.94 2.57)
@@ -213,7 +213,7 @@
 			(type solid)
 		)
 		(layer "F.CrtYd")
-		(uuid "a3c80ddc-607d-4a3c-b79a-4f7f0037e986")
+		(uuid "97b8351a-d982-46a3-933e-9b2bb929d3e9")
 	)
 	(fp_line
 		(start 13.94 4.05)
@@ -223,7 +223,7 @@
 			(type solid)
 		)
 		(layer "F.CrtYd")
-		(uuid "4ac525c2-fe3e-4eaf-9797-3ee7e5353dde")
+		(uuid "7b494af4-8aa3-435d-8418-6936e58b4e7e")
 	)
 	(fp_line
 		(start 13.94 4.05)
@@ -233,7 +233,7 @@
 			(type solid)
 		)
 		(layer "F.CrtYd")
-		(uuid "028c3eaf-ff0a-436f-bbeb-59d0a3882f98")
+		(uuid "70d5e57c-fa2c-47f4-a0ce-c8be4207c5ec")
 	)
 	(fp_line
 		(start -3.58 -4.04)
@@ -243,7 +243,7 @@
 			(type solid)
 		)
 		(layer "F.Fab")
-		(uuid "c13cccf7-d156-409a-b4db-29387a79e967")
+		(uuid "0b022c12-c5c2-47e3-bd55-e1f27f9d09ad")
 	)
 	(fp_line
 		(start -3.58 -4.04)
@@ -253,7 +253,7 @@
 			(type solid)
 		)
 		(layer "F.Fab")
-		(uuid "d1e72f0a-8358-4f4d-b0b5-52e44dfff18c")
+		(uuid "a7b32d4d-7c66-4970-aa27-f144c530451c")
 	)
 	(fp_line
 		(start -3.58 0.99)
@@ -263,7 +263,7 @@
 			(type solid)
 		)
 		(layer "F.Fab")
-		(uuid "c17b511c-31cd-45df-9806-e83407b2bbce")
+		(uuid "b82fbde3-32e0-432a-8e47-4fa981dc3739")
 	)
 	(fp_line
 		(start -3.58 17.26)
@@ -273,7 +273,7 @@
 			(type solid)
 		)
 		(layer "F.Fab")
-		(uuid "55b4dd04-332e-488c-8420-d4e828d1706c")
+		(uuid "15f8c3ca-6502-455f-bcc2-b60059a72e7a")
 	)
 	(fp_line
 		(start -2.58 -0.01)
@@ -283,7 +283,7 @@
 			(type solid)
 		)
 		(layer "F.Fab")
-		(uuid "ba91fada-8c3e-4775-b197-960d7feb446a")
+		(uuid "eb0cfb1c-bd86-42f9-a83a-338e0c91634f")
 	)
 	(fp_line
 		(start -2.58 -0.01)
@@ -293,7 +293,7 @@
 			(type solid)
 		)
 		(layer "F.Fab")
-		(uuid "ca729797-8f1e-4f85-9fb9-ce0ac0cc757a")
+		(uuid "6bed8b79-95aa-499f-bda7-883a354598eb")
 	)
 	(fp_line
 		(start 12.46 -4.04)
@@ -303,12 +303,12 @@
 			(type solid)
 		)
 		(layer "F.Fab")
-		(uuid "ccb4d90f-f0b2-4853-a567-c1f8174cbc90")
+		(uuid "f895e20e-759d-46bb-8daf-f4cb94609b84")
 	)
 	(fp_text user "${REFERENCE}"
 		(at 4.44 6.36 0)
 		(layer "F.Fab")
-		(uuid "45a69b49-4f1c-4565-ba70-cda35deab176")
+		(uuid "ab0934c5-81df-4201-b195-a63d277dd41c")
 		(effects
 			(font
 				(size 1 1)
@@ -321,14 +321,14 @@
 		(size 3.25 3.25)
 		(drill 3.25)
 		(layers "*.Cu" "*.Mask")
-		(uuid "b3d7301d-4a11-4bf9-a8f4-d8fd1721de3d")
+		(uuid "c874b83d-dcaf-4719-a1c4-7d292155ef59")
 	)
 	(pad "" np_thru_hole circle
 		(at 10.155 6.36)
 		(size 3.25 3.25)
 		(drill 3.25)
 		(layers "*.Cu" "*.Mask")
-		(uuid "59530e30-8600-4159-a833-e42a2250b943")
+		(uuid "3626b909-2a2e-4297-a8a5-b7d3020bea81")
 	)
 	(pad "1" thru_hole roundrect
 		(at 0 0)
@@ -337,7 +337,7 @@
 		(layers "*.Cu" "*.Mask")
 		(remove_unused_layers no)
 		(roundrect_rratio 0.167)
-		(uuid "2f2df08b-4bfb-4a99-8bd6-10cf1b1eeada")
+		(uuid "5ebe45a0-44a9-491a-8703-437c0e22009d")
 	)
 	(pad "2" thru_hole circle
 		(at 1.26 -2.54)
@@ -345,7 +345,7 @@
 		(drill 0.89)
 		(layers "*.Cu" "*.Mask")
 		(remove_unused_layers no)
-		(uuid "d87d446b-e29c-411c-9048-33e05ad3fe0e")
+		(uuid "8de684d7-782c-4703-9fe9-6e258fa4f692")
 	)
 	(pad "3" thru_hole circle
 		(at 2.54 0)
@@ -353,7 +353,7 @@
 		(drill 0.89)
 		(layers "*.Cu" "*.Mask")
 		(remove_unused_layers no)
-		(uuid "ccb8aeb4-1ed3-431f-b6e3-512ebbba02d7")
+		(uuid "1c7d5698-85c6-4c32-a3b6-30c118687ea9")
 	)
 	(pad "4" thru_hole circle
 		(at 3.8 -2.54)
@@ -361,7 +361,7 @@
 		(drill 0.89)
 		(layers "*.Cu" "*.Mask")
 		(remove_unused_layers no)
-		(uuid "ebb7087c-db59-4b76-9ec6-664279c0acb5")
+		(uuid "6d7627e9-b820-45c1-b73e-99480d300486")
 	)
 	(pad "5" thru_hole circle
 		(at 5.08 0)
@@ -369,7 +369,7 @@
 		(drill 0.89)
 		(layers "*.Cu" "*.Mask")
 		(remove_unused_layers no)
-		(uuid "c66f0f87-1f22-40bc-a29d-a3352334e9d9")
+		(uuid "3f2de23d-2716-46fa-b8a4-6cab2d33c978")
 	)
 	(pad "6" thru_hole circle
 		(at 6.34 -2.54)
@@ -377,7 +377,7 @@
 		(drill 0.89)
 		(layers "*.Cu" "*.Mask")
 		(remove_unused_layers no)
-		(uuid "d07049eb-7aa2-46b0-b76c-37798d74c482")
+		(uuid "a189ddb3-145e-4008-a3d6-0ece71c6fc18")
 	)
 	(pad "7" thru_hole circle
 		(at 7.62 0)
@@ -385,7 +385,7 @@
 		(drill 0.89)
 		(layers "*.Cu" "*.Mask")
 		(remove_unused_layers no)
-		(uuid "ebbc2b56-c1ee-4758-a5b5-1658b5ad50ba")
+		(uuid "0d786f4b-7a96-4e91-a6dd-a78551876fc2")
 	)
 	(pad "8" thru_hole circle
 		(at 8.88 -2.54)
@@ -393,7 +393,7 @@
 		(drill 0.89)
 		(layers "*.Cu" "*.Mask")
 		(remove_unused_layers no)
-		(uuid "444cbed0-b4ee-4e71-a929-3ed722f2665f")
+		(uuid "178f4a9f-8de1-4f27-b2b2-6a184e23d991")
 	)
 	(pad "9" thru_hole circle
 		(at -2.185 11.26)
@@ -401,7 +401,7 @@
 		(drill 1.02)
 		(layers "*.Cu" "*.Mask")
 		(remove_unused_layers no)
-		(uuid "bb1ca0cd-feb3-4308-b2d6-f8dcf09ba1ce")
+		(uuid "87c4e00b-1c9d-41e3-98c7-1befe99aa2e9")
 	)
 	(pad "10" thru_hole circle
 		(at 0.355 11.26)
@@ -409,7 +409,7 @@
 		(drill 1.02)
 		(layers "*.Cu" "*.Mask")
 		(remove_unused_layers no)
-		(uuid "2c647d23-a8c9-4869-a3bc-fb19d0e3c3bf")
+		(uuid "1e7fa218-88b4-4661-a218-c53e342bbf48")
 	)
 	(pad "11" thru_hole circle
 		(at 8.525 11.26)
@@ -417,7 +417,7 @@
 		(drill 1.02)
 		(layers "*.Cu" "*.Mask")
 		(remove_unused_layers no)
-		(uuid "96056ad2-1f78-413a-8787-641f93a89115")
+		(uuid "32e54d30-e6cb-49bc-b1cb-744fec353963")
 	)
 	(pad "12" thru_hole circle
 		(at 11.065 11.26)
@@ -425,7 +425,7 @@
 		(drill 1.02)
 		(layers "*.Cu" "*.Mask")
 		(remove_unused_layers no)
-		(uuid "48e07c6f-7cce-4800-9fa8-58baeea4f6e4")
+		(uuid "95e40be4-9e03-4812-8c78-d4e13786951d")
 	)
 	(pad "SH" thru_hole circle
 		(at -3.305 3.31)
@@ -433,7 +433,7 @@
 		(drill 1.63)
 		(layers "*.Cu" "*.Mask")
 		(remove_unused_layers no)
-		(uuid "c82e119f-01e0-48c6-9d3e-97fad0ec9706")
+		(uuid "20f3ee30-c6a9-47a0-a426-b1fc61d0799e")
 	)
 	(pad "SH" thru_hole circle
 		(at 12.185 3.31)
@@ -441,10 +441,10 @@
 		(drill 1.63)
 		(layers "*.Cu" "*.Mask")
 		(remove_unused_layers no)
-		(uuid "8cd53196-a423-467d-be36-89a80b027332")
+		(uuid "201b1c0a-5dbe-41b2-ab9e-13e21e988740")
 	)
 	(embedded_fonts no)
-	(model "${KICAD10_3DMODEL_DIR}/Connector_RJ.3dshapes/RJ45_Hanrun_HR911105A_Horizontal.step"
+	(model "${KIPRJMOD}/../../../mechanical/models/RJ45_Hanrun_HR911105A_Horizontal.step"
 		(offset
 			(xyz 0 0 0)
 		)

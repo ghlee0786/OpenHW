@@ -1,14 +1,12 @@
 (footprint "SOT-23"
 	(version 20260206)
-	(generator "pcbnew")
-	(generator_version "10.0")
+	(generator "kicad-footprint-generator")
 	(layer "F.Cu")
 	(descr "SOT, 3 Pin (JEDEC TO-236 Var AB https://www.jedec.org/document_search?search_api_views_fulltext=TO-236)")
 	(tags "SOT TO_SOT_SMD")
-	(property "Reference" "REF"
+	(property "Reference" "REF**"
 		(at 0 -2.4 0)
 		(layer "F.SilkS")
-		(uuid "ecf40836-54bb-4a21-9368-d8619a4f95e7")
 		(effects
 			(font
 				(size 1 1)
@@ -19,7 +17,6 @@
 	(property "Value" "SOT-23"
 		(at 0 2.4 0)
 		(layer "F.Fab")
-		(uuid "d19f0616-55dd-4eba-b75d-3ed89c5f125a")
 		(effects
 			(font
 				(size 1 1)
@@ -27,33 +24,10 @@
 			)
 		)
 	)
-	(property "Datasheet" ""
-		(at 0 0 0)
-		(layer "F.Fab")
-		(hide yes)
-		(uuid "68dd58b8-65ae-40e8-8007-c2dc7345458b")
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-		)
-	)
-	(property "Description" ""
-		(at 0 0 0)
-		(layer "F.Fab")
-		(hide yes)
-		(uuid "409ab6ed-d1db-434c-a644-9cfb8f41a67c")
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-		)
-	)
 	(property "KiLib_Generator" "package/gullwing"
 		(at 0 0 0)
 		(layer "F.SilkS")
 		(hide yes)
-		(uuid "987f981d-0e9c-455b-8f8b-c0603a150829")
 		(effects
 			(font
 				(size 1 1)
@@ -71,7 +45,7 @@
 			(type solid)
 		)
 		(layer "F.SilkS")
-		(uuid "c9fbe2ad-270b-46d8-9097-8f8cc0e53021")
+		(uuid "13730d96-6507-4e73-9ce7-3830e640bdc2")
 	)
 	(fp_line
 		(start -0.76 0.37)
@@ -81,7 +55,7 @@
 			(type solid)
 		)
 		(layer "F.SilkS")
-		(uuid "62f62327-d65a-4c4b-9a88-81ae5187863b")
+		(uuid "4c332669-cf2f-4b84-9102-99094f8dfa65")
 	)
 	(fp_line
 		(start 0.76 -1.56)
@@ -91,7 +65,7 @@
 			(type solid)
 		)
 		(layer "F.SilkS")
-		(uuid "4ef0eec4-59ae-4a60-aef8-34d0fe91668d")
+		(uuid "05d9a691-1e90-408b-bcec-68190f22dbca")
 	)
 	(fp_line
 		(start 0.76 0.58)
@@ -101,7 +75,7 @@
 			(type solid)
 		)
 		(layer "F.SilkS")
-		(uuid "0b894c61-420d-4779-9299-209deb6a0976")
+		(uuid "7db55159-6183-44f9-a59c-f22ad3002518")
 	)
 	(fp_line
 		(start 0.76 1.56)
@@ -111,7 +85,7 @@
 			(type solid)
 		)
 		(layer "F.SilkS")
-		(uuid "30f7d4ab-792a-4726-a49e-8ee15377d6a6")
+		(uuid "fa7bae1d-de15-4c53-99e2-242a1ac647b3")
 	)
 	(fp_poly
 		(pts
@@ -123,7 +97,7 @@
 		)
 		(fill yes)
 		(layer "F.SilkS")
-		(uuid "318ce15a-73a2-4135-8990-b8d4836d9319")
+		(uuid "68ec6334-61f8-431d-9d34-59b27241d7f9")
 	)
 	(fp_line
 		(start -1.93 -1.5)
@@ -133,7 +107,6 @@
 			(type solid)
 		)
 		(layer "F.CrtYd")
-		(uuid "aaffd9bb-bd91-47db-9ff1-1948252446a8")
 	)
 	(fp_line
 		(start -1.93 -0.39)
@@ -143,7 +116,6 @@
 			(type solid)
 		)
 		(layer "F.CrtYd")
-		(uuid "4e93fc53-0122-486f-9c27-8d4069f11821")
 	)
 	(fp_line
 		(start -1.93 0.39)
@@ -153,7 +125,6 @@
 			(type solid)
 		)
 		(layer "F.CrtYd")
-		(uuid "66324e09-cf82-4780-ac7e-d2c6319d41fc")
 	)
 	(fp_line
 		(start -1.93 1.5)
@@ -163,7 +134,6 @@
 			(type solid)
 		)
 		(layer "F.CrtYd")
-		(uuid "ed126fcf-5e09-4df7-9b98-2362d918ab7d")
 	)
 	(fp_line
 		(start -0.9 -1.7)
@@ -173,7 +143,6 @@
 			(type solid)
 		)
 		(layer "F.CrtYd")
-		(uuid "bc8ce170-8931-415f-bc43-3763e2393977")
 	)
 	(fp_line
 		(start -0.9 -1.5)
@@ -183,7 +152,6 @@
 			(type solid)
 		)
 		(layer "F.CrtYd")
-		(uuid "6a5fdbe7-f1bb-4f62-89b1-f05223501f2b")
 	)
 	(fp_line
 		(start -0.9 -0.39)
@@ -193,7 +161,6 @@
 			(type solid)
 		)
 		(layer "F.CrtYd")
-		(uuid "520e7cdc-f254-48b3-890d-a3d07e0ef93c")
 	)
 	(fp_line
 		(start -0.9 0.39)
@@ -203,7 +170,6 @@
 			(type solid)
 		)
 		(layer "F.CrtYd")
-		(uuid "427dce7e-9a03-4696-8eac-8cbc3e9a8214")
 	)
 	(fp_line
 		(start -0.9 1.5)
@@ -213,7 +179,6 @@
 			(type solid)
 		)
 		(layer "F.CrtYd")
-		(uuid "f86e8225-8114-4658-a26b-2f69cbc0b0e5")
 	)
 	(fp_line
 		(start -0.9 1.7)
@@ -223,7 +188,6 @@
 			(type solid)
 		)
 		(layer "F.CrtYd")
-		(uuid "cc0763f6-b0d4-4181-9bf5-ea34846a2df5")
 	)
 	(fp_line
 		(start 0.9 -1.7)
@@ -233,7 +197,6 @@
 			(type solid)
 		)
 		(layer "F.CrtYd")
-		(uuid "88104538-7988-429f-96e6-efed156bb976")
 	)
 	(fp_line
 		(start 0.9 -0.55)
@@ -243,7 +206,6 @@
 			(type solid)
 		)
 		(layer "F.CrtYd")
-		(uuid "41aa669d-d516-4b81-935a-b17451d6a3fd")
 	)
 	(fp_line
 		(start 0.9 0.55)
@@ -253,7 +215,6 @@
 			(type solid)
 		)
 		(layer "F.CrtYd")
-		(uuid "2bfd0bbd-ee55-4008-8f7a-076e3ca5dddb")
 	)
 	(fp_line
 		(start 0.9 1.7)
@@ -263,7 +224,6 @@
 			(type solid)
 		)
 		(layer "F.CrtYd")
-		(uuid "255f56ed-70f4-4976-86e6-ef3e21462e13")
 	)
 	(fp_line
 		(start 1.93 -0.55)
@@ -273,7 +233,6 @@
 			(type solid)
 		)
 		(layer "F.CrtYd")
-		(uuid "dc5b34e9-a0a5-4607-b890-25eb958d76de")
 	)
 	(fp_line
 		(start 1.93 0.55)
@@ -283,31 +242,14 @@
 			(type solid)
 		)
 		(layer "F.CrtYd")
-		(uuid "38bdccce-cace-496e-ab47-93fb389b1c68")
-	)
-	(fp_line
-		(start -0.76 -1.51)
-		(end -0.76 -1.56)
-		(stroke
-			(width 0.15)
-			(type solid)
-		)
-		(layer "F.Fab")
-		(uuid "c4d940af-bfe2-43d7-9f73-584a0e3acd31")
-	)
-	(fp_line
-		(start -0.76 1.56)
-		(end -0.76 1.51)
-		(stroke
-			(width 0.15)
-			(type solid)
-		)
-		(layer "F.Fab")
-		(uuid "7c41fdeb-cc29-4178-a0ba-f2f12a2c80b6")
 	)
 	(fp_poly
 		(pts
-			(xy -0.325 -1.45) (xy 0.65 -1.45) (xy 0.65 1.45) (xy -0.65 1.45) (xy -0.65 -1.125)
+			(xy -0.325 -1.45)
+			(xy 0.65 -1.45)
+			(xy 0.65 1.45)
+			(xy -0.65 1.45)
+			(xy -0.65 -1.125)
 		)
 		(stroke
 			(width 0.1)
@@ -315,12 +257,10 @@
 		)
 		(fill no)
 		(layer "F.Fab")
-		(uuid "f4da4fed-0046-455e-a967-3af94487925c")
 	)
 	(fp_text user "${REFERENCE}"
 		(at 0 0 90)
 		(layer "F.Fab")
-		(uuid "96f6f96f-84d6-408b-ba22-6e4b69efa9df")
 		(effects
 			(font
 				(size 0.72 0.72)
@@ -333,21 +273,18 @@
 		(size 1.475 0.6)
 		(layers "F.Cu" "F.Mask" "F.Paste")
 		(roundrect_rratio 0.25)
-		(uuid "4a2e25a3-8d08-49fb-97d6-28765728e149")
 	)
 	(pad "2" smd roundrect
 		(at -0.9375 0.95)
 		(size 1.475 0.6)
 		(layers "F.Cu" "F.Mask" "F.Paste")
 		(roundrect_rratio 0.25)
-		(uuid "8cba9b27-8f06-4735-8709-95862fbea2ae")
 	)
 	(pad "3" smd roundrect
 		(at 0.9375 0)
 		(size 1.475 0.6)
 		(layers "F.Cu" "F.Mask" "F.Paste")
 		(roundrect_rratio 0.25)
-		(uuid "687c5356-669d-4e76-8cac-c9384d1338da")
 	)
 	(embedded_fonts no)
 	(model "${KICAD10_3DMODEL_DIR}/Package_TO_SOT_SMD.3dshapes/SOT-23.step"
