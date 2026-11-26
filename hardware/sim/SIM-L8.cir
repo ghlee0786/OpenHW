@@ -1,0 +1,36 @@
+* SIM-001b
+.model dsi D(IS=1e-14 N=1)
+.model bat54 D(IS=2e-7 N=1.05 RS=1.5 CJO=10p)
+.model nq nmos level=1 vto=1.0 kp=1.79
+.model pa pmos level=1 vto=-0.9 kp=5.5
+V33 v33 0 3.3
+Ven e0 0 PWL(0 0 1m 0 1.001m 1.71 20m 1.71 20.001m 0)
+Ren e0 en 93.75
+R6 en 0 100k
+R7 en rst 10k
+C10 rst 0 100n
+D3 rst en bat54
+M3 pg en 0 0 nq
+Cg3 en 0 61p
+R4 v33 pg 100k
+M1 iov pg v33 v33 pa
+Cg1 pg v33 645p
+R5 pg pgav 10k
+M2 avd pgav v33 v33 pa
+Cg2 pgav v33 645p
+C7 iov 0 1u
+Rli iov 0 110
+C8 avd 0 1u
+C9 avd 0 100n
+Rla avd 0 110
+
+.options reltol=1e-3 abstol=1e-9 vntol=1e-6 itl4=200
+.tran 100n 25m 0 2u uic
+.control
+set wr_singlescale
+set wr_vecnames
+run
+wrdata out.txt v(en) v(rst) v(iov) v(avd)
+quit
+.endc
+.end

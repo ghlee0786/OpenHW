@@ -1,0 +1,43 @@
+* SIM-001b
+.model dsi D(IS=1e-14 N=1)
+
+.subckt drv vm out1 out2 in1 in2 vcc gnd
+Ri1 in1 gnd 100k
+Ri2 in2 gnd 100k
+Ba a gnd V = V(in1) > 0.46*V(vcc) ? 1 : 0
+Bb b gnd V = V(in2) > 0.46*V(vcc) ? 1 : 0
+Bh1 h1 gnd V = V(a)*(1-V(b))
+Bh2 h2 gnd V = V(b)*(1-V(a))
+Bl1 l1 gnd V = V(b)*(1-V(a)) + V(a)*V(b)
+Bl2 l2 gnd V = V(a)*(1-V(b)) + V(a)*V(b)
+S1 vm out1 h1 gnd sh
+S2 out1 gnd l1 gnd sl
+S3 vm out2 h2 gnd sh
+S4 out2 gnd l2 gnd sl
+D1 out1 vm dsi
+D2 gnd out1 dsi
+D3 out2 vm dsi
+D4 gnd out2 dsi
+.model sh sw vt=0.5 vh=0.05 ron=0.14 roff=100meg
+.model sl sw vt=0.5 vh=0.05 ron=0.14 roff=100meg
+.ends
+Vm vm 0 5.25
+Vcc vcc 0 2.744
+Vi1 i1 0 PWL(0 0 10m 0 10.001m 1.71 210m 1.71 210.001m 0)
+R1g i1 in1 93.75
+Vi2 i2 0 PWL(0 0 500m 0 500.001m 1.71 700m 1.71 700.001m 0)
+R2g i2 in2 93.75
+X2 vm icra icrb in1 in2 vcc 0 drv
+Vsc icra c1 0
+Rcoil c1 icrb 18.0
+
+.options reltol=1e-3 abstol=1e-9 vntol=1e-6 itl4=200
+.tran 10u 800m 0 100u uic
+.control
+set wr_singlescale
+set wr_vecnames
+run
+wrdata out.txt i(Vsc) v(icra)-v(icrb) v(in2) v(in1)
+quit
+.endc
+.end

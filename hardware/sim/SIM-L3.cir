@@ -1,0 +1,85 @@
+* SIM-001b
+Vin vs 0 11.4
+Rsrc vs v12 10m
+.model led D(IS=1.2847e-18 N=3 RS=0.105 CJO=200p)
+.model ss24 D(IS=1.87e-6 N=1.1 RS=0.061 CJO=130p BV=40)
+
+.subckt al_A vin set sw ctrl gnd
+Rpu ctrl n5 50k
+V5 n5 gnd 5
+Ben en gnd V = 0.5*(1+tanh((V(ctrl)-0.225)/0.01))
+Css ss gnd 1n
+Rss ss gnd 1g
+Bss gnd ss I = 10u*V(en)*0.5*(1-tanh((V(ss)-1)/0.01)) - (1-V(en))*V(ss)/100
+Bx x gnd V = (V(vin)-V(set)) / max(V(ss), 0.02)
+Ahy x cmp hy_al_A
+.model hy_al_A hyst(in_low=0.10399 in_high=0.10400999999999999 hyst=0.0208 out_lower_limit=0 out_upper_limit=1 input_domain=0.002 fraction=TRUE)
+Bg g0 gnd V = V(en) * (1 - V(cmp))
+* 게이트 10 ns 평활 (전파지연 45 ns 의 일부 · 수치 안정)
+Rgf g0 g 1k
+Cgf g gnd 10p
+Ssw sw gnd g gnd swm_al_A
+.model swm_al_A sw vt=0.5 vh=0.05 ron=0.3 roff=10meg
+Csw sw gnd 20p
+.ends
+
+R13 v12 setA 0.099
+DA1 setA mA led
+DA2 mA kA led
+VilA kA liA 0
+LA liA lxA 4.7e-05
+RLA lxA swA 0.24
+DFA swA v12 ss24
+XA v12 setA swA ctrl 0 al_A
+CA1 v12 cAe 10u
+RCA cAe 0 5m
+CA2 v12 0 100n
+
+.subckt al_B vin set sw ctrl gnd
+Rpu ctrl n5 50k
+V5 n5 gnd 5
+Ben en gnd V = 0.5*(1+tanh((V(ctrl)-0.225)/0.01))
+Css ss gnd 1n
+Rss ss gnd 1g
+Bss gnd ss I = 10u*V(en)*0.5*(1-tanh((V(ss)-1)/0.01)) - (1-V(en))*V(ss)/100
+Bx x gnd V = (V(vin)-V(set)) / max(V(ss), 0.02)
+Ahy x cmp hy_al_B
+.model hy_al_B hyst(in_low=0.10399 in_high=0.10400999999999999 hyst=0.0208 out_lower_limit=0 out_upper_limit=1 input_domain=0.002 fraction=TRUE)
+Bg g0 gnd V = V(en) * (1 - V(cmp))
+* 게이트 10 ns 평활 (전파지연 45 ns 의 일부 · 수치 안정)
+Rgf g0 g 1k
+Cgf g gnd 10p
+Ssw sw gnd g gnd swm_al_B
+.model swm_al_B sw vt=0.5 vh=0.05 ron=0.3 roff=10meg
+Csw sw gnd 20p
+.ends
+
+R14 v12 setB 0.099
+DB1 setB mB led
+DB2 mB kB led
+VilB kB liB 0
+LB liB lxB 4.7e-05
+RLB lxB swB 0.24
+DFB swB v12 ss24
+XB v12 setB swB ctrl 0 al_B
+CB1 v12 cBe 10u
+RCB cBe 0 5m
+CB2 v12 0 100n
+Vpw pw0 0 PULSE(1.71 0 1.875m 1u 1u 0.625m 2.5m)
+Rpw pw0 irpwm 93.75
+R12 core irpwm 100k
+Vcore core 0 1.8
+M5 ctrl irpwm 0 0 nq7
+.model nq7 nmos level=1 vto=1.0 kp=1.79
+Cg5 irpwm 0 61p
+
+.options reltol=1e-3 abstol=1e-9 vntol=1e-6 itl4=200
+.tran 10n 7.5m 0 50n uic
+.control
+set wr_singlescale
+set wr_vecnames
+run
+wrdata out.txt i(Vin) i(VilA) i(VilB) v(ctrl) v(irpwm) (v(v12)-v(setA))/0.099 (v(v12)-v(setB))/0.099
+quit
+.endc
+.end

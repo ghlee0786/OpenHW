@@ -1,0 +1,68 @@
+{
+  "id": "SIM-L5",
+  "title": "CAM_1V8 스위치 Q6/Q7 켜짐·꺼짐·돌입",
+  "owner": "firmware",
+  "circuit": {
+    "board": "front",
+    "refs": [
+      "Q6",
+      "Q7",
+      "R17",
+      "R18",
+      "C19",
+      "R19",
+      "C18",
+      "C11",
+      "X1"
+    ],
+    "schematic_commit": "f0745ed"
+  },
+  "model": {
+    "source": "레벨 1 MOSFET 맞춤 (데이터시트 VGS(th)·RDS(on)·Ciss·Rg)",
+    "url": "https://www.diodes.com/assets/Datasheets/DMG2305UX.pdf",
+    "license": "—",
+    "behavioral": true,
+    "basis": "DMG2305UX DS36196 Rev.8-2 p.2; DMG1012T DS31783 Rev.8-2 p.2; SG2002 Table 2-8 VOH; CORE_1V8 경로 0.1Ω·X1 450Ω 가정"
+  },
+  "criteria_commit": "7cab389",
+  "checks": [
+    {
+      "name": "켜짐 시간 (CAM_EN 50 % → CAM_1V8 ≥ 1.71 V)",
+      "op": "<=",
+      "limit": 0.001,
+      "unit": "s",
+      "value": 3.64433e-05,
+      "corner": "Q6·Q7 약함, CORE_1V8 1.8V",
+      "pass": true
+    },
+    {
+      "name": "CORE_1V8 돌입 피크 전류",
+      "op": "<=",
+      "limit": 0.3,
+      "unit": "A",
+      "value": 0.132951,
+      "corner": "Q6·Q7 강함, CORE_1V8 1.89V, 경로 0.1Ω(가정), CAM_EN 상승 뒤",
+      "pass": true
+    },
+    {
+      "name": "꺼짐: CAM_EN 하강 → Q6 VGS > −0.3 V",
+      "op": "<=",
+      "limit": 0.0001,
+      "unit": "s",
+      "value": 0.000346585,
+      "corner": "Q6·Q7 약함",
+      "pass": false
+    }
+  ],
+  "verdict": "fail",
+  "waveforms": [
+    "hardware/sim/png/SIM-L5-cam1v8.png"
+  ],
+  "netlist": "hardware/sim/SIM-L5.cir",
+  "tool": {
+    "name": "ngspice",
+    "version": "47",
+    "sha256": "22d5cae2bd32b2e39157a8d27bf457122f68285b72a9ebefdf41551b628233ab"
+  },
+  "notes": "분석 창 수정(결과 본 뒤, 기준 변경 아님): 돌입을 CAM_EN 상승 뒤(t > 0.9 ms)로 — 첫 실행은 t = 0 의 uic 초기 충전(7.8 A)을 넣었다 | 기록만: 꺼진 뒤 CAM_1V8 < 0.3V 까지 0.92 ms (X1 부하 450Ω 가정) | C-017 회로(f0745ed): Q7 드레인 → R18 1 kΩ → Q6 게이트, C19 10 nF 게이트–CAM_1V8(밀러 소프트스타트), R19 10 kΩ 블리더. 이전 회로(656b50a) 돌입 5.11 A는 a3b988c 결과 | 수정 제안 검증(판정 밖, S5): R17 4.7 kΩ · C19 4.7 nF → 돌입 0.242 A(강함), 켜짐 23.5 µs · 꺼짐 47.1 µs(약함), 최종 VGS −1.48 V, 켬 때 Q7 전류 0.32 mA"
+}
