@@ -62,6 +62,7 @@
 | M-003 | orch (O-56) | mechanical t18x | 외함 설계: KiCad STEP 기준, #25 벽·#26 방열·PMMA 창+흑색 폼, 3D 프린트 시제품 | mechanical/** (새 레인) | F3D·STEP·STL·도면·렌더·간섭 수치, 커밋 | 1차 completed — 레인 t-20261127-013549-8089 d74012a·8261d9b(orch 해시 확인 f3d 61414b1e·STEP a26cc967·HOUSING a9c41c21·FRONT_COVER 32472a17). 외형 51.75×69.5×69.9, PETG+Al 옆판, 창 4장 분리, 간섭: 외함 충돌 0, USB-C 플러그↔캐리어 판 9.72 → O-61. 열: 옆판→공기 약 55 K/W 병목(가정, 차선 핀 옆판/금속 외함 K32, 실측). LED 안쪽 각 7.2°/8.1° < M-001e 14.7°(I3, 차선 K13). 2차: pcb 배치 고정 STEP·J3 수정 뒤 재검사 |
 | F-004c | orch (O-57) | firmware t18w | 원인 K 후속: K-1 층별 compare 첫 오차 층 → K-2 헤드 혼합정밀도 → K-3 sigmoid 그래프 밖, 기준 2da6706 그대로 | firmware/** (F-004 레인) | 단계별 커밋, 합격 시 해시·시험·빌드 / K 3회째 불합격 시 D 근거 | completed(합격) — 335f3e7. K-1: 새 원인 L(검증 입력 행 정렬 누락, --aligned_input [1,1,416,1280]) — F-004 3회·F-004b 실패의 첫 원인은 검증 입력, 원인 J 판정 철회. INT8은 백본 1183_Conv부터 오차 누적(원인 K) → K-2 전체 BF16: K1 21/21·K2 0.013·K3 0.944·K4 20/21·K5 0 PASS. 기준 수치 2da6706 그대로(orch diff 확인 — 입력 형식만 바뀜). cvimodel eee83a22…(orch 해시 확인), 원인 M(패치 표시 파일) 고친 뒤 이미지 rc 0, emmc.zip 00b685a0…(orch 확인). orch 재실행: persond 33/0·daynight 40/0·통합 16/0 모두 rc 0. HIL 미확인(보드 BF16 로드·FPS·정렬 프레임) |
 | G-002 | orch (O-59) | pcb t190 | KiCad 실시간 GUI 작업: 자기 레인 보드를 PCB 편집기로 열고 kicad-mcp(IPC)로 편집, 단계별 스크린샷, 스크립트와 동시 쓰기 금지 | hardware/pcb/** (P-003 레인), validation/runtime/kicad-gui/G-002 | IPC 연결 확인, 스크린샷, DRC 종료 코드(kicad-cli), 커밋 | running |
+| F-005 | orch (O-67) | firmware t18w | bring-up 확인 절차서(전원·부팅·카메라·BF16 로드/FPS/행 정렬·PWM·ICR·IR 듀티·MDI 링크 O-47·USB/SD·열) — 먼저 1e37에서 빠져 새 레인 | firmware/docs/bringup-checklist.md (새 레인) | 절차서 커밋, 1e37 해제 알림 | running |
 
 ## 운영 변경 (2026-11-26, 사용자 지시 · lead 전달)
 - 의견 묻지 않고 진행: 사람 쪽 미정값은 D-003(lead 레인 t-20261126-144135-5470 docs/decisions/D-003-working-defaults.md, 커밋 8ac5ce5) 값으로 확정 취급. 새 갈림길은 기본값 선택 → 아래 「분기 기록」에 분기점·선택·이유·차선책 → lead 요약 보고. 문제 시 해당 행으로 돌아가 차선책.
@@ -141,6 +142,7 @@
 | O-64 | V-005 RQ-11 실크–마스크 개구 0.15 미만 252곳(KiCad DRC는 0건) | DRU 0.15 유지, 선폭 0.15로 바꾼 뒤 다시 재서 개구 둘레 0.15 안 실크를 스크립트로 잘라냄 | 규칙을 낮추지 않고 사용자 요구(잘림 없음)를 여유 있게 지킴 | DRU를 PCBWay 공개 기준(겹침 금지)으로 낮춤 — 사용자 확인 시 |
 | O-65 | V-005 RQ-13/H2 실크 글자 0(참조 지정자를 Fab로 옮긴 방침) | 사용자 감수 항목(글자·획·숨김·겹침·방향)이 글자를 전제하므로 참조 지정자를 실크에 둠 — 1.0/0.2, 자리 없는 부품만 Fab·조립도, 목록 기록 | lead 전달 사용자 지시 3) | 글자 없이 조립도로 대신(사용자 H2 결정 시) |
 | O-66 | V-005 RQ-12 외곽 실크 간격 문턱(PCBWay 수치 없음) | 0.30mm(CNC 외형 ±0.2 + 0.1, 검토자 문턱) — J2·J3·J4 실크 줄임 | 공차로 깎이는 실크 방지 | 0.20 |
+| O-67 | lead batch b-20261127-021022-80bf accept가 firmware 세션이 1e37에 살아 있어 막힘 | firmware가 1e37 미커밋 0 확인 → 셸을 저장소 루트로 → 새 레인에서 F-005 시작 → orch가 lead에 해제 알림 | 칸을 지우지 않고(--force 금지) 다음 일로 바로 이어감 | firmware 세션 종료 후 lead accept |
 
 ## 발주 패키지 직전 정리 목록
 - [ ] 회로도 표시 겹침: 캐리어 J2 옆 12V_IN_RAW 라벨, D3 PWR_LED 라벨, J1 품번 문자 (O-32)
