@@ -849,3 +849,48 @@
   - `--selftest` 22/22
   - 보이는 겹침 0/0
   - Rev 「C-019」
+
+## 28. C-020 — 카메라 레일 순서 S6 (orch O-97, SIM-001c ② firmware `43eb4f7`, 계약 v1.16)
+
+- **문제:** Q1(IOVDD)·Q2(AVDD)가 같은 CAM_PG로 거의 동시에 움직인다.
+  - 끌 때 IOVDD가 AVDD보다 2.31ms 먼저 떨어진다. GC2053 §9.3은 IOVDD가 마지막이어야 한다.
+  - 켤 때 AVDD−IOVDD가 최악 1.0µs다. §9.2는 t1 ≥ 50µs다.
+- **바꾼 것 (전면, 게이트 비대칭 RC):**
+
+| 부품 | 값 · 결선 | 동작 |
+|---|---|---|
+| R20 | 1k → **100k** (CAM_PG–CAM_PG_IO) | Q1을 끌 때 천천히 → IOVDD 마지막 |
+| R21 (새) | 1k (CAM_PG_IO–CAM_PG_IOD) | D4와 직렬 |
+| D4 (새) | BAT54WS, 애노드 CAM_PG_IOD → 캐소드 CAM_PG | Q1을 켤 때 게이트를 빨리 끌어내림 → IOVDD 먼저 |
+| R5 | 10k → **100k** (CAM_PG–CAM_PG_AV) | Q2를 켤 때 천천히 → AVDD 나중 |
+| D5 (새) | BAT54WS, 애노드 CAM_PG → 캐소드 CAM_PG_AV | Q2를 끌 때 게이트를 빨리 올림 → AVDD 먼저 꺼짐 |
+
+- **극성 확인:**
+  - P-FET라 게이트 Low일 때 켜진다. Q3가 CAM_PG를 끌어내리면 켜지고, R4 100k가 올리면 꺼진다.
+  - D4는 CAM_PG가 Low일 때 순방향이다(Q1을 빨리 켬). D5는 CAM_PG가 High일 때 순방향이다(Q2를 빨리 끔).
+  - firmware 문서 원문의 방향(「CAM_PG_IO → CAM_PG」 「CAM_PG → CAM_PG_AV」)과 같다.
+  - 검증(firmware, 같은 모델 최악 4경우):
+    - 켤 때 AVDD−IOVDD 180µs
+    - 끌 때 IOVDD−AVDD 1.1ms
+    - CORE_3V3 돌입 310mA, 최저 3.269V
+- **netcompare (`cdabf3c` 대비), 의도한 차이만:**
+  - 캐리어: 0
+  - 전면:
+    - R5·R20 값
+    - R21·D4·D5 추가
+    - CAM_PG +D4-1(K)·D5-2(A)
+    - CAM_PG_IO +R21-1
+    - CAM_PG_AV +D5-1(K)
+    - 새 넷 CAM_PG_IOD {D4-2(A), R21-2}
+- **UUID:** 심벌 UUID 변경 0(객체 단위 병합). 새로 생긴 것은 R21·D4·D5뿐이다.
+- **`contract_check.py`:**
+  - 저항 「Rn 값(넷–넷)」과 다이오드 「Dn BAT54(애노드 → 캐소드)」를 대조하는 항목을 더했다(393줄).
+  - 고장 주입 24건이다(D5 극성 뒤집힘, R20 값).
+- **판정:**
+  - ERC 두 보드 0
+  - contract_check 불일치 0
+  - selftest 24/24
+  - Rev 「C-020」
+- **남은 것:**
+  - 모듈 BXF4677 안 LDO의 지연은 모른다. 실물 순서는 bring-up에서 IOVDD·AVDD를 프로브로 확인한다.
+  - BOM 반영이 필요하다: BAT54WS ×2, 1k, R5·R20 100k.
