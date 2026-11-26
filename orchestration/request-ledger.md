@@ -41,7 +41,7 @@
 | R-008b | orch | research t18s | C-004 58eb49b 기준 BOM 재내보내기 + 남은 MPN 확인(RT9013-28GB·F1·C1·L1·SS24·22µF DC 바이어스·XKB 외곽·GH 케이블) | docs/research/bom-full.csv (R-008 레인) | 차이표, 21열, 커밋 | running (b3b376a 기준) |
 | C-005 | orch | schematic t18z | R-009·V-004b 반영: 전면 J2 PicoBlade(O-34), ALS-PT19 풋프린트, DC 잭 대조, V-004b 미해소 | hardware/schematic/**, hardware/libraries/** | ERC 0, 의도 차이, 부품표 | completed — b3b376a (계약 v1.5 a2b4945), orch 재실행 ERC 0/0, carrier 98·front 85부품, 라이브러리 silk 0 |
 | V-004c | orch | review t191 | C-005 수정분 재검토(N1 Q6 게이트·OE·SMBJ6.0A·R11·SSA24·F1·계약 v1.5) | validation/review-V004c-C005.md | 판정표, 레인·커밋 | completed — 레인 t-20261126-183643-3f9e 커밋 9b24181. 전부 해소, ERC 0/0, 의도 밖 변경 0. 권고 R17 10k → C-006 |
-| C-006 | orch (V-004c 권고) | schematic t18z | 전면 R17 100k → 10k (값만) | hardware/schematic/front (C-002 레인) | netcompare R17 값 1건, ERC 0, 커밋 | running |
+| C-006 | orch (V-004c 권고) | schematic t18z | 전면 R17 100k → 10k (값만) | hardware/schematic/front (C-002 레인) | netcompare R17 값 1건, ERC 0, 커밋 | completed — 355ab3e (계약 v1.6 fb6629c), orch 재실행 front ERC 0 |
 
 ## 운영 변경 (2026-11-26, 사용자 지시 · lead 전달)
 - 의견 묻지 않고 진행: 사람 쪽 미정값은 D-003(lead 레인 t-20261126-144135-5470 docs/decisions/D-003-working-defaults.md, 커밋 8ac5ce5) 값으로 확정 취급. 새 갈림길은 기본값 선택 → 아래 「분기 기록」에 분기점·선택·이유·차선책 → lead 요약 보고. 문제 시 해당 행으로 돌아가 차선책.
@@ -96,3 +96,4 @@
 - [ ] 회로도 표제란 Rev 문자열이 생성기 값 「C-002b」로 남음 → 최종 리비전으로 (schematic 보고)
 - [ ] 발주 게이트 G1 짝 BTB 실물 결합(1번 핀·VIN 정격) · G2 S401 홀더 분리·높이·강판 외곽·공동 깊이·DF30 결합 높이 실측 (O-17·O-26)
 - [ ] CLA216 리드 커넥터 계열 실물 확인(G2와 함께) — PicoBlade/GH (O-34)
+- [ ] 회로도 표제란 Rev가 C-005로 남음(C-006 값 변경 반영) — 최종 리비전 표기로 통일
