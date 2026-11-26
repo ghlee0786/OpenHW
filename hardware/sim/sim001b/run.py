@@ -24,6 +24,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 SIM = os.path.dirname(HERE)
 REPO = os.path.dirname(os.path.dirname(SIM))
 NG = os.environ.get("NGSPICE", "C:/Users/gh/tools/ngspice/47/Spice64/bin/ngspice_con.exe")
+IR_BLEEDER = os.environ.get("SIM_IR_BLEEDER", "")   # SIM-001e 후보 c1 확인용 — 비우면 회로도 그대로
 CRITERIA_COMMIT = "7cab389"
 SCH_COMMIT = "a2d878c"   # C-020 (S6): 전면 R20 100k·R21 1k·D4 BAT54WS, R5 100k·D5 BAT54WS (+ C-018/C-019: R6 6.04k, R17 4.7k·C19 4.7nF, C20·C21 4.7nF)
 ILIM = 1.86   # TPS26600 R6 6.04 kΩ: I(OL) 최소 1.86 A (대표 ≈1.99 A, 계약 v1.14 3.1절 L108) — "시험 회로의 ILIM"을 보수적으로 최솟값으로
@@ -211,6 +212,8 @@ def ir_body(corner, strings=("A",), ctrl="open"):
     b = f"Vin vs 0 {vin}\nRsrc vs v12 10m\n" + led_model("led", vf1) + SS24
     for k in strings:
         b += al8860(f"al_{k}", vm, 0.3) + string(k, rs, L, 0.24 if corner != "typ" else 0.2, "led")
+        if IR_BLEEDER:   # SIM-001e 확인용(판정용 아님): LED 스트링 양단 블리더 (환경 변수 SIM_IR_BLEEDER, 예 10k)
+            b += f"Rbl{k} set{k} k{k} {IR_BLEEDER}\n"
     if ctrl == "open":
         b += "Rctrl ctrl 0 1g\n"
     else:
