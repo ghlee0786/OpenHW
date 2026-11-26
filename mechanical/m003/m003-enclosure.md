@@ -295,3 +295,9 @@
 | analysis2.md · bom.md · bom.csv · drawing/m003-assembly.pdf·png · drawing/m003-drawing.pdf·png (⑥ +X 갱신) · render/ (방열판 포함) | — |
 
 - §13의 1차 해시(61414b1e…, a26cc967…, a9c41c21…, 32472a17…)는 2차 산출물로 대체됐다.
+
+### 14.7 orch 결정 (2차 회수)
+
+- O-68: 바깥 핀 방열판 H3 채택.
+- O-69: PoC는 LED 스트링 B 실장 (조사 범위 86%, 외형 변화 없음 — 기둥 B·절연 패드 B1/B2는 이미 들어 있음). K13은 비교만 유지.
+- O-61 (pcb J3 USB-C 이동) STEP이 오면 `03_check.py`로 재검사한다.

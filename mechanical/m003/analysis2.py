@@ -1,6 +1,8 @@
 """M-003 2차 계산 (CAD 독립): ① 방열 — 자연대류 상관식으로 방열판 크기 정하기·정상 상태 온도, ② IR 조명 범위 vs 시야 (HFOV 88°).
 실행: python -I -B -X utf8 mechanical/m003/analysis2.py  → analysis2.md 를 쓴다. 모든 입력은 A{} 에 [가정]/[근거] 표기."""
-import math, os
+import math, os, sys
+
+sys.stdout.reconfigure(encoding='utf-8')   # cp949 콘솔에서 -X utf8 없이도 print 가 실패하지 않게
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 g = {}
