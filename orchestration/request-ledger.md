@@ -18,6 +18,7 @@
 | F-002 | orch | firmware t18w | reCamera-OS 0.2.4 원본 Docker 기준 빌드(slot 경유, 산출물은 저장소 밖) | firmware/docs/build-baseline.md, firmware/scripts/** | 종료 코드 0+해시 또는 실패 원인 판정, 레인·커밋 | running |
 | R-006 | orch (V-001 ④⑥ 분기 복귀, O-8) | research t18s | 렌즈 재선정(GC2053 HFOV 85~95°, 왜곡 모델·BFL·IR 보정) + IR LED 조사각·개수(1.0A, 직렬 ≤2) | docs/research/optics-ir-r006.md (+csv) | 렌즈 1안·차선 계산 근거, LED 결론, 레인·커밋 | queued (R-004 뒤, R-005보다 먼저) |
 | M-001 | orch | mechanical t18x | 공개 STEP 측정 → 3층 적층·광축·IR LED·창·체결 기준안 (외함 아님) | mechanical/** | 측정표·기준안·Fusion MCP 결과, 레인·커밋 | completed — 레인 t-20261126-161155-50dc 커밋 ad23d15. Fusion MCP read·execute 성공, J1 윗면/J2 아랫면 독립 확인, 적층안 z·M1.6 나사·IR 후보 영역, 분기 K1~K8 |
+| G-001 | lead t18q (사용자 요청 2026-11-26) | schematic t18z | L-001·C-002를 KiCad 10 GUI로 보이게 진행, 단계별 스크린샷, GUI 단일 소유(pcb 금지 통지) | 스크린샷 C:/workspace_python/OpenHW/validation/runtime/kicad-gui/** (gitignore) | 창 뜸 즉시 보고 → lead 전달, ERC는 kicad-cli 종료 코드 | running (C-001b 뒤 L-001부터) |
 
 ## 운영 변경 (2026-11-26, 사용자 지시 · lead 전달)
 - 의견 묻지 않고 진행: 사람 쪽 미정값은 D-003(lead 레인 t-20261126-144135-5470 docs/decisions/D-003-working-defaults.md, 커밋 8ac5ce5) 값으로 확정 취급. 새 갈림길은 기본값 선택 → 아래 「분기 기록」에 분기점·선택·이유·차선책 → lead 요약 보고. 문제 시 해당 행으로 돌아가 차선책.
@@ -42,5 +43,4 @@
 | O-12 | 짝 BTB 풋프린트 출처 (V-001 ③: B301/S401 파일은 Apache-2.0, CC BY-SA는 코어 회로도 PDF만) | B301 KiCad 풋프린트에서 파생 허용 + Apache-2.0 고지·출처 기록, SUNGTECH 데이터시트 나오면 치수 대조 | ShareAlike 위험 낮음, 회로·PCB 착수를 막는 항목 해소 | 데이터시트로 독자 작성 |
 | O-13 | 렌즈 (V-001 ④ CIL327 F-θ로 HFOV 약 121° > D-003 #4 90°) | R-002 O2 무효 → R-006에서 재선정, 기구는 렌즈 길이 변수로 진행 | 결정 근거 뒤집힘(O-8) | — |
 | O-14 | ICR·IR LED 구동 (V-001 ⑤⑥) | ICR 드라이버 VDD 5V+펄스, AP1511B vs DRV8837 정격 근거 있는 쪽 / IR LED 1.0A·직렬 ≤2·방열 기판 | 3.3V에서 코일 전압 하한, 1.5A 여유 0 | AP1511B 3.3V 유지 불가 → DRV8837 |
-| G-001 | lead t18q (사용자 요청 2026-11-26) | schematic t18z | L-001·C-002를 KiCad 10 GUI로 보이게 진행, 단계별 스크린샷, GUI 단일 소유(pcb 금지 통지) | 스크린샷 C:/workspace_python/OpenHW/validation/runtime/kicad-gui/** (gitignore) | 창 뜸 즉시 보고 → lead 전달, ERC는 kicad-cli 종료 코드 | running (C-001b 뒤 L-001부터) |
 | O-15 | GUI 스크린샷 저장 위치 | 메인 체크아웃 validation/runtime/kicad-gui/<작업id>/ (gitignore) | 레인 gc 뒤에도 남음, 커밋 대상 아님 | 레인 worktree 안 validation/runtime/ |
