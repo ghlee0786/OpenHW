@@ -189,7 +189,7 @@ def check(t, N):
         r2 = [r for r in r2 if C.comps[r].split()[0].endswith('k')]
         vout = 0.596 * (1 + rv(r2[0]) / rv(r3[0]))  # TPS54302 VREF 0.596V (SLVSDC9 7.3.x 표)
         add('3.1', f'5V 벅 출력 (R {C.comps[r2[0]]}/{C.comps[r3[0]]}, VREF 0.596V) ±{pct}% 안', True, abs(vout - 5) <= 5 * int(pct) / 100)
-    for g, val in find(t, r'게이트 (CAM_1V8_G) = R17 (\d+k)'):
+    for g, val in find(t, r'게이트 (CAM_1V8_G) = R17 ([\d.]+k)'):
         add('3.1', 'R17 값·넷', f'{val} ' + '-'.join(sorted(('CORE_1V8', g))), f'{F.comps.get("R17")} {"-".join(sorted({F.at("R17", 1), F.at("R17", 2)}))}')
     if find(t, r'전면 Q6 DMG2305UX'):
         add('3.1', 'Q6 품명', 'DMG2305UX', F.comps.get('Q6'))
@@ -197,7 +197,7 @@ def check(t, N):
     for ref, val in find(t, r'Q7 DMG1012T\(G = CAM_EN, D → (R\d+) (\d+k) → 게이트\)'):
         add('3.1', 'Q7 G', 'CAM_EN', F.fn('Q7', 'G'))
         add('3.1', f'Q7 D → {ref} {val} → Q6 게이트', f'{ref} {val}', ' '.join(f'{r} {F.comps[r]}' for r in F.two_pin(F.fn('Q7', 'D'), F.fn('Q6', 'G'))) or '없음')
-    for ref, val in find(t, r'게이트–드레인 (C\d+) (\d+nF) 밀러'):
+    for ref, val in find(t, r'게이트–드레인 (C\d+) ([\d.]+nF)\([^)]*\) 밀러'):
         add('3.1', f'Q6 게이트–드레인 {ref}', f'{ref} {val}', ' '.join(f'{r} {F.comps[r]}' for r in F.two_pin(F.fn('Q6', 'G'), F.fn('Q6', 'D'))) or '없음')
     for ref, val in find(t, r'CAM_1V8 → GND (R\d+) (\d+k) 블리더'):
         add('3.1', f'CAM_1V8 블리더 {ref}', f'{ref} {val}', ' '.join(f'{r} {F.comps[r]}' for r in F.two_pin('CAM_1V8', 'GND') if r.startswith('R')) or '없음')
@@ -337,11 +337,11 @@ FAULTS = [
     ('7절 IR_LED_EN 커넥터 캐리어 22 → 24', 'J2-21 / 캐리어 22', 'J2-21 / 캐리어 24'),
     ('12A J7-4 ↔ J4-3 → J4-4', '| 4 | ALS_INT_RSV | 시험점 TP26만 (BTB 미연결, v1.12 O-83) | **3** |', '| 4 | ALS_INT_RSV | 시험점 TP26만 (BTB 미연결, v1.12 O-83) | **4** |'),
     ('12A J7-2 신호 12V_IR → GND', '| 2 | 12V_IR | TPS26600 OUT |', '| 2 | GND | TPS26600 OUT |'),
-    ('3.1 ILIM 6.98kΩ → 10kΩ', 'ILIM 6.98kΩ ≈', 'ILIM 10kΩ ≈'),
+    ('3.1 ILIM 6.04kΩ → 10kΩ', 'ILIM 6.04kΩ ≈', 'ILIM 10kΩ ≈'),
     ('3.1 Q7 → R18 1k → 2k', 'D → R18 1k → 게이트', 'D → R18 2k → 게이트'),
     ('3.1 블리더 R19 → R20', 'GND R19 10k 블리더', 'GND R20 10k 블리더'),
     ('3.1 5V_SYS C23 → C24', 'C7·C8·C20·C23,', 'C7·C8·C20·C24,'),
-    ('3.1 R17 10k → 100k', '= R17 10k', '= R17 100k'),
+    ('3.1 R17 4.7k → 100k', '= R17 4.7k', '= R17 100k'),
     ('12절 D7 SMBJ6.0A → SMBJ5.0A', '**D7 SMBJ6.0A**', '**D7 SMBJ5.0A**'),
     ('12B DNP 목록 front C6 → C5', '| front | C6 | 100nF |', '| front | C5 | 100nF |'),
     ('12B DNP 목록 carrier R17 행 빠짐', '| carrier | R17 | 47k | SD D3 풀업 옵션 | 위와 같음 |\n', ''),
