@@ -1,0 +1,51 @@
+{
+  "_comment": "P-002 넷클래스 원본. gen_templates.py 가 이 파일로 carrier/front .kicad_pro 를 만든다. 근거: netclasses.md",
+  "classes": [
+    {"name": "Default",    "track_width": 0.20, "clearance": 0.20, "via_diameter": 0.65, "via_drill": 0.30, "diff_pair_width": 0.20, "diff_pair_gap": 0.20, "diff_pair_via_gap": 0.25},
+    {"name": "CSI_100",    "track_width": 0.15, "clearance": 0.20, "via_diameter": 0.65, "via_drill": 0.30, "diff_pair_width": 0.15, "diff_pair_gap": 0.16, "diff_pair_via_gap": 0.25, "priority": 0},
+    {"name": "MDI_100",    "track_width": 0.15, "clearance": 0.20, "via_diameter": 0.65, "via_drill": 0.30, "diff_pair_width": 0.15, "diff_pair_gap": 0.16, "diff_pair_via_gap": 0.25, "priority": 1},
+    {"name": "USB_90",     "track_width": 0.20, "clearance": 0.20, "via_diameter": 0.65, "via_drill": 0.30, "diff_pair_width": 0.20, "diff_pair_gap": 0.16, "diff_pair_via_gap": 0.25, "priority": 2},
+    {"name": "PWR_12V_IN", "track_width": 1.00, "clearance": 0.25, "via_diameter": 0.80, "via_drill": 0.40, "diff_pair_width": 0.20, "diff_pair_gap": 0.20, "diff_pair_via_gap": 0.25, "priority": 3},
+    {"name": "PWR_5V",     "track_width": 1.50, "clearance": 0.20, "via_diameter": 0.80, "via_drill": 0.40, "diff_pair_width": 0.20, "diff_pair_gap": 0.20, "diff_pair_via_gap": 0.25, "priority": 4},
+    {"name": "PWR_12V_IR", "track_width": 0.60, "clearance": 0.25, "via_diameter": 0.80, "via_drill": 0.40, "diff_pair_width": 0.20, "diff_pair_gap": 0.20, "diff_pair_via_gap": 0.25, "priority": 5},
+    {"name": "PWR_LOGIC",  "track_width": 0.30, "clearance": 0.20, "via_diameter": 0.65, "via_drill": 0.30, "diff_pair_width": 0.20, "diff_pair_gap": 0.20, "diff_pair_via_gap": 0.25, "priority": 6}
+  ],
+  "patterns": [
+    {"netclass": "CSI_100",    "pattern": "*CAM_RX0_*"},
+    {"netclass": "MDI_100",    "pattern": "*EPHY_RX*"},
+    {"netclass": "MDI_100",    "pattern": "*EPHY_TX*"},
+    {"netclass": "MDI_100",    "pattern": "*MDI_*"},
+    {"netclass": "USB_90",     "pattern": "*USB_DP"},
+    {"netclass": "USB_90",     "pattern": "*USB_DN"},
+    {"netclass": "PWR_12V_IN", "pattern": "*12V_IN*"},
+    {"netclass": "PWR_5V",     "pattern": "*5V_SYS"},
+    {"netclass": "PWR_5V",     "pattern": "VIN"},
+    {"netclass": "PWR_5V",     "pattern": "*/VIN"},
+    {"netclass": "PWR_12V_IR", "pattern": "*12V_IR"},
+    {"netclass": "PWR_LOGIC",  "pattern": "*3V3"},
+    {"netclass": "PWR_LOGIC",  "pattern": "*1V8"}
+  ],
+  "board_rules": {
+    "min_track_width": 0.15,
+    "min_clearance": 0.16,
+    "min_via_diameter": 0.60,
+    "min_through_hole_diameter": 0.30,
+    "min_via_annular_width": 0.15,
+    "min_hole_to_hole": 0.45,
+    "min_hole_clearance": 0.25,
+    "min_copper_edge_clearance": 0.40,
+    "min_silk_clearance": 0.15,
+    "min_text_height": 1.0,
+    "min_text_thickness": 0.15,
+    "min_connection": 0.0,
+    "min_groove_width": 0.0,
+    "min_microvia_diameter": 0.2,
+    "min_microvia_drill": 0.1,
+    "min_resolved_spokes": 2,
+    "solder_mask_to_copper_clearance": 0.0,
+    "max_error": 0.005,
+    "use_height_for_length_calcs": true
+  },
+  "solder_mask_expansion": 0.05,
+  "solder_mask_min_web": 0.10
+}

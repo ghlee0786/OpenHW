@@ -1,0 +1,80 @@
+(version 1)
+# OpenHW 캐리어·전면 보드 사용자 규칙 (P-002, 2026-11-26)
+# 근거: hardware/pcb/fab-rules-pcbway.md (P-001) §3, PCBWay 추가 요금 없는 기준 6/6mil·드릴 0.3mm 위 여유값
+# gen_templates.py 가 각 보드 폴더에 <보드>.kicad_dru 로 복사한다. 이 파일이 원본이다.
+
+# ---- 제조 공통 ----
+(rule "fab_min_drill"
+  (constraint hole_size (min 0.30mm)))
+
+(rule "fab_annular_ring"
+  (constraint annular_width (min 0.15mm)))
+
+(rule "fab_hole_to_hole"
+  (constraint hole_to_hole (min 0.45mm)))
+
+(rule "fab_copper_to_edge"
+  (constraint edge_clearance (min 0.40mm)))
+
+(rule "fab_track_min"
+  (constraint track_width (min 0.15mm)))
+
+(rule "fab_copper_clearance"
+  (constraint clearance (min 0.16mm)))
+
+(rule "fab_via_diameter"
+  (condition "A.Type == 'Via'")
+  (constraint via_diameter (min 0.60mm)))
+
+(rule "fab_silk_text"
+  (layer "?.Silkscreen")
+  (constraint text_height (min 1.0mm))
+  (constraint text_thickness (min 0.15mm)))
+
+(rule "fab_silk_to_pad"
+  (layer "?.Silkscreen")
+  (constraint silk_clearance (min 0.15mm)))
+
+# ---- 고속 차동 (L1/L4 표면, 인접 내층 GND 기준) ----
+(rule "hs_outer_only"
+  (layer inner)
+  (condition "A.hasNetclass('CSI_100') || A.hasNetclass('MDI_100') || A.hasNetclass('USB_90')")
+  (constraint disallow track))
+
+(rule "csi_100_pair"
+  (condition "A.hasNetclass('CSI_100')")
+  (constraint track_width (min 0.14mm) (opt 0.15mm) (max 0.16mm))
+  (constraint diff_pair_gap (min 0.15mm) (opt 0.16mm) (max 0.18mm))
+  (constraint diff_pair_uncoupled (max 3mm))
+  (constraint skew (max 1.0mm)))
+
+(rule "mdi_100_pair"
+  (condition "A.hasNetclass('MDI_100')")
+  (constraint track_width (min 0.14mm) (opt 0.15mm) (max 0.16mm))
+  (constraint diff_pair_gap (min 0.15mm) (opt 0.16mm) (max 0.18mm))
+  (constraint diff_pair_uncoupled (max 5mm)))
+
+(rule "usb_90_pair"
+  (condition "A.hasNetclass('USB_90')")
+  (constraint track_width (min 0.19mm) (opt 0.20mm) (max 0.21mm))
+  (constraint diff_pair_gap (min 0.15mm) (opt 0.16mm) (max 0.18mm))
+  (constraint diff_pair_uncoupled (max 5mm)))
+
+# 고속 트랙과 다른 넷 트랙 사이 (짝끼리는 제외). 0.5mm 피치 패드 탈출부는 패드가 상대라 적용되지 않는다.
+(rule "hs_track_spacing"
+  (condition "(A.hasNetclass('CSI_100') || A.hasNetclass('MDI_100') || A.hasNetclass('USB_90')) && A.Type == 'Track' && B.Type == 'Track' && !A.isCoupledDiffPair()")
+  (constraint clearance (min 0.30mm)))
+
+# ---- 전원 (IPC-2221 외층 ΔT10℃ 계산 이상, netclasses.md §3) ----
+(rule "pwr_12v_in_width"
+  (condition "A.hasNetclass('PWR_12V_IN')")
+  (constraint track_width (min 0.80mm)))
+
+(rule "pwr_12v_ir_width"
+  (condition "A.hasNetclass('PWR_12V_IR')")
+  (constraint track_width (min 0.55mm)))
+
+# 5V 는 0.5mm 피치 BTB 4핀으로 갈라져 들어가므로 최소폭은 패드 탈출 폭(0.30)만 강제한다. 본선은 넷클래스 1.5mm·면 채움.
+(rule "pwr_5v_width"
+  (condition "A.hasNetclass('PWR_5V')")
+  (constraint track_width (min 0.30mm)))

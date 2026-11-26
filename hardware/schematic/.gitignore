@@ -1,0 +1,6 @@
+# KiCad local view state
+*.kicad_prl
+*.lck
+_autosave-*
+*-backups/
+tools/c002-gen-report.json

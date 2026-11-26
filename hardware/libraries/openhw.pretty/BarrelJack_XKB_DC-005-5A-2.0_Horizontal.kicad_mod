@@ -1,0 +1,179 @@
+(footprint "BarrelJack_XKB_DC-005-5A-2.0_Horizontal"
+	(version 20260206)
+	(generator "pcbnew")
+	(generator_version "10.0")
+	(layer "F.Cu")
+	(descr "XKB DC-005-5A-2.0 DC jack 5.5x2.1, THT right angle. Pin spacing per XKB drawing Rev A1 as read by V-004 R6: 1-2 5.90, pin 3 at 3.0 / 4.70, slots 1.0x3.5. Derived from KiCad Connector_BarrelJack:BarrelJack_Horizontal (body outline kept, verify vs XKB drawing). Body per XKB X-DC-005-5A-2.0 Rev A1 2025-04-22: 14.0 x 9.0, front -13.6, rear +0.4 (R-009). 3D model is the KiCad generic 6.0-pitch jack (substitute). Silk keeps 0.2 inside a board edge at body front x=-13.6 (C-008).")
+	(tags "Power Jack")
+	(property "Reference" "REF**"
+		(at -8.45 5.75 0)
+		(layer "F.SilkS")
+		(uuid "9bf4c2b1-46be-40db-91e7-9fc26926aecf")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "Value" "BarrelJack_XKB_DC-005-5A-2.0_Horizontal"
+		(at -6.2 -5.5 0)
+		(layer "F.Fab")
+		(uuid "36cd9c58-69dd-4a8e-b29b-80a4380254e8")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "Datasheet" ""
+		(at 0 0 0)
+		(unlocked yes)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "fa324262-db12-4de0-a0d2-f47dbc316e7b")
+		(effects
+			(font
+				(size 1.27 1.27)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "Description" ""
+		(at 0 0 0)
+		(unlocked yes)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "e2934d77-4f75-422f-87da-6b5ca4b814db")
+		(effects
+			(font
+				(size 1.27 1.27)
+				(thickness 0.15)
+			)
+		)
+	)
+	(attr through_hole)
+	(duplicate_pad_numbers_are_jumpers no)
+	(fp_text user "${REFERENCE}"
+		(at -3 -2.95 0)
+		(layer "F.Fab")
+		(uuid "81e747e0-4946-4f17-a33f-e0465332937e")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(fp_rect
+		(start -13.6 -4.5)
+		(end 0.4 4.5)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(fill no)
+		(layer "F.Fab")
+		(uuid "b55ac6f1-ea8d-4394-86d6-47eb384637f0")
+	)
+	(fp_rect
+		(start -13.85 -4.75)
+		(end 2.0 6.7)
+		(stroke
+			(width 0.05)
+			(type solid)
+		)
+		(fill no)
+		(layer "F.CrtYd")
+		(uuid "2449a5ea-ba4a-4eaa-9a02-9999e733925e")
+	)
+	(fp_line
+		(start -13.300 -4.610)
+		(end 0.510 -4.610)
+		(stroke
+			(width 0.12)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(uuid "262e4628-78fb-467b-8103-a4fe7bc3514c")
+	)
+	(fp_line
+		(start 0.510 -4.610)
+		(end 0.510 -2.360)
+		(stroke
+			(width 0.12)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(uuid "5589e9b6-158d-4fc5-87ee-6c909f4d79cf")
+	)
+	(fp_line
+		(start 0.510 2.360)
+		(end 0.510 4.610)
+		(stroke
+			(width 0.12)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(uuid "bdfb940e-d57c-4f64-b157-8a64a33616d1")
+	)
+	(fp_line
+		(start -13.300 4.610)
+		(end -5.360 4.610)
+		(stroke
+			(width 0.12)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(uuid "add3d91a-ebec-4179-861a-76e93ed78fe5")
+	)
+	(fp_line
+		(start -0.640 4.610)
+		(end 0.510 4.610)
+		(stroke
+			(width 0.12)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(uuid "72bb0bfb-cbbe-42c2-96d8-6dc1d0626175")
+	)
+	(pad "1" thru_hole rect
+		(at 0 0)
+		(size 3.5 4.2)
+		(drill oval 1.0 3.5)
+		(layers "*.Cu" "*.Mask")
+		(remove_unused_layers no)
+		(uuid "612a7b3c-694b-4b8c-9db9-df1de65505ed")
+	)
+	(pad "2" thru_hole roundrect
+		(at -5.9 0)
+		(size 3.0 4.2)
+		(drill oval 1.0 3.5)
+		(layers "*.Cu" "*.Mask")
+		(remove_unused_layers no)
+		(roundrect_rratio 0.25)
+		(uuid "7d51c881-82dc-4cee-accc-b6ff7fba8db5")
+	)
+	(pad "3" thru_hole roundrect
+		(at -3.0 4.7)
+		(size 4.2 3.5)
+		(drill oval 3.5 1.0)
+		(layers "*.Cu" "*.Mask")
+		(remove_unused_layers no)
+		(roundrect_rratio 0.25)
+		(uuid "e6fa3427-1bd4-4771-845f-bf8f39594a3e")
+	)
+	(embedded_fonts no)
+	(model "${KICAD10_3DMODEL_DIR}/Connector_BarrelJack.3dshapes/BarrelJack_Horizontal.step"
+		(offset
+			(xyz 0 0 0)
+		)
+		(scale
+			(xyz 1 1 1)
+		)
+		(rotate
+			(xyz 0 0 0)
+		)
+	)
+)
