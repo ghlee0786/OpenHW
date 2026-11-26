@@ -141,7 +141,7 @@
 | F4-8 | 검증을 통과하지 못한 모델 | 이미지에 넣지 않는다 | 틀린 결과를 내는 모델을 출하하지 않는다 | — |
 
 ## 7. 미확인 / 남은 일
-- **모델:** 원인 J 수정(Transpose 앞에서 자르기) 뒤 다시 변환·검증. orch 지시를 기다린다.
+- **모델:** F-004b(8절)에서 Transpose 앞 자르기로 1회 재변환했지만 **불합격**이었다. 모델 경로 **D**로 마감한다(모델 없이, bring-up 뒤로). 실제 원인은 Slice가 아니라 헤드 출력(obj 채널이 0)이다. 다음 시도는 orch·사용자가 결정한다.
 - **HIL:** sscma-node가 persond 요청으로 노드를 실제로 만들고 시작하는지, RTSP 재생, 추론 FPS, 이벤트 지연.
 - **Node-RED와 충돌:** 사용자가 Node-RED flow로 camera 노드를 따로 만들면 카메라가 겹친다. 지금 이미지에는 사용자 flow가 없다(`/home/recamera/.node-red/flows.json` 없음).
 - **야간 IR 영상에서의 정확도:** COCO(가시광) 가중치라 성능이 떨어질 수 있다.
@@ -179,3 +179,64 @@
 - 디코딩은 `[1,k,3549]` 배치로 한다. grid는 `[1,2,N]`, stride는 `[1,1,N]`이다.
 - 결과를 axis 1로 Concat해 `[1,6,3549]`를 만들고, axis 2로 0 패딩해 `[1,6,10647]`로 늘린다.
 - **맨 끝에서만** Transpose해 `output_sscma [1,10647,6]`을 만든다. sscma-node가 받는 모양은 그대로다.
+
+### 8.2 결과 — **불합격 → 모델 경로 D로 마감 (5회째 없음)**
+
+| 단계 | 명령 / 산출 | 종료 코드 | 결과 |
+|---|---|---|---|
+| 기준 커밋 | `2da6706` (8.1 기준 + `verify_cvimodel.py`) | — | 변환 전에 기록 |
+| 그래프 바꾸기 | `yolox_to_sscma.py` 커밋 `7b6f254` | — | 원래 Transpose를 지우고 채널 축으로 자른 뒤 끝에서만 Transpose |
+| K0 등가 | onnxruntime, 21장, 새 ONNX vs F-004 ONNX | 0 | **최대 절대차 0.000** (출력 `[1,10647,6]`) · `f004b-k0.log` |
+| 변환 | `slot --label F-004b-model -- bash firmware/models/convert-yolox-person.sh` (`OUT_DIR=…/models-candidate`, deploy 시험 옵션은 빼서 원인 H를 피함, 커밋 `f92d506`) | **0** (130 s) | cvimodel sha256 `f9920f9e0e12b0dc4ea15cbe876b65698735cf41f1b212b50544ae4d690d02fe` (1,290,224 B) · `f004b-model-1.log` |
+| 검증 | `verify_cvimodel.py … 20 …/000000162130.jpg` | **1** | **VERIFY FAILED** · `f004b-verify-1.log` |
+
+**입력 해시:**
+- 원본 `yolox_nano.onnx`: `c789161ed43c8269fcd4e67c67eeeb4e80c622da2eb296a20bc6007bd18a0b7d`.
+- 새 sscma ONNX: `e475ee4e0e1fd44018662f8a697f30231279b385cf255c08b43690a3b628f010`.
+- F-004 sscma ONNX: `b81424be9f5c68cdbd0413cef25dd96c4ed862ed1ec700a8f28af4e52a2086fc`.
+
+**K 판정 (기준 그대로):**
+
+| # | 값 | 판정 |
+|---|---|---|
+| K1 판정 일치 | 11/21 = 52.4 % | FAIL |
+| K2 점수 차 (사람 이미지 10장) | 평균 0.842, 최대 0.925 | FAIL |
+| K3 대응 박스 IoU (ONNX 검출 24개) | 평균 0.000 (cvimodel 검출 없음) | FAIL |
+| K4 검출 수 같음 | 11/21, 최대 차 7 | FAIL |
+| K5 사람 없는 이미지 | 검출 0 | ok |
+
+ONNX 최고 점수가 0.66~0.93인 사람 이미지 10장에서도 cvimodel 최고 점수는 ≤ 0.009다. 이는 F-004의 실패 3회와 같은 모양이다.
+
+**하강 단계 비교** (`firmware/models/stage_compare.py`, `000000085329.jpg`, float top MLIR vs cvimodel 호스트 모의 · `f004b-stages-4.log`):
+- cvimodel 덤프는 층 묶음 때문에 헤드 `1158_Reshape`(stride 8, `[85,2704]`, Slice 앞)와 최종 출력만 남는다.
+- tpu 단계 MLIR(`*_int8_sym_tpu.mlir`)은 가중치 npz 이름이 맞지 않아(`…_tpu_weights.npz` 없음) 실행되지 않아 비교에서 뺐다.
+
+| 텐서 | float top | cvimodel | cos |
+|---|---|---|---|
+| 최종 col0·col1 (x, y) | 0~1.01 | 0~0.99 | **0.999** |
+| 최종 col2·col3 (w, h) | max 1.34 / 1.31 | max 1.17 / 1.03 | 0.83 / 0.80 |
+| 최종 col4 (score = obj·person) | max 0.932 | max 0.009 | **0.000** |
+| 최종 col5 (person) | max 0.940 | max 0.561 | 0.45 |
+| 헤드 ch4 obj (Slice 앞) | max 0.394 | **전부 0** | **0.000** |
+| 헤드 ch5 person | max 0.591 | max 0.453 | 0.46 |
+| 헤드 ch6~84 다른 클래스 | max 0.759 | max 0.340 | 0.22 |
+| 헤드 ch0~3 reg | — | — | 0.51 / 0.46 / 0.92 / 0.86 |
+
+**원인 다시 판정:**
+- 이번에는 Slice가 맞는 채널을 집는다. x·y 열 cos가 0.999이고, 최종 열과 헤드 채널이 대응한다.
+- 그러므로 F-004의 원인 J(Transpose 뒤 마지막 축 Slice)는 **틀린 판정**이었다.
+- 실제로 틀어지는 곳은 **Slice 앞 YOLOX 헤드 출력**이다. cvimodel에서 obj(sigmoid) 채널이 전부 0이고, 클래스·reg 채널도 cos 0.2~0.9로 무너진다.
+- F-004 실패 3(BF16)도 같은 모양이었으므로 INT8 보정표만의 문제는 아닐 수 있다. 헤드 쪽 sigmoid·Concat의 cv181x 하강이 의심되지만 **확인하지 않았다.** 층 묶음 때문에 덤프에 중간 층이 없다.
+- 이 근거로 지시대로 **D로 마감**한다. 같은 계통의 5회째 변환은 돌리지 않는다.
+
+**출하:**
+- cvimodel `f9920f9e…`는 `…/openhw-tools/models-candidate/`에만 있다.
+- `apply-f004.sh`가 읽는 `…/openhw-tools/models/`는 비어 있다. 그러므로 이미지에는 들어가지 않는다.
+- 이미지는 F-004 그대로다(`out-f004`, 모델 없음, emmc.zip `82012afe…`).
+- 합격하지 않았으므로 persond 모델 연결, 호스트 시험 재실행, 이미지 재빌드는 하지 않았다.
+- 네트워크는 닫힘 기본을 그대로 유지한다.
+
+**다음 시도를 한다면 (orch·사용자 결정, 하지 않음):**
+1. 층 묶음 없이(`--debug`·`compare_all`) 헤드 층별로 비교해 처음 틀어지는 층을 찾는다.
+2. 헤드 sigmoid·Concat 앞 층을 F32/BF16으로 두는 혼합 정밀도(`--quantize_table`)로 변환한다.
+3. obj·cls sigmoid를 그래프 밖(persond 또는 후처리)으로 빼고 logit을 출력한다.
