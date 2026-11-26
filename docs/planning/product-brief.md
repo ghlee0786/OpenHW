@@ -3,17 +3,18 @@
 
 ## 결정됨 (사용자 2026-11-26)
 - 제품: 엣지 AI 카메라 노드 — 카메라 입력 → 온보드 NPU 감지 → 네트워크로 이벤트/영상 전송
-- 형태: 리눅스 SBC를 직접 설계 (모듈 캐리어가 아닌 SoC 직접 탑재)
-- SoC: Sophgo SG2002 (DDR 내장, QFN). 2순위 후보 Allwinner V851s — 근거: docs/decisions/D-001-soc.md
+- 형태: SG2002 코어 모듈 + 자체 설계 캐리어 보드 (사용자 경로 C 선택 — SoC 직접 탑재에서 변경, 근거 docs/decisions/D-002-module-carrier.md). 모듈 후보 예: Sipeed LicheeRV Nano 코어보드, 구매처 확인 중
+- SoC: Sophgo SG2002 — 근거: docs/decisions/D-001-soc.md (칩 단품 조달 불가로 D-002에서 모듈 경로로 보완)
 - 제외: Rockchip RV 계열 (사용자 지정. RV 외 Rockchip은 제외 대상 아님)
-- OS: 벤더 SDK 기반 Buildroot 리눅스 (`duo-buildroot-sdk` 계열 — 버전 확인 전)
+- OS: 벤더 SDK 기반 Buildroot 리눅스, 벤더 커널 5.10.4 고정. SDK 후보 `duo-buildroot-sdk` · Sipeed LicheeRV-Nano-Build · sophgo/sophpi (모듈 확정 후 그 모듈 공급사 SDK 우선)
 - 광학 일체 실장 (사용자 2026-11-26): 렌즈(마운트·홀더), IR-cut 필터(주야 전환), IR LED(야간 조명)를 보드 설계 단계에서 함께 고려해 실장
   - 전기: IR-cut 구동, IR LED 구동, 주야 판별 입력을 회로 요구에 포함
   - 기구: 렌즈 광축·홀더 고정 구멍·IR LED 위치/광차단을 PCB 배치 기준으로 삼고, 이후 그 PCB STEP을 기준으로 외함 설계 (README 단계 7)
 
 ## 미정 (추정으로 확정하지 않음)
 - 감지 대상(사람/차량/영역 침입 등)과 실측 합격 기준
-- 카메라 센서 (SDK 지원·IQ 파일 제공 센서 중에서 선정 예정)
+- 카메라 센서 (SDK 지원·IQ 파일 제공 센서 중에서 선정 예정). IQ 보유 후보: GC4653·OS04A10·OS04C10·SC2336·IMX307(SDK), GC2083·SC035HGS·OV5647(Milk-V rootfs), GC02M1·OV2685(Sipeed). IQ+모듈 조달 동시 확인은 GC2083뿐 (R-001, 2026-11-26)
+- 벤더 커널 5.10 고정 수용 여부, 위탁 조립 허용 여부 (사용자 확인 대기)
 - 영상 저장 여부 (이벤트만 / 녹화) → 저장장치(SPI NAND / eMMC / microSD) 결정
 - 원격 업데이트(A/B OTA) 포함 여부
 - 광학 세부: 화각(FOV)·고정/가변 초점, 렌즈 마운트(M12 등), IR 파장(850nm / 940nm), 야간 조사 거리, 주야 판별 방식(조도센서 / 영상 기반)

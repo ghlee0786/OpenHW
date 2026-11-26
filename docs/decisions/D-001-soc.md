@@ -1,6 +1,6 @@
 # D-001 SoC 선택: Sophgo SG2002
 - 날짜: 2026-11-26 · 결정자: 사용자 · 기록: lead
-- 상태: 방향 결정. 조달·SDK·센서 조사로 확인 전 (아래 "확인 필요" 미해결 시 재검토)
+- 상태: SoC 선택 유지. 확인 필요 1~5는 R-001(research 레인 t-20261126-144331-462e)로 조사됨 — 칩 단품 조달 불가로 형태는 D-002(모듈 + 캐리어)로 변경
 
 ## 배경
 - 목표: PCBWay 등 극소량 제작, 가장 싸고 빠른 리눅스 SBC형 완전기능 PoC.
@@ -10,8 +10,8 @@
 ## 후보와 판단 (일반 지식 기준, 수치 미검증)
 | 후보 | 판단 |
 |---|---|
-| Sophgo SG2002 | 채택. DDR 내장(256MB급), MIPI CSI·ISP·H.264/265·NPU, QFN, SDK·참고 보드(Milk-V Duo 256M, LicheeRV Nano) 공개 |
-| Allwinner V851s/V851se | 2순위. DDR 내장(64MB급), ISP·NPU, QFN, Tina Linux |
+| Sophgo SG2002 | 채택. DDR3 256MB 내장 확인(TRM v1.02), MIPI CSI·ISP·H.264/265·NPU, QFN, SDK·참고 보드(Milk-V Duo 256M, LicheeRV Nano) 공개. 단품 조달 불확실: 공식 샘플 품절, 리셀러 단종 표시, 정규 유통 없음 (2026-11-26) → D-002 모듈 경로. 벤더 커널 5.10.4 고정, 메인라인에 카메라·NPU 없음 |
+| Allwinner V851s/V851se | 2순위. V851s/SE DDR2 64MB, V851s3 DDR3L 128MB(단품 미유통), ISP·NPU, QFN, Tina Linux. SDK 계정(LV2) 필요, NPU 변환 도구 비공개 |
 | Sophgo CV1800B | NPU 없음 — 감지 기능 요구와 불일치 |
 | Ingenic T31/T41, SigmaStar SSC33x | SDK NDA·소량 조달 어려움 |
 | RPi CM4/CM5 등 모듈+캐리어 | 사용자가 SoC 직접 탑재 경로 선택 |
