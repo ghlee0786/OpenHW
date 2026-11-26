@@ -165,46 +165,6 @@
 	(sheetfile "reCamera 2002 GC2053 Sensor Board.kicad_sch")
 	(attr smd)
 	(duplicate_pad_numbers_are_jumpers no)
-	(fp_line
-		(start -3.51 -1.88)
-		(end 3.51 -1.88)
-		(stroke
-			(width 0.12)
-			(type default)
-		)
-		(layer "F.SilkS")
-		(uuid "69c97606-2ed8-4b10-8fe0-1239ca9b79fd")
-	)
-	(fp_line
-		(start -3.51 1.88)
-		(end -3.51 -1.88)
-		(stroke
-			(width 0.12)
-			(type default)
-		)
-		(layer "F.SilkS")
-		(uuid "0ed9eee2-36f1-43df-a87a-2fc765a81892")
-	)
-	(fp_line
-		(start 3.51 -1.88)
-		(end 3.51 1.88)
-		(stroke
-			(width 0.12)
-			(type default)
-		)
-		(layer "F.SilkS")
-		(uuid "ad827066-bb4a-432c-8426-d27b91984a84")
-	)
-	(fp_line
-		(start 3.51 1.88)
-		(end -3.51 1.88)
-		(stroke
-			(width 0.12)
-			(type default)
-		)
-		(layer "F.SilkS")
-		(uuid "e093c78f-6a6b-467e-b846-3216d9b9e91e")
-	)
 	(fp_rect
 		(start -3.5052 -1.8796)
 		(end 3.4798 1.8288)
@@ -342,6 +302,66 @@
 			)
 			(justify left bottom)
 		)
+	)
+	(fp_line
+		(start 2.575 -1.880)
+		(end 3.510 -1.880)
+		(stroke
+			(width 0.12)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(uuid "e83db908-055b-4ddc-858f-4607d2ae94d0")
+	)
+	(fp_line
+		(start -3.510 -1.880)
+		(end -2.575 -1.880)
+		(stroke
+			(width 0.12)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(uuid "8341595e-5ccb-4db3-bdfd-49c73ad8a472")
+	)
+	(fp_line
+		(start -3.510 -1.880)
+		(end -3.510 1.880)
+		(stroke
+			(width 0.12)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(uuid "e003f6d9-39ef-4378-b62a-3177800dd007")
+	)
+	(fp_line
+		(start 3.510 -1.880)
+		(end 3.510 1.880)
+		(stroke
+			(width 0.12)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(uuid "aa1f390a-198d-49a9-bb81-237557f4eb68")
+	)
+	(fp_line
+		(start 2.575 1.880)
+		(end 3.510 1.880)
+		(stroke
+			(width 0.12)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(uuid "cbad31ff-a810-4635-a3eb-2e6244290405")
+	)
+	(fp_line
+		(start -3.510 1.880)
+		(end -2.575 1.880)
+		(stroke
+			(width 0.12)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(uuid "a754af6f-e8a0-4ffd-95e9-70dd47d41da2")
 	)
 	(pad "1" smd roundrect
 		(at -2.2 2.08 90)

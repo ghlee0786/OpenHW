@@ -109,7 +109,9 @@ FIXED = {
         # GH 6P, M-002 K20 (−19.0…−13.5, −15.0…−3.5). 구멍 (−17,−17) 금지 원에 0.28 걸려 +Y로 0.3 올림
         "J4": ("crt", "B", "-X", (-19.0, -14.7, -13.5, -3.2)),
         # J_ICR (M-001d x +15…+19, y ±3): GH 2P 자리 보류 — PicoBlade 53261-0271로 바뀔 예정(O-34, C-005), G2 실물 확인 전 확정 금지
-        "J2": ("crt", "F", "-X", (13.6, -3.25, 19.95, 3.25)),
+        # → PicoBlade courtyard 6.89×9.56: 윗면 어디에도 자리 없음(MH1 courtyard ±13.55가 홀더 귀 ±12.2보다 1.35 넓음).
+        #   패드–외곽 0.4를 지키는 자리에 두고 MH1 courtyard 겹침 1건을 미결로 드러낸다 (O-34, 라이브러리 courtyard 축소 요청)
+        "J2": ("crt", "F", "-X", (12.95, -4.78, 19.84, 4.78)),
     },
 }
 
@@ -126,7 +128,7 @@ FREE = {
         ("D2", "F", (4.0, -31.0), None), ("U2", "F", (6.0, -24.5), None), ("C1", "F", (-4.0, -30.0), None),
         ("C2", "F", (-0.5, -24.0), None), ("C3", "F", (-12.5, -31.5), None), ("C4", "F", (-12.5, -28.0), None),
         ("U1", "F", (6.0, -15.0), None), ("L1", "F", (12.0, -16.5), None), ("C7", "F", (17.5, -9.0), None),
-        ("C8", "F", (17.5, -4.5), None), ("C20", "F", (17.5, -13.0), None), ("C19", "F", (3.0, -12.5), None),
+        ("C8", "F", (17.5, -4.5), None), ("C20", "F", (17.5, -13.0), None), ("C23", "F", (17.5, -16.5), None), ("C19", "F", (3.0, -12.5), None),
         ("D7", "F", (17.5, 2.5), None),  # C-004: 5V_SYS TVS — J1 5V 핀(13.8, 0.25…−1.25) 옆
         ("C11", "F", (-1.0, -15.5), None),
         # USB (J1 1·3번 → 뒷면 USB-C −X): ESD·CC 저항은 USB-C 다리 안쪽 윗면
@@ -138,7 +140,7 @@ FREE = {
         ("C", "F", (2.0, -5.0), None), ("R", "F", (0.0, 0.0), None), ("TP", "B", (12.0, 12.0), None),
     ],
     "front": [
-        ("J2", "F", (16.8, 0.0), "-X"),
+
         ("U3", "F", (-17.0, 0.0), None), ("Q4", "F", (-17.0, 4.5), None),
         # A 스트링 드라이버: 뒷면 −X 위쪽 / B 스트링: 뒷면 +X 아래쪽
         ("U4", "B", (-15.5, 2.0), None), ("L1", "B", (-15.5, 8.5), None), ("D1", "B", (-15.5, -3.0), None),
@@ -158,11 +160,15 @@ ZONES = {
     "carrier": [],
     "front": [
         ("F", (-12.2, -7.95, 12.2, 7.95), {"MH1"}),            # 스페이서 프레임 (M-001d §3.6)
-        ("F", (-3.8, -14.4, 3.8, -9.6), {"J3", "MH1"}),        # DF30 자리
+        ("F", (-4.3, -14.9, 4.3, -9.6), {"J3", "MH1"}),        # DF30 자리 (+0.5: 0.4 피치 마스크 개구와 이웃 패드 분리)
         ("B", (-10.0, 8.0, 10.0, 16.0), {"J1"}),               # 방열판 J1 창
         ("B", (-9.5, 16.5, 9.5, 19.5), set()),                 # K21 TP_A 노출 구리 패드 (M-002 3f7ceee §8)
         ("B", (-12.0, -19.5, -6.0, -13.5), set()),             # K21 TP_B1
         ("B", (6.0, -19.5, 12.0, -13.5), set()),               # K21 TP_B2
+        # CSI 통로 (layout-plan §4.2): J1(뒷면 y 9.8) → L4 남쪽 → DF30 북쪽 비아(윗면) — 부품 비움
+        ("B", (1.2, -10.2, 6.2, 8.7), set()),
+        ("B", (-1.0, -10.2, 6.2, -8.3), set()),
+        ("F", (-3.0, -9.6, 4.0, -7.95), {"MH1"}),
     ],
 }
 # 외함 고정 자리(구멍 없이 금지 원만, 지름 미정) — 캐리어는 (+17,−17)을 뺀다 (M-002 K19)
@@ -199,8 +205,8 @@ def opening(fp):
     """입구 방향: 패드 무게중심 → courtyard 중심 방향(O 좌표)."""
     sig = [O(p.GetPosition()) for p in fp.Pads() if p.GetNumber().isdigit()]
     mp = [O(p.GetPosition()) for p in fp.Pads() if p.GetNumber() == "MP"]
-    if mp and fp.GetFPID().GetUniStringLibItemName().startswith("JST_"):
-        # JST 측면 진입형: 신호 패드(뒤) → 고정 탭 MP(입구 쪽)
+    if mp and fp.GetFPID().GetUniStringLibItemName().startswith(("JST_", "Molex_")):
+        # JST·Molex 측면 진입형: 신호 패드(뒤) → 고정 탭 MP(입구 쪽)
         (ax, ay), (bx, by) = [(sum(q[0] for q in s) / len(s), sum(q[1] for q in s) / len(s)) for s in (sig, mp)]
         dx, dy = bx - ax, by - ay
         return ("+X" if dx > 0 else "-X") if abs(dx) > abs(dy) else ("+Y" if dy > 0 else "-Y")
@@ -307,8 +313,8 @@ class Placer:
             if opening(fp) != want_open:
                 continue
             c = crt_box(fp)
-            if abs((c[2] - c[0]) - (target[2] - target[0])) > 1.2 or abs((c[3] - c[1]) - (target[3] - target[1])) > 1.2:
-                continue
+            # 크기는 맞추지 않는다(입구 방향만): 커넥터 교체(예: J_ICR GH→PicoBlade, O-34)에도 같은 자리 규칙. 차이는 아래 출력으로 보고
+
             # 입구 쪽 변을 목표 변에 맞추고, 다른 축은 가운데를 맞춘다
             tx = target[0] - c[0] if want_open == "-X" else target[2] - c[2] if want_open == "+X" else \
                 (target[0] + target[2]) / 2 - (c[0] + c[2]) / 2

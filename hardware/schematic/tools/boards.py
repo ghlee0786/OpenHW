@@ -35,7 +35,7 @@ s.block('PIN','12V 입력 · 보호',['DC 12V (GST25A12 2.08A) → F1 3A → Q1 
 # --- 12V input & protection
 s.add('J2', 'Connector:Barrel_Jack_Switch', 'DC-005-5A-2.0', 'openhw:BarrelJack_XKB_DC-005-5A-2.0_Horizontal', {'1': '12V_IN_RAW', '2': 'GND'},
       fields={'MPN': 'XKB DC-005-5A-2.0 (LCSC C381116)', 'Note': 'C-004 R6: dedicated footprint 1-2 5.90, pin3 3.0/4.70, slot 1.0x3.5'})
-s.add('F1', 'Device:Fuse', '3A slow-blow >=32V', 'Fuse:Fuse_1206_3216Metric', {'1': '12V_IN_RAW', '2': '12V_IN_F'}, fields={'MPN': 'candidate Littelfuse 0437003.WR (1206 Slo-Blo 3A) - rating check pending (V-004 R12)'})
+s.add('F1', 'Device:Fuse', '3A slow-blow 63V', 'Fuse:Fuse_1206_3216Metric', {'1': '12V_IN_RAW', '2': '12V_IN_F'}, fields={'MPN': 'Bel Fuse 0685T3000-01 (1206 Slow Blow 3A 63V, V-004b R12)'})
 s.add('Q1', 'Transistor_FET:FDS9435A', 'AO4407A', 'Package_SO:SOIC-8_3.9x4.9mm_P1.27mm',
       {'1': '12V_IN', '2': '12V_IN', '3': '12V_IN', '4': 'Q1_G', '5': '12V_IN_F', '6': '12V_IN_F', '7': '12V_IN_F', '8': '12V_IN_F'},
       fields={'MPN': 'AOS AO4407A (LCSC C16072)', 'Note': 'reverse-polarity P-FET, symbol FDS9435A has same SSSGDDDD pinout'})
@@ -59,7 +59,8 @@ C(s, 'C19', '75pF C0G 50V', '5V_SYS', 'BUCK_FB')
 C(s, 'C7', '22uF/25V X7R', '5V_SYS', 'GND', 'Capacitor_SMD:C_1210_3225Metric')
 C(s, 'C8', '22uF/25V X7R', '5V_SYS', 'GND', 'Capacitor_SMD:C_1210_3225Metric')
 C(s, 'C20', '22uF/25V X7R', '5V_SYS', 'GND', 'Capacitor_SMD:C_1210_3225Metric')
-s.add('D7', 'Device:D_Zener', 'SMBJ5.0A', 'Diode_SMD:D_SMB', {'1': '5V_SYS', '2': 'GND'}, fields={'MPN': 'SMBJ5.0A (VRWM 5.0V, VBR>=6.4V)', 'Note': 'unidirectional TVS, K=1 (V-004 R5)'})
+s.add('C23', 'Device:C', '22uF/25V X7R', 'Capacitor_SMD:C_1210_3225Metric', {'1': '5V_SYS', '2': 'GND'}, fields={'MPN': 'Samsung CL32B226KAJNNNE', 'Note': 'C-007/O-37: 4th output cap, DC-bias+tol worst ~40uF with 3 < TI 44uF (R-008b)'})
+s.add('D7', 'Device:D_Zener', 'SMBJ6.0A', 'Diode_SMD:D_SMB', {'1': '5V_SYS', '2': 'GND'}, fields={'MPN': 'SMBJ6.0A (VRWM 6.0V > Vout max 5.30V, V-004b R5)', 'Note': 'unidirectional TVS, K=1'})
 s.add('D3', 'Device:LED', 'PWR green', 'LED_SMD:LED_0603_1608Metric', {'2': 'PWR_LED_A', '1': 'GND'})
 R(s, 'R4', '2.2k', '5V_SYS', 'PWR_LED_A')
 s.block('EFUSE','12V_IR eFuse TPS26600 (IR LED 전원)',['SHDN = IR_LED_EN (1.8V GPIO, 10k 풀다운 = 기본 끔) · UVLO = IN · OVP/MODE/RTN = GND (O-21)','ILIM 8.06k = 약 1.49A (2스트링 최악 1.22A, 분기 C2-4) · dVdT 22nF'],cols=4)
@@ -80,6 +81,7 @@ s.add('J3', 'Connector:USB_C_Receptacle_USB2.0_16P', 'USB-C 16P', 'Connector_USB
 R(s, 'R7', '5.1k', 'USB_CC1', 'GND'); R(s, 'R8', '5.1k', 'USB_CC2', 'GND')
 s.add('U3', 'Power_Protection:USBLC6-2SC6', 'USBLC6-2SC6', 'Package_TO_SOT_SMD:SOT-23-6', {'1': 'USB_DP', '6': 'USB_DP', '3': 'USB_DN', '4': 'USB_DN', '2': 'GND', '5': 'USB_VBUS'})
 R(s, 'R9', '200k', 'USB_VBUS', 'USB_DET'); R(s, 'R10', '100k', 'USB_DET', 'GND')
+C(s, 'C22', '10nF', 'USB_DET', 'GND')
 C(s, 'C12', '1uF', 'USB_VBUS', 'GND')
 s.block('SD','microSD (SDIO0, 3.3V 전용)',['SD0_PWR_EN High = 켬 (gpio494) · CD = gpio493 (계약 7절)','R13~R17 풀업 DNP · U4/U5 ESD'],cols=4)
 # --- microSD (SD0, 3.3V only, B101-equivalent power switch re-drawn)
@@ -87,7 +89,7 @@ s.add('J4', 'Connector:Micro_SD_Card_Det_Hirose_DM3AT', 'DM3AT-SF-PEJM5', 'Conne
       {'1': 'SDIO_D2', '2': 'SDIO_D3', '3': 'SDIO_CMD', '4': 'SD_PWR_3V3', '5': 'SDIO_CLK', '6': 'GND', '7': 'SDIO_D0', '8': 'SDIO_D1', '9': 'SDIO_CD', '10': 'GND', 'SH': 'GND'},
       fields={'Note': 'R-004 BOM rep is SHOU HAN TF PUSH (C393941); Hirose DM3AT is R-004 alternative with official KiCad footprint (branch C2-1)'})
 s.add('Q2', 'Transistor_FET:AO3401A', 'AO3401A', 'Package_TO_SOT_SMD:SOT-23', {'1': 'SD_PWR_G', '2': 'CORE_3V3', '3': 'SD_PWR_3V3'})
-R(s, 'R11', '100k', 'CORE_3V3', 'SD_PWR_G')
+R(s, 'R11', '100k', 'CORE_3V3', 'SD_PWR_GD')
 s.add('Q3', 'Transistor_FET:DMG1012T', 'DMG1012T', 'Package_TO_SOT_SMD:SOT-523', {'1': 'SD0_PWR_EN', '2': 'GND', '3': 'SD_PWR_GD'})
 R(s, 'R22', '47k', 'SD_PWR_GD', 'SD_PWR_G')
 C(s, 'C21', '100nF', 'SD_PWR_G', 'CORE_3V3')
@@ -163,10 +165,10 @@ f.add('U2', 'Driver_Motor:DRV8837', 'DRV8837DSGR', 'openhw:Texas_DSG0008A_WSON-8
 R(f, 'R1', '10k', 'FRONT_2V8', 'ICR_NSLEEP')
 C(f, 'C3', '10uF', 'VIN', 'GND', 'Capacitor_SMD:C_0603_1608Metric'); C(f, 'C4', '100nF', 'VIN', 'GND'); C(f, 'C5', '100nF', 'FRONT_2V8', 'GND')
 R(f, 'R2', '100k', 'IR_CUT', 'GND'); R(f, 'R3', '100k', 'WH_PWM', 'GND')
-f.add('J2', 'Connector_Generic_MountingPin:Conn_01x02_MountingPin', 'ICR (CLA216 JST 1.25mm 2P)', 'Connector_JST:JST_GH_SM02B-GHS-TB_1x02-1MP_P1.25mm_Horizontal',
-      {'1': 'ICR_A', '2': 'ICR_B', 'MP': 'GND'}, fields={'Note': 'header series (GH?) and coil polarity unconfirmed - physical check'})
+f.add('J2', 'Connector_Generic_MountingPin:Conn_01x02_MountingPin', 'PicoBlade 53261-0271 (CLA216 lead)', 'Connector_Molex:Molex_PicoBlade_53261-0271_1x02-1MP_P1.25mm_Horizontal',
+      {'1': 'ICR_A', '2': 'ICR_B', 'MP': 'GND'}, fields={'MPN': 'Molex 53261-0271 (LCSC C177225); alt JST SM02B-GHS-TB (O-34)', 'Note': 'pin1=ICR_A=red(+) assumed: IN1=1 pulse -> filter open (night), IN2=1 -> closed (day). Housing length and wire order: G2 physical check before PCB release'})
 f.add('MH1', 'Mechanical:MountingHole', 'CLA216-ICR M12 holder', 'openhw:M12_Holder_20mm_CLA216-ICR', {}, fields={'MPN': 'Commonlands CLA216-ICR'})
-f.block('SENS','센서 모듈 DF30 24P (BXF4677-GC2053) · 24MHz · 전원 스위치',['모듈 3.3V 전원 3핀 ← CAM_EN 스위치 · CAM_1V8(Q6) = MCLK·I2C 풀업 · RESET RC 10k/100nF + BAT54 (R3) · C6 DNP 유지 (R13)','MCLK 24MHz 발진기 (BTB에 MCLK 없음, 계약 9절) · 모듈↔J3 번호 대응은 추론 → 실물 도통'],cols=5)
+f.block('SENS','센서 모듈 DF30 24P (BXF4677-GC2053) · 24MHz · 전원 스위치',['모듈 3.3V 전원 3핀 ← CAM_EN 스위치 · CAM_1V8(Q6, 게이트 Q7/R17 → 자기 소스 풀업, N1) = MCLK(OE=VDD)·I2C 풀업 · RESET RC + BAT54 · C6 DNP 유지','MCLK 24MHz 발진기 (BTB에 MCLK 없음, 계약 9절) · 모듈↔J3 번호 대응은 추론 → 실물 도통'],cols=5)
 # --- sensor module DF30 24P (BXF4677-GC2053) - pin numbering = S401 J2
 df = {'1': 'CAM_I2C2_SDA', '3': 'CAM_I2C2_SCL', '4': 'CAM_MCLK', '5': 'CAM_RX0_0N', '7': 'CAM_RX0_0P', '9': 'CAM_RX0_CLKN', '11': 'CAM_RX0_CLKP',
       '12': 'CAM_AVDD', '13': 'CAM_RX0_1N', '14': 'CAM_IOVDD', '15': 'CAM_RX0_1P', '16': 'CAM_AVDD', '24': 'CAM_RESET'}
@@ -186,11 +188,13 @@ C(f, 'C7', '1uF', 'CAM_IOVDD', 'GND'); C(f, 'C8', '1uF', 'CAM_AVDD', 'GND'); C(f
 R(f, 'R7', '10k', 'CAM_EN', 'CAM_RESET'); C(f, 'C10', '100nF', 'CAM_RESET', 'GND')
 f.add('D3', 'Device:D_Schottky', 'BAT54WS', 'Diode_SMD:D_SOD-323', {'1': 'CAM_EN', '2': 'CAM_RESET'}, fields={'Note': 'V-004 R3: RESET discharges first when CAM_EN falls'})
 R(f, 'R16', '10k', 'CAM_RESET', 'GND', dnp=True)
-f.add('Q6', 'Transistor_FET:Q_PMOS_GSD', 'DMG2305UX', 'Package_TO_SOT_SMD:SOT-23', {'1': 'CAM_PG', '2': 'CORE_1V8', '3': 'CAM_1V8'}, fields={'MPN': 'Diodes DMG2305UX', 'Note': 'CAM_1V8 switch (V-004 R1, O-33): RDS(on) <=200mR @ VGS -1.8V, VGS(th) -0.5..-0.9V (DS36196 Rev 8-2); AO3401A unsuitable'})
+f.add('Q6', 'Transistor_FET:Q_PMOS_GSD', 'DMG2305UX', 'Package_TO_SOT_SMD:SOT-23', {'1': 'CAM_1V8_G', '2': 'CORE_1V8', '3': 'CAM_1V8'}, fields={'MPN': 'Diodes DMG2305UX', 'Note': 'CAM_1V8 switch (V-004 R1, O-33): RDS(on) <=200mR @ VGS -1.8V, VGS(th) -0.5..-0.9V (DS36196 Rev 8-2); AO3401A unsuitable'})
 C(f, 'C18', '1uF', 'CAM_1V8', 'GND')
+R(f, 'R17', '10k', 'CORE_1V8', 'CAM_1V8_G')
+f.add('Q7', 'Transistor_FET:DMG1012T', 'DMG1012T', 'Package_TO_SOT_SMD:SOT-523', {'1': 'CAM_EN', '2': 'GND', '3': 'CAM_1V8_G'}, fields={'Note': 'V-004b N1: Q6 gate pulled to its own source (CORE_1V8), driven by CAM_EN (S401 pattern)'})
 # MCLK 24MHz (OT7EL89, OE=CAM_EN, supply CORE_1V8 always-on)
 f.add('X1', 'Oscillator:ASE-xxxMHz', 'OT7EL89CJI-111YLC-24M', 'Oscillator:Oscillator_SMD_SiT_PQFN-4Pin_2.0x1.6mm',
-      {'1': 'CAM_EN', '2': 'GND', '3': 'MCLK_OSC', '4': 'CAM_1V8'}, fields={'MPN': 'YXC OT7EL89CJI-111YLC-24M (LCSC C5280583)', 'Note': '2016 4P OE/GND/OUT/VDD; footprint SiT 2.0x1.6 - verify land vs YXC drawing'})
+      {'1': 'CAM_1V8', '2': 'GND', '3': 'MCLK_OSC', '4': 'CAM_1V8'}, fields={'MPN': 'YXC OT7EL89CJI-111YLC-24M (LCSC C5280583)', 'Note': '2016 4P OE/GND/OUT/VDD; footprint SiT 2.0x1.6 - verify land vs YXC drawing'})
 R(f, 'R8', '22R', 'MCLK_OSC', 'CAM_MCLK'); C(f, 'C11', '100nF', 'CAM_1V8', 'GND')
 f.block('ALS','조도 LTR-329 · I2C2 상시 풀업',['I2C2 1.8V · GC2053 0x3f · LTR-329 0x29 (VIO 1.7~3.6V) · 풀업 4.7k → CAM_1V8 스위칭 (O-33, V-004 R1) · LTR-329는 CAM_EN=1일 때만 폴링','LIGHT_SENSE 아날로그 차선 Q4/R11 DNP'],cols=4)
 # I2C2 always-on 1.8V pull-ups (O-22)
@@ -200,7 +204,7 @@ f.add('U3', 'openhw:LTR-329ALS-01', 'LTR-329ALS-01', 'openhw:Lite-On_LTR-329ALS-
       fields={'MPN': 'Lite-On LTR-329ALS-01 (LCSC C284894)'})
 C(f, 'C12', '1uF', 'FRONT_2V8', 'GND'); C(f, 'C13', '100nF', 'FRONT_2V8', 'GND')
 # LIGHT_SENSE alternative pads (DNP)
-f.add('Q4', 'Device:Q_Photo_NPN', 'ALS-PT19 (alt)', 'LED_SMD:LED_0805_2012Metric', {'1': 'CORE_1V8', '2': 'LIGHT_SENSE'}, dnp=True,
+f.add('Q4', 'Device:Q_Photo_NPN', 'ALS-PT19 (alt)', 'openhw:Everlight_ALS-PT19_1.7x0.8mm', {'1': 'CORE_1V8', '2': 'LIGHT_SENSE'}, dnp=True,
       fields={'Note': 'alternative analog ALS (contract C15); footprint placeholder - ALS-PT19 land to be drawn if used'})
 R(f, 'R11', '10k', 'LIGHT_SENSE', 'GND', dnp=True)
 f.block('IR','IR LED 2스트링 · AL8860 x2 (B 스트링 DNP)',['12V_IR → Rs 0.1R → VSMA1085400 x2 직렬 → L 68uH → SW · 스트링당 1.0A (O-25, V-001 6)','IR_PWM High = 끔 · R12 풀업 → 기본 끔 (K1) · CTRL = IR_PWM 오픈드레인 공통 (분기 C2-5) · 기본 12V_IR 꺼짐 (eFuse SHDN) · 열: 스트링 평균 ≤1.6W = IR_PWM 듀티 ≤25% (O-31, FW 강제)'],cols=6)
@@ -218,9 +222,9 @@ for k, dn in (('A', False), ('B', True)):
           fields={'MPN': 'Vishay VSMA1085400 (+-40deg; package drawing 6.550-5367.01-4; land drawing 6.550-5366.9-3 = VSMA1085600 land)'})
     f.add(f'D_IR_{k}2', 'Device:LED', 'VSMA1085400', 'openhw:Vishay_VSMA1085600_3.4x3.4mm', {'2': f'IR{k}_M', '1': f'IR{k}_K'}, dnp=dn,
           fields={'MPN': 'Vishay VSMA1085400'})
-    f.add(f'L{1 if k=="A" else 2}', 'Device:L', '47uH Irms>=1.3A Isat>=2A', 'Inductor_SMD:L_Bourns_SRN6045TA', {'1': f'IR{k}_K', '2': f'IR{k}_SW'}, dnp=dn,
+    f.add(f'L{1 if k=="A" else 2}', 'Device:L', '47uH Irms>=1.3A Isat>=2A', 'openhw:L_Bourns_SRN6045TA', {'1': f'IR{k}_K', '2': f'IR{k}_SW'}, dnp=dn,
           fields={'MPN': 'Bourns SRN6045TA-470M (Irms 1.6A, Isat 2.0A per V-004 R10)'})
-    f.add(f'D{1 if k=="A" else 2}', 'Device:D_Schottky', 'SS24 (40V 2A, SMA)', 'Diode_SMD:D_SMA', {'1': '12V_IR', '2': f'IR{k}_SW'}, dnp=dn, fields={'MPN': 'Vishay SS24-E3/61T (DO-214AC/SMA) - check pending'})
+    f.add(f'D{1 if k=="A" else 2}', 'Device:D_Schottky', 'SS24 (40V 2A, SMA)', 'Diode_SMD:D_SMA', {'1': '12V_IR', '2': f'IR{k}_SW'}, dnp=dn, fields={'MPN': 'Vishay SS24S-E3/61T (SMA 40V 2A, LCSC C84317)', 'Note': 'alt Vishay SSA24-M3/61T (O-38: stock 0, 15wk)'})
     C(f, f'C{14 if k=="A" else 16}', '10uF/50V X7R', '12V_IR', 'GND', 'Capacitor_SMD:C_1206_3216Metric', dnp=dn)
     C(f, f'C{15 if k=="A" else 17}', '100nF/50V', '12V_IR', 'GND', dnp=dn)
 f.block('FPC','보드 간 JST GH 6P (캐리어와 같은 대칭 배치)',['계약 12A절 v1.3 · 12V_IR 2접점 x 1.0A (최악 0.61A/접점)'],cols=3)
