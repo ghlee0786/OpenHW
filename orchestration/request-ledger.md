@@ -86,6 +86,8 @@
 | SIM-001b | orch (O-80, VD-001 7) | firmware t18w | AL8860×2·DRV8837 ICR·Q6/Q7 역급전·I2C 상승/리셋 RC 시뮬 — 기준 먼저 커밋 | hardware/sim (새 레인) | 파형·수치·판정 JSON, 커밋 | queued(F-008 뒤) |
 | REN-001 | 사용자 목표 → lead → orch | mechanical t18x | VD-001 끝점: kicad-cli PCB 레이트레이싱 렌더 + Blender 5.2 제품 렌더(STEP→메시 무료 도구, 재질, 2560×1440, 턴테이블 8초) — 현재 배선본으로 장면 먼저 | mechanical/** (M-006 레인), validation/runtime/vd001/render | 파일 수·해상도·STEP 해시(기계), 사람 눈은 HTML | running |
 | C-015 | orch (O-82) | schematic t18z | 계약 v1.12: C-014 불일치 8 해소(회로도 기준) + DNP 목록 절 신설·판정화 | hardware/schematic/hw-fw-contract.md, tools/contract_check.py (C-014 레인) | contract_check 종료 0, selftest 0, 커밋 | running |
+| C-016 | orch (O-83) | schematic t18z | 코어 J2-32(PWR_WAKEUP1)에서 ALS_INT_RSV 분리·미연결, 계약 v1.12 반영 | hardware/schematic/** (C-014 레인) | ERC 0, 의도한 넷 차이만, contract_check 0, 커밋 | queued(C-015 뒤) |
+| F-009 | orch (O-83) | firmware t18w | DTS·daynight에서 ALS_INT GPIO 사용 제거(있으면), 호스트 시험 재실행 | firmware/** (새 레인) | 시험 종료 0, 커밋 | queued(SIM-001b 뒤) |
 
 ## 운영 변경 (2026-11-26, 사용자 지시 · lead 전달)
 - 의견 묻지 않고 진행: 사람 쪽 미정값은 D-003(lead 레인 t-20261126-144135-5470 docs/decisions/D-003-working-defaults.md, 커밋 8ac5ce5) 값으로 확정 취급. 새 갈림길은 기본값 선택 → 아래 「분기 기록」에 분기점·선택·이유·차선책 → lead 요약 보고. 문제 시 해당 행으로 돌아가 차선책.
@@ -186,6 +188,8 @@
 | O-81 | SIM 결과 형식 없음·ngspice 미설치로 SIM-001b 대기, 사용자 지시 '허들은 모두 허용(설치·설정·재시작), 결제 금지, 범위는 가상 설계까지' | 결과 JSON 공통 형식을 orch가 정함(queues/SIM-result-format.md). ngspice 설치는 준비된 firmware가 먼저(사용자 홈 격리·공식·sha256), schematic은 그 경로 사용. Docker Desktop 시작은 lead 정정(D-003 #41)으로 취소 — 켜지 않음 | 대기 제거, 설치 1회 | — |
 | O-81 사고 | orch O-81 ②가 firmware에 Docker Desktop 시작을 지시 → lead 정정(#41) 전달 직전 04:16:24 무렵 firmware가 시작 → 다른 프로젝트 컨테이너(lab904·sso·pids-api 등 20개+)가 재시작 정책으로 올라옴(orch 읽기 확인) | orch 잘못: '허들 허용'을 공용 자원(다른 프로젝트에 영향)까지 넓혀 lead 확인 없이 지시. 끌지·둘지는 lead 결정, OpenHW 칸은 끄거나 컨테이너 조작하지 않음 | 재발 방지: 다른 프로젝트와 공용 자원(Docker Desktop·WSL·공용 포트)은 '허들 허용' 범위 밖 — 먼저 lead(D-003 #41 lead 갱신). lead 결정: Docker 켠 채 유지(두 번째 조작 피함, 끌지는 사용자 결정), OpenHW는 다른 컨테이너 읽기만 | — |
 | O-82 | C-014: 계약 v1.11과 회로도 불일치 8(MCLK R8 22Ω·I2C2 풀업 CAM_1V8·SPARE1/ALS_INT GH J7-3/4 ×4·스트링 B 실장·RESET C10 실장) | 회로도가 맞음(각각 C20·D-003 #25·O-69·C-004 R3·README 120행 근거) → 계약만 v1.12로 고침, DNP 목록 절 신설해 판정 대상으로 | 회로도는 ERC·netcompare·리뷰를 거친 최신, 계약 문구가 뒤처짐 | 회로도를 계약에 맞춤(근거 없음 — 불채택) |
+| O-83 | M-006: 코어 J2-32 = Seeed 보드 PWR_WAKEUP1 ↔ 우리 ALS_INT_RSV | lead 기본값: ALS 인터럽트를 J2-32에서 뗌(미연결, Seeed 처리 확인되면 맞춤), 계약 v1.12, firmware DTS 정리 | ALS는 폴링(#18)이라 인터럽트 불필요, 깨우기 입력에 외부 신호 거는 위험 제거 | Seeed 원 용도 확인 후 재연결 |
+| O-84 | M-006: CLA216 리드 커넥터 — Seeed S401 J3 GH 1.25 2P ↔ 우리 PicoBlade(O-34) | R-019 판정 대기. GH면 전면 J2를 GH 1.25 2P로 교체(심볼·풋프린트→pcb→외함 재검사), 판정 불가면 2핀 0.1in 스루홀 납땜 패드 | lead 기본값 | — |
 
 ## 발주 패키지 직전 정리 목록
 - [ ] 회로도 표시 겹침: 캐리어 J2 옆 12V_IN_RAW 라벨, D3 PWR_LED 라벨, J1 품번 문자 (O-32)
