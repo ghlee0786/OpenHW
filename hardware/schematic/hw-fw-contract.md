@@ -1,8 +1,8 @@
 # C-001 HW/FW 계약 — reCamera Core 2002 캐리어·전면 보드
 
-- 상태: **계약 v1.4 (FW 대조 완료 · C-004 회로도 반영)** · 2026-11-26
+- 상태: **계약 v1.5 (FW 대조 완료 · C-005 회로도 반영)** · 2026-11-26
 - 배정: orch t18r C-001 → C-001b(FW 대조) · 작성자: schematic (단독) · 레인 `t-20261126-155208-d030`
-- 이력: 초안 `ac12920` → v1 `8613910` → v1.1 `be646c2` → v1.2 `fd12ba4` → v1.3 `e3ccdd0` → v1.4 (이 커밋: V-004 K1~K4 · O-33 — C-004 회로도 `58eb49b`와 일치)
+- 이력: 초안 `ac12920` → v1 `8613910` → v1.1 `be646c2` → v1.2 `fd12ba4` → v1.3 `e3ccdd0` → v1.4 `d159068` → v1.5 (이 커밋: V-004b — IR_PWM Hi-Z 상태 정정·듀티 기준, N1 Q6 게이트, X1 OE, SMBJ6.0A, USB_DET 필터 — C-005 회로도 `b3b376a`와 일치)
 - KiCad 회로도는 C-002에서 그린다. 부품은 「1안」이고 재고·정격 확정은 C-002/R-004에서 한다.
 
 ## 0. 입력과 근거
@@ -107,7 +107,7 @@
 | 5V_SYS | 캐리어 벅 | 3A급, 입력 정격 ≥28V | 3.2절 | 가정 |
 | 12V_IR | 캐리어 eFuse TPS26600 | **2스트링 최악 1.22A · ILIM 8.06kΩ ≈ 1.49A** (MODE 개방 = 회로차단기 + 자동 재시도, v1.4) | V-001 ⑥, V-004 K3 | 가정 |
 | 전면 2V8 (v1.4, 넷 FRONT_2V8) | 전면 LDO RT9013-28GB (입력 코어 VIN) | ≥50mA (DRV8837 VCC + LTR-329) | DRV8837 VIH max 0.5×2.8 = 1.4V → 1.8V GPIO 여유 0.4V (V-004 R9) | 가정 |
-| CAM_1V8 (v1.4) | 전면 Q6 DMG2305UX (CORE_1V8 스위칭, 게이트 CAM_PG) | I2C2 풀업 + 24MHz 발진기 | V-004 R1·R2, O-33 | 가정 |
+| CAM_1V8 (v1.5) | 전면 Q6 DMG2305UX (CORE_1V8 스위칭, **게이트 CAM_1V8_G = R17 100k → CORE_1V8 풀업, Q7 DMG1012T(G = CAM_EN)로 끌어내림** — V-004b N1, S401 패턴) | I2C2 풀업 + 24MHz 발진기 | V-004 R1·R2, O-33 | 가정 |
 
 ### 3.2 전력 예산 (야간 최악)
 
@@ -153,7 +153,7 @@
 | 11 | 12 | SD1_CLK | SG2002 SD1 (R48~R53 0Ω, 2002w DNP) · 패드 번호 미확인 | 미확인 (1.8V 추정) | 미사용 (NC) | wifisd okay · 2002 실장 실물 확인 | 07 |
 | 12 | 11 | GND | GND | — | GND | — | — |
 | 13 | 14 | GND | GND | — | GND | — | — |
-| 14 | 13 | USB_DET | 60 USB_VBUS_DET | 분압 입력 (B101: VIN 20k/10k) | USB-C VBUS **200k/100k** 분압 (v1.4, V-004 R11: 역급전 1/10) | USB_VBUS_DET 기능 (일치) | 05 |
+| 14 | 13 | USB_DET | 60 USB_VBUS_DET | 분압 입력 (B101: VIN 20k/10k) | USB-C VBUS **200k/100k** 분압 + C22 10nF 필터 (v1.4·v1.5, V-004 R11·V-004b 권고) | USB_VBUS_DET 기능 (일치) | 05 |
 | 15 | 16 | SD1_CMD | SG2002 SD1 (R48~R53 0Ω, 2002w DNP) · 패드 번호 미확인 | 미확인 (1.8V 추정) | 미사용 (NC) | wifisd okay · 2002 실장 실물 확인 | 07 |
 | 16 | 15 | MIPI_TXM2/IIC1_SDA/PWM | 83 PAD_MIPI_TXM2 | 1.8V 추정(VDD18A_MIPI) | IIC1_SDA → 캐리어 예비 I2C 패드 | IIC1 (i2c1 okay) · ADS1015@0x48 노드 삭제 → FW | 05 |
 | 17 | 18 | SD1_D0 | SG2002 SD1 (R48~R53 0Ω, 2002w DNP) · 패드 번호 미확인 | 미확인 (1.8V 추정) | 미사용 (NC) | wifisd okay · 2002 실장 실물 확인 | 07 |
@@ -257,7 +257,7 @@
 | 45 | 46 | GND | GND | — | GND | — | — |
 | 46 | 45 | GND | GND | — | GND | — | — |
 | 47 | 48 | GND | GND | — | GND | — | — |
-| 48 | 47 | CAM_EN | 43 PWR_WAKEUP0 (기능 PWR_GPIO_6) | 1.8V | 센서 전원 스위치·24MHz 발진기 EN·센서 리셋 | PWR_GPIO_6 = gpio358, S70hardware가 켬 (일치) | 04 |
+| 48 | 47 | CAM_EN | 43 PWR_WAKEUP0 (기능 PWR_GPIO_6) | 1.8V | 센서 전원 스위치·CAM_1V8 스위치(Q7)·센서 리셋 (발진기 OE는 v1.5부터 CAM_1V8) | PWR_GPIO_6 = gpio358, S70hardware가 켬 (일치) | 04 |
 | 49 | 50 | 1V8 | 코어 SGM2036 1.8V LDO 출력 (Imax 300mA, 공유) | 1.8V 출력 | 센서 1.8V·I2C 풀업 | — | 03·07 |
 | 50 | 49 | NC | (코어 쪽 미연결, ✕ 표시) | — | NC | — | 07 |
 | 51 | 52 | 1V8 | 코어 SGM2036 1.8V LDO 출력 (Imax 300mA, 공유) | 1.8V 출력 | 센서 1.8V·I2C 풀업 | — | 03·07 |
@@ -321,12 +321,12 @@
 |---|---|---|---|---|---|---|---|---|
 | ICR IN1 | GPIO15/IR_CUT | 17 SPK_EN → XGPIOA_15 | gpio495 | J1-33 / 전면 34 | 3.3V 추정 (미확인) | 출력 Low | DRV8837 IN1 | red LED heartbeat → 삭제, ICR용으로 |
 | ICR IN2 | WH_PWM | 47 PWR_GPIO0 → PWR_GPIO_0 | gpio352 | J1-6 / 전면 5 | 1.8V | 출력 Low | DRV8837 IN2 | white LED → 삭제 |
-| IR LED 밝기 | IR_PWM | 35 PAD_ZQ → PWR_GPIO_24 또는 **PWM_2** | gpio376 / pwm 채널 2 (pwmchip 번호는 FW) | J1-16 / 전면 15 | 1.8V 추정 | **전기 High = LED 끔 · Low/Hi-Z = 켬(CTRL 개방)** (v1.4 K1). 하드웨어 기본: R12 100k → CORE_1V8 풀업 = 끔 | N-MOSFET → AL8860 CTRL 끌어내림 (PWM 극성 반전, ≤500Hz — V-001). **FW 규칙: IR_LED_EN을 올리기 전에 IR_PWM을 High로 둔다** · 평균 듀티는 ≤25% 끔 비율 기준으로 환산 (O-31) | blue LED(mmc0) → 삭제, `PINMUX_CONFIG(GPIO_ZQ, PWM_2)` |
+| IR LED 밝기 | IR_PWM | 35 PAD_ZQ → PWR_GPIO_24 또는 **PWM_2** | gpio376 / pwm 채널 2 (pwmchip 번호는 FW) | J1-16 / 전면 15 | 1.8V 추정 | **전기 High = LED 끔 · Hi-Z = 끔(R12 풀업) · Low = 켬(CTRL 개방)** (v1.5, V-004b). 하드웨어 기본: R12 100k → CORE_1V8 풀업 = 끔 | N-MOSFET → AL8860 CTRL 끌어내림 (PWM 극성 반전, ≤500Hz — V-001). **FW 규칙: IR_LED_EN을 올리기 전에 IR_PWM을 High로 둔다** · **IR_PWM Low(켬) 비율 ≤25%** (O-31) | blue LED(mmc0) → 삭제, `PINMUX_CONFIG(GPIO_ZQ, PWM_2)` |
 | IR LED 전원 | IR_LED_EN | 86 PAD_MIPI_TXP1 → XGPIOC_15 | gpio431 (추론) | J2-21 / 캐리어 22 | 1.8V 추정 | Low = 끔 (하드웨어 풀다운) | 12V_IR 부하 스위치 EN | spi0 SDI 기능 → spi0/mcp2518fd 삭제, GPIO로 |
 | 예비 | SPARE1 | 85 PAD_MIPI_TXM1 → XGPIOC_14 | gpio430 (추론) | J2-19 / 캐리어 20 → FPC 8 | 1.8V 추정 | 입력 | 예비 | 위와 같음 |
 | 상태 LED | STATUS_LED | 87 PAD_MIPI_TXM0 → XGPIOC_12 | gpio428 (추론) | J2-23 / 캐리어 24 | 1.8V 추정 | Low = 끔 | N-MOSFET + LED | portc 12를 쓰는 mm610x reset·mcp2518fd IRQ → 삭제 |
 | 조도 INT 예비 | PWR_WAKEUP1 | 44 PWR_BUTTON1 → PWR_GPIO_8 | gpio360 | J2-31 / 캐리어 32 → FPC 7 | 1.8V | 입력 | 차선 센서 INT | DTS에 주석으로만 있음 |
-| 센서 전원·리셋 | CAM_EN | 43 PWR_WAKEUP0 → PWR_GPIO_6 | gpio358 | J1-47 / 전면 48 | 1.8V | 부팅 때 High | 전원 스위치·발진기 EN·센서 리셋 | `S70hardware`가 켬 (그대로) |
+| 센서 전원·리셋 | CAM_EN | 43 PWR_WAKEUP0 → PWR_GPIO_6 | gpio358 | J1-47 / 전면 48 | 1.8V | 부팅 때 High | 전원 스위치(Q3·Q7)·센서 리셋 (발진기 OE = CAM_1V8, v1.5) | `S70hardware`가 켬 (그대로) |
 | 업그레이드 버튼 | UPGRAD_KEY | 30 AUX0 → XGPIOA_30 | gpio510 | J2-35 / 캐리어 36 | 3.3V | 풀업 (누르면 0) | 버튼 → **직렬 1kΩ** → GND | DTS `wifi_pin poweron-gpio = porta 30`이 출력으로 쓸 수 있음 → 삭제. 출력과 버튼이 부딪칠 때를 막으려고 1kΩ을 넣는다 |
 | microSD 전원 | SD0_PWR_EN | 15 → XGPIOA_14 | gpio494 | J2-37 / 캐리어 38 | 3.3V | High = 켬 (B101 NPN+PFET 패턴, 같은 SDK로 동작) | P-FET 스위치 | 그대로 |
 | microSD 감지 | SDIO_CD | 14 → XGPIOA_13 | gpio493 (`cvi-cd-gpios`) | J2-55 / 캐리어 56 | 3.3V | — | 카드 감지 스위치 → GND | 그대로 |
@@ -360,7 +360,7 @@
 | 클록 | 위치 | 값 | 근거 | 할 일 |
 |---|---|---|---|---|
 | SoC 주 클록 | 코어 X1 | 25MHz 10ppm | 코어 SCH 04 | 없음 |
-| 센서 MCLK | **전면 보드** | 24MHz 발진기 (S401 X1 「9C24000004」 패턴, EN = CAM_EN, 전원 CAM_1V8) | BTB에 MCLK 없음 (5.1절) | 실장 **필수** |
+| 센서 MCLK | **전면 보드** | 24MHz 발진기 (S401 X1 「9C24000004」 패턴, **OE = VDD = CAM_1V8** — v1.5 V-004b R2: OE가 VDD보다 먼저 오르지 않음) | BTB에 MCLK 없음 (5.1절) | 실장 **필수** |
 | 32.768kHz | 코어 시트 06 X3 (Wi-Fi 쪽) | — | 코어 SCH 06 | 캐리어 영향 없음 |
 | 이더넷·USB | SoC 내장 | — | F-001 1.8절 | 없음 |
 
@@ -393,7 +393,7 @@
 | 12V 입력 | 역접 | P-MOSFET (Vds ≥30V, 게이트 제너) | 일반 설계 |
 | 〃 | 과전압·서지 | TVS SMBJ15A급 + 하위 IC 입력 정격 ≥28V (AL8860 4.5~40V) | R-002, V-001 |
 | 〃 | 과전류 | PTC 또는 퓨즈 2.5~3A (예산 1.2A의 약 2배) | 3.2절 |
-| 5V_SYS | 벅 고장 시 과전압 | **D7 SMBJ5.0A** (VRWM 5.0V, VBR ≥ 6.4V, 단방향) — v1.4에서 회로 반영(V-004 R5·K4). DRV8837 VM 최대 11V, 코어 상한 미확인 | 3.1절 |
+| 5V_SYS | 벅 고장 시 과전압 | **D7 SMBJ6.0A** (VRWM 6.0V > 벅 최대 5.30V, 단방향) — v1.5 V-004b R5 (v1.4의 SMBJ5.0A는 VRWM이 출력보다 낮았음). DRV8837 VM 최대 11V, 코어 상한 미확인 | 3.1절 |
 | USB-C | ESD | D± 저용량 ESD, VBUS TVS, CC 5.1k 풀다운 | B101 패턴 |
 | microSD | ESD | 7선 ESD | B101 패턴 |
 | RJ45 | 서지·ESD | 칩 쪽 쌍마다 저용량 TVS, 칩 쪽 센터탭 100nF → GND, 라인 쪽 Bob Smith 75Ω + 1nF/2kV → 실드, GNDPWR–GND 1M + 1nF | B101 넷리스트 |
@@ -444,6 +444,7 @@
 | **C16** | **UPGRAD_KEY 보호** | 버튼 직렬 1kΩ | DTS wifi_pin이 gpio510을 출력으로 쓸 수 있다 | FW가 wifi_pin을 지우면 0Ω |
 | **C17** | **IR LED 설정 (V-001 ⑥)** | AL8860 Rs 0.1Ω(1.0A), 12V에서 직렬 ≤2, 방열 기판 | 1.5A 설정은 절대최대에 여유가 0 | FR4 + thermal via + 0.8A 이하 |
 | **C18** | **C-002 반영 (v1.2)** | ① FPC 대칭 핀배치(12A절) ② ILIM 8.06k ③ 두 AL8860 CTRL이 IR_PWM 하나를 공유 ④ I2C2 풀업은 CORE_1V8 상시 ⑤ DVDD를 AVDD 레일로 | C-002 README 12절 C2-3~C2-8 | 각 행의 차선은 C-002 README에 있다 |
+| **C21** | **V-004b 반영 (v1.5)** | Q6 게이트 자기 소스 풀업 + Q7(N1) · X1 OE = CAM_1V8 · SMBJ6.0A · R11 → SD_PWR_GD · USB_DET 10nF · CLA216 리드 PicoBlade(O-34) | V-004b · R-009 | C-005 README 17.5 |
 | **C20** | **V-004 반영 (v1.4)** | I2C2 풀업·X1을 CAM_1V8로(O-33) · IR_PWM 극성(High = 끔) + R12 풀업 · 전면 LDO 2.8V · TPS26600 MODE 개방 · USB_DET 200k/100k · 5V TVS · RESET RC + BAT54 | V-004 R1~R13 · K1~K4 | C-004 README 16.5 |
 | **C19** | **ICR·IR 부품 (O-25)** | IR LED VSMA1085400(±40°) 4자리 = 2직렬 × 2스트링, B는 DNP. 풋프린트는 VSMA1085600과 같다(도면 6.550-5366.9-3) | R-006 | VSMA1085600(±60°) |
 
