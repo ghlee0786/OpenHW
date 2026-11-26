@@ -1,0 +1,128 @@
+name,kind,value_mm,source_note
+btb_h,input,8.0,[M001] BTB 결합 높이
+core_t,input,1.6,[M001]
+brd_t,input,1.6,[pcb] 캐리어·전면 두께
+optic_above_front,input,29.485,[M001] 전면 윗면 → 창 안쪽 면 (받침 0.75 + 상면 0.835 + TTL 27.4 + 0.5)
+led_top_above_front,input,2.445,[M001] VSMA 높이
+led_a_y,input,16.0,[pcb] D_IR_A1/A2 y
+led_b_y,input,-16.5,[pcb] D_IR_B1/B2 y (DNP)
+brd_x_min,input,-20.0,
+brd_x_max,input,20.0,
+car_y_min,input,-34.0,
+brd_y_max,input,20.0,
+fr_y_min,input,-20.0,
+holes,input,"[(13.0, 13.0), (13.0, -13.0), (-13.0, 13.0), (-17.0, -17.0)]",캐리어·전면 공통 M1.6 NPTH
+core_holes,input,"[(13.0, 13.0), (13.0, -13.0), (-13.0, 13.0)]",
+rj_x,input,"(-10.475, 5.565)","[pcb] fab, [DS] HR911105A 21.30×16.04×13.50"
+rj_y,input,"(-33.455, -12.155)","[pcb] fab, [DS] HR911105A 21.30×16.04×13.50"
+rj_h,input,13.5,"[pcb] fab, [DS] HR911105A 21.30×16.04×13.50"
+rj_open_w,input,16.54,[DS] 권장 패널 개구 (PCB 면부터)
+rj_open_h,input,14.0,[DS] 권장 패널 개구 (PCB 면부터)
+dc_x,input,"(10.68, 19.68)","[pcb] fab, [DS] XKB 14×9×11"
+dc_y,input,"(-33.705, -19.705)","[pcb] fab, [DS] XKB 14×9×11"
+dc_h,input,11.0,"[pcb] fab, [DS] XKB 14×9×11"
+dc_axis_below,input,6.5,[DS] 구멍 중심 PCB 아래 6.50
+dc_open_d,input,10.5,[가정] 플러그 오버몰드 Ø≤10 통과
+usb_x,input,"(-19.455, -12.155)","[pcb] fab, [DS] HRO 7.35×8.94×3.26"
+usb_y,input,"(-4.47, 4.47)","[pcb] fab, [DS] HRO 7.35×8.94×3.26"
+usb_h,input,3.26,"[pcb] fab, [DS] HRO 7.35×8.94×3.26"
+usb_open_w,input,12.8,[가정] USB-C 오버몰드 12.35×6.5 + 여유
+usb_open_h,input,7.0,[가정] USB-C 오버몰드 12.35×6.5 + 여유
+sd_x,input,"(-6.96, 6.91)",[pcb] KiCad DM3AT 모델 측정
+sd_y,input,"(3.43, 19.6)",[pcb] KiCad DM3AT 모델 측정
+sd_h,input,1.78,[pcb] KiCad DM3AT 모델 측정
+sd_slot_w,input,13.0,"[가정] 카드 11×1 + 여유, 판 아랫면 기준"
+sd_slot_z,input,"(-2.4, 0.2)","[가정] 카드 11×1 + 여유, 판 아랫면 기준"
+btn,input,"[(14.5, -6.0), (14.5, 4.0)]",[pcb] SW1/SW2 PTS810 (뒷면)
+stat_led,input,"[(17.5, 9.0), (17.5, -14.5)]",[pcb] D6/D3 0603 (뒷면)
+t_w,input,2.0,[가정] 옆벽 (0.4 노즐 5둘레)
+t_back,input,2.5,[가정] 뒷벽
+clr,input,0.5,[가정] 판–벽 틈
+back_clr,input,0.6,[가정] RJ45 아래끝–뒷벽
+x_in_min,input,-25.0,[M002 K20] 하니스 통로 → 외함 −X 안쪽 벽 ≤ −25.0
+al_gap,input,0.75,[M002b] 갭 패드 Tflex P340 1.0t 를 0.75 로 압축
+al_t,input,2.0,[가정] 5052 판
+led_out_deg,input,32.0,[M-003 2차] LED A 바깥쪽(+Y) 빛을 벽이 가리지 않는 각 — VFOV/2 28.5° + 주머니 테두리 여유 (30°면 주머니 위끝이 28.0°에서 자름)
+step_z0,input,8.0,[가정] +Y 벽 45° 단 시작 높이 (microSD 쪽은 보드 가까이)
+win_t,input,3.0,[M001] PMMA
+ledge_t,input,1.2,[가정] 창 받침 턱 두께
+lens_win_d,input,20.6,[가정] 렌즈 창 지름 (창 바깥 면 화각 반경 10.0 + 0.3)
+lens_ap_d,input,16.0,[가정] 턱 개구 (창 안쪽 면 화각 반경 ≤ 6.7)
+rib_y,input,12.2,[가정] 가운데 띠 반폭 (렌즈 창 반경 10.5 + 1.7)
+b_pocket_y0,input,-28.4,[가정] B 창 바깥 끝 (나사 자리 확보)
+lens_tube,input,"(9.6, 10.8, 36.8)","[가정] 렌즈 관 안 반경·바깥 반경·아래 끝 z (머리 Ø18과 반경 0.6, 2.0 겹침)"
+lens_foam,input,"(8.2, 9.5, 1.0)","[가정] 폼 링 안·바깥 반경, 자유 두께 (0.7로 압축)"
+als_in,input,"((-18.5, -15.5), (-1.5, 5.5))","[pcb] U3 LTR-329 (−17,0) + Q4 PT19 (−17,4.5) 덮는 관 안쪽"
+als_wall,input,1.0,
+als_gap,input,1.2,"[가정] 관 아래 끝 – 전면 윗면 (폼 개스킷 1.6t → 1.2 = 25 % 압축, 3M 4516 흑색 PVC 1.6t 대표)"
+als_gasket_t,input,1.6,
+ins_hole_d,input,4.0,"[DS] CNC Kitchen M2.5 표준 인서트 (L4.0, 구멍 4.0, 최소 벽 1.6)"
+ins_len,input,4.0,"[DS] CNC Kitchen M2.5 표준 인서트 (L4.0, 구멍 4.0, 최소 벽 1.6)"
+boss_d,input,7.2,"[DS] CNC Kitchen M2.5 표준 인서트 (L4.0, 구멍 4.0, 최소 벽 1.6)"
+cov_screws,input,"[(-21.4, -8.0), (18.4, 8.0), (-21.4, -32.9), (18.4, -32.9)]",덮개 M2.5×8
+post_d,input,4.6,적층 기둥 (M1.6×8 뒤에서)
+post_hole,input,1.9,적층 기둥 (M1.6×8 뒤에서)
+post_cb_d,input,3.8,적층 기둥 (M1.6×8 뒤에서)
+post_cb_top,input,3.0,적층 기둥 (M1.6×8 뒤에서)
+tripod,input,"(0.0, -4.0)","[2차 출처 3DJake 표] CNC Kitchen 1/4""-20 짧은 판 L 6.4, 구멍 8.1, 최소 벽 3.3 → 보스 Ø15 (벽 3.45), 막힌 깊이 8.2 ≥ L+1"
+tripod_boss_d,input,15.0,"[2차 출처 3DJake 표] CNC Kitchen 1/4""-20 짧은 판 L 6.4, 구멍 8.1, 최소 벽 3.3 → 보스 Ø15 (벽 3.45), 막힌 깊이 8.2 ≥ L+1"
+tripod_boss_h,input,6.7,"[2차 출처 3DJake 표] CNC Kitchen 1/4""-20 짧은 판 L 6.4, 구멍 8.1, 최소 벽 3.3 → 보스 Ø15 (벽 3.45), 막힌 깊이 8.2 ≥ L+1"
+tripod_hole_d,input,8.1,"[2차 출처 3DJake 표] CNC Kitchen 1/4""-20 짧은 판 L 6.4, 구멍 8.1, 최소 벽 3.3 → 보스 Ø15 (벽 3.45), 막힌 깊이 8.2 ≥ L+1"
+hs_type,input,'extrusion',
+hs_y,input,"(-36.5, 34.5)",핀 길이 71 (중력 방향)
+hs_W,input,62.5,"프로파일 폭 (z 방향, 외형 z 가운데에 맞춤). 0 이면 외형 z 전체"
+hs_zpad,input,0.5,바닥판 z = 외형 z 범위 − 0.5
+hs_tb,input,3.5,SK 444 (analysis_m005.md) — H3 는 3.0 / 9 / 20 / 1.5
+hs_n,input,12,SK 444 (analysis_m005.md) — H3 는 3.0 / 9 / 20 / 1.5
+hs_H,input,16.5,SK 444 (analysis_m005.md) — H3 는 3.0 / 9 / 20 / 1.5
+hs_t,input,1.4,SK 444 (analysis_m005.md) — H3 는 3.0 / 9 / 20 / 1.5
+hs_ped_t,input,4.0,받침대 판 두께 = 벽 창 통과 (x_al_in … x_out_max)
+hs_ped_screw_z_near,input,"(-8.0, 12.0)","받침대 판 ↔ 압출 바닥 M2.5 접시머리 2개 (y = 받침대 가운데, z = 가까운 핀 사이)"
+hs_ped_clr,input,0.3,받침대 ↔ 벽 창 틈
+print_tab_w,input,1.0,"[M-003c] +X 창 가운데 출력용 희생 기둥 폭 (브리지 42 → 20.5 ×2), 조립 ② 전에 잘라냄. 0 이면 없음"
+win_clr,input,0.35,[M-003c] 창 ↔ 주머니 틈 (한 변) — PMMA 레이저 컷 ±0.23~0.25 (SendCutSend·Xometry) + FDM
+win_r,input,0.5,[M-003c] PMMA 사각 창 모서리 R (주머니 모서리는 직각 — 출력 모서리 R≈0.2 보다 큼)
+al_win_y,input,"(-28.0, 14.0)",+X 벽 창
+al_win_z,input,"(-19.0, 24.0)",+X 벽 창
+al_holes_y,input,"(-31.0, 17.0)",M2.5 관통 + 안쪽 너트 — z 는 가장 가까운 핀 사이 중심으로 맞춤
+al_holes_z_near,input,"(-21.0, 21.0)",M2.5 관통 + 안쪽 너트 — z 는 가장 가까운 핀 사이 중심으로 맞춤
+flange,input,"((18.0, 20.0), (-19.5, 19.5), (-4.5, 2.9))","방열판 +X 플랜지 (방열판과 일체, 판 아래로) — 캐리어 C_1210 윗끝 z −5.48 위 0.98"
+spr_xy,input,"((-18.0, 20.0), (-19.5, 19.5))",[M002] 방열판 (AL_SPREADER_TAB_PX)
+spr_gap,input,1.3,[M002] 방열판 (AL_SPREADER_TAB_PX)
+spr_t,input,1.0,[M002] 방열판 (AL_SPREADER_TAB_PX)
+pillar_a,input,"((-9.5, 9.5), (16.5, 19.5))","[M002b] 기둥 A (일체 보스), 윗면 도피 홈 slot_w × 0.5"
+pillar_b,input,"[((-12.0, -6.0), (-19.5, -13.5)), ((6.0, 12.0), (-19.5, -13.5))]",
+b2_notch,input,"((10.9, 12.5), (-15.1, -13.0))","[M-003] 기둥·패드 B2 모서리 따냄 — 스탠드오프 (13,−13) 맞모 반경 1.85 + 0.25"
+ins_t,input,0.75,[M002b]
+slot_w,input,1.6,[M002b]
+slot_d,input,0.5,[M002b]
+ins_pads,input,"[((-9.8, 9.8), (16.2, 19.8)), ((-12.3, -6.0), (-19.8, -13.2)), ((6.0, 12.3), (-19.8, -13.2))]",
+spr_j1_win,input,"((-10.0, 10.0), (8.0, 16.0))","[M002] 방열판 J1(BTB) 창 — J1 짝 외형 x ±8.85, y 9.19…14.41"
+so_clear_d,input,4.0,[가정] 방열판 스탠드오프 관통 구멍 (육각 맞모 3.7 + 0.3)
+so_d,input,3.2,M1.6 육각 스탠드오프 대각 근사
+z_car_bot,derived,-9.6,params.derive()
+z_car_top,derived,-8.0,params.derive()
+z_fr_bot,derived,9.6,params.derive()
+z_fr_top,derived,11.2,params.derive()
+z_win_in,derived,40.685,params.derive()
+z_bez_in,derived,39.485,params.derive()
+z_bez_out,derived,43.685,params.derive()
+z_led_top,derived,13.645,params.derive()
+z_back_in,derived,-23.7,params.derive()
+z_back_out,derived,-26.2,params.derive()
+x_out_min,derived,-27.0,params.derive()
+x_al_in,derived,20.75,params.derive()
+x_in_max,derived,22.75,params.derive()
+x_out_max,derived,24.75,params.derive()
+y_in_min,derived,-34.5,params.derive()
+y_out_min,derived,-36.5,params.derive()
+y_in_lo,derived,20.5,params.derive()
+y_out_lo,derived,22.5,params.derive()
+y_in_hi,derived,32.5,params.derive()
+y_out_hi,derived,34.5,params.derive()
+hs_z,derived,"(-22.5075, 39.9925)",params.derive()
+hs_fin_zc,derived,"[-21.8075, -16.252954545454546, -10.698409090909092, -5.143863636363637, 0.4106818181818177, 5.965227272727272, 11.519772727272727, 17.07431818181818, 22.628863636363636, 28.18340909090909, 33.73795454545454, 39.292500000000004]",params.derive()
+al_holes,derived,"[(-31.0, -19.030227272727274), (17.0, -19.030227272727274), (-31.0, 19.85159090909091), (17.0, 19.85159090909091)]",params.derive()
+x_hs_base,derived,"(24.75, 28.25)",params.derive()
+x_hs_tip,derived,44.75,params.derive()
+hs_ped_screws,derived,"[(-7.0, -7.921136363636364), (-7.0, 14.297045454545454)]",params.derive()
