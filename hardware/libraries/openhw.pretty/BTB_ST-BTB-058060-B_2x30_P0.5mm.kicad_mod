@@ -5,7 +5,7 @@
 	(layer "F.Cu")
 	(descr "SUNGTECH ST-BTB-058060-B 60P 0.5mm board-to-board (socket, front board side). Derived from Seeed OSHW-reCamera-Series (commit f5fcf0a, Apache-2.0) footprint Connector:BTB60-Male-Female-0.5-17.7x4.4mm in sensors/s401-gc2053; nets/3D path removed. Mates reCamera Core 2002 J1. Dimensions to be checked vs SUNGTECH datasheet (R-004).")
 	(tags "board-to-board BTB 0.5mm 60P reCamera SUNGTECH")
-	(property "Reference" "J1"
+	(property "Reference" "REF**"
 		(at -1.25 -3.8 0)
 		(unlocked yes)
 		(layer "User.5")
@@ -166,57 +166,6 @@
 	(sheetfile "reCamera 2002 GC2053 Sensor Board.kicad_sch")
 	(attr smd)
 	(duplicate_pad_numbers_are_jumpers no)
-	(fp_line
-		(start -8.85 -2.2)
-		(end -8.85 2.2)
-		(stroke
-			(width 0.12)
-			(type default)
-		)
-		(layer "F.SilkS")
-		(uuid "13afdb29-6ec4-4ebc-a3c3-fde5308471aa")
-	)
-	(fp_line
-		(start -8.85 2.2)
-		(end 8.85 2.2)
-		(stroke
-			(width 0.12)
-			(type default)
-		)
-		(layer "F.SilkS")
-		(uuid "29051f13-c851-428f-bc58-4b68fb379e7d")
-	)
-	(fp_line
-		(start 8.85 -2.2)
-		(end -8.85 -2.2)
-		(stroke
-			(width 0.12)
-			(type default)
-		)
-		(layer "F.SilkS")
-		(uuid "34b612d7-39dc-49b8-accc-c225ada9104a")
-	)
-	(fp_line
-		(start 8.85 2.2)
-		(end 8.85 -2.2)
-		(stroke
-			(width 0.12)
-			(type default)
-		)
-		(layer "F.SilkS")
-		(uuid "fbaab683-e629-45a7-ad81-8071b7f71f05")
-	)
-	(fp_rect
-		(start 8.85 2.2)
-		(end -8.85 -2.2)
-		(stroke
-			(width 0.05)
-			(type default)
-		)
-		(fill no)
-		(layer "F.CrtYd")
-		(uuid "5c31ddbb-b4b2-44db-b0b0-b5cd833b1f1e")
-	)
 	(fp_rect
 		(start 8.85 2.2)
 		(end -8.85 -2.2)
@@ -343,6 +292,48 @@
 			)
 			(justify left bottom mirror)
 		)
+	)
+	(fp_rect
+		(start -9.15 -3.2)
+		(end 9.15 3.2)
+		(stroke
+			(width 0.05)
+			(type solid)
+		)
+		(fill no)
+		(layer "F.CrtYd")
+		(uuid "aa47e171-3198-49b6-8ec1-41ad9501fd18")
+	)
+	(fp_line
+		(start -8.9 -0.9)
+		(end -8.9 0.9)
+		(stroke
+			(width 0.12)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(uuid "8196c351-0bed-4fad-9b94-1ca0146afd57")
+	)
+	(fp_line
+		(start 8.9 -0.9)
+		(end 8.9 0.9)
+		(stroke
+			(width 0.12)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(uuid "4fddb24a-e933-43fb-bc3f-035f21c068ea")
+	)
+	(fp_circle
+		(center -8.1 -2.6)
+		(end -7.949999999999999 -2.6)
+		(stroke
+			(width 0.3)
+			(type solid)
+		)
+		(fill yes)
+		(layer "F.SilkS")
+		(uuid "453d874d-0255-4f70-aaef-8f4aec91b89b")
 	)
 	(pad "" np_thru_hole circle
 		(at -8.2 1.25 90)

@@ -183,3 +183,67 @@ C-002 회로도·PCB 프로젝트에서는 이 폴더의 `openhw.kicad_sym`과 `
 2. CLA216-ICR 도면: 구멍 지름·나사, ICR 케이블 헤더 계열
 3. TE 84953 정격 전류/핀 (12V_IR 1A를 3핀으로 나누는 조건)
 4. VSMA1085600·LTR-329 3D 모델
+
+## C-003 수정 (V-003 지적 반영, 2026-11-26)
+
+- **수정 방식:** 스크립트 `tools/c003_libfix.py`로 `.kicad_mod` 텍스트를 S-expression 단위로 고친다(다시 돌려도 결과가 같다). KiCad GUI는 쓰지 않았다(O-27).
+
+| 풋프린트 | 바뀐 것 | 근거 |
+|---|---|---|
+| `BTB_ST-BTB-058060-A/B_2x30_P0.5mm` | courtyard를 패드(y ±2.9)·위치결정 구멍(x ±8.5) 포함 **18.3 × 6.4**로 바꿈. 패드를 가로지르던 실크 ±2.2 선을 지우고, 양 끝 세로선(x ±8.9)과 1번 점(−8.1, −2.6)으로 바꿈. 레퍼런스 `REF**`. 패드 폭 0.25는 원품 기준 그대로 둠(O-23) | V-003 ⑦ (권장 18.2×6.3 이상, silk_over_copper 120건) |
+| `Diodes_MSOP-8EP_3x3mm_P0.65mm_EP1.7x2.0mm_AL8860` (**새로 만듦**) | KiCad 공식 `MSOP-8-1EP_3x3mm_P0.65mm_EP1.5x1.8mm`에서 파생. 공식 파일은 덮어쓰지 않음.<br>· 신호 패드 0.45 × 1.35, 중심 x ±1.975(Y2 5.3)<br>· EP 1.7 × 2.0<br>· EP 페이스트 4조각(약 66%) | Diodes DS39014 Rev 8-2 p.17 Suggested Pad Layout (V-003 ②) |
+| `Texas_DSG0008A_WSON-8-1EP_2x2mm_P0.5mm_EP0.9x1.6mm` (**새로 만듦**) | 공식 풋프린트를 그대로 복사하고 3D 경로만 바꿈: 설치본에 있는 `${KICAD10_3DMODEL_DIR}/Package_SON.3dshapes/WSON-8-1EP_2x2mm_P0.5mm_EP0.9x1.6mm.step` | V-003 ① (공식 STEP 파일 없음) |
+| `M12_Holder_20mm_CLA216-ICR` | 속성 정정: MPN `CLA216-ICR`, Manufacturer `Commonlands`, Datasheet Commonlands 제품 페이지, Description. 구멍을 NPTH **Ø1.8**, 간격 **20.0**(±10.0)으로 바꿈 | V-003 ⑧ · R-007 (간격 20.0, 홀더 구멍 참고 Ø1.7) · M1.6 나사 ISO 273 medium 여유 1.8 |
+
+- **회로도 연결:** U4·U5(AL8860)과 U2(DRV8837)가 위 새 풋프린트를 가리키도록 바꿨다(C-003 커밋).
+- **라이선스:** AL8860·DRV8837 파생은 KiCad 공식 라이브러리(CC-BY-SA 4.0 + 예외 조항)에서 나왔다. KiCad 라이브러리 예외 조항에 따라 설계 산출물에는 고지 의무가 없지만, 출처는 각 풋프린트 설명(descr)에 적었다.
+
+### 검사 (verifiable 예)
+
+| 명령 | 결과 |
+|---|---|
+| `kicad-cli fp export svg -o <먼저 만든 폴더> hardware/libraries/openhw.pretty` | 종료 0, SVG 8개 생성 확인(V-003: 폴더가 없으면 0을 돌려주고 파일이 없음) |
+| `kicad-cli pcb drc --severity-all --format json` — 시험판: openhw 풋프린트 8개를 한 판에 배치 (scratchpad, 저장소에 넣지 않음) | 종료 0. **BTB A/B·AL8860·DRV8837·M12·VSMA·LTR-329: 위반 0** (BTB silk_over_copper 120 → 0)<br>남은 46건은 모두 **DF30**(S401 파생, 0.4mm 피치): clearance 22(패드 간격 0.17 < 기본 0.2) · silk_over_copper 24. 그 밖에 시험판 외곽 없음 1건 |
+
+- **DF30 → pcb(P-003)로 넘김:** 0.4mm 피치에는 풋프린트 로컬 간격이나 넷클래스 규칙이 필요하다. 실크는 이번 범위 밖이라 고치지 않았다.
+
+## C-004 추가 (V-004 R6)
+
+| 풋프린트 | 내용 | 근거 |
+|---|---|---|
+| `BarrelJack_XKB_DC-005-5A-2.0_Horizontal` (**새로 만듦**) | KiCad `Connector_BarrelJack:BarrelJack_Horizontal`에서 파생. 핀 1 (0,0) · 핀 2 (−5.9, 0) · 핀 3 (−3.0, 4.7). 슬롯 1.0×3.5(핀 3은 3.5×1.0). 패드 3.5×4.2 / 3.0×4.2 / 4.2×3.5(환형 링 ≥0.35). 몸체 외곽선과 3D는 원본 그대로 → XKB 도면과 대조 필요 | V-004 R6 (XKB 도면 Rev A1, LCSC C381116: 1–2 5.90, 3은 3.0·4.70, 슬롯 1.0×3.5) |
+
+- 스크립트 `tools/c004_libfix.py`.
+- `kicad-cli fp export svg --footprint BarrelJack_XKB_DC-005-5A-2.0_Horizontal -o <먼저 만든 폴더>` → 종료 0, SVG 생성 확인.
+
+## C-005 추가 (R-009 ⑨ · V-004b R6 · pcb 실크 요청)
+
+| 풋프린트 | 내용 |
+|---|---|
+| `BarrelJack_XKB_DC-005-5A-2.0_Horizontal` | 몸체 Fab·실크를 XKB X-DC-005-5A-2.0 Rev A1(2025-04-22) 14.0 × 9.0, 앞면 −13.6, 뒤끝 +0.4로 맞춤. courtyard (−13.85, −4.75)~(2.0, 6.7). 실크는 패드에서 ≥0.2. 패드는 C-004 그대로 |
+| `Hirose_DF30FC-24DS-0.4V_2x12_P0.4mm` | 실크를 패드에서 ≥0.2로 잘라냄 (랜드 같음) |
+| `L_Bourns_SRN6045TA` (**새로 만듦**) | KiCad 공식 사본. 실크만 잘라냄 (랜드 같음) |
+| `Everlight_ALS-PT19_1.7x0.8mm` (**새로 만듦**) | 패드 0.8×0.8 @ ±0.75, 몸체 1.7×0.8, 핀 1 = 콜렉터(실크 점 −1.45), Everlight DLS-0000039 Rev.8 (R-009 ⑨, 도면 sha256 448c33a1…9bed) |
+
+- 스크립트: `tools/c005_libfix.py`. 실크 자르기 함수는 축에 나란한 실크선만 다룬다(이 풋프린트들에는 사선이 없다).
+- 시험판 DRC: silk 위반 0(17.3절).
+
+## C-008 추가 (pcb P-003 `9355bd1` 요청 · 넷 변경 없음)
+
+| 풋프린트 | 내용 |
+|---|---|
+| `BarrelJack_XKB_DC-005-5A-2.0_Horizontal` | 보드 외곽 = 몸체 앞면(x −13.6)이라 앞면 실크선을 뺐다. 옆 실크선은 x −13.3에서 시작한다(외곽 + 0.2 + 선 두께 절반 0.06). |
+| `M12_Holder_20mm_CLA216-ICR` | F.CrtYd x를 ±13.5에서 **±12.45**로 바꿨다(R-007 귀 포함 24.4 → ±12.2, 여유 0.25). y는 ±9.5 그대로다. |
+| `M12_Holder_20mm_CLA216-ICR` | 센서 받침 **13.2□** 자리를 표시했다(M-001d K11, 높이 0.75). F.Fab 점선 외곽 + 풋프린트 규칙 영역 `SENSOR_PEDESTAL`(F.Cu, 부품 금지 · 트랙·비아·패드·동박 붓기 허용). 받침은 접착 부품이라 동박은 넣지 않았다(O-39 기본값, 차선은 동박 기준면). |
+
+**시험판 `kicad-cli pcb drc --severity-all` (scratchpad, 외곽선 있음)**
+
+| 판 | 결과 |
+|---|---|
+| 수정 전(HEAD) | silk_edge_clearance 2 · courtyards_overlap 1 (MH1 / PicoBlade) |
+| 수정 후 | **위반 0** |
+| 음성 시험(받침 안에 0402) | items_not_allowed 1 → 금지 영역이 동작한다 |
+
+- PicoBlade(90° 회전)의 courtyard 폭은 6.89다. J_ICR(MH1 기준 x 12.65…19.54, 폭 6.89)에 딱 들어간다.
+- 스크립트: `tools/c008_libfix.py` (두 번 돌려도 결과가 같다).
+- 회로도 ERC는 두 보드 모두 종료 0이다(라이브러리만 바뀌었다).
