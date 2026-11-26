@@ -54,7 +54,12 @@
 | C-010 | orch (O-46) | schematic t18z | 캐리어 RJ45 쪽 MDI P/N 맞바꿈(ESD 뒤 넷), 계약 v1.9 | hardware/schematic/carrier (C-002 레인) | 의도 차이, ERC 0, 커밋 | completed — 21175f3 (계약 v1.9 f6d188e), J5 핀 1·2·3·6 = TXN·TXP·RXN·RXP, orch 재실행 carrier ERC 0. 회로도 배선 기준 21175f3 |
 | R-013 | orch (O-46) | research t18s | SG2002 EPHY 10BASE-T 자동 극성·Auto MDI-X 근거 | docs/research/r013-ephy-polarity.md | 근거(쪽/줄), 커밋 | completed — 레인 t-20261126-222823-c868 커밋 5e456c5. Auto MDI-X 지원(TRM 18.2.2), 10BASE-T 자동 극성 근거 없음 → O-47 |
 | C-011 | orch (O-47) | schematic t18z | C-010 되돌림(git revert 21175f3), 계약 v1.10 | hardware/schematic/carrier (C-002 레인) | c653eac와 차이 0, ERC 0, 커밋 | completed — 32e9ed9(revert)·83728da (계약 v1.10 4d5d49e), orch netcompare 재실행 차이 0(99/95·85/66)·carrier ERC 0. 회로도 배선 기준 83728da |
-| F-004b | orch (O-50) | firmware t18w | 원인 J 회피 재변환·호스트 모의 검증 1회(같은 원인 4회째, 사용자 허가) — 합격 기준 먼저 기록 | firmware/** (F-004 레인) | 기준 커밋, 합격 시 해시·시험·빌드 / 불합격 시 D 마감 근거 | running |
+| F-004b | orch (O-50) | firmware t18w | 원인 J 회피 재변환·호스트 모의 검증 1회(같은 원인 4회째, 사용자 허가) — 합격 기준 먼저 기록 | firmware/** (F-004 레인) | 기준 커밋, 합격 시 해시·시험·빌드 / 불합격 시 D 마감 근거 | completed(불합격 → D 마감, O-53) — 기준 2da6706(K0~K5 변환 전) → 그래프 7b6f254(K0 등가 최대차 0) → cvimodel f9920f9e… verify rc=1 → f855b4a. K1 11/21·K2 0.842·K3 0.000·K4 11/21 실패, K5 ok. 하강 비교: Slice는 맞음(cos 0.999), 헤드 1158_Reshape obj 채널 0 → 원인 J 판정 정정, 실제 원인 K(헤드 출력 하강) 후보. 모델 출하 안 함(models-candidate만), 이미지 out-f004 그대로 |
+| P-004 | orch (O-54) | pcb t190 | P-003 계속(DRC 0·미연결 0) → 제조 산출물(R-010 16항, 업로드 없음), 배치 고정 STEP 먼저 | hardware/pcb/** (P-003 레인) | DRC 종료 0, 차동 길이표, 산출물·sha256, 커밋 | running |
+| V-005 | orch (O-55) | review t191 | PCB 독립 감수: DRC·D-003 #21/#28/#29/#31·절연 패드 + 실크스크린(양면) + 사람 확인 HTML | docs/review/, validation/runtime/v005 (새 레인) | 항목·verifiable·근거·수정 요청, 커밋 | running |
+| R-014 | orch | research t18s | KiCad 10 IPC API·실시간 MCP 조사(설치 목록만) | docs/research/r014-kicad-live-mcp.md (새 레인) | 근거·결론, 커밋 | running |
+| R-015 | orch | research t18s | Fusion Electronics KiCad 가져오기·DRC 교차 검토 가능 여부 | docs/research/r015-fusion-electronics.md (새 레인) | 근거·결론, 커밋 | running |
+| M-003 | orch (O-56) | mechanical t18x | 외함 설계: KiCad STEP 기준, #25 벽·#26 방열·PMMA 창+흑색 폼, 3D 프린트 시제품 | mechanical/** (새 레인) | F3D·STEP·STL·도면·렌더·간섭 수치, 커밋 | running |
 
 ## 운영 변경 (2026-11-26, 사용자 지시 · lead 전달)
 - 의견 묻지 않고 진행: 사람 쪽 미정값은 D-003(lead 레인 t-20261126-144135-5470 docs/decisions/D-003-working-defaults.md, 커밋 8ac5ce5) 값으로 확정 취급. 새 갈림길은 기본값 선택 → 아래 「분기 기록」에 분기점·선택·이유·차선책 → lead 요약 보고. 문제 시 해당 행으로 돌아가 차선책.
@@ -119,6 +124,11 @@
 | O-50 | 사용자 결정 2026-11-27(lead): F-004 모델 경로 A 허가 | 원인 J 회피 재변환 1회만, 합격 기준(ONNX 대비 점수 차·IoU·검출 수)을 결과 전에 기록, 실패 시 D로 마감(5회째 없음). 네트워크 노출 닫힘 유지 | 사용자 허가 범위 그대로 | D: 모델 없이 마감·bring-up 뒤로 |
 | O-51 | 사용자 지시 2026-11-27(lead): Freerouting(GPL-3.0)+Java 21 설치 허가 — O-35(B) 차선 해제 | 도입 여부·시점 pcb 판단. 쓰면 사용자 홈 격리 설치·공식 배포처·버전/URL/sha256 기록·저속만(고속 차동·전원·IR 열 패드 고정)·SES 후 DRC·차동 재검사 종료 코드로 판정·V-005 전 미완료·GUI 열지 않음(pcbnew 헤드리스) | 사용자 허가 조건 그대로, 진행 중인 스크립트 배선은 끊지 않음 | 스크립트 배선(O-35 B) 유지 |
 | O-52 | Freerouting v2.4.1·v2.5.0이 Java 25 빌드(class 69) — 허가된 Java 21에서 실행 불가(pcb 시험) | (C) Java 21로 도는 옛 공식 판(v2.x 중 class ≤65) 탐색·사용. Java 25 런타임(A)·자체 런타임 포함 CLI zip(B)은 허가 밖이라 쓰지 않고 lead에 사용자 결정 사항으로 올림. 받아 둔 v2.4.1·v2.5.0 jar는 미사용 표시(삭제 안 함) | 사용자 허가는 Java 21 명시 — 설치 범위는 사용자 결정(AGENTS) | 맞는 판 없으면 스크립트 배선(O-35 B) 유지, 사용자 허가 시 A |
+| O-52b | lead 회신: O-52 (A) 진행 — 사용자 설치 지시의 목적은 Freerouting 도입, Java는 실행 수단 | Temurin 25 LTS JRE 포터블(C:/Users/gh/tools/freerouting 아래만, PATH·JAVA_HOME 변경 없음, sha256 대조) + Freerouting v2.5.0. 옛 판 탐색 중단. D-003 #32 갱신은 lead | lead 허가 | Java 21 옛 판 → 스크립트 배선 |
+| O-53 | F-004b 불합격(K1~K4) — 사용자 결정 '실패 시 D, 5회째 없음' | 모델 경로 D 마감(모델 없이, bring-up 뒤로). 새로 드러난 원인 K(헤드 obj 채널 하강) 후속 3안(층별 compare·헤드 혼합정밀도·sigmoid 그래프 밖)은 사용자 결정 대기 목록으로 | 사용자 지시 그대로, 원인 K는 다른 원인이지만 사용자가 이 경로를 닫음 | 사용자 허가 시 원인 K 1회차 |
+| O-54 | 사용자 지시 2026-11-27: orch는 개발 완료+케이스 설계 완료까지 멈추지 않음 | 갈림길 기본값 진행, 구매·발주·업로드·외부 연락·push만 대기 목록. P-004: DRC 0·미연결 0 뒤 R-010 16항 산출물, 배치 고정 STEP 먼저 커밋 | 사용자 지시 | — |
+| O-55 | V-005를 PCB 완성 전에 시작할지 | 지금 6ecfa85로 감수 스크립트·1차 실행, pcb 완료 커밋에서 최종 재실행 | 감수 준비 시간을 배선과 겹쳐 줄임, 판정은 최종 커밋 기준 | 완성 뒤 한 번에 |
+| O-56 | M-003 시작 시점(보드 미완성) | pcb 레인 최신 커밋에서 STEP 직접 내보내 시작, 외곽·구멍·커넥터를 매개변수로, 배치 고정 STEP 오면 교체. R-015 기다리지 않음 | 배치는 거의 고정, 배선은 외함에 영향 없음 | 배치 고정 STEP 뒤 시작 |
 
 ## 발주 패키지 직전 정리 목록
 - [ ] 회로도 표시 겹침: 캐리어 J2 옆 12V_IN_RAW 라벨, D3 PWR_LED 라벨, J1 품번 문자 (O-32)
@@ -136,3 +146,5 @@
 - [ ] 절연 패드 두께(P330/340/350)는 G2 실측 후 선택 (M-002b K24)
 - [ ] IR LED via-in-pad(수지 충전·도금 덮개) 옵션 여부 — 견적 금액 보고 후 결정 (O-44)
 - [ ] 사람 감지 모델 경로 사용자 결정 대기: (A) 원인 J 회피 재변환(같은 원인 4번째라 허가 필요) / (B) Seeed YOLO11n AGPL / (C) Sophgo 라이선스 문의 — 현재 (D) 모델 없이 마감 (F-004)
+- [ ] (사용자 결정 대기) F-004 사람 감지 모델 — 원인 K 후속 3안 / AGPL YOLO11n(B) / Sophgo 문의(C)
+- [ ] (사용자 진행) PCBWay 가입·문의 — lead 초안 t-20261127-013043-46d1 docs/manufacturing/pcbway-inquiry-draft.md
