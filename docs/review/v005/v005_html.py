@@ -90,6 +90,12 @@ for k, lab in (('S1_on_mask_open', 'S1 패드·노출 동박 위 실크(잘림)'
     rows.append((lab, [(SI[b]['summary'].get(k, 0), SI[b]['summary'].get(k, 0) == 0) for b in BOARDS]))
 rows.append(('실크 글자 수 / 참조 수 (앞·뒤)', [('%d·%d / %d·%d' % (SI[b]['counts']['F']['text'], SI[b]['counts']['B']['text'], SI[b]['counts']['F'].get('ref', 0), SI[b]['counts']['B'].get('ref', 0)), True) for b in BOARDS]))
 rows.append(('읽는 방향 (앞 / 뒤, 각도:개수)', [('%s / %s' % (SI[b].get('orientation', {}).get('F', {}), SI[b].get('orientation', {}).get('B', {})), True) for b in BOARDS]))
+EX = {bd: (load('excl_%s.json' % bd) if os.path.exists(os.path.join(res, 'excl_%s.json' % bd)) else None) for bd in BOARDS}
+if all(EX.values()):
+    rows.append(('O-74 DRC 제외 수 / ignore 심각도 / DRU severity 규칙', [('%d / %d / %d' % (EX[b]['verdict']['exclusions'], EX[b]['verdict']['ignored_severities'], EX[b]['verdict']['dru_severity_rules']), True) for b in BOARDS]))
+    rows.append(('O-74 E2 lib_footprint_mismatch 외 종류 제외', [(len(EX[b]['E2_disallowed']), EX[b]['verdict']['E2_pass']) for b in BOARDS]))
+    rows.append(('O-74 E3 제외 참조 = pcb 문서 목록', [(EX[b]['E3']['status'], EX[b]['E3']['status'] != '불일치') for b in BOARDS]))
+    rows.append(('O-74 E4 사본·인스턴스 패드·구멍·실크 밖 다름', [(', '.join(EX[b]['verdict']['E4a_fail'] + EX[b]['verdict']['E4b_fail']) or '0', not (EX[b]['verdict']['E4a_fail'] or EX[b]['verdict']['E4b_fail'])) for b in BOARDS]))
 for lab, vals in rows:
     parts.append('<tr><td>%s</td>%s</tr>' % (E(lab), ''.join(cell(v, g) for v, g in vals)))
 parts.append('</table><p class="mut">수치 판정 근거와 수정 요청은 <code>docs/review/v005-pcb-review.md</code>.</p></div>')
