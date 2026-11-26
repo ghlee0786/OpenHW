@@ -104,7 +104,7 @@
 | SIM-001e | lead → orch (O-98) | firmware t18w | L3 IR 끔 구간 링잉 개선 1회: 원인 노드 → (a) LED 병렬 C (b) SW RC 스너버 (c) 끔 처리 비교, 기존 통과 항목 악화 0인 안 → C-021 | hardware/sim (새 레인) | 기준 먼저 커밋, 종료 코드, 변경 표 | completed — 레인 t-20261127-061121-2cf0 기준 a3529ae → 8591271: 원인 L–접합 용량 공진·LED 순방향 꼬리(001b "발광 아님" 정정), 후보 8종 중 c1 LED 양단 10k 블리더만 악화 0 통과, c1 넣은 전체 L1~L10 pass(orch 재실행 종료 0 — 재실행이 결과 파일 9개를 덮어써 orch가 git restore로 되돌림, 미커밋 0) → C-021 |
 | C-021 | orch (O-99) | schematic t18z | 전면 IR 스트링 양단 10k 블리더 2개, 계약 v1.17 | hardware/schematic (새 레인) | ERC 0·contract_check 0, 커밋 | completed — 레인 t-20261127-062731-6d2e 613cf14(+04ac5cd): 전면 R22·R23 10k 1%(IR 스트링 양단), 계약 v1.17(S3 정정). orch 재실행 contract_check 0(레인 변경 0). 대조 스크립트가 회로도 값 "10k 1%"의 첫 토큰만 비교하게 바뀜 — 계약 칸은 원래 값만 적어 허용 오차는 대조 대상이 아니었음(검사 약화 아님, 기록) |
 | R-024 | orch | research t18s | BOM C-021: R22·R23 10k 1% 0402 | bom-full·PCBWay BOM (새 레인) | make_pcbway_bom 0, 커밋 | completed — 레인 t-20261127-063202-e8f3 6463619: R22·R23 10k 1% C25744, bom-full 101행, make_pcbway_bom 종료 0(orch가 scratch 사본으로 재실행 0) |
-| SIM-001f | orch (O-99) | firmware t18w | C-021 613cf14로 SIM-L 전체 정식 재실행(schematic_commit 613cf14) | hardware/sim (새 레인) | 종료 0, 커밋 | running |
+| SIM-001f | orch (O-99) | firmware t18w | C-021 613cf14로 SIM-L 전체 정식 재실행(schematic_commit 613cf14) | hardware/sim (새 레인) | 종료 0, 커밋 | completed — 레인 t-20261127-063202-6080(start --from 2cf0) e4e1a87: SIM-L1~L10 전부 pass, L3 끔 1.44µA, SIM_IR_BLEEDER 변수 제거. orch 전체 저장소 사본 재실행 종료 0 → VD-001 7) 회로 시뮬 불합격 0(SIM-001a 15/15 + SIM-L 10/10) |
 
 ## 운영 변경 (2026-11-26, 사용자 지시 · lead 전달)
 - 의견 묻지 않고 진행: 사람 쪽 미정값은 D-003(lead 레인 t-20261126-144135-5470 docs/decisions/D-003-working-defaults.md, 커밋 8ac5ce5) 값으로 확정 취급. 새 갈림길은 기본값 선택 → 아래 「분기 기록」에 분기점·선택·이유·차선책 → lead 요약 보고. 문제 시 해당 행으로 돌아가 차선책.
@@ -221,6 +221,7 @@
 | O-96 | mechanical 30c6 레인(기준 0c2ec91)이 main에 나중에 들어온 mechanical/m003(8089 병합분)을 restore로 가져와 고침 → 병합 때 add/add 충돌 50파일 예상 | REN-002 끝에서 main 최신 새 레인 → git restore --source <30c6 최종> -- mechanical/ (및 validation 해시 문서 등 바뀐 경로) 커밋 → 30c6 cancel, 새 레인 batch | 하네스 규칙 안에서 충돌 없이 반영(O-72·O-95와 같은 방식) | lead가 30c6 단독 accept 후 레인에서 해결 |
 | O-97 | SIM-001c: GC2053 전원 순서(켤 때 AVDD−IOVDD ≥50µs, 끌 때 IOVDD 마지막) 불합격 — Q1·Q2 동시 동작 | S6 게이트 비대칭 RC+BAT54(같은 모델 검증 180µs·1.1ms·돌입 310mA) 채택, 재시뮬로 확인, 실물은 bring-up 프로브 | 하드웨어만으로 해결, FW·계약 핀 변경 없음 | AVDD 스위치를 SPARE1(gpio430)로 분리해 FW 순서 제어 |
 | O-99 | SIM-001e: IR 끔 구간 링잉은 순방향 꼬리(발광 가능) — 001b의 '발광 아님' 판단 틀림 | c1 LED 양단 10k 블리더 채택(같은 모델로 기존 항목 악화 0), C-021 → 재시뮬 L 전체 | 유일하게 악화 없이 해결 | 불합격 기록 유지 |
+| O-100 | lead: validation/runtime은 gitignore라 레인 worktree 안 렌더가 accept 때 지워짐(main에 vd001 없음) | 최종 렌더·manifest·VD-001 HTML은 main 체크아웃 C:/workspace_python/OpenHW/validation/runtime/vd001/에 두고, 대표 PNG(제품 10·PCB 앞뒤 4)·MP4는 docs/renders/에 커밋(개당 <20MB) — mechanical·review에 전달 | 최종 결과물 보존 | — |
 
 ## 발주 패키지 직전 정리 목록
 - [ ] 회로도 표시 겹침: 캐리어 J2 옆 12V_IN_RAW 라벨, D3 PWR_LED 라벨, J1 품번 문자 (O-32)
