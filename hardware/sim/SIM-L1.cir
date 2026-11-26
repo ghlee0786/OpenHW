@@ -25,6 +25,7 @@ Csw sw gnd 20p
 
 R13 v12 setA 0.099
 DA1 setA mA led
+R22 setA kA 10k
 DA2 mA kA led
 VilA kA liA 0
 LA liA lxA 3.76e-05

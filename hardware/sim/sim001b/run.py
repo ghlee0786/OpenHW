@@ -25,7 +25,7 @@ SIM = os.path.dirname(HERE)
 REPO = os.path.dirname(os.path.dirname(SIM))
 NG = os.environ.get("NGSPICE", "C:/Users/gh/tools/ngspice/47/Spice64/bin/ngspice_con.exe")
 CRITERIA_COMMIT = "7cab389"
-SCH_COMMIT = "a2d878c"   # C-020 (S6): 전면 R20 100k·R21 1k·D4 BAT54WS, R5 100k·D5 BAT54WS (+ C-018/C-019: R6 6.04k, R17 4.7k·C19 4.7nF, C20·C21 4.7nF)
+SCH_COMMIT = "613cf14"   # C-021 (O-99): 전면 R22·R23 10k LED 양단 블리더 + C-020 (S6): R20 100k·R21 1k·D4 BAT54WS, R5 100k·D5 BAT54WS (+ C-018/C-019: R6 6.04k, R17 4.7k·C19 4.7nF, C20·C21 4.7nF)
 ILIM = 1.86   # TPS26600 R6 6.04 kΩ: I(OL) 최소 1.86 A (대표 ≈1.99 A, 계약 v1.14 3.1절 L108) — "시험 회로의 ILIM"을 보수적으로 최솟값으로
 ILIM_OLD = 1.49   # 7cab389 작성 때 회로(R6 8.06 kΩ)의 숫자 — 비교로만 적는다
 plt.rcParams["font.family"] = ["Malgun Gothic", "DejaVu Sans"]
@@ -182,6 +182,7 @@ def string(k, rs, L, dcr, ledm):
     return f"""
 R{13 if k == 'A' else 14} v12 set{k} {rs}
 D{k}1 set{k} m{k} {ledm}
+R{22 if k == 'A' else 23} set{k} k{k} 10k
 D{k}2 m{k} k{k} {ledm}
 Vil{k} k{k} li{k} 0
 L{k} li{k} lx{k} {L}
@@ -282,7 +283,7 @@ def b1():
     ax[1].axhline(1.6, color="r", ls="--", lw=.8, label="기준 1.6 A"); ax[1].set_ylabel("인덕터 전류 [A]"); ax[1].set_xlabel("시간 [µs]"); ax[1].legend(); ax[1].grid(alpha=.3)
     ax[0].set_title("SIM-L1 AL8860 한 스트링 정상 상태 (마지막 50 µs)")
     fig.tight_layout(); fig.savefig(png, dpi=110); plt.close(fig)
-    return dict(id="SIM-L1", title="AL8860 한 스트링 LED 전류·리플·주파수", refs=["U4", "R13", "L1", "D1", "D_IR_A1", "D_IR_A2", "C14", "C15"],
+    return dict(id="SIM-L1", title="AL8860 한 스트링 LED 전류·리플·주파수", refs=["U4", "R13", "R22", "L1", "D1", "D_IR_A1", "D_IR_A2", "C14", "C15"],
                 checks=checks, png=[png], net="SIM-L1.cir", notes=notes,
                 model=dict(source="데이터시트 동작 모델 (AL8860 히스테리시스·소프트스타트·CTRL, VSMA·SS24 다이오드 맞춤)",
                            url="https://www.diodes.com/assets/Datasheets/AL8860.pdf", license="—", behavioral=True,
@@ -315,7 +316,7 @@ def b2():
     ax.set_xlabel("시간 [ms]"); ax.set_ylabel("12V_IR 입력 전류 [A]"); ax.legend(); ax.grid(alpha=.3)
     ax.set_title("SIM-L2 스트링 A+B 동시 100 % — 12V_IR 입력 전류 (입력 캡 C14·C16 포함)")
     fig.tight_layout(); fig.savefig(png, dpi=110); plt.close(fig)
-    return dict(id="SIM-L2", title="스트링 A+B 동시 — 12V_IR eFuse 입력 전류 합", refs=["U4", "U5", "R13", "R14", "L1", "L2", "C14", "C16", "U2·R6 6.04k(carrier TPS26600)"],
+    return dict(id="SIM-L2", title="스트링 A+B 동시 — 12V_IR eFuse 입력 전류 합", refs=["U4", "U5", "R13", "R14", "R22", "R23", "L1", "L2", "C14", "C16", "U2·R6 6.04k(carrier TPS26600)"],
                 checks=checks, png=[png], net="SIM-L2.cir", notes=notes, out=out,
                 model=b1_model())
 
@@ -367,7 +368,7 @@ def b3(b2res):
         a.grid(alpha=.3)
     ax[0].set_title(f"SIM-L3 PWM 25 % (400 Hz) — 실효 켬 비율 {ratio:.3f}")
     fig.tight_layout(); fig.savefig(png, dpi=110); plt.close(fig)
-    return dict(id="SIM-L3", title="IR PWM 25 % 디밍 (IR_PWM → Q5 → IR_CTRL)", refs=["Q5", "R12", "U4", "U5"], checks=checks, png=[png],
+    return dict(id="SIM-L3", title="IR PWM 25 % 디밍 (IR_PWM → Q5 → IR_CTRL)", refs=["Q5", "R12", "U4", "U5", "R22", "R23"], checks=checks, png=[png],
                 net="SIM-L3.cir", notes=notes, model=b1_model())
 
 

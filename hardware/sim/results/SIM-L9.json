@@ -23,7 +23,7 @@
       "C10",
       "D3"
     ],
-    "schematic_commit": "a2d878c"
+    "schematic_commit": "613cf14"
   },
   "model": {
     "source": "RC + 레벨 1 MOSFET 근사",
