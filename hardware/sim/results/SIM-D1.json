@@ -11,7 +11,7 @@
    "U1(carrier)",
    "U1(front)"
   ],
-  "schematic_commit": "a61dc63"
+  "schematic_commit": "7760f38"
  },
  "model": {
   "source": "데이터시트 동작 모델 조합 (어댑터·TPS26600·TPS54302·RT9013) + 코어 레일 가정 모델",
@@ -27,7 +27,7 @@
    "op": "<=",
    "limit": 15.0,
    "unit": "ms",
-   "value": 3.378662,
+   "value": 3.470084,
    "corner": "어댑터 50 ms 상승",
    "pass": true
   },
@@ -45,7 +45,7 @@
    "op": "<=",
    "limit": 5.0,
    "unit": "%",
-   "value": 0.130003,
+   "value": 0.066601,
    "corner": "",
    "pass": true
   },
@@ -54,7 +54,7 @@
    "op": "<=",
    "limit": 5.0,
    "unit": "%",
-   "value": -1.273627,
+   "value": -1.273634,
    "corner": "",
    "pass": true
   },

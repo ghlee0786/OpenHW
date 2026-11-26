@@ -10,7 +10,7 @@
    "C11",
    "front C14..C17"
   ],
-  "schematic_commit": "a61dc63"
+  "schematic_commit": "7760f38"
  },
  "model": {
   "source": "데이터시트 동작 모델 (TPS26600 평균)",

@@ -65,8 +65,8 @@ Bin vin 0 I = max(v(il), 0) * v(sw) / max(v(vin), 1) / 0.92
 
 Xbk in12 v5 fb TPS54302 params: L=1e-05 FSW=400000.0
 Cv5 v5 0 6.993e-05
-Rtop v5 fb 100k
-Rbot fb 0 13.3k
+Rtop v5 fb 78700
+Rbot fb 0 10700
 Cff v5 fb 75p
 * 코어: 5V 부하 0.3 A (3V3 뜬 뒤), 3V3 = VIN > 4 V 뒤 1 ms 램프 (SY80004 소프트 스타트 가정), 1V8 = 3V3 따라 (SGM2036)
 Bon33 e33 0 V = v(v5) > 4.0 ? 1 : 0
