@@ -5,7 +5,7 @@
 합성 프로젝트(보드 · .kicad_pro 제외 목록 · .kicad_dru · fp-lib-table · openhw.pretty 사본 · pcb 문서)를 만들고
 v005_excl.py 를 하위 프로세스로 돌려 위반은 잡히고 정상은 통과하는지 본다. 종료 0 = 전부 통과, 1 = 실패.
 """
-import sys, os, json, shutil, subprocess, tempfile
+import sys, os, re, json, shutil, subprocess, tempfile
 import pcbnew
 
 sys.stdout.reconfigure(encoding='utf-8')
@@ -50,8 +50,109 @@ c4 = load('Resistor_SMD', 'R_0603_1608Metric')                                  
 for g in [g for g in c4.GraphicalItems() if g.GetClass() == 'PCB_SHAPE' and g.GetLayer() == pcbnew.F_Fab][:1]:
     c4.Remove(g)
 IO.FootprintSave(OH, c4)
+# ---- O-74b: 실크 사본 폴더(fp-lib-table 별칭을 돌림) + SOURCES.tsv ----
+import hashlib
+
+
+def sha(p):
+    return hashlib.sha256(open(p, 'rb').read()).hexdigest()
+
+
+def kfp(lib, name):
+    return os.path.join(KFP, lib + '.pretty', name + '.kicad_mod')
+
+
+SILK_DIR = os.path.join(WORK, 'hardware', 'pcb', 'lib', 'silk', 'front')
+SR = os.path.join(SILK_DIR, 'Resistor_SMD.pretty')
+SP = os.path.join(SILK_DIR, 'Package_TO_SOT_SMD.pretty')
+OHR = os.path.join(WORK, 'hardware', 'libraries', 'openhw.pretty')     # 저장소 openhw 원본(별칭:이름 표기 시험)
+for d in (SR, SP, OHR):
+    os.makedirs(d)
+# 사본은 .kicad_mod 텍스트를 직접 고쳐 만든다: KiCad 10 SWIG 는 같은 풋프린트를 여러 번 읽거나 복제하면 형 변환이 깨진다.
+
+
+def spans(t, heads):
+    """최상위 풋프린트 안의 (head …) 블록 [시작, 끝) 목록"""
+    out, i = [], 0
+    while True:
+        k = min([x for x in (t.find('(' + h, i) for h in heads) if x >= 0] or [-1])
+        if k < 0:
+            return out
+        d, j = 0, k
+        while True:
+            if t[j] == '(':
+                d += 1
+            elif t[j] == ')':
+                d -= 1
+                if d == 0:
+                    break
+            j += 1
+        out.append((k, j + 1))
+        i = j + 1
+
+
+GR = ('fp_line', 'fp_arc', 'fp_circle', 'fp_poly', 'fp_rect')
+
+
+def txt(lib, name):
+    return open(kfp(lib, name), encoding='utf-8').read()
+
+
+def cut(t, sp):
+    for a_, b_ in sorted(sp, reverse=True):
+        t = t[:a_] + t[b_:]
+    return t
+
+
+def t_drop_silk(t, keep_first=True):
+    sp = [x for x in spans(t, GR) if '(layer "F.SilkS")' in t[x[0]:x[1]]]
+    return cut(t, sp[1 if keep_first else 0:])
+
+
+def t_drop_fab(t):
+    sp = [x for x in spans(t, GR) if '(layer "F.Fab")' in t[x[0]:x[1]]]
+    return cut(t, sp[:1])
+
+
+def t_move_pad(t, num, dy):
+    for a_, b_ in spans(t, ('pad ',)):
+        blk = t[a_:b_]
+        if blk.startswith('(pad "%s"' % num):
+            m = re.search(r'\(at ([-\d.]+) ([-\d.]+)', blk)
+            nb = blk[:m.start()] + '(at %s %s' % (m.group(1), repr(round(float(m.group(2)) + dy, 4))) + blk[m.end():]
+            return t[:a_] + nb + t[b_:]
+    raise AssertionError('pad')
+
+
+def t_rename(t, new):
+    return re.sub(r'^\(footprint "[^"]+"', '(footprint "%s"' % new, t, count=1)
+
+
+def put(d, name, t):
+    open(os.path.join(d, name + '.kicad_mod'), 'w', encoding='utf-8').write(t)
+
+
+put(SR, 'R_0402_1005Metric', t_drop_silk(txt('Resistor_SMD', 'R_0402_1005Metric')))            # 실크만 → 통과
+put(SR, 'R_0603_1608Metric', txt('Resistor_SMD', 'R_0603_1608Metric'))                           # 기록 sha 틀림 → 불합격
+put(SR, 'R_0805_2012Metric', txt('Resistor_SMD', 'R_0805_2012Metric'))                           # SOURCES 행 없음 → 불합격
+put(SP, 'SOT-23', t_move_pad(txt('Package_TO_SOT_SMD', 'SOT-23'), '2', 0.05))                     # 패드 → 불합격
+put(SP, 'SOT-23-5', t_drop_fab(txt('Package_TO_SOT_SMD', 'SOT-23-5')))                            # Fab → 불합격
+put(OHR, 'SOT-23_OH', t_rename(txt('Package_TO_SOT_SMD', 'SOT-23'), 'SOT-23_OH'))
+put(SP, 'SOT-23_OH', t_drop_silk(t_rename(txt('Package_TO_SOT_SMD', 'SOT-23'), 'SOT-23_OH')))     # openhw 원본, 실크만 → 통과
+oh_file = os.path.join(OHR, 'SOT-23_OH.kicad_mod')
+rows = [
+    ('Resistor_SMD.pretty/R_0402_1005Metric.kicad_mod', '${KICAD10_FOOTPRINT_DIR}/Resistor_SMD.pretty/R_0402_1005Metric.kicad_mod', sha(kfp('Resistor_SMD', 'R_0402_1005Metric'))),
+    ('Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod', '${KICAD10_FOOTPRINT_DIR}/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod', '0' * 64),
+    ('Resistor_SMD.pretty/R_1206_3216Metric.kicad_mod', '${KICAD10_FOOTPRINT_DIR}/Resistor_SMD.pretty/R_1206_3216Metric.kicad_mod', sha(kfp('Resistor_SMD', 'R_1206_3216Metric'))),  # 사본 파일 없음
+    ('Package_TO_SOT_SMD.pretty/SOT-23.kicad_mod', kfp('Package_TO_SOT_SMD', 'SOT-23').replace('\\', '/'), sha(kfp('Package_TO_SOT_SMD', 'SOT-23'))),  # 절대 경로
+    ('Package_TO_SOT_SMD.pretty/SOT-23-5.kicad_mod', '/opt/kicad/share/kicad/footprints/Package_TO_SOT_SMD.pretty/SOT-23-5.kicad_mod', sha(kfp('Package_TO_SOT_SMD', 'SOT-23-5'))),  # 다른 PC 절대 경로 → 이 PC KiCad
+    ('Package_TO_SOT_SMD.pretty/SOT-23_OH.kicad_mod', 'openhw:SOT-23_OH', sha(oh_file)),
+]
+open(os.path.join(SILK_DIR, 'SOURCES.tsv'), 'w', encoding='utf-8').write('copy\tsource\tsha256\n' + ''.join('%s\t%s\t%s\n' % r for r in rows))
 open(os.path.join(WORK, 'fp-lib-table'), 'w', encoding='utf-8').write(
-    '(fp_lib_table\n  (version 7)\n  (lib (name "openhw")(type "KiCad")(uri "${KIPRJMOD}/openhw.pretty")(options "")(descr ""))\n)\n')
+    '(fp_lib_table\n  (version 7)\n  (lib (name "openhw")(type "KiCad")(uri "${KIPRJMOD}/openhw.pretty")(options "")(descr ""))\n'
+    '  (lib (name "Resistor_SMD") (type "KiCad") (uri "${KIPRJMOD}/hardware/pcb/lib/silk/front/Resistor_SMD.pretty") (options "") (descr "O-74b"))\n'
+    '  (lib (name "Package_TO_SOT_SMD")(type "KiCad")(uri "${KIPRJMOD}/hardware/pcb/lib/silk/front/Package_TO_SOT_SMD.pretty")(options "")(descr "O-74b"))\n)\n')
 
 # ---- 보드: openhw 사본 인스턴스 ----
 b = pcbnew.BOARD()
@@ -128,7 +229,7 @@ doc = os.path.join(WORK, 'pcb-notes.md')
 open(doc, 'w', encoding='utf-8').write('# 메모\n- O-74 실크 자름 제외 (front): R2, R4, R9\n- 다른 줄 R7 (관계없는 메모)\n- O-74 carrier: R3\n')
 
 out = os.path.join(WORK, 'excl.json')
-rc = subprocess.run([sys.executable, '-I', os.path.join(HERE, 'v005_excl.py'), pcb, out, '--doc', doc, '--board-name', 'front'],
+rc = subprocess.run([sys.executable, '-I', os.path.join(HERE, 'v005_excl.py'), pcb, out, '--doc', doc, '--board-name', 'front', '--repo-root', WORK],
                     capture_output=True, text=True, encoding='utf-8')
 if rc.returncode != 0:
     print('v005_excl.py 실패', rc.returncode, rc.stderr[-2000:]); sys.exit(1)
@@ -136,6 +237,7 @@ R = json.load(open(out, encoding='utf-8'))
 inst = {r['ref']: r for r in R['E4a_instances']}
 libc = {r['name']: r for r in R['E4b_library_copies']}
 E3 = R['E3']
+cp = {r['name']: r for r in R.get('E4c_silk_copies', [])}
 CASES = [
     ('E1 제외 4건 나열', len(R['exclusions']) == 4 and {x['type'] for x in R['exclusions']} == {'lib_footprint_mismatch', 'clearance'}),
     ('E1 제외 → 참조 매핑(R2·R3·R4)', sorted(r for x in R['exclusions'] if x['type'] == 'lib_footprint_mismatch' for r in x['refs']) == ['R2', 'R3', 'R4']),
@@ -158,12 +260,22 @@ CASES = [
     ('E4b 패드 옮긴 사본 불합격', libc.get('SOT-23', {}).get('ok') is False and libc['SOT-23']['pads_equal'] is False),
     ('E4b Fab 지운 사본 불합격', libc.get('R_0603_1608Metric', {}).get('ok') is False and libc['R_0603_1608Metric']['pads_equal'] is True),
     ('E4b THT 사본 통과', libc.get('PinHeader_1x02_P2.54mm_Vertical', {}).get('ok') is True),
+    ('E2b 제외가 있으면 0 아님 표시', R['verdict']['E2b_exclusions_zero'] is False),
+    ('E4c 실크 사본 별칭 2개 인식', R['verdict']['silk_redirects'] == ['Package_TO_SOT_SMD', 'Resistor_SMD']),
+    ('E4c R_0402 실크만·sha 맞음 통과', cp.get('R_0402_1005Metric', {}).get('ok') is True and cp['R_0402_1005Metric']['silk_equal'] is False),
+    ('E4c R_0603 기록 sha 틀림 불합격', cp.get('R_0603_1608Metric', {}).get('ok') is False and cp['R_0603_1608Metric'].get('sha_ok') is False and cp['R_0603_1608Metric'].get('pads_equal') is True),
+    ('E4c R_0805 SOURCES 행 없음 불합격', cp.get('R_0805_2012Metric', {}).get('ok') is False and 'SOURCES' in cp['R_0805_2012Metric'].get('error', '')),
+    ('E4c R_1206 사본 파일 없음 불합격', cp.get('R_1206_3216Metric', {}).get('ok') is False),
+    ('E4c SOT-23 패드 0.05 이동 불합격(절대 경로 원본)', cp.get('SOT-23', {}).get('ok') is False and cp['SOT-23'].get('pads_equal') is False and cp['SOT-23'].get('sha_ok') is True),
+    ('E4c SOT-23-5 Fab 지움 불합격(다른 PC 경로 → 이 PC KiCad)', cp.get('SOT-23-5', {}).get('ok') is False and cp['SOT-23-5'].get('sha_ok') is True and cp['SOT-23-5'].get('nonsilk_equal') is False),
+    ('E4c openhw:이름 원본·실크만 통과', cp.get('SOT-23_OH', {}).get('ok') is True),
+    ('E4c 불합격 목록 5', len(R['verdict']['E4c_fail']) == 5),
 ]
 fail = 0
 for name, ok in CASES:
     print('%s  %s' % ('통과' if ok else '실패', name))
     fail += 0 if ok else 1
 if fail:
-    print('--- 진단', json.dumps(dict(E3=E3, inst=inst, lib=libc, v=R['verdict']), ensure_ascii=False)[:4000])
+    print('--- 진단', json.dumps(dict(v=R['verdict'], cp=cp, E3=E3, inst=inst, lib=libc), ensure_ascii=False)[:5000])
 print('사례 %d · 실패 %d · 폴더 %s' % (len(CASES), fail, WORK))
 sys.exit(1 if fail else 0)

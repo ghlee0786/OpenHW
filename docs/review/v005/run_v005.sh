@@ -29,7 +29,7 @@ for b in carrier front; do
   step "netlist_$b" "$KCLI" sch export netlist --format kicadsexpr -o "$OUT/$b.net" "$SCH" || bad=1
   step "silk_$b" "$KPY" -I "$HERE/v005_silk.py" "$P" "$OUT/silk_$b.json" --netlist "$OUT/$b.net" || bad=1
   # O-74: 제외·ignore 나열, 허용 종류, pcb 문서 목록 대조, openhw 사본 패드·구멍
-  step "excl_$b" "$KPY" -I "$HERE/v005_excl.py" "$P" "$OUT/excl_$b.json" --board-name $b --doc $(ls "$WORK"/hardware/pcb/*.md "$WORK"/hardware/pcb/*/*.md 2>/dev/null) || bad=1
+  step "excl_$b" "$KPY" -I "$HERE/v005_excl.py" "$P" "$OUT/excl_$b.json" --board-name $b --repo-root "$WORK" --doc $(ls "$WORK"/hardware/pcb/*.md "$WORK"/hardware/pcb/*/*.md 2>/dev/null) || bad=1
   for s in top bottom; do step "render_${b}_$s" "$KCLI" pcb render --side $s --width 1400 --height 1400 --quality high --background opaque -o "$OUT/${b}_$s.png" "$P" || bad=1; done
   step "svgF_$b" "$KCLI" pcb export svg --mode-single --page-size-mode 2 --exclude-drawing-sheet -l F.Silkscreen,F.Mask,Edge.Cuts -o "$OUT/${b}_F_silk.svg" "$P" || bad=1
   step "svgB_$b" "$KCLI" pcb export svg --mode-single --page-size-mode 2 --exclude-drawing-sheet --mirror -l B.Silkscreen,B.Mask,Edge.Cuts -o "$OUT/${b}_B_silk.svg" "$P" || bad=1

@@ -349,3 +349,49 @@ bash docs/review/v005/run_v005.sh <pcb 최종 커밋>
   - `Texas_DSG0008A_WSON-8`: 원본과 같다
   - 나머지 9개는 사용자 작성이라 원본이 없다.
 - 이 값들은 pcb가 O-74 제외를 넣기 전 상태다. 최종 커밋에서 다시 판정한다.
+
+---
+
+# O-74b 변경: 실크 사본 폴더 판정 (2026-11-27, 스크립트만 준비)
+
+- **orch O-74b:** pcb는 DRC 제외를 쓰지 않는다(kicad-cli는 제외 항목도 종료 5로 센다). 대신 다음과 같이 한다.
+  - 보드 fp-lib-table의 같은 별칭(Resistor_SMD · openhw 등)을 pcb 소유 사본 폴더 `hardware/pcb/lib/silk/<보드>/`로 돌린다.
+  - 사본에서는 실크만 고친다. FPID는 그대로라 회로도 일치 0, 라이브러리 불일치 0이 된다.
+  - 사본의 원본 출처와 sha256은 `SOURCES.tsv`에 적는다.
+- **E2:** 그대로 둔다(허용 밖 종류 불합격). 새 **E2b**는 DRC 제외 수 = 0이어야 한다.
+- **E4c(새):** fp-lib-table 별칭의 uri가 `…/lib/silk/…`이면 그 폴더의 `*.kicad_mod` 전부를 SOURCES.tsv 행의 원본과 비교한다.
+  - **통과:** 패드(번호 · 종류 · 모양 · 위치 · 각도 · 크기 · 둥근 비 · 드릴 · 층)와 실크 밖 그림이 같고 실크만 다르며, **원본 파일 sha256 = 기록값**일 때
+  - **불합격:** 행 없는 사본, 사본 파일 없는 행, 원본 파일 없음
+  - SOURCES.tsv를 찾는 곳: 사본 폴더와 그 위(`silk`까지)
+  - 열 찾기: 머리글 copy · 사본 / source · 원본 / sha256. 머리글이 없으면 순서대로 읽는다.
+  - 원본 표기:
+    - `${KICAD10_FOOTPRINT_DIR}/…`
+    - 절대 경로(`…/share/kicad/footprints/…`는 이 PC의 KiCad 10.0.8 경로로 바꿔 읽음)
+    - 저장소 상대 경로(스냅샷 루트 `--repo-root`)
+    - TSV 상대 경로
+    - `openhw:이름`(→ `hardware/libraries/openhw.pretty`)
+- **E4a 대상 확장:** 사본 폴더로 돌린 별칭의 보드 인스턴스도 자기(사본) 라이브러리와 비교한다.
+
+## 고장 주입 — `test_v005_excl.py`: 사례 31 · 실패 0 · 종료 0 (O-74b 10건 추가)
+
+| 판정 | 양성(잡아야 함) | 음성(통과해야 함) |
+|---|---|---|
+| E2b | 제외 4건 → 「0 아님」 | — |
+| E4c | R_0603 기록 sha 틀림 · R_0805 SOURCES 행 없음 · R_1206 행만 있고 사본 없음 · SOT-23 패드 2를 0.05 이동(원본 = 절대 경로) · SOT-23-5 Fab 선 삭제(원본 = 다른 PC 절대 경로 → 이 PC KiCad로 바꿔 읽음) → 불합격 5 | 별칭 2개(Resistor_SMD · Package_TO_SOT_SMD) 인식, R_0402 실크만 바꿈(`${KICAD10_FOOTPRINT_DIR}` 원본), SOT-23_OH 실크만 바꿈(`openhw:SOT-23_OH` 원본) |
+
+- 시험 사본은 `.kicad_mod` 텍스트를 직접 고쳐 만든다.
+
+**시험 중 원인을 확인한 실패**
+
+| # | 증상 | 원인 | 고친 것 | 재시험 |
+|---|---|---|---|---|
+| 6 | 시험이 300초 넘게 멈춤 | `CreateLibrary`가 부모 폴더 없는 경로에서 멈춘다(faulthandler: `pcbnew.py` `CreateLibrary`) | 부모 폴더를 먼저 만든다 | 진행 |
+| 7 | 시험: `GraphicalItems()`가 `SwigPyObject`를 돌려줌 | 같은 풋프린트를 여러 번 읽거나 `FOOTPRINT(…)`로 복제하면 KiCad 10 SWIG 형 변환이 깨진다 | 사본 시험 데이터를 텍스트 편집으로 만든다 | 통과 |
+
+- 판정 스크립트도 풋프린트를 한 번만 읽고(`load_fp`) 복제 + 새 UUID로 쓴다.
+
+## 690ff78 실행 (`run_v005.sh 690ff78` → 종료 0)
+
+- test_silk 0, test_excl 0, excl 0 · 0
+- 두 보드 모두 제외 0(E2b 통과), 실크 사본 별칭 없음(E4c 사본 0), E4a · E4b 불합격 0
+- pcb가 O-74b 사본 폴더를 커밋하면 최종 run에서 판정한다.

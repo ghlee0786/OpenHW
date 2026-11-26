@@ -12,6 +12,9 @@ E2 lib_footprint_mismatch 외 종류의 제외 → 불합격. 주석에 「O-74�
 E3 제외 참조 목록 = 문서 목록? (문서가 없으면 판정 보류)
 E4 a) 보드 위 풋프린트(라이브러리 openhw 전부 + 제외된 것)를 자기 라이브러리 풋프린트와 비교: 패드·구멍 같고, 실크 밖 그림도 같아야 한다(실크만 달라도 됨)
    b) openhw 라이브러리 풋프린트 중 KiCad 표준에 같은 이름(또는 가장 긴 접두 이름)이 있는 것: 패드·구멍 같고 실크 밖 그림도 같아야 한다
+   c) (O-74b) fp-lib-table 이 실크 사본 폴더(…/lib/silk/…)로 돌린 별칭마다 그 폴더의 풋프린트 전부를 SOURCES.tsv 의 원본과 비교:
+      패드·구멍·실크 밖 그림이 같고 실크만 달라야 하며, 원본 파일 sha256 이 기록과 같아야 한다. 행 없는 사본·사본 없는 행은 불합격
+E2b (O-74b) DRC 제외는 0 이어야 한다(pcb 는 제외를 쓰지 않는다)
 """
 import sys, os, re, json, argparse, glob
 import pcbnew
@@ -23,6 +26,7 @@ ap.add_argument('--pro'); ap.add_argument('--dru'); ap.add_argument('--fplib')
 ap.add_argument('--doc', nargs='*', default=[])
 ap.add_argument('--board-name', default=None)
 ap.add_argument('--kicad-footprints', default=None)
+ap.add_argument('--repo-root', default=None, help='SOURCES.tsv 의 저장소 상대 경로 기준(스냅샷 루트)')
 A = ap.parse_args()
 base = os.path.splitext(A.pcb)[0]
 PRO = A.pro or base + '.kicad_pro'
@@ -90,7 +94,7 @@ R['E3'] = dict(exclusion_refs=excl_refs, doc_refs=sorted(doc_refs), doc_lines=do
 # ---------- E4 ----------
 libs = {}
 if os.path.exists(FPLIB):
-    for nick, uri in re.findall(r'\(lib\s+\(name\s+"([^"]+)"\)\(type\s+"[^"]+"\)\(uri\s+"([^"]+)"\)', open(FPLIB, encoding='utf-8').read()):
+    for nick, uri in re.findall(r'\(lib\s*\(name\s+"([^"]+)"\)\s*\(type\s+"?[^")]+"?\)\s*\(uri\s+"([^"]+)"\)', open(FPLIB, encoding='utf-8').read()):
         libs[nick] = os.path.normpath(uri.replace('${KIPRJMOD}', os.path.dirname(os.path.abspath(A.pcb))))
 
 
@@ -142,6 +146,24 @@ def shape_sig(g):
 
 
 TMP = pcbnew.BOARD()
+IO = pcbnew.PCB_IO_KICAD_SEXPR()
+_FPC = {}
+
+
+def load_fp(libdir, name):
+    """같은 풋프린트를 여러 번 읽으면 KiCad 10 SWIG 가 FOOTPRINT 로 못 바꾼다 → 한 번 읽고 복제해서 돌려준다"""
+    k = (os.path.normcase(os.path.abspath(libdir)), name)
+    if k not in _FPC:
+        try:
+            _FPC[k] = IO.FootprintLoad(libdir, name)
+        except Exception:
+            _FPC[k] = None
+    raw = _FPC[k]
+    if raw is None:
+        return None
+    c = pcbnew.FOOTPRINT(raw)
+    c.ResetUuidDirect()
+    return c
 
 
 def compare(inst, libfp):
@@ -168,14 +190,17 @@ def compare(inst, libfp):
 
 
 excluded_uuids = {u for x in excl for u in x['uuids']}
+# O-74b: fp-lib-table 별칭 중 실크 사본 폴더(hardware/pcb/lib/silk/…)를 가리키는 것
+silk_libs = {n: p for n, p in libs.items() if re.search(r'[\\/]lib[\\/]silk[\\/]', p.replace('\\', '/') + '/')}
+R['silk_lib_redirects'] = silk_libs
 inst_rows = []
 for fp in b.Footprints():
     lib = fp.GetFPID().GetLibNickname().wx_str() if hasattr(fp.GetFPID().GetLibNickname(), 'wx_str') else str(fp.GetFPID().GetLibNickname())
     name = fp.GetFPID().GetLibItemName().wx_str() if hasattr(fp.GetFPID().GetLibItemName(), 'wx_str') else str(fp.GetFPID().GetLibItemName())
-    if lib != 'openhw' and fp.m_Uuid.AsString() not in excluded_uuids:
+    if lib != 'openhw' and fp.m_Uuid.AsString() not in excluded_uuids and lib not in silk_libs:
         continue
     lp = lib_path(lib)
-    lf = pcbnew.FootprintLoad(lp, name) if lp else None
+    lf = load_fp(lp, name) if lp else None
     row = dict(ref=fp.GetReference(), fpid='%s:%s' % (lib, name), excluded=fp.m_Uuid.AsString() in excluded_uuids)
     if lf is None:
         row.update(ok=False, error='라이브러리 풋프린트 없음 (%s)' % lp)
@@ -203,12 +228,123 @@ if oh and os.path.isdir(oh):
         if not match:
             lib_rows.append(dict(name=name, original=None, note='표준 원본 없음(사용자 작성)'))
             continue
-        a = pcbnew.FootprintLoad(oh, name)
-        o = pcbnew.FootprintLoad(std_names[match], match)
+        a = load_fp(oh, name)
+        o = load_fp(std_names[match], match)
         c = compare(a, o)
         lib_rows.append(dict(name=name, original='%s:%s' % (os.path.basename(std_names[match])[:-7], match), match=how, **c,
                              ok=c['pads_equal'] and c['nonsilk_equal']))
 R['E4b_library_copies'] = lib_rows
+
+# ---------- E4c (O-74b): 실크 사본 폴더의 풋프린트 전부 ↔ SOURCES.tsv 원본 ----------
+# SOURCES.tsv: 사본 폴더 또는 그 위(…/lib/silk 까지)에 둔다. 머리글로 열을 찾는다(없으면 순서 = 사본, 원본, sha256).
+#   사본 열: copy·사본·footprint·fp·name  원본 열: source·원본·src·origin  sha 열: sha256·sha
+#   원본 표기: ${KICAD10_FOOTPRINT_DIR}/Lib.pretty/X.kicad_mod · 절대 경로(…/share/kicad/footprints/… 는 이 PC 의 KiCad 로 바꿔 읽음)
+#             · 저장소 상대 경로(--repo-root 기준) · TSV 상대 경로 · 별칭:이름(openhw → hardware/libraries/openhw.pretty)
+import hashlib
+
+
+def sha256(path):
+    h = hashlib.sha256()
+    with open(path, 'rb') as f:
+        h.update(f.read())
+    return h.hexdigest()
+
+
+def find_sources(d):
+    out, cur = [], os.path.abspath(d)
+    for _ in range(4):
+        f = os.path.join(cur, 'SOURCES.tsv')
+        if os.path.exists(f):
+            out.append(f)
+        if os.path.basename(cur) == 'silk':
+            break
+        cur = os.path.dirname(cur)
+    return out
+
+
+def parse_sources(f):
+    rows = []
+    lines = [l.rstrip('\r\n') for l in open(f, encoding='utf-8-sig') if l.strip() and not l.lstrip().startswith('#')]
+    if not lines:
+        return rows
+    head = [h.strip().lower() for h in lines[0].split('\t')]
+
+    def col(keys):
+        for i, h in enumerate(head):
+            if any(k in h for k in keys):
+                return i
+        return None
+    ci, si, hi = col(('copy', '사본', 'footprint', 'fp', 'name')), col(('source', '원본', 'src', 'origin')), col(('sha',))
+    body = lines[1:]
+    if ci is None or si is None:
+        ci, si, hi, body = 0, 1, 2, lines
+    for l in body:
+        c = l.split('\t')
+        if len(c) <= max(ci, si):
+            continue
+        rows.append(dict(copy=c[ci].strip(), source=c[si].strip(), sha256=(c[hi].strip().lower() if hi is not None and hi < len(c) else ''), tsv=f))
+    return rows
+
+
+def resolve_source(src, tsv):
+    s = src.strip().strip('"')
+    s2 = re.sub(r'\$\{KICAD\d*_FOOTPRINT_DIR\}', KFP.replace('\\', '/'), s)
+    if s2 != s:
+        return os.path.normpath(s2)
+    m = re.fullmatch(r'([^/\\:]+):([^/\\]+)', s)
+    if m:
+        nick, name = m.group(1), m.group(2)
+        if nick == 'openhw' and A.repo_root:
+            return os.path.join(A.repo_root, 'hardware', 'libraries', 'openhw.pretty', name + '.kicad_mod')
+        return os.path.join(KFP, nick + '.pretty', name + '.kicad_mod')
+    if os.path.isabs(s):
+        if os.path.exists(s):
+            return s
+        t = s.replace('\\', '/')
+        k = t.find('/share/kicad/footprints/')
+        return os.path.normpath(os.path.join(KFP, t[k + len('/share/kicad/footprints/'):])) if k >= 0 else s
+    for base_ in ([A.repo_root] if A.repo_root else []) + [os.path.dirname(tsv)]:
+        p = os.path.normpath(os.path.join(base_, s))
+        if os.path.exists(p):
+            return p
+    return os.path.normpath(os.path.join(A.repo_root or os.path.dirname(tsv), s))
+
+
+copy_rows = []
+for nick, d in sorted(silk_libs.items()):
+    srcs = []
+    for f in find_sources(d):
+        srcs += parse_sources(f)
+    copies = sorted(glob.glob(os.path.join(d, '*.kicad_mod')))
+    for cp in copies:
+        name = os.path.splitext(os.path.basename(cp))[0]
+        lib_dir_name = os.path.basename(d)
+        cand = [r for r in srcs if os.path.splitext(os.path.basename(r['copy'].replace('\\', '/').split(':')[-1]))[0] == name
+                and (lib_dir_name in r['copy'] or nick in r['copy'] or '/' not in r['copy'].replace('\\', '/'))]
+        row = dict(lib=nick, dir=d, name=name, copy_sha256=sha256(cp))
+        if not cand:
+            row.update(ok=False, error='SOURCES.tsv 에 행 없음'); copy_rows.append(row); continue
+        r0 = cand[0]
+        orig = resolve_source(r0['source'], r0['tsv'])
+        row.update(source=r0['source'], source_path=orig, recorded_sha256=r0['sha256'])
+        if not os.path.exists(orig):
+            row.update(ok=False, error='원본 파일 없음'); copy_rows.append(row); continue
+        row['source_sha256'] = sha256(orig)
+        row['sha_ok'] = (row['source_sha256'] == r0['sha256'])
+        a = load_fp(d, name)
+        o = load_fp(os.path.dirname(orig), os.path.splitext(os.path.basename(orig))[0])
+        if a is None or o is None:
+            row.update(ok=False, error='풋프린트 읽기 실패'); copy_rows.append(row); continue
+        c = compare(a, o)
+        row.update(c, ok=c['pads_equal'] and c['nonsilk_equal'] and row['sha_ok'])
+        copy_rows.append(row)
+    # SOURCES 행인데 사본 파일이 없는 것
+    names = {os.path.splitext(os.path.basename(c))[0] for c in copies}
+    for r in srcs:
+        n = os.path.splitext(os.path.basename(r['copy'].replace('\\', '/').split(':')[-1]))[0]
+        if (os.path.basename(d) in r['copy'] or nick in r['copy']) and n not in names:
+            copy_rows.append(dict(lib=nick, dir=d, name=n, ok=False, error='SOURCES.tsv 행의 사본 파일 없음'))
+R['E4c_silk_copies'] = copy_rows
 
 R['verdict'] = dict(
     E2_pass=not R['E2_disallowed'],
@@ -216,6 +352,10 @@ R['verdict'] = dict(
     E3=R['E3']['status'],
     E4a_fail=[r['ref'] for r in inst_rows if not r.get('ok')],
     E4b_fail=[r['name'] for r in lib_rows if r.get('original') and not r.get('ok')],
+    E2b_exclusions_zero=(len(excl) == 0),
+    silk_redirects=sorted(silk_libs),
+    E4c_copies=len(copy_rows),
+    E4c_fail=['%s:%s' % (r['lib'], r['name']) for r in copy_rows if not r.get('ok')],
     exclusions=len(excl), ignored_severities=len(R['ignored_severities']), dru_severity_rules=len(dru_sev))
 json.dump(R, open(A.out, 'w', encoding='utf-8'), ensure_ascii=False, indent=1, default=str)
 print(json.dumps(R['verdict'], ensure_ascii=False))

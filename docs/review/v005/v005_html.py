@@ -95,6 +95,9 @@ if all(EX.values()):
     rows.append(('O-74 DRC 제외 수 / ignore 심각도 / DRU severity 규칙', [('%d / %d / %d' % (EX[b]['verdict']['exclusions'], EX[b]['verdict']['ignored_severities'], EX[b]['verdict']['dru_severity_rules']), True) for b in BOARDS]))
     rows.append(('O-74 E2 lib_footprint_mismatch 외 종류 제외', [(len(EX[b]['E2_disallowed']), EX[b]['verdict']['E2_pass']) for b in BOARDS]))
     rows.append(('O-74 E3 제외 참조 = pcb 문서 목록', [(EX[b]['E3']['status'], EX[b]['E3']['status'] != '불일치') for b in BOARDS]))
+    rows.append(('O-74b E2b DRC 제외 0', [(EX[b]['verdict']['exclusions'], EX[b]['verdict'].get('E2b_exclusions_zero', True)) for b in BOARDS]))
+    rows.append(('O-74b 실크 사본 별칭 / 사본 수', [('%s / %d' % (', '.join(EX[b]['verdict'].get('silk_redirects', [])) or '없음', EX[b]['verdict'].get('E4c_copies', 0)), True) for b in BOARDS]))
+    rows.append(('O-74b E4c 사본↔원본(패드·구멍·실크 밖·sha256) 불합격', [(', '.join(EX[b]['verdict'].get('E4c_fail', [])) or '0', not EX[b]['verdict'].get('E4c_fail')) for b in BOARDS]))
     rows.append(('O-74 E4 사본·인스턴스 패드·구멍·실크 밖 다름', [(', '.join(EX[b]['verdict']['E4a_fail'] + EX[b]['verdict']['E4b_fail']) or '0', not (EX[b]['verdict']['E4a_fail'] or EX[b]['verdict']['E4b_fail'])) for b in BOARDS]))
 for lab, vals in rows:
     parts.append('<tr><td>%s</td>%s</tr>' % (E(lab), ''.join(cell(v, g) for v, g in vals)))
