@@ -60,6 +60,7 @@
 | R-014 | orch | research t18s | KiCad 10 IPC API·실시간 MCP 조사(설치 목록만) | docs/research/r014-kicad-live-mcp.md (새 레인) | 근거·결론, 커밋 | running |
 | R-015 | orch | research t18s | Fusion Electronics KiCad 가져오기·DRC 교차 검토 가능 여부 | docs/research/r015-fusion-electronics.md (새 레인) | 근거·결론, 커밋 | running |
 | M-003 | orch (O-56) | mechanical t18x | 외함 설계: KiCad STEP 기준, #25 벽·#26 방열·PMMA 창+흑색 폼, 3D 프린트 시제품 | mechanical/** (새 레인) | F3D·STEP·STL·도면·렌더·간섭 수치, 커밋 | running |
+| F-004c | orch (O-57) | firmware t18w | 원인 K 후속: K-1 층별 compare 첫 오차 층 → K-2 헤드 혼합정밀도 → K-3 sigmoid 그래프 밖, 기준 2da6706 그대로 | firmware/** (F-004 레인) | 단계별 커밋, 합격 시 해시·시험·빌드 / K 3회째 불합격 시 D 근거 | running |
 
 ## 운영 변경 (2026-11-26, 사용자 지시 · lead 전달)
 - 의견 묻지 않고 진행: 사람 쪽 미정값은 D-003(lead 레인 t-20261126-144135-5470 docs/decisions/D-003-working-defaults.md, 커밋 8ac5ce5) 값으로 확정 취급. 새 갈림길은 기본값 선택 → 아래 「분기 기록」에 분기점·선택·이유·차선책 → lead 요약 보고. 문제 시 해당 행으로 돌아가 차선책.
@@ -129,6 +130,7 @@
 | O-54 | 사용자 지시 2026-11-27: orch는 개발 완료+케이스 설계 완료까지 멈추지 않음 | 갈림길 기본값 진행, 구매·발주·업로드·외부 연락·push만 대기 목록. P-004: DRC 0·미연결 0 뒤 R-010 16항 산출물, 배치 고정 STEP 먼저 커밋 | 사용자 지시 | — |
 | O-55 | V-005를 PCB 완성 전에 시작할지 | 지금 6ecfa85로 감수 스크립트·1차 실행, pcb 완료 커밋에서 최종 재실행 | 감수 준비 시간을 배선과 겹쳐 줄임, 판정은 최종 커밋 기준 | 완성 뒤 한 번에 |
 | O-56 | M-003 시작 시점(보드 미완성) | pcb 레인 최신 커밋에서 STEP 직접 내보내 시작, 외곽·구멍·커넥터를 매개변수로, 배치 고정 STEP 오면 교체. R-015 기다리지 않음 | 배치는 거의 고정, 배선은 외함에 영향 없음 | 배치 고정 STEP 뒤 시작 |
+| O-57 | lead 정정: O-53의 원인 K 후속을 사용자 대기로 올린 것 | 바로 진행 — 원인 K는 새 원인(0회부터 3회 상한), 사용자는 멈춤 없는 진행 지시. K-1 진단 → K-2 혼합정밀도 → K-3 후처리 분리, 기준 2da6706 그대로 | AGENTS 실패 횟수 규칙(원인별), O-54 | K 3회 불합격 시 D 유지 |
 
 ## 발주 패키지 직전 정리 목록
 - [ ] 회로도 표시 겹침: 캐리어 J2 옆 12V_IN_RAW 라벨, D3 PWR_LED 라벨, J1 품번 문자 (O-32)
@@ -146,5 +148,6 @@
 - [ ] 절연 패드 두께(P330/340/350)는 G2 실측 후 선택 (M-002b K24)
 - [ ] IR LED via-in-pad(수지 충전·도금 덮개) 옵션 여부 — 견적 금액 보고 후 결정 (O-44)
 - [ ] 사람 감지 모델 경로 사용자 결정 대기: (A) 원인 J 회피 재변환(같은 원인 4번째라 허가 필요) / (B) Seeed YOLO11n AGPL / (C) Sophgo 라이선스 문의 — 현재 (D) 모델 없이 마감 (F-004)
-- [ ] (사용자 결정 대기) F-004 사람 감지 모델 — 원인 K 후속 3안 / AGPL YOLO11n(B) / Sophgo 문의(C)
+- [ ] (사용자 결정 대기) F-004 대체 모델 경로 — AGPL YOLO11n(B) / Sophgo 문의(C) (원인 K 후속은 O-57로 진행)
+- [ ] (사용자 지시 대기) push — main 병합은 1a6147a로 끝남, 남은 3레인(orch·pcb·firmware)은 완료 시 lead가 batch
 - [ ] (사용자 진행) PCBWay 가입·문의 — lead 초안 t-20261127-013043-46d1 docs/manufacturing/pcbway-inquiry-draft.md
