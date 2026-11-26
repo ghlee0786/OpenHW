@@ -9,11 +9,14 @@
 | R-003 | lead t18q (사용자 결정 D-002 경로 C, 2026-11-26 · 우선순위 최상) | research t18s | SG2002 모듈 구매처 확인: LicheeRV Nano 코어 등 후보, 1/5/10 구매처·단가·재고·EOL, 실장 방식·PCBWay 조립, 핀맵·풋프린트·STEP·라이선스·MIPI/이더넷/USB/전원 인출, SDK·센서 지원 | docs/research/module-sg2002.md, (선택) docs/research/module-candidates.csv | 구매 가능 모듈 1개 이상 확정 또는 불가+대안, 질문 목록, 레인 id·커밋 → orch 회수 → lead 보고 | completed — 레인 t-20261126-152145-fce6 커밋 c958a25(미병합). 권고 reCamera Core 2002 8GB (101991223) |
 | R-004 | lead t18q (2026-11-26) | research t18s (예정) | PCBWay 턴키 견적 확인용 짧은 BOM: 확정 모듈 1종 + 캐리어 핵심 부품 대표 후보(카메라 커넥터·이더넷 잭/마그네틱·전원 입력 IC·IR-cut 구동 IC·IR LED 드라이버) | (제안) docs/research/bom-quote-draft.csv | bom-template.csv 열, 제조사·MPN·패키지·수량(1/5/10)·출처 URL·확인일, 레인 id·커밋 | running (2026-11-26 모듈 확정 후 배정 · 접수 확인. BTB 원품번·GC2053 조달 포함, 이어서 R-005) |
 | R-005 | orch (D-003 #14) | research t18s | 공개 라이선스 자료만 hardware/datasheets 보관 + INDEX.md | hardware/datasheets/** | URL·리비전·sha256·라이선스·확인일 | queued (R-004 뒤, 배정문은 R-004-research.md 끝) |
-| C-001 | orch (단계 3) | schematic t18z | HW/FW 계약 초안: 전원 트리·예산, B2B 사용 핀, I2C·GPIO, 부트·디버그·보호, FPC 핀배치 | hardware/schematic/hw-fw-contract.md | 표 완성·근거/미확인·분기 기록, 레인·커밋 | running (2026-11-26 접수 확인) |
-| F-001 | orch (단계 3) | firmware t18w | reCamera SDK 사실: 빌드 호스트·부트·DT/핀먹스·센서 IQ·I2C/GPIO·ICR·조도·EPHY·SD·tpu-mlir | firmware/docs/sdk-facts.md | 표·핀 요약 절, 레인·커밋 | running (2026-11-26 접수 확인) |
+| C-001 | orch (단계 3) | schematic t18z | HW/FW 계약 초안: 전원 트리·예산, B2B 사용 핀, I2C·GPIO, 부트·디버그·보호, FPC 핀배치 | hardware/schematic/hw-fw-contract.md | 표 완성·근거/미확인·분기 기록, 레인·커밋 | completed — 레인 t-20261126-155208-d030 커밋 ac12920. 3층 구조 C1(캐리어–코어–전면 센서 보드), J1 윗면 센서/J2 아랫면 |
+| F-001 | orch (단계 3) | firmware t18w | reCamera SDK 사실: 빌드 호스트·부트·DT/핀먹스·센서 IQ·I2C/GPIO·ICR·조도·EPHY·SD·tpu-mlir | firmware/docs/sdk-facts.md | 표·핀 요약 절, 레인·커밋 | completed — 레인 t-20261126-155208-b6b4 커밋 e23e9ec. GC2053 IQ 있음, IR-cut·주야 전환 구현 없음, LTR-329 드라이버 없음 |
 | P-001 | orch (단계 5 준비) | pcb t190 | PCBWay 공정 규칙·스택업·임피던스, 0.5mm 커넥터 조립 조건 → KiCad 규칙 제안 | hardware/pcb/fab-rules-pcbway.md | 규칙표 출처·확인일, 스택업 안, 레인·커밋 | running (2026-11-26 접수 확인) |
 | V-001 | orch | review t191 | R-002·R-003 핵심 6주장 독립 재확인 | validation/review-V001-R002-R003.md | 판정표·영향, 레인·커밋 | running (2026-11-26 접수 확인) |
-| — | 대기 | mechanical t18x | PCB STEP 나오기 전 배정 없음(의존: C-002 회로 → PCB 배치) | — | — | waiting (의존) |
+| C-001b | orch | schematic t18z | 계약의 FW 확인 대기 열을 sdk-facts와 대조·확정 → 계약 v1 | hardware/schematic/hw-fw-contract.md (C-001 레인) | FW 대기 0 또는 사유, 커밋 | running (L-001보다 먼저) |
+| L-001 | orch (단계 4 준비) | schematic t18z | KiCad 라이브러리: AP1511B·AL8860·VSMA1085600·LTR-329·M12/ICR 홀더·FPC 10P (BTB·벅·RJ45·SD·센서는 의존 대기) | hardware/libraries/** | 핀↔패드 대조표, kicad-cli 결과, 레인·커밋 | queued (C-001b 뒤) |
+| F-002 | orch | firmware t18w | reCamera-OS 0.2.4 원본 Docker 기준 빌드(slot 경유, 산출물은 저장소 밖) | firmware/docs/build-baseline.md, firmware/scripts/** | 종료 코드 0+해시 또는 실패 원인 판정, 레인·커밋 | running |
+| M-001 | orch | mechanical t18x | 공개 STEP 측정 → 3층 적층·광축·IR LED·창·체결 기준안 (외함 아님) | mechanical/** | 측정표·기준안·Fusion MCP 결과, 레인·커밋 | running |
 
 ## 운영 변경 (2026-11-26, 사용자 지시 · lead 전달)
 - 의견 묻지 않고 진행: 사람 쪽 미정값은 D-003(lead 레인 t-20261126-144135-5470 docs/decisions/D-003-working-defaults.md, 커밋 8ac5ce5) 값으로 확정 취급. 새 갈림길은 기본값 선택 → 아래 「분기 기록」에 분기점·선택·이유·차선책 → lead 요약 보고. 문제 시 해당 행으로 돌아가 차선책.
@@ -32,3 +35,6 @@
 | O-6 | 기다리는 동안 병렬 일 | pcb는 PCBWay 공정 규칙(P-001), review는 R-002/R-003 독립 검증(V-001), mechanical 대기 | 의존 없는 일만 병렬, 결정 근거 조기 검증 | 전부 순차 |
 | O-7 | 모듈 5개 확보 위험 (D-003 #12·#15, lead 2026-11-26 지시: 판단 기준만 기록) | reCamera Core 2002 유지. R-004에서 공개 정보로 확인: Seeed 수량 표시·Digi-Key·Mouser·공식 대리점 재고 합 | 판단 기준 — (a) 공식 판매처 공개 재고 합 ≥5 또는 Seeed 「In Stock」+수량 제한 없음 표시 → 유지 (b) 합 <5이고 2002w/64GB 변형(101991224·102991898·102991899) 포함 합 ≥5 → 변형 혼용 허용(핀 호환·SDK 동일 근거 확인 조건) (c) 그래도 <5 또는 단종/EOL 표시 → D-003 #15 차선 LicheeRV Nano-E로 복귀 검토 후 lead 보고. 구매·판매자 문의 금지 유지 | LicheeRV Nano-E + GC4653 |
 | O-8 | V-001에서 주장 뒤집힘 처리 (lead 지시) | 뒤집힌 주장에 걸린 분기 행(O-2·O-3·D-003 #17 등)으로 복귀해 차선 적용 여부 판정 → lead 보고 | 결정 근거 무결성 | — |
+| O-9 | 조도센서 읽기 수단 (F-001: LTR-329 커널 드라이버 5.10에 없음) | LTR-329를 전면 보드 CAM I2C2에 두고 사용자 공간 i2c-dev 폴링 | 커널 백포트 불필요, 주소 0x29 vs GC2053 0x3f 충돌 없음(C-001b에서 레벨·주소 근거 확인) | LIGHT_SENSE(J1-18 ADC1) 포토트랜지스터 |
+| O-10 | C-001 3층 구조로 R-002 O1(센서 B2B→캐리어→센서 보드 경로) 무효 | C-001 C1 채택: 캐리어(뒤)–코어–전면 센서 보드, ICR·IR PWM·조도는 J1 신호로 전면 보드 처리, 캐리어→전면은 12V_IR FPC 10P | J1·J2가 코어 윗면·아랫면에 나뉘어 캐리어 한 장으로 둘 다 받을 수 없음(STEP 배치 확인) | — (물리 제약) · D-003 #17 「별도 센서 보드+FPC」 문구 갱신을 lead에 제안 |
+| O-11 | 계약 확정 전 병렬 | schematic: C-001b 먼저 → L-001 / firmware: F-002 기준 빌드 / mechanical: M-001 기준 형상 | 각자 다른 파일·의존 없는 일 | 순차 |
