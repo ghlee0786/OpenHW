@@ -101,7 +101,8 @@
 | C-020 | orch (O-97) | schematic t18z | 카메라 레일 순서 S6: Q1 게이트 100k∥(1k+BAT54), Q2 게이트 100k∥BAT54, 계약 v1.16 | hardware/schematic (새 레인) | ERC 0·contract_check 0, 커밋 | completed — 레인 t-20261127-055630-c14c a2d878c(+3c0b0bd): R20 100k·R21 1k·D4 BAT54WS(Q1), R5 100k·D5 BAT54WS(Q2), 극성 재확인, 계약 v1.16. orch 재실행 contract_check 0·selftest 0(24, 극성 고장 포함) |
 | SIM-001d | orch (O-97) | firmware t18w + schematic t18z | C-020 a2d878c로 재시뮬: firmware L5·L9·L10(+전체 L), schematic SIM-001a C3(CORE_3V3 강하) | hardware/sim (각 새 레인) | 같은 기준, 종료 코드, 커밋 | completed — schematic c14c 939d2f0 15/15 / firmware 레인 t-20261127-060029-2377(start --from bf55) 942c7e5: 종료 1(pass 9, L3 S3만 — 기준대로 불합격 기록), L9 IOVDD 마지막 1.105ms·L10 AVDD 180µs 뒤·돌입 310mA. 참고: 리셋 해제 여유 최악 0.37ms(bring-up 1-7) |
 | R-023 | orch | research t18s | BOM 갱신 C-020: D4·D5 BAT54WS, R21 1k, R5·R20 100k | bom-full·PCBWay BOM (새 레인) | make_pcbway_bom 0, 커밋 | completed — 레인 t-20261127-060023-2ca0 6ae4eed: D3–D5 BAT54WS C124205, 10k×3·100k×7·1k×2 갱신, make_pcbway_bom 종료 0(orch 재실행 0) |
-| SIM-001e | lead → orch (O-98) | firmware t18w | L3 IR 끔 구간 링잉 개선 1회: 원인 노드 → (a) LED 병렬 C (b) SW RC 스너버 (c) 끔 처리 비교, 기존 통과 항목 악화 0인 안 → C-021 | hardware/sim (새 레인) | 기준 먼저 커밋, 종료 코드, 변경 표 | running |
+| SIM-001e | lead → orch (O-98) | firmware t18w | L3 IR 끔 구간 링잉 개선 1회: 원인 노드 → (a) LED 병렬 C (b) SW RC 스너버 (c) 끔 처리 비교, 기존 통과 항목 악화 0인 안 → C-021 | hardware/sim (새 레인) | 기준 먼저 커밋, 종료 코드, 변경 표 | completed — 레인 t-20261127-061121-2cf0 기준 a3529ae → 8591271: 원인 L–접합 용량 공진·LED 순방향 꼬리(001b "발광 아님" 정정), 후보 8종 중 c1 LED 양단 10k 블리더만 악화 0 통과, c1 넣은 전체 L1~L10 pass(orch 재실행 종료 0 — 재실행이 결과 파일 9개를 덮어써 orch가 git restore로 되돌림, 미커밋 0) → C-021 |
+| C-021 | orch (O-99) | schematic t18z | 전면 IR 스트링 양단 10k 블리더 2개, 계약 v1.17 | hardware/schematic (새 레인) | ERC 0·contract_check 0, 커밋 | running |
 
 ## 운영 변경 (2026-11-26, 사용자 지시 · lead 전달)
 - 의견 묻지 않고 진행: 사람 쪽 미정값은 D-003(lead 레인 t-20261126-144135-5470 docs/decisions/D-003-working-defaults.md, 커밋 8ac5ce5) 값으로 확정 취급. 새 갈림길은 기본값 선택 → 아래 「분기 기록」에 분기점·선택·이유·차선책 → lead 요약 보고. 문제 시 해당 행으로 돌아가 차선책.
@@ -217,6 +218,7 @@
 | O-95 | lead batch: firmware F-010 레인 dbd1이 main과 충돌(firmware/docs/bringup-checklist.md — F-008/F-009가 main에서 같은 파일 수정), dbd1에는 병합 상태가 남지 않음(깨끗), 직접 git merge 금지 | firmware가 SIM-001c ② 뒤 main 최신에서 새 레인 → F-010 변경(패치 0004·apply 스크립트·절차서 2-1·14절 줄)을 main 판 위에 손으로 옮겨 커밋(O-72 방식) → dbd1 cancel, 새 레인 batch | 하네스 규칙 안에서 충돌 해소, main 쪽 수정 보존 | lead가 dbd1 단독 accept로 병합 상태를 레인에 남기면 거기서 해결 — 완료 1422 dae174e(패치 0004 dbd1과 바이트 동일 orch 확인), lead에 dbd1 cancel·1422 batch 요청 |
 | O-96 | mechanical 30c6 레인(기준 0c2ec91)이 main에 나중에 들어온 mechanical/m003(8089 병합분)을 restore로 가져와 고침 → 병합 때 add/add 충돌 50파일 예상 | REN-002 끝에서 main 최신 새 레인 → git restore --source <30c6 최종> -- mechanical/ (및 validation 해시 문서 등 바뀐 경로) 커밋 → 30c6 cancel, 새 레인 batch | 하네스 규칙 안에서 충돌 없이 반영(O-72·O-95와 같은 방식) | lead가 30c6 단독 accept 후 레인에서 해결 |
 | O-97 | SIM-001c: GC2053 전원 순서(켤 때 AVDD−IOVDD ≥50µs, 끌 때 IOVDD 마지막) 불합격 — Q1·Q2 동시 동작 | S6 게이트 비대칭 RC+BAT54(같은 모델 검증 180µs·1.1ms·돌입 310mA) 채택, 재시뮬로 확인, 실물은 bring-up 프로브 | 하드웨어만으로 해결, FW·계약 핀 변경 없음 | AVDD 스위치를 SPARE1(gpio430)로 분리해 FW 순서 제어 |
+| O-99 | SIM-001e: IR 끔 구간 링잉은 순방향 꼬리(발광 가능) — 001b의 '발광 아님' 판단 틀림 | c1 LED 양단 10k 블리더 채택(같은 모델로 기존 항목 악화 0), C-021 → 재시뮬 L 전체 | 유일하게 악화 없이 해결 | 불합격 기록 유지 |
 
 ## 발주 패키지 직전 정리 목록
 - [ ] 회로도 표시 겹침: 캐리어 J2 옆 12V_IN_RAW 라벨, D3 PWR_LED 라벨, J1 품번 문자 (O-32)
@@ -254,7 +256,7 @@
 - [x] ngspice 47 공용 설치: C:/Users/gh/tools/ngspice/47/Spice64/bin/ngspice_con.exe — SourceForge ng-spice-rework/47 ngspice-47_64.7z md5 550f3a5a…(게시값 일치, orch 재확인), 로컬 sha256 59225971…, -v 확인(orch). py7zr 0.22.0 C:/Users/gh/tools/py7zr-venv(확인용)
 - [ ] bring-up(G1 문서 게이트 잔여): BTB 접점 전류 정격(VIN 핀당 0.325A 피크)·HCTL↔SUNGTECH 교차 결합·결합 높이 실측, 코어 2002 안테나 스프링 없음 확인
 - [ ] bring-up(G2 잔여): 센서 블록 두께·강판 귀·공동 깊이·DF30 결합·광학 중심·Tflex 두께 실측
-- [ ] bring-up: SIM B3 IR 끔 구간 링잉(6mA 피크, 평균 41µA 역방향) — 꺼짐 중 발광 없음 확인
+- [ ] bring-up: IR 끔 구간 — 블리더(C-021) 뒤 순방향 꼬리 없음·발광 없음 확인(SIM-001e: 원래는 순방향 꼬리였음, LED CJO 가정)
 - [ ] VD-001: M-007 J5 LED 직접광 84.6%(렌즈 경통 가림, analysis2 86) — mechanical 개선 검토
 - [ ] bring-up: 센서 IOVDD/AVDD 켜기·끄기 순서 프로브 확인(SIM은 보드 레일 90% 대리 — 모듈 내부 LDO 지연 미상)
 - [ ] bring-up: 센서 리셋 해제 vs AVDD 90% 여유(SIM 최악 0.37ms) 측정
