@@ -399,17 +399,57 @@ def build(board_name):
             place(fp, spec[0], spec[1], spec[2])
             pl.commit(ref, fp, spec[0])
     done = set(FIXED[board_name])
+
+    def put(ref, side, anchor, want=None):
+        if not pl.free(ref, fps[ref], side, anchor, want):
+            missing.append(ref)
+            place(fps[ref], side, 0.0, (40.0 + len(missing) * 3, 0.0))  # 보드 밖에 둔다 → DRC가 잡는다
+        done.add(ref)
+
+    # 1) 이름을 정한 부품(IC·커넥터·전력 부품)은 계획 좌표 둘레에
+    prefix_rules = {}
     for key, side, anchor, want in FREE[board_name]:
-        if key in fps and key not in done:
-            refs = [key]
+        if key in fps:
+            if key not in done:
+                put(key, side, anchor, want)
         else:
-            refs = sorted((r for r in fps if r not in done and re.fullmatch(re.escape(key) + r"\d+", r)),
-                          key=lambda r: int(re.sub(r"\D", "", r) or 0))
-        for ref in refs:
-            if not pl.free(ref, fps[ref], side, anchor, want):
-                missing.append(ref)
-                place(fps[ref], side, 0.0, (40.0 + len(missing) * 3, 0.0))  # 보드 밖에 둔다 → DRC가 잡는다
-            done.add(ref)
+            prefix_rules[key] = (side, anchor)
+
+    # 2) 나머지(C·R·D·Q·TP…)는 연결 기반: 이미 놓인 부품과 공유하는 넷 중 패드가 가장 적은(가장 구체적인) 넷의
+    #    놓인 패드 중심을 기준점으로, 그 패드 주인의 면에 둔다. 테스트점(TP)은 접근이 쉬운 계획 면(뒷면)에 둔다.
+    nets_of = {r: {p.GetNetname() for p in fps[r].Pads() if p.GetNetname()} for r in fps}
+    skip = {"/GND", "GND"}
+
+    def anchor_for(ref):
+        best = None
+        for n in nets_of[ref] - skip:
+            placed = [(O(p.GetPosition()), fps[r2].IsFlipped()) for r2 in done if r2 in fps and n in nets_of[r2]
+                      for p in fps[r2].Pads() if p.GetNetname() == n]
+            if placed and (best is None or len(placed) < len(best)):
+                best = placed
+        if not best:
+            return None
+        x = sum(p[0][0] for p in best) / len(best)
+        y = sum(p[0][1] for p in best) / len(best)
+        side = "B" if sum(1 for p in best if p[1]) * 2 > len(best) else "F"
+        return (x, y), side, len(best)
+
+    todo = [r for r in fps if r not in done]
+    while todo:
+        scored = [(anchor_for(r), r) for r in todo]
+        with_a = [(a[2], r, a) for a, r in scored if a]
+        if not with_a:
+            break
+        _, ref, (pos, side, _) = min(with_a)
+        key = re.match(r"[A-Z_]+", ref).group(0)
+        if key == "TP" and key in prefix_rules:
+            side = prefix_rules[key][0]
+        put(ref, side, pos)
+        todo.remove(ref)
+    for ref in todo:  # 놓인 부품과 연결이 없는 부품은 접두 규칙 기준점으로
+        key = re.match(r"[A-Z_]+", ref).group(0)
+        if key in prefix_rules:
+            put(ref, *prefix_rules[key])
     # 참조 지정자는 조립도(Fab)로 — 40×40·40×54 밀집 배치에서 실크 글자 겹침을 없앤다. 극성·1번 핀 실크 표시는 풋프린트 그대로
     for fp in fps.values():
         fp.Reference().SetLayer(pcbnew.B_Fab if fp.IsFlipped() else pcbnew.F_Fab)
