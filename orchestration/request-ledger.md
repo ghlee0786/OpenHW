@@ -12,10 +12,11 @@
 | C-001 | orch (단계 3) | schematic t18z | HW/FW 계약 초안: 전원 트리·예산, B2B 사용 핀, I2C·GPIO, 부트·디버그·보호, FPC 핀배치 | hardware/schematic/hw-fw-contract.md | 표 완성·근거/미확인·분기 기록, 레인·커밋 | completed — 레인 t-20261126-155208-d030 커밋 ac12920. 3층 구조 C1(캐리어–코어–전면 센서 보드), J1 윗면 센서/J2 아랫면 |
 | F-001 | orch (단계 3) | firmware t18w | reCamera SDK 사실: 빌드 호스트·부트·DT/핀먹스·센서 IQ·I2C/GPIO·ICR·조도·EPHY·SD·tpu-mlir | firmware/docs/sdk-facts.md | 표·핀 요약 절, 레인·커밋 | completed — 레인 t-20261126-155208-b6b4 커밋 e23e9ec. GC2053 IQ 있음, IR-cut·주야 전환 구현 없음, LTR-329 드라이버 없음 |
 | P-001 | orch (단계 5 준비) | pcb t190 | PCBWay 공정 규칙·스택업·임피던스, 0.5mm 커넥터 조립 조건 → KiCad 규칙 제안 | hardware/pcb/fab-rules-pcbway.md | 규칙표 출처·확인일, 스택업 안, 레인·커밋 | running (2026-11-26 접수 확인) |
-| V-001 | orch | review t191 | R-002·R-003 핵심 6주장 독립 재확인 | validation/review-V001-R002-R003.md | 판정표·영향, 레인·커밋 | running (2026-11-26 접수 확인) |
+| V-001 | orch | review t191 | R-002·R-003 핵심 6주장 독립 재확인 | validation/review-V001-R002-R003.md | 판정표·영향, 레인·커밋 | completed — 레인 t-20261126-155240-aa11 커밋 2a7bf47. ①②③ 일치(보완 있음) ④ 불일치(CIL327 HFOV 약 121°) ⑤⑥ 조건부 |
 | C-001b | orch | schematic t18z | 계약의 FW 확인 대기 열을 sdk-facts와 대조·확정 → 계약 v1 | hardware/schematic/hw-fw-contract.md (C-001 레인) | FW 대기 0 또는 사유, 커밋 | running (L-001보다 먼저) |
 | L-001 | orch (단계 4 준비) | schematic t18z | KiCad 라이브러리: AP1511B·AL8860·VSMA1085600·LTR-329·M12/ICR 홀더·FPC 10P (BTB·벅·RJ45·SD·센서는 의존 대기) | hardware/libraries/** | 핀↔패드 대조표, kicad-cli 결과, 레인·커밋 | queued (C-001b 뒤) |
 | F-002 | orch | firmware t18w | reCamera-OS 0.2.4 원본 Docker 기준 빌드(slot 경유, 산출물은 저장소 밖) | firmware/docs/build-baseline.md, firmware/scripts/** | 종료 코드 0+해시 또는 실패 원인 판정, 레인·커밋 | running |
+| R-006 | orch (V-001 ④⑥ 분기 복귀, O-8) | research t18s | 렌즈 재선정(GC2053 HFOV 85~95°, 왜곡 모델·BFL·IR 보정) + IR LED 조사각·개수(1.0A, 직렬 ≤2) | docs/research/optics-ir-r006.md (+csv) | 렌즈 1안·차선 계산 근거, LED 결론, 레인·커밋 | queued (R-004 뒤, R-005보다 먼저) |
 | M-001 | orch | mechanical t18x | 공개 STEP 측정 → 3층 적층·광축·IR LED·창·체결 기준안 (외함 아님) | mechanical/** | 측정표·기준안·Fusion MCP 결과, 레인·커밋 | running |
 
 ## 운영 변경 (2026-11-26, 사용자 지시 · lead 전달)
@@ -38,3 +39,6 @@
 | O-9 | 조도센서 읽기 수단 (F-001: LTR-329 커널 드라이버 5.10에 없음) | LTR-329를 전면 보드 CAM I2C2에 두고 사용자 공간 i2c-dev 폴링 | 커널 백포트 불필요, 주소 0x29 vs GC2053 0x3f 충돌 없음(C-001b에서 레벨·주소 근거 확인) | LIGHT_SENSE(J1-18 ADC1) 포토트랜지스터 |
 | O-10 | C-001 3층 구조로 R-002 O1(센서 B2B→캐리어→센서 보드 경로) 무효 | C-001 C1 채택: 캐리어(뒤)–코어–전면 센서 보드, ICR·IR PWM·조도는 J1 신호로 전면 보드 처리, 캐리어→전면은 12V_IR FPC 10P | J1·J2가 코어 윗면·아랫면에 나뉘어 캐리어 한 장으로 둘 다 받을 수 없음(STEP 배치 확인) | — (물리 제약) · D-003 #17 「별도 센서 보드+FPC」 문구 갱신을 lead에 제안 |
 | O-11 | 계약 확정 전 병렬 | schematic: C-001b 먼저 → L-001 / firmware: F-002 기준 빌드 / mechanical: M-001 기준 형상 | 각자 다른 파일·의존 없는 일 | 순차 |
+| O-12 | 짝 BTB 풋프린트 출처 (V-001 ③: B301/S401 파일은 Apache-2.0, CC BY-SA는 코어 회로도 PDF만) | B301 KiCad 풋프린트에서 파생 허용 + Apache-2.0 고지·출처 기록, SUNGTECH 데이터시트 나오면 치수 대조 | ShareAlike 위험 낮음, 회로·PCB 착수를 막는 항목 해소 | 데이터시트로 독자 작성 |
+| O-13 | 렌즈 (V-001 ④ CIL327 F-θ로 HFOV 약 121° > D-003 #4 90°) | R-002 O2 무효 → R-006에서 재선정, 기구는 렌즈 길이 변수로 진행 | 결정 근거 뒤집힘(O-8) | — |
+| O-14 | ICR·IR LED 구동 (V-001 ⑤⑥) | ICR 드라이버 VDD 5V+펄스, AP1511B vs DRV8837 정격 근거 있는 쪽 / IR LED 1.0A·직렬 ≤2·방열 기판 | 3.3V에서 코일 전압 하한, 1.5A 여유 0 | AP1511B 3.3V 유지 불가 → DRV8837 |
