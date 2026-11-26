@@ -70,7 +70,7 @@
 | C-013 | lead → orch | schematic t18z | 회로도 라벨 겹침·Rev 표기 정리(O-32 남은 것), 넷·UUID 변경 0 | hardware/schematic/** (새 레인) | ERC 0, netcompare 0, 겹침 수 전후, 앞뒤 PNG | completed — 레인 t-20261127-025035-86d8 656b50a: Ref/Value 필드 한 격자 위(생성기+HEAD 좌표, UUID 유지), Rev C-013. 겹침(다른 글자) 캐리어 17→0·전면 9→0, 남은 같은 자리 같은 이름 라벨 20/8은 화면상 하나. orch 재실행 ERC 두 보드 0, netcompare f56945b 대비 99/95·85/66 차이 0. 앞뒤 PNG validation/runtime/kicad-gui/C-013/ — 사람 확인 전 |
 | R-017 | lead → orch | research t18s | PoC 총비용 추정표 5대(공개 가격만, 미확인 표시, 최소/기준/최대) — 먼저 192c 해제 | docs/research/r017-poc-cost.* (새 레인) | 출처·확인일, 커밋 | running |
 | F-007 | lead → orch | firmware t18w | bring-up 호스트 도구(RTSP FPS·MQTT 기록·FPS 집계·12V 전류 집계)와 시험 — 먼저 ed35 해제 | firmware/tools/host/ (새 레인) | 도구 시험 종료 코드(고장 주입), 커밋 | running |
-| V-005b | lead → orch | review t191 | 실크 감수 자동화 확대(글자·획·겹침·외곽·숨김·방향·1번 핀 규칙), 고장 주입 시험 | docs/review/v005 (V-005 레인) | verifiable 예 늘린 목록, 시험 종료 코드, 커밋 | running |
+| V-005b | lead → orch | review t191 | 실크 감수 자동화 확대(글자·획·겹침·외곽·숨김·방향·1번 핀 규칙), 고장 주입 시험 | docs/review/v005 (V-005 레인) | verifiable 예 늘린 목록, 시험 종료 코드, 커밋 | completed — a1934f2: B4·B6·B7·B8·B9(1번 핀·극성, 회로도 K 핀 기준)·S1v/S1h(비아·구멍 위)·S6a 기계 판정, 고장 주입 30건 실패 0(orch 재실행 rc 0). 690ff78(=6ecfa85 보드) 실행 rc 0. 남은 사람 확인 H1 키 커넥터 면제(J2·J3·J4·J5)·H2 ok_half·H3 첫 보드 인쇄. RQ-14(비아 위 실크 93)·RQ-15(전면 J3·J2 1번 핀 표시)·RQ-16(C-012 미반영) → pcb |
 
 ## 운영 변경 (2026-11-26, 사용자 지시 · lead 전달)
 - 의견 묻지 않고 진행: 사람 쪽 미정값은 D-003(lead 레인 t-20261126-144135-5470 docs/decisions/D-003-working-defaults.md, 커밋 8ac5ce5) 값으로 확정 취급. 새 갈림길은 기본값 선택 → 아래 「분기 기록」에 분기점·선택·이유·차선책 → lead 요약 보고. 문제 시 해당 행으로 돌아가 차선책.
