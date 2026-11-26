@@ -52,7 +52,8 @@
 | F-004 | orch | firmware t18w | 사람 감지(tdl_models) → 이벤트 전송·RTSP, 이벤트 로직 시험, 패치 빌드 | firmware/** | 모델 출처·라이선스·해시, 시험·빌드 결과, 레인·커밋 | completed(모델 제외, lead 결정 D) — 레인 t-20261126-210506-1e37 c4a6334. 모델 경로 A/B/C는 사용자 답 대기(D-003 #19). persond 33/0·daynight 40/0(orch 재실행), 모델 없는 이미지 빌드 0. 모델: tdl 라이선스 미확인·Seeed AGPL 미사용, YOLOX-Nano 변환 검증 원인 J 3회 중단 → 사용자 결정(A 회피 재변환/B AGPL/C 문의/D 연기) |
 | M-002b | orch (O-43) | mechanical t18x | IR LED 열 경로 전기 절연: 절연 갭 패드 품번·수치, 기둥 접촉면, ΔT 재계산 | mechanical/** (M-001 레인) | 품번·열 저항·간섭, 커밋 | completed — e33bdde. Laird Tflex P340 1겹(>5kV)+방열판 일체 GND 기둥, 금속 접촉 0, ΔT A 9.5K·B 7.0K(추정), 차선 Fujipoly GR25B |
 | C-010 | orch (O-46) | schematic t18z | 캐리어 RJ45 쪽 MDI P/N 맞바꿈(ESD 뒤 넷), 계약 v1.9 | hardware/schematic/carrier (C-002 레인) | 의도 차이, ERC 0, 커밋 | completed — 21175f3 (계약 v1.9 f6d188e), J5 핀 1·2·3·6 = TXN·TXP·RXN·RXP, orch 재실행 carrier ERC 0. 회로도 배선 기준 21175f3 |
-| R-013 | orch (O-46) | research t18s | SG2002 EPHY 10BASE-T 자동 극성·Auto MDI-X 근거 | docs/research/r013-ephy-polarity.md | 근거(쪽/줄), 커밋 | running |
+| R-013 | orch (O-46) | research t18s | SG2002 EPHY 10BASE-T 자동 극성·Auto MDI-X 근거 | docs/research/r013-ephy-polarity.md | 근거(쪽/줄), 커밋 | completed — 레인 t-20261126-222823-c868 커밋 5e456c5. Auto MDI-X 지원(TRM 18.2.2), 10BASE-T 자동 극성 근거 없음 → O-47 |
+| C-011 | orch (O-47) | schematic t18z | C-010 되돌림(git revert 21175f3), 계약 v1.10 | hardware/schematic/carrier (C-002 레인) | c653eac와 차이 0, ERC 0, 커밋 | running |
 
 ## 운영 변경 (2026-11-26, 사용자 지시 · lead 전달)
 - 의견 묻지 않고 진행: 사람 쪽 미정값은 D-003(lead 레인 t-20261126-144135-5470 docs/decisions/D-003-working-defaults.md, 커밋 8ac5ce5) 값으로 확정 취급. 새 갈림길은 기본값 선택 → 아래 「분기 기록」에 분기점·선택·이유·차선책 → lead 요약 보고. 문제 시 해당 행으로 돌아가 차선책.
@@ -111,6 +112,7 @@
 | O-44 | IR LED 열 비아 (pcb: 빈자리 비아 4개/LED ≈43 K/W, ΔT≈33K) | 빈자리 비아 유지(추가 비용 없음), 랜드 안 비아 자리 좌표 기록 | 추정 접합 ≈95°C로 허용 안(가정 포함, 실측 판정) | via-in-pad 수지 충전 약 12개/LED(≈11K, PCBWay 추가 비용 — 견적 때 결정) |
 | O-45 | 이벤트·영상 네트워크 노출 (F-004) | MQTT 1883 LAN 비공개(로컬, event_host로 외부 지정), RTSP는 비밀번호 설정 시만, 기본 admin/admin 안 씀 | 보안 기본 닫힘 — lead 확정(D-003 #30) | LAN 공개 시 인증·TLS |
 | O-46 | 캐리어 MDI 극성 (pcb: J1 쌍 P 서쪽 vs RJ45 +핀 동쪽, 기하학상 한 번 꼬임 필요) | 회로도에서 ESD 뒤 RJ45 쪽 TX±·RX± 맞바꿈 — 차동 쌍 유지, 규칙 완화 없음 | 100BASE-TX 극성 무관, 10BASE-T는 PHY 자동 극성(R-013 확인) | 미지원 시 FW 100M 고정 → PCB 비아 꼬임(규칙 예외) |
+| O-47 | O-46 재판단 (R-013: EPHY 10BASE-T 자동 극성 근거 없음, 자동 협상 FLP도 극성 의존, O-8 복귀) | O-46 차선 채택: 회로도 표준 배정으로 되돌리고(C-011) PCB에서 ESD→RJ45 약 5mm 구간 쌍 비아로 P/N 교차, 그 구간 한정 규칙 예외 | 기능 위험(링크 실패) 제거가 국소 규칙 예외보다 중요 | 첫 보드 T1~T4 링크 시험으로 확인 후 회로도 반전 |
 
 ## 발주 패키지 직전 정리 목록
 - [ ] 회로도 표시 겹침: 캐리어 J2 옆 12V_IN_RAW 라벨, D3 PWR_LED 라벨, J1 품번 문자 (O-32)
