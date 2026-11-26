@@ -1,0 +1,68 @@
+{
+ "id": "SIM-B3",
+ "title": "TPS54302 부하 과도 0→1.5A·루프 안정도",
+ "owner": "schematic",
+ "circuit": {
+  "board": "carrier",
+  "refs": [
+   "U1",
+   "L1",
+   "C7",
+   "C8",
+   "C20",
+   "C23",
+   "C19"
+  ],
+  "schematic_commit": "a61dc63"
+ },
+ "model": {
+  "source": "데이터시트 동작 모델 (평균 전류 모드)",
+  "url": "TI SLVSDG6C (Mar 2026) https://www.ti.com/lit/ds/symlink/tps54302.pdf sha256 d81679ba…51b8",
+  "license": "이 저장소 작성",
+  "behavioral": true,
+  "basis": "SLVSDG6C 6.3.3 gm 240 µA/V, 6.2 블록도 내부 보상 20 kΩ + 2.04 nF, 2 pF; Gcs = 11.20 A/V 는 Equation 14 fo = 5.1/(Vout·Co) 에서 역산; Samsung Electro-Mechanics Component Library DC-Bias 차트 API (CL32B226KAJNNN, 25 °C, 2026-11-27 받음) sha256 501635c3…13e0 — 5 V 17.42 µF / 0 V 21.92 µF"
+ },
+ "criteria_commit": "64bde61",
+ "checks": [
+  {
+   "name": "부하 과도 편차 0.1↔1.5 A",
+   "op": "<=",
+   "limit": 0.25,
+   "unit": "V",
+   "value": 0.138408,
+   "corner": "VIN 12 V, C 유효 69.9 µF",
+   "pass": true
+  },
+  {
+   "name": "교차 주파수",
+   "op": "<=",
+   "limit": 40000.0,
+   "unit": "Hz",
+   "value": 19985.6315,
+   "corner": "1.3 A",
+   "pass": true
+  },
+  {
+   "name": "위상 여유",
+   "op": ">=",
+   "limit": 45,
+   "unit": "deg",
+   "value": 107.709297,
+   "corner": "1.3 A",
+   "pass": true
+  }
+ ],
+ "verdict": "pass",
+ "waveforms": [
+  "hardware/sim/png/SIM-B3-step.png",
+  "hardware/sim/png/SIM-B3-loop.png"
+ ],
+ "netlist": "hardware/sim/SIM-B3-tran.cir",
+ "tool": {
+  "name": "ngspice",
+  "version": "ngspice-47 (공식 SourceForge ng-spice-rework/47/ngspice-47_64.7z)",
+  "sha256": "59225971… (7z, firmware 설치·검증 — orch O-81)",
+  "path": "C:/Users/gh/tools/ngspice/47/Spice64/bin/ngspice_con.exe"
+ },
+ "notes": "0 A 가 아니라 0.1 A 에서 시작(평균 모델에 펄스 스킵이 없어 0 A 경계가 의미 없음). Gcs 역산·2차 샘플 지연은 근사 — 교차 주파수·위상 여유는 실측(주입)으로 확인 권장."
+}

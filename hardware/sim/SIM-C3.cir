@@ -1,0 +1,53 @@
+* SIM-C3 스위치 켬 순간 CORE_3V3·CORE_1V8 강하 — 코어 레일 = 이상 전원 + 경로 0.1 Ω + 로컬 C (코어 SCH 03 출력 10 µF ×2 X5R → 3.3 V 바이어스 12 µF, 1V8 10 µF → 8.5 µF 가정)
+.model PAO PMOS(LEVEL=1 VTO=-0.9 KP=10.5 W=1 L=1 CGSO=0 CGDO=0)
+.model PDM PMOS(LEVEL=1 VTO=-0.7 KP=13.37 W=1 L=1 CGSO=0 CGDO=0)
+V33 s33 0 3.32
+R33 s33 c33 0.1
+C33 c33 0 12u
+V18 s18 0 1.8
+R18p s18 c18 0.1
+C18p c18 0 8.5u
+* 전면 CAM_EN (1 ms): Q3 → CAM_PG, Q7 → CAM_1V8_PD
+Ven en 0 PULSE(0 1 1m 1u 1u 1 2)
+R4 c33 pg 100k
+Sq3 pg 0 en 0 SQ
+R5 pg pgav 10k
+Mq1 iov pg c33 c33 PAO
+Cg1 pg c33 645p
+Mq2 avd pgav c33 c33 PAO
+Cg2 pgav c33 645p
+C7 iov 0 1u
+C8 avd 0 1.1u
+Ri iov 0 110
+Ra avd 0 110
+* CAM_1V8 (C-018): R17 4.7k 풀업, Q7 → R18 1k, C19 4.7 nF 게이트–드레인
+R17 c18 g6 4.7k
+Sq7 pd 0 en 0 SQ
+R18 pd g6 1k
+C19 g6 v18 4.7n
+Mq6 v18 g6 c18 c18 PDM
+Cg6 g6 c18 808p
+C11 v18 0 1.1u
+R19 v18 0 10k
+Rx1 v18 0 450
+* 캐리어 SD (10 ms): Q3 → SD_PWR_GD, R22 47k / C21 100 nF
+Vsd sden 0 PULSE(0 1 10m 1u 1u 1 2)
+R11 c33 gd 100k
+Sq3c gd 0 sden 0 SQ
+R22 gd gsd 47k
+C21 gsd c33 100n
+Mq2c sdv gsd c33 c33 PAO
+Cg2c gsd c33 645p
+Csd sdv 0 11.1u
+Rsd sdv 0 16.5
+R23 sdv 0 100k
+.model SQ SW(Ron=1 Roff=1e9 Vt=0.5)
+.options method=gear
+.control
+set wr_singlescale
+set wr_vecnames
+tran 0.1u 40m
+wrdata c3.dat v(c33) v(c18) v(iov) v(avd) v(v18) v(sdv)
+quit
+.endc
+.end

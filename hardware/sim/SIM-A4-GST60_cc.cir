@@ -1,0 +1,85 @@
+* SIM-A4 어댑터(GST60_cc: 5.25 A, 정전류) + 12V 최악 부하: IR A+B 25 % 듀티 500 Hz(켬 1.22 A) + 5V 벅(1.3 A) → 20 ms 에 12V_IR 0.1 Ω 과부하
+
+.subckt ADAPTER out on
+Vfl flt 0 0
+Bsrc 0 out I = v(flt) < 0.5 ? max(0, min(5.25, (11.64 * min(1, v(on)) - v(out)) / 0.136)) : 0
+Cad out 0 100u
+Rbl out 0 10k
+.ends
+
+
+.subckt TPS26600 in out shdn dvdt
+* 켜짐 조건 (POR 상승 4.1 V 최악, OVP 상승 31.0 V 최악 — 히스테리시스는 A2 에서 따로)
+Ben en0 0 V = (v(shdn) > 0.76) && (v(in) > 4.1) && (v(in) < 31.0) && (v(flt) < 0.5) ? 1 : 0
+Ren en0 en 1k
+Cen en 0 1n
+* dVdT: 켜지면 I(dVdT) 충전, 꺼지면 14 Ω 방전
+Bdv 0 dvdt I = v(en) > 0.5 ? (4.7e-06 * (v(dvdt) * 24.6 < v(in) + 1 ? 1 : 0)) : -v(dvdt) / 14.0
+* 통과 FET: 목표 = min(GAIN·VdVdT, VIN), 전류 = (목표 − OUT)/RON, 0 ~ I(OL) 로 제한
+Bfet in out I = v(en) > 0.5 ? max(0, min(2.11519, (min(24.6 * v(dvdt), v(in)) - v(out)) / 0.15)) : 0
+* 회로차단기 타이머: 제한 중이면 1 V / 4 ms 로 오르고, 아니면 빨리 내림. 1 V 넘으면 flt 래치
+Blim lim 0 V = ((min(24.6 * v(dvdt), v(in)) - v(out)) / 0.15 > 2.10462) && (v(en) > 0.5) ? 1 : 0
+Btm 0 tmr I = v(lim) > 0.5 ? (v(tmr) < 1.2 ? 0.00025 : 0) : (v(tmr) > 0 ? -1e-4 : 0)
+Ctm tmr 0 1u
+Bfl 0 flt I = v(tmr) > 1 ? max(0, 1 - v(flt)) : (v(flt) > 0 ? -9.25926e-07 : 0)
+Cfl flt 0 1u
+.ends
+
+Von on 0 PWL(0 0 1m 1)
+Xad ad on ADAPTER
+Vad ad adm 0
+Rq1 adm in12 0.02
+Cin1 in12 0 47u
+Cin2 in12 0 31.1u
+Vsh shdn 0 PWL(0 0 8m 0 8.01m 1.8)
+Xef in12 ir shdn dvdt TPS26600
+Cdv dvdt 0 22n
+Cir ir 0 30.2u
+
+
+.subckt TPS54302 vin sw fb params: L=10u FSW=400k
+Buv uv0 0 V = v(vin) > 4.1 ? 1 : 0
+Ruv uv0 uv 1k
+Cuv uv 0 1n
+* 소프트 스타트 기준: 켜진 뒤 0 → VFB 를 5 ms 에
+Bss 0 ss I = v(uv) > 0.5 ? (v(ss) < 0.596 ? 0.0001192 : 0) : -v(ss) * 1e-3
+Css ss 0 1u
+Gea 0 comp VALUE = { 0.00024 * (min(v(ss), 0.596) - v(fb)) }
+* EA 출력 클램프 (6.3.1): 0 ~ I(LIM_HS)/Gcs 밖으로 나가면 1 mS 로 되돌림 (연속 함수 — 수렴용)
+Bclp comp 0 I = 1e-3 * (max(v(comp) - 0.35711, 0) + min(v(comp), 0))
+Rc comp cz 20000.0
+Cc cz 0 2.04e-09
+Cp comp 0 2e-12
+Rcl comp 0 10Meg
+* 전류 명령 → fsw/2 2차 지연 (평균 전류 모드 샘플링 근사)
+Bcmd cmd 0 V = (v(fb) > 0.64368 ? 0 : 1) * max(0, min(11.2011 * v(comp), 4.0 - (v(vin) - v(sw)) * v(sw) / (v(vin) + 1e-3) / ({L} * {FSW}) / 2))
+Rf1 cmd f1 1
+Lf1 f1 f2 {0.64 / (3.14159 * FSW)}
+Cf1 f2 0 {1 / (0.64 * 3.14159 * FSW)}
+* 인덕터 전류 (전압 노드 il = 암페어), 기울기 제한
+Bil 0 il I = v(uv) > 0.5 ? 1e-6 * max(-max(v(sw), 0) / {L}, min((v(vin) - v(sw)) / {L}, (v(f2) - v(il)) * 3.14159 * {FSW})) : -v(il) * 1e-3
+Cil il 0 1u
+Gout 0 sw VALUE = { max(v(il), 0) }
+Bin vin 0 I = max(v(il), 0) * v(sw) / max(v(vin), 1) / 0.92
+.ends
+
+Xbk in12 v5 fb TPS54302 params: L=1e-05 FSW=400000.0
+Cv5 v5 0 6.993e-05
+Rtop v5 fb 100k
+Rbot fb 0 13.3k
+Cff v5 fb 75p
+Rld v5 0 3.846
+Vpwm pwm 0 PULSE(0 1 9m 1u 1u 0.5m 2m)
+Bir ir 0 I = v(pwm) > 0.5 ? 1.22 * min(1, max(v(ir), 0) / 9) : 0
+Sov ir 0 sc 0 SWM
+Vsc sc 0 PULSE(0 1 20m 1u 1u 1 2)
+.model SWM SW(Ron=0.1 Roff=1e6 Vt=0.5)
+.options method=gear
+.control
+set wr_singlescale
+set wr_vecnames
+tran 2u 40m
+wrdata a4.dat i(Vad) v(in12) v(ir) v(v5)
+quit
+.endc
+.end

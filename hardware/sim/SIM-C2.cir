@@ -1,0 +1,27 @@
+* SIM-C2 부하 스위치 DC 강하 — 최악 RDS(on) (레벨 1: VTO 최악, RDS(on) 최대 점 맞춤)
+.model PAO PMOS(LEVEL=1 VTO=-1.3 KP=9.804 W=1 L=1 CGSO=0 CGDO=0)
+.model PDM PMOS(LEVEL=1 VTO=-0.9 KP=5.556 W=1 L=1 CGSO=0 CGDO=0)
+Vc3 c3 0 3.3
+Vc18 c18 0 1.764
+* SD_PWR_3V3: Q2 AO3401A, 게이트 0 V (VGS −3.3 V), 0.2 A
+Msd sd 0 c3 c3 PAO
+Isd sd 0 0.2
+* CAM_IOVDD·CAM_AVDD: AO3401A, 게이트 0 V, 0.1 A 씩
+Mio io 0 c3 c3 PAO
+Iio io 0 0.1
+* CAM_1V8: Q6 DMG2305UX, 게이트 = R17 4.7k / (R18 1k + Q7 2 Ω) 분압 (C-018), 부하 20 mA + R19 블리더
+Rg17 c18 g18 4.7k
+Rg18 g18 0 1.002k
+Mc18 v18 g18 c18 c18 PDM
+Ic18 v18 0 20m
+R19 v18 0 10k
+.control
+op
+let dsd = 3.3 - v(sd)
+let dio = 3.3 - v(io)
+let v18 = v(v18)
+let vg = v(g18) - 1.764
+echo $&dsd $&dio $&v18 $&vg > c2.dat
+quit
+.endc
+.end

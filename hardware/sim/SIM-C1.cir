@@ -1,0 +1,13 @@
+* SIM-C1 RT9013-28 (전면 U1) — VIN 4.75 V, 출력 정확도 −2 %, 드롭아웃 최대 400 mV@500 mA (0.8 Ω 등가), 부하 0~50 mA
+Vin vin 0 4.75
+Bldo out 0 V = min(2.7439999999999998, v(vin) - 0.8 * i(Vld))
+Vld out o2 0
+Ild o2 0 0
+.control
+set wr_singlescale
+set wr_vecnames
+dc Ild 0 50m 1m
+wrdata c1.dat v(out) v(vin)
+quit
+.endc
+.end

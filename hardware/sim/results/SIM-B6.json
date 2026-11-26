@@ -1,0 +1,44 @@
+{
+ "id": "SIM-B6",
+ "title": "출력 커패시터 DC 바이어스 감액 (22 µF ×4)",
+ "owner": "schematic",
+ "circuit": {
+  "board": "carrier",
+  "refs": [
+   "C7",
+   "C8",
+   "C20",
+   "C23"
+  ],
+  "schematic_commit": "a61dc63"
+ },
+ "model": {
+  "source": "제조사 DC 바이어스 자료 + 계산",
+  "url": "Samsung Electro-Mechanics Component Library DC-Bias 차트 API (CL32B226KAJNNN, 25 °C, 2026-11-27 받음) sha256 501635c3…13e0 — 5 V 17.42 µF / 0 V 21.92 µF",
+  "license": "—",
+  "behavioral": false,
+  "basis": "5 V 에서 C/C0 = 0.795; 공차 −10% (K)"
+ },
+ "criteria_commit": "64bde61",
+ "checks": [
+  {
+   "name": "출력 C 유효 최소 (5 V 바이어스, −10%)",
+   "op": ">=",
+   "limit": 3e-05,
+   "unit": "F",
+   "value": 6.3e-05,
+   "corner": "",
+   "pass": true
+  }
+ ],
+ "verdict": "pass",
+ "waveforms": [],
+ "netlist": null,
+ "tool": {
+  "name": "ngspice",
+  "version": "ngspice-47 (공식 SourceForge ng-spice-rework/47/ngspice-47_64.7z)",
+  "sha256": "59225971… (7z, firmware 설치·검증 — orch O-81)",
+  "path": "C:/Users/gh/tools/ngspice/47/Spice64/bin/ngspice_con.exe"
+ },
+ "notes": "유효 공칭 69.9 µF, 최소 62.9 µF. SIM-B2·B3 는 이 값을 쓴다."
+}

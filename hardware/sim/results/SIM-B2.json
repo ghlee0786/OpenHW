@@ -1,0 +1,48 @@
+{
+ "id": "SIM-B2",
+ "title": "TPS54302 출력 리플",
+ "owner": "schematic",
+ "circuit": {
+  "board": "carrier",
+  "refs": [
+   "U1",
+   "L1",
+   "C7",
+   "C8",
+   "C20",
+   "C23"
+  ],
+  "schematic_commit": "a61dc63"
+ },
+ "model": {
+  "source": "이상 스위치 스위칭 모델 (고정 듀티)",
+  "url": "TI SLVSDG6C (Mar 2026) https://www.ti.com/lit/ds/symlink/tps54302.pdf sha256 d81679ba…51b8",
+  "license": "이 저장소 작성",
+  "behavioral": true,
+  "basis": "SLVSDG6C 5.5 R(HSD) 85 mΩ·R(LSD) 40 mΩ·fsw 290~510 kHz; SRP7028A-100M DCR 85 mΩ max·L ±20%; 출력 C Samsung Electro-Mechanics Component Library DC-Bias 차트 API (CL32B226KAJNNN, 25 °C, 2026-11-27 받음) sha256 501635c3…13e0 — 5 V 17.42 µF / 0 V 21.92 µF; ESR 8 mΩ/개 가정"
+ },
+ "criteria_commit": "64bde61",
+ "checks": [
+  {
+   "name": "출력 리플 (VIN 12.6 V, L 8 µH, fsw 290 kHz)",
+   "op": "<=",
+   "limit": 0.03,
+   "unit": "Vpp",
+   "value": 0.009176,
+   "corner": "C 유효 62.9 µF",
+   "pass": true
+  }
+ ],
+ "verdict": "pass",
+ "waveforms": [
+  "hardware/sim/png/SIM-B2-ripple.png"
+ ],
+ "netlist": "hardware/sim/SIM-B2.cir",
+ "tool": {
+  "name": "ngspice",
+  "version": "ngspice-47 (공식 SourceForge ng-spice-rework/47/ngspice-47_64.7z)",
+  "sha256": "59225971… (7z, firmware 설치·검증 — orch O-81)",
+  "path": "C:/Users/gh/tools/ngspice/47/Spice64/bin/ngspice_con.exe"
+ },
+ "notes": "인덕터 리플 1.310 App, 피크 1.957 A (1.3 A 부하). 레이아웃 ESL·프로브 영향 없음."
+}

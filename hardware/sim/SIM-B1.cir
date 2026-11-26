@@ -1,0 +1,15 @@
+* SIM-B1 TPS54302 FB 분압 DC (VFB 최대·최소 × R2 100k/R3 13.3k ±1%) — .op
+Vref1 r1 0 0.611
+Vref2 r2 0 0.581
+Eo1 o1 0 VALUE = { v(r1) * (1 + 101k / 13.167k) }
+Eo2 o2 0 VALUE = { v(r2) * (1 + 99k / 13.433k) }
+.control
+op
+let vmax = v(o1)
+let vmin = v(o2)
+echo vmax $&vmax > b1.dat
+echo vmin $&vmin >> b1.dat
+print vmax vmin
+quit
+.endc
+.end
