@@ -1,6 +1,6 @@
 {
- "head": "ea1336b",
- "base": "ea1336b",
+ "head": "f0745ed",
+ "base": "f0745ed",
  "checks": [
   {
    "sec": "4절",
@@ -2645,16 +2645,16 @@
   {
    "sec": "3.1·12절",
    "item": "TPS26600 ILIM 저항",
-   "expected": "8.06k",
-   "actual": "8.06k",
+   "expected": "6.98k",
+   "actual": "6.98k",
    "ok": true,
    "info": false
   },
   {
    "sec": "3.1·12절",
    "item": "TPS26600 ILIM 저항",
-   "expected": "8.06k",
-   "actual": "8.06k",
+   "expected": "6.98k",
+   "actual": "6.98k",
    "ok": true,
    "info": false
   },
@@ -2796,9 +2796,33 @@
   },
   {
    "sec": "3.1",
-   "item": "Q7 G / D",
-   "expected": "CAM_EN/CAM_1V8_G",
-   "actual": "CAM_EN/CAM_1V8_G",
+   "item": "Q7 G",
+   "expected": "CAM_EN",
+   "actual": "CAM_EN",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "3.1",
+   "item": "Q7 D → R18 1k → Q6 게이트",
+   "expected": "R18 1k",
+   "actual": "R18 1k",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "3.1",
+   "item": "Q6 게이트–드레인 C19",
+   "expected": "C19 10nF",
+   "actual": "C19 10nF",
+   "ok": true,
+   "info": false
+  },
+  {
+   "sec": "3.1",
+   "item": "CAM_1V8 블리더 R19",
+   "expected": "R19 10k",
+   "actual": "R19 10k",
    "ok": true,
    "info": false
   },

@@ -9,7 +9,7 @@
 함께 (같은 실행): 두 보드 ERC --exit-code-violations, netcompare(기준 커밋 넷리스트 대비).
 
 usage:
-  python contract_check.py [--contract FILE] [--base ea1336b] [--md OUT.md] [--json OUT.json]
+  python contract_check.py [--contract FILE] [--base f0745ed] [--md OUT.md] [--json OUT.json]
   python contract_check.py --selftest          # 고장 주입: 계약 표 한 줄을 바꾼 사본마다 불일치가 늘어나는지
 종료 코드 = 계약 불일치 수 + ERC 실패 보드 수 + netcompare 차이 보드 수 (255 상한). --selftest 는 놓친 고장 수.
 """
@@ -272,7 +272,7 @@ def netlists(tmp, sch_of):
 
 def main(argv):
     sys.stdout.reconfigure(encoding='utf-8')
-    contract = os.path.join(SCH, 'hw-fw-contract.md'); base = 'ea1336b'; md = js = None  # C-016 netlist baseline
+    contract = os.path.join(SCH, 'hw-fw-contract.md'); base = 'f0745ed'; md = js = None  # C-017 netlist baseline
     it = iter(argv)
     for a in it:
         if a == '--contract': contract = next(it)

@@ -1,22 +1,22 @@
-# VD-001 조건 1 — 계약↔회로도 기계 대조 (C-014 · C-015 · C-016)
+# VD-001 조건 1 — 계약↔회로도 기계 대조 (C-014 · C-015 · C-016 · C-017)
 
-- 대조 대상: `hardware/schematic/hw-fw-contract.md` **v1.12**와 `carrier.kicad_sch`·`front.kicad_sch`의 kicad-cli 넷리스트. 레인은 t-20261127-041255-b9cd(main 434e960 기준)이다.
+- 대조 대상: `hardware/schematic/hw-fw-contract.md` **v1.13**과 `carrier.kicad_sch`·`front.kicad_sch`의 kicad-cli 넷리스트. 레인은 t-20261127-041255-b9cd(main 434e960 기준)이다.
 - 스크립트: `hardware/schematic/tools/contract_check.py`
-  - 한 번 실행하면 계약 대조, 두 보드 ERC `--exit-code-violations`, netcompare(기준 커밋 대비, 기본값은 C-016 `ea1336b`)를 모두 돈다.
+  - 한 번 실행하면 계약 대조, 두 보드 ERC `--exit-code-violations`, netcompare(기준 커밋 대비, 기본값은 C-017 `f0745ed`)를 모두 돈다.
   - **종료 코드 = 계약 불일치 수 + ERC 실패 보드 수 + netcompare 차이 보드 수**
 - 다시 돌리기: `cd hardware/schematic && python tools/contract_check.py --md <표.md> --json <결과.json>`
   - 고장 주입은 `--selftest`로 돌리고, 종료 코드는 놓친 고장 수다.
 - 기계 결과 JSON: [c014-contract-check.json](c014-contract-check.json)
 
-## 결과 (C-016 반영, 계약 v1.12)
+## 결과 (C-017 반영, 계약 v1.13)
 
 | 항목 | 값 | verifiable |
 |---|---|---|
-| 계약 대조 줄 | 381 (C-016: 7절 「→ J7-4」·12A 「캐리어 32」 대조가 미연결로 바뀌어 3줄 줄어듦) | 예 |
+| 계약 대조 줄 | 384 (C-016에서 3줄 줄고 C-017 Q7·C19·R19로 3줄 늚) | 예 |
 | 계약 불일치 | **0** | 예 |
 | ERC 종료 코드 | carrier 0 · front 0 | 예 |
-| netcompare ea1336b 대비 | carrier 0 · front 0. C-016 자체의 의도한 차이(0c2e8e7 대비 carrier 3 · front 9)는 회로도 README 24절에 있다 | 예 |
-| 고장 주입 `--selftest` | 18건 모두 잡음 (놓침 0, 종료 0) | 예 |
+| netcompare f0745ed 대비 | carrier 0 · front 0. 의도한 차이: C-016 회로도 README 24절, C-017 25절 | 예 |
+| 고장 주입 `--selftest` | 20건 모두 잡음 (놓침 0, 종료 0) | 예 |
 | 스크립트 종료 코드 | **0** | 예 |
 
 | 절 | 대조 줄 | 불일치 |
@@ -30,7 +30,7 @@
 | 12A | 21 | 0 |
 | 3.1·12절 | 7 | 0 |
 | 12절 | 6 | 0 |
-| 3.1 | 11 | 0 |
+| 3.1 | 14 | 0 |
 | 9절 | 1 | 0 |
 | 13절 C17 | 2 | 0 |
 | DNP | 4 | 0 |
