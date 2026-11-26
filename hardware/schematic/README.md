@@ -698,3 +698,48 @@
   - `tools/netcompare.py` C-012 `f56945b` 대비: 두 보드 차이 0 (종료 0)
   - 부품·DNP·UUID 변경 없음
 - **그림:** `validation/runtime/kicad-gui/C-013/index.html`에 전후 PNG를 모았다(`kicad-cli sch export svg` → PyMuPDF PNG). 사람 눈 확인용이다(verifiable 아니오).
+
+## 24. C-016 — 캐리어 32(PWR_WAKEUP1) 미연결 · 전면 R15 삭제 · J2 납땜 패드 (orch O-83 · O-84, R-019)
+
+- **캐리어 BTB J1-32** (코어 J2 짝 핀, 넷 PWR_WAKEUP1):
+  - ALS_INT_RSV에서 떼어 **no-connect**로 바꿨다. Seeed B301·B101과 같게 미연결이고 풀 저항도 없다(R-019).
+  - 이유: ALS는 i2c-dev 폴링이다(D-003 #18). 또 이 핀은 코어 깨우기 입력이다.
+  - 생성기 `boards.py`에서 `PWR_WAKEUP1`을 NC 목록에 넣었다.
+- **ALS_INT_RSV:** 하니스 예비선으로만 남는다.
+  - 캐리어: J7-4 · TP26
+  - 전면: J4-3 · **TP24(새로)**
+- **전면 R15 10k(ALS_INT_RSV → CORE_1V8) 삭제:**
+  - LTR-329ALS-01에는 INT 핀이 없다. INT 있는 차선은 LTR-303ALS다.
+  - 외부 10k를 CORE_1V8에 두면 셧다운 때 핀을 Low로 끌 위험이 있다(O-83).
+- **전면 J2 (CLA216 ICR 리드):** PicoBlade 53261 → 2핀 2.54mm 스루홀 납땜 패드(O-84).
+  - 풋프린트: `Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical`
+  - 심벌: `Connector_Generic:Conn_01x02`. MP 핀이 없어져 GND 연결도 빠졌다.
+  - 헤더는 실장하지 않는다. `in_bom no` · `in_pos_files no`
+  - 1번 사각 패드 = ICR_A(극성 표시)
+  - 생성기 `schgen.add()`에 `in_bom` 인자를 더했다.
+- **UUID 유지:**
+  - HEAD 파일에 생성기 출력을 줄 단위로 맞췄다. UUID·path를 가린 비교에서 같은 줄은 HEAD 원문을 쓴다.
+  - 결과는 생성기 출력과 UUID만 빼면 같다.
+  - 캐리어: UUID 792개 중 791개 유지, 새로 1개(no-connect)
+  - 전면: 656개 중 653개 유지, 새로 3개(TP24). J2 심벌 UUID도 유지했다.
+- **netcompare (C-015 `0c2e8e7` 대비), 의도한 차이만:**
+  - 캐리어 3:
+    - J1-32 → `unconnected-(J1-Pin_32-Pad32)`
+    - ALS_INT_RSV {J1-32, J7-4, TP26} → {J7-4, TP26}
+  - 전면 9:
+    - COMP J2: 값·풋프린트
+    - COMP R15 삭제
+    - COMP TP24 추가
+    - ALS_INT_RSV {J4-3, R15-2} → {J4-3, TP24-1}
+    - GND에서 J2-MP 빠짐
+    - CORE_1V8에서 R15-1 빠짐
+- **판정:**
+  - ERC 두 보드 종료 0
+  - `contract_check.py` 계약 불일치 0
+  - `--selftest` 18/18
+  - 겹침(`tools/overlaps.py`) 보이는 겹침 0/0
+  - 표제란 Rev 「C-016」
+  - SVG: `validation/runtime/kicad-gui/C-016/`
+- **BOM (넘김):** 전면 BOM을 다시 내보내면 J2·R15가 빠지고 TP24가 생긴다. 그러면 `bom-full.csv`(R-016 소유)에 J2·R15가 남아 `make_pcbway_bom.py`가 종료 1이 된다.
+  - 그래서 이 레인에서는 `inputs/front-kicad-bom.csv`를 고치지 않았다.
+  - bom-full 갱신과 함께 다시 내보내야 한다.
