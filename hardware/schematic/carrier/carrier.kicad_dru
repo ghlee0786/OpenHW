@@ -41,11 +41,13 @@
   (condition "A.hasNetclass('CSI_100') || A.hasNetclass('MDI_100') || A.hasNetclass('USB_90')")
   (constraint disallow track))
 
+# 비결합 4mm (P-003에서 3→4): 전면 CSI는 짝 BTB 탈출(0.5 피치) + DF30 탈출(0.4 피치) + 층 바꿈 쌍 비아(간격 0.9)
+# 세 곳이 구조상 필요해 최소 약 3.3mm가 나온다(DRC 실측). 800Mbps 레인에서 4mm 비결합은 약 24ps 구간.
 (rule "csi_100_pair"
   (condition "A.hasNetclass('CSI_100')")
   (constraint track_width (min 0.14mm) (opt 0.15mm) (max 0.16mm))
   (constraint diff_pair_gap (min 0.15mm) (opt 0.16mm) (max 0.18mm))
-  (constraint diff_pair_uncoupled (max 3mm))
+  (constraint diff_pair_uncoupled (max 4mm))
   (constraint skew (max 1.0mm)))
 
 (rule "mdi_100_pair"
@@ -64,6 +66,23 @@
 (rule "hs_track_spacing"
   (condition "(A.hasNetclass('CSI_100') || A.hasNetclass('MDI_100') || A.hasNetclass('USB_90')) && A.Type == 'Track' && B.Type == 'Track' && !A.isCoupledDiffPair()")
   (constraint clearance (min 0.30mm)))
+
+# 고속 탈출 구역 (P-003): 커넥터·ESD 패드 간격(0.4/0.5mm 피치 커넥터, USBLC6 1.9, SOD-323 2.1)에서 쌍이 쌍 간격으로 모이는 구간.
+# 배선기(route.py)가 쌍마다 패드 둘레+탈출점 사각형을 계산해 규칙 영역 DP_BRK(제한 없음)로 넣는다. 그 안에서만:
+#  쌍 안 간격 상한 = 패드 간격, 다른 고속 넷 트랙과 간격 = 제조 최소 0.16(P-001). 구역 밖은 위 규칙 그대로.
+(rule "dp_breakout_pair"
+  (condition "(A.hasNetclass('CSI_100') || A.hasNetclass('MDI_100') || A.hasNetclass('USB_90')) && A.intersectsArea('DP_BRK')")
+  (constraint diff_pair_gap (min 0.15mm) (max 2.2mm)))
+
+(rule "dp_breakout_spacing"
+  (condition "(A.hasNetclass('CSI_100') || A.hasNetclass('MDI_100') || A.hasNetclass('USB_90')) && A.Type == 'Track' && B.Type == 'Track' && !A.isCoupledDiffPair() && A.intersectsArea('DP_BRK')")
+  (constraint clearance (min 0.16mm)))
+
+# 쌍 안 길이 보정 굴곡(P-003): 짧은 선에만 짝 반대쪽으로 넣은 45° 굴곡 구간(규칙 영역 DP_TUNE, 배선기가 넣음).
+# 굴곡 높이(≤0.45)만큼 쌍 안 간격이 벌어지는 것은 보정의 결과다 — 그 구간에서만 간격 상한을 1.0mm로.
+(rule "dp_tuning_gap"
+  (condition "(A.hasNetclass('CSI_100') || A.hasNetclass('MDI_100') || A.hasNetclass('USB_90')) && A.intersectsArea('DP_TUNE')")
+  (constraint diff_pair_gap (min 0.15mm) (max 1.0mm)))
 
 # ---- 전원 (IPC-2221 외층 ΔT10℃ 계산 이상, netclasses.md §3) ----
 (rule "pwr_12v_in_width"

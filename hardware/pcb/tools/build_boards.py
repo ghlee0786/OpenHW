@@ -95,6 +95,9 @@ FIXED = {
         "J3": ("crt", "B", "-X", (-20.0, -5.37, -10.49, 5.37)),
         # GH 6P, M-002 K20 (−19.0…−13.5, −30.5…−19.0). 실제 courtyard 6.49×12.05가 구멍 (−17,−17) 금지 원에 0.28 걸려 −Y로 0.3 내림
         "J7": ("crt", "F", "-X", (-19.0, -30.8, -13.5, -19.3)),
+        # 이더넷 ESD: 북쪽에서 남쪽으로 들어오는 MDI 쌍의 왼쪽(서쪽)이 P → 1번 핀(P) 서쪽 = 회전 0°. RJ45 핀 줄(y −13.66) 바로 위
+        "D4": ("F", 0.0, (4.5, -11.6)),
+        "D5": ("F", 0.0, (-6.5, -11.6)),
     },
     "front": {
         "J1": ("B", 180.0, (0.0, 11.8)),
@@ -122,7 +125,7 @@ FREE = {
         ("J6", "B", (-16.5, -11.0), "-X"),
         ("SW1", "B", (14.5, -6.0), None), ("SW2", "B", (14.5, 4.0), None),
         # D4·D5 = 이더넷 MDI ESD (EPHY_TX±·RX±) → RJ45 핀(뒷면 THT, y −13.7…−16.2) 바로 안쪽 윗면 (커넥터 → ESD → 나머지)
-        ("D4", "F", (4.5, -12.0), None), ("D5", "F", (-6.5, -12.0), None),
+
         ("D3", "B", (17.5, -14.5), None), ("D6", "B", (17.5, 9.0), None),
         # 전원 입력 사슬 (윗면, DC 잭 위 연장부) → eFuse → 벅 → J1 5V 핀(13.8, 0.25…−1.25)
         ("F1", "F", (16.0, -31.5), None), ("Q1", "F", (14.0, -26.0), None), ("D1", "F", (9.5, -31.5), None),
@@ -130,7 +133,7 @@ FREE = {
         ("C2", "F", (-0.5, -24.0), None), ("C3", "F", (-12.5, -31.5), None), ("C4", "F", (-12.5, -28.0), None),
         ("U1", "F", (6.0, -15.0), None), ("L1", "F", (12.0, -16.5), None), ("C7", "F", (17.5, -9.0), None),
         ("C8", "F", (17.5, -4.5), None), ("C20", "F", (17.5, -13.0), None), ("C23", "F", (17.5, -16.5), None), ("C19", "F", (3.0, -12.5), None),
-        ("D7", "F", (17.5, 2.5), None),  # C-004: 5V_SYS TVS — J1 5V 핀(13.8, 0.25…−1.25) 옆
+        ("D7", "F", (12.0, -15.0), None),  # C-004: 5V_SYS TVS — 벅 출력 쪽 (+X 띠는 3.8mm라 SMB 4.6이 안 들어감)
         ("C11", "F", (-1.0, -15.5), None),
         # USB (J1 1·3번 → 뒷면 USB-C −X): ESD·CC 저항은 USB-C 다리 안쪽 윗면
         ("U3", "F", (-8.5, 2.0), None),
@@ -158,7 +161,14 @@ FREE = {
 
 # 부품 금지 영역: (면, (x0, y0, x1, y1), 허용 ref 목록)
 ZONES = {
-    "carrier": [],
+    "carrier": [
+        # 고속 통로 (layout-plan §4.2): MDI = J1 안쪽 줄(x 9.8) → 서쪽 → 남쪽 → D4·D5(RJ45 옆), USB = J1 바깥 줄(x 13.8) → 동쪽 탈출 → J1 위쪽 → 서쪽 U3
+        ("F", (5.8, -10.4, 8.4, 8.2), set()),
+        ("F", (-8.6, -10.4, 8.4, -8.0), set()),
+        ("F", (14.6, 5.5, 16.2, 11.4), set()),
+        ("F", (-9.0, 9.6, 16.2, 11.4), set()),
+        ("F", (-8.6, 3.8, -5.6, 11.4), set()),  # USB: 위쪽 띠 → U3 동쪽 핀으로 내려오는 세로 구간
+    ],
     "front": [
         ("F", (-12.2, -7.95, 12.2, 7.95), {"MH1"}),            # 스페이서 프레임 (M-001d §3.6)
         ("F", (-4.3, -14.9, 4.3, -9.6), {"J3", "MH1"}),        # DF30 자리 (+0.5: 0.4 피치 마스크 개구와 이웃 패드 분리)
@@ -175,6 +185,12 @@ ZONES = {
 # 외함 고정 자리(구멍 없이 금지 원만, 지름 미정) — 캐리어는 (+17,−17)을 뺀다 (M-002 K19)
 ENCL = {"carrier": [(17, 17), (-17, 17)], "front": [(17, 17), (17, -17), (-17, 17)]}
 OUTLINE = {"carrier": (-20.0, -34.0, 20.0, 20.0), "front": (-20.0, -20.0, 20.0, 20.0)}
+# 이름 붙은 규칙 영역(제한 없음) — DRU 가 intersectsArea('<이름>') 로 쓴다: (이름, 층, (x0, y0, x1, y1) O 기준)
+# 고속 탈출 구역(DP_BRK)은 배치가 바뀌어도 맞도록 배선기(route.py)가 쌍마다 계산해 route_apply.py 가 넣는다.
+RULE_AREAS = {
+    "carrier": [],
+    "front": [],
+}
 
 
 def load_fp(fpid):
@@ -463,6 +479,19 @@ def build(board_name):
         key = re.match(r"[A-Z_]+", ref).group(0)
         if key in prefix_rules:
             put(ref, *prefix_rules[key])
+    for name, lname, (ax0, ay0, ax1, ay1) in RULE_AREAS[board_name]:
+        z = pcbnew.ZONE(board)
+        z.SetIsRuleArea(True)
+        z.SetZoneName(name)
+        z.SetLayer(board.GetLayerID(lname))
+        for f in (z.SetDoNotAllowTracks, z.SetDoNotAllowVias, z.SetDoNotAllowPads, z.SetDoNotAllowZoneFills, z.SetDoNotAllowFootprints):
+            f(False)
+        ol = z.Outline()
+        ol.NewOutline()
+        for x, y in ((ax0, ay0), (ax1, ay0), (ax1, ay1), (ax0, ay1)):
+            v = K(x, y)
+            ol.Append(v.x, v.y)
+        board.Add(z)
     # 참조 지정자는 조립도(Fab)로 — 40×40·40×54 밀집 배치에서 실크 글자 겹침을 없앤다. 극성·1번 핀 실크 표시는 풋프린트 그대로
     for fp in fps.values():
         fp.Reference().SetLayer(pcbnew.B_Fab if fp.IsFlipped() else pcbnew.F_Fab)

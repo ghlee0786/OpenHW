@@ -52,6 +52,8 @@ def main():
         else:
             data["tracks"].append({"net": t.GetNetname(), "layer": t.GetLayerName(), "w": mm(t.GetWidth()),
                                    "a": [mm(t.GetStart().x), mm(t.GetStart().y)], "b": [mm(t.GetEnd().x), mm(t.GetEnd().y)]})
+    data["areas"] = [{"name": z.GetZoneName(), "layers": [n for n, lid in CU if z.IsOnLayer(lid)], "polys": poly_points(z.Outline())}
+                     for z in b.Zones() if z.GetIsRuleArea()]
     for z in b.Zones():
         if z.GetIsRuleArea() and (z.GetDoNotAllowTracks() or z.GetDoNotAllowVias()):
             data["keepouts"].append({"name": z.GetZoneName(), "layers": [n for n, lid in CU if z.IsOnLayer(lid)],
