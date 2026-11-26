@@ -42,7 +42,7 @@
 | C-005 | orch | schematic t18z | R-009·V-004b 반영: 전면 J2 PicoBlade(O-34), ALS-PT19 풋프린트, DC 잭 대조, V-004b 미해소 | hardware/schematic/**, hardware/libraries/** | ERC 0, 의도 차이, 부품표 | completed — b3b376a (계약 v1.5 a2b4945), orch 재실행 ERC 0/0, carrier 98·front 85부품, 라이브러리 silk 0 |
 | V-004c | orch | review t191 | C-005 수정분 재검토(N1 Q6 게이트·OE·SMBJ6.0A·R11·SSA24·F1·계약 v1.5) | validation/review-V004c-C005.md | 판정표, 레인·커밋 | completed — 레인 t-20261126-183643-3f9e 커밋 9b24181. 전부 해소, ERC 0/0, 의도 밖 변경 0. 권고 R17 10k → C-006 |
 | C-006 | orch (V-004c 권고) | schematic t18z | 전면 R17 100k → 10k (값만) | hardware/schematic/front (C-002 레인) | netcompare R17 값 1건, ERC 0, 커밋 | completed — 355ab3e (계약 v1.6 fb6629c), orch 재실행 front ERC 0 |
-| C-007 | orch | schematic t18z | 캐리어 5V 출력 22µF 1210 1개 추가, 전면 D1/D2 MPN SS24S-E3/61T | hardware/schematic/** (C-002 레인) | 의도 차이, ERC 0, 커밋 | running |
+| C-007 | orch | schematic t18z | 캐리어 5V 출력 22µF 1210 1개 추가, 전면 D1/D2 MPN SS24S-E3/61T | hardware/schematic/** (C-002 레인) | 의도 차이, ERC 0, 커밋 | completed — f651dfe (계약 v1.7 62145e8), orch 재실행 carrier ERC 0. 회로도 배선 기준 고정 |
 
 ## 운영 변경 (2026-11-26, 사용자 지시 · lead 전달)
 - 의견 묻지 않고 진행: 사람 쪽 미정값은 D-003(lead 레인 t-20261126-144135-5470 docs/decisions/D-003-working-defaults.md, 커밋 8ac5ce5) 값으로 확정 취급. 새 갈림길은 기본값 선택 → 아래 「분기 기록」에 분기점·선택·이유·차선책 → lead 요약 보고. 문제 시 해당 행으로 돌아가 차선책.
