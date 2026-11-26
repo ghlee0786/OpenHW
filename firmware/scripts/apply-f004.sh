@@ -19,6 +19,11 @@ command -v cygpath >/dev/null && FW="$(cygpath -w "$FW")"
 docker run --rm -v "$VOL":/work -v "$FW":/fw:ro -v "$(mkdir -p "$MODEL_DIR" && echo "$MODEL_DIR")":/models:ro --workdir /work/src "$IMAGE" bash -c '
   set -e
   id builder >/dev/null 2>&1 || useradd -m -u 1000 -s /bin/bash builder
+  # 0002 패치가 새로 만드는 패키지 파일은 패치에서 매번 다시 만든다(표시 파일 때문에 고친 패치가 다시 적용되지 않는다 — 원인 M, F-004c)
+  for f in Config.in openhw-persond.mk; do
+    awk -v t="+++ b/external/br2-external/openhw-persond/$f" "\$0==t{on=1;getline;next} on&&/^diff /{exit} on{print substr(\$0,2)}" \
+      /fw/patches/reCamera-OS/0002-openhw-persond.patch > external/br2-external/openhw-persond/$f
+  done
   D=external/br2-external/openhw-persond/src
   rm -rf "$D" && mkdir -p "$D"
   cp /fw/apps/persond/{Makefile,persond.c,persond_logic.c,persond_logic.h,persond.conf,S97persond} "$D/"
