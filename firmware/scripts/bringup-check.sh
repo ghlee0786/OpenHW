@@ -78,7 +78,10 @@ case "$mode:$en" in
   *) fail D4 "mode '$mode' 와 IR_LED_EN '$en' 이 맞지 않음" ;;
 esac
 
-# N1 이더넷 링크 (이미지에 ethtool 없음 → sysfs)
+# N0 ethtool (F-006 O-70 — R-013 T1~T4 장치 쪽 명령)
+[ -x "$R/usr/sbin/ethtool" ] && pass N0 "/usr/sbin/ethtool 있음" || fail N0 "/usr/sbin/ethtool 없음 (F-006 이전 이미지)"
+
+# N1 이더넷 링크 (sysfs — ethtool 이 속도를 못 읽는 드라이버여도 판정되게)
 c=$(rd "$R/sys/class/net/eth0/carrier"); sp=$(rd "$R/sys/class/net/eth0/speed"); du=$(rd "$R/sys/class/net/eth0/duplex")
 [ "$c" = 1 ] && pass N1 "eth0 링크 ${sp}Mb/s $du" || fail N1 "eth0 carrier='$c'"
 

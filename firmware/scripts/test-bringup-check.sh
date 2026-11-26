@@ -18,15 +18,16 @@ mk() { # $1 root $2 mode $3 en $4 duty $5 1883addr
   printf 'rtsp = 1\nrtsp_pass =\n' > $r/etc/openhw/persond.conf
   cp /models/yolox_nano_person_416_bf16_cv181x.cvimodel $r/usr/share/openhw/models/
   i=100; for d in mosquitto sscma-node daynight persond; do mkdir -p $r/proc/$i; echo $d > $r/proc/$i/comm; i=$((i+1)); done
+  mkdir -p $r/usr/sbin && printf '#!/bin/sh\n' > $r/usr/sbin/ethtool && chmod +x $r/usr/sbin/ethtool
 }
 mk /t/day day 0 2499999 0100007F
 mk /t/night night 1 1875000 0100007F
 mk /t/bad night 1 1250000 00000000
-rm /t/bad/proc/103/comm; printf 'X\0' > /t/bad/proc/device-tree/model
+rm /t/bad/proc/103/comm; printf 'X\0' > /t/bad/proc/device-tree/model; rm /t/bad/usr/sbin/ethtool
 for sh in "busybox sh" dash bash; do $sh -n $SCR && echo "syntax($sh) rc=0" || echo "syntax($sh) rc=$?"; done
 if command -v shellcheck >/dev/null; then shellcheck -s sh -S warning $SCR; echo "shellcheck rc=$?"; else echo "shellcheck 없음"; fi
 bad=0
-for t in day:0 night:0 bad:4; do
+for t in day:0 night:0 bad:5; do
   n=${t%%:*}; want=${t#*:}; echo "== $n"; ROOT=/t/$n busybox sh $SCR; rc=$?; echo "rc($n)=$rc 기대 $want"
   [ "$rc" = "$want" ] || bad=$((bad + 1))
 done

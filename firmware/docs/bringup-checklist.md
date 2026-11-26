@@ -1,6 +1,6 @@
 # F-005 bring-up 확인 절차서 — reCamera Core 2002 캐리어·전면 보드
 
-- 배정: orch t18r F-005 (O-67) · 추가 O-69(IR 스트링 B) · lead #10(12V 입력 전류) · 작성: firmware t18w · 레인 `t-20261127-021240-b74e` (main `1a6147a` 기준) · 2026-11-27
+- 배정: orch t18r F-005 (O-67) · 추가 O-69(IR 스트링 B) · lead #10(12V 입력 전류) · 작성: firmware t18w · 레인 `t-20261127-021240-b74e` (main `1a6147a` 기준) · 2026-11-27 · **F-006 갱신** (O-70 ethtool · O-71 열 판정 수치, 레인 `t-20261127-022900-ed35`)
 - 판정 원칙:
   - 이 문서의 모든 판정은 **보드가 도착한 뒤** 한다. 지금까지 HIL은 0건이다.
   - `verifiable` 열의 뜻:
@@ -24,8 +24,11 @@
 | F-001 | `firmware/docs/sdk-facts.md` | `e23e9ec` |
 | F-003 | `firmware/docs/f003-bsp-daynight.md` | `37644e4` (병합 `281043b`) |
 | F-004/b/c | `firmware/docs/f004-person-event.md` (레인 `t-20261126-210506-1e37`) | `335f3e7` (이 절차서 작성 때 아직 main에 없음 — lead batch 대상) |
+| M-003 2차 | `mechanical/m003/analysis2.md` (mechanical 레인 `t-20261127-013549-8089`) | `4752a68` |
+| VSMA1085400 | Vishay 데이터시트 Document Number 80294 Rev. 1.4 (08-Jul-2022), https://www.vishay.com/docs/80294/vsma1085400.pdf (sha256 `642c5635c26b48e48d4f095e0907963a4e54c5f9936d3810f06d6aa0798692b3`, 2026-11-27 읽음) | — |
+| SG2002 | `hardware/datasheets/sophgo/01_SG2002_Datasheet_V1.0_EN.docx` (Preliminary 1.0-alpha, 온도 표) | `hardware/datasheets/INDEX.md` |
 | 원장 | `orchestration/request-ledger.md` (orch 레인 `harness/t-20261126-144334-727e`) | `2151f63` (main의 원장은 빈 틀) |
-| 이미지 | `C:/Users/gh/.local/share/openhw-tools/recamera-sdk/out-f004c/` (저장소 밖) | F-004c `335f3e7` |
+| 이미지 | `C:/Users/gh/.local/share/openhw-tools/recamera-sdk/out-f006/` (저장소 밖) — F-004c 이미지 + `ethtool` | F-006 (`0003-openhw-ethtool.patch`) |
 
 시험점 번호는 `boards.py` 시험점 목록 순서다(캐리어 L135–138, 전면 L237–239). 위치(좌표)는 PCB 배치가 main에 없어 **미기재**이므로, 실물 실크로 찾는다.
 - **캐리어:** TP1 12V_IN · TP2 5V_SYS · TP3 12V_IR · TP4 CORE_3V3 · TP5 SD_PWR_3V3 · TP6/7 GND · TP8/9 USB_DP/DN · TP10 USB_DET · TP11 nRESET · TP12 UPGRAD_KEY · TP13 STATUS_LED · TP14 IR_LED_EN · TP15 SPARE1 · TP16/17 I2C1 SDA/SCL · TP18/19 RESERVE1/2 · TP20–23 UART1 RX/TX/CTS/RTS · TP24/25 DEBUG_UART0 TX/RX · TP26 ALS_INT_RSV
@@ -105,7 +108,7 @@
 
 | # | 목적 | 준비물 | 절차 · 명령 | 기대값 | 판정 | 불합격 시 차선 | verifiable |
 |---|---|---|---|---|---|---|---|
-| 2-1 | 이미지 무결성 | 호스트 | `sha256sum out-f004c/*.zip` | `sg2002_reCamera_0.2.4_emmc.zip`(= `upgrade.zip`) **`00b685a0034651a645b00745c05aa7f7155194f68a563f36be025cdfa9328a52`** · recovery `22cd0a26c4699bb135b70c3c0c3003a99947fe5a4e183918ed181e69ae941152` · sd_compat `e7e44e3fc484306be5dcd745a79a2a334e31d5bb7e557f161dc8f62ca5584962` (F-004c 9.3절) | 일치하면 합격 | 다르면 쓰지 않고 다시 collect한다 | 예 |
+| 2-1 | 이미지 무결성 | 호스트 | `sha256sum out-f006/*.zip` | `sg2002_reCamera_0.2.4_emmc.zip`(= `upgrade.zip`) **`1553210f338a0d1c0934605acac29c651c812f7b1c6eb3da2f2ef142a502b168`** · recovery `2408d6257431fb51d44be1ce2de9e001cd16f5b22865cad63264f86e508131bc` · sd_compat `15bd3e5747fe89780880bd329d27441ac72e3a0f43e262838bd4c8394838cd39` (F-006 = F-004c 이미지 `00b685a0…` + ethtool) | 일치하면 합격 | 다르면 쓰지 않고 다시 collect한다 | 예 |
 | 2-2 | 콘솔 연결 | 3.3V USB-UART | 캐리어 **J6 JST SH 3P**: 1 = GND, 2 = DEBUG_UART0_TX, 3 = DEBUG_UART0_RX (`boards.py` L116–117). 어댑터 RX ← J6-2, TX → J6-3. 호스트에서 `115200 8N1` | 보드율 근거: 이미지 `/etc/inittab` `ttyS0::respawn:/sbin/getty -L ttyS0 115200 vt100` (out-f004c rootfs 확인). 계약 11절은 "실물로 확인" | 부트로그(fsbl → OpenSBI → u-boot → Linux)가 깨지지 않고 나오면 합격 | 글자가 깨지면 보드율을 바꿔 본다. 아무것도 나오지 않으면 TP24/TP25 파형 확인. **TX에 풀다운·LED를 달지 않는다**(부트 스트랩, 계약 10절) | 예 |
 | 2-3 | 공장 이미지 부팅 확인 | 콘솔 | 받은 그대로 부팅한다(굽기 전) | `login:` 프롬프트 | 프롬프트가 나오면 합격 | 코어 불량 또는 BTB 결합 문제 → 1-5 다시 | 예 |
 | 2-4 | **우리 이미지 기록** | microSD, 콘솔 | 1안 SD 복구: `*_emmc_recovery.zip`을 SD에 준비하고 꽂은 채 전원을 넣으면 eMMC에 굽는다(F-001 L63, RC README §2.4). SD에 쓰는 정확한 형식(압축 풀기·파티션)은 RC README §2.4 원문을 따른다 — **이 레인에서 원문 형식은 다시 확인하지 않았다**. 부트 순서는 SD가 먼저다(`run sdboot \|\| cvi_update …`, F-001 L61). 2안 USB: `usb_dl.exe -c cv181x -s linux -i <압축 푼 폴더>`, 캐리어 USB-C(J3) 디바이스 모드. 버튼 절차는 미확인(계약 14절 실물 3) | 콘솔에 굽기 진행이 보이고, SD를 빼고 재부팅하면 eMMC로 부팅된다 | `cat /etc/openhw/persond.conf`가 있고 P1(모델 sha256)이 PASS면 합격 | USB 굽기 모드 진입 절차는 UPGRAD_KEY(SW2)를 누른 채 전원/RESET으로 시험해 기록한다(F-001 L65 "절차 미확인"). 3회 실패하면 멈추고 보고 | 예 |
@@ -149,17 +152,16 @@
 
 ## 6. 이더넷 링크 (O-47 · R-013 T1~T4)
 
-> **이미지에 `ethtool`이 없다** (out-f004c rootfs 확인: `ip`·`ifconfig`·`iperf3`·`ping`은 있고 `ethtool`·`mii-tool`은 없다). 그래서 R-013 T1~T4를 이렇게 바꿔 한다.
-> - 장치 쪽 확인: `/sys/class/net/eth0/{carrier,speed,duplex}`로 읽는다(`bringup-check.sh` N1).
-> - 속도 강제·광고 제한: **상대(PC) 쪽 `ethtool`**로 한다.
-> - 장치 쪽에서 강제할 필요가 생기면, 이미지에 `ethtool` 패키지를 넣는 것을 F-00x로 제안한다(지금은 하지 않음).
+> **F-006부터 이미지에 `ethtool` 5.10이 들어 있다** (`/usr/sbin/ethtool`, O-70). 그래서 R-013 T1~T4를 **장치 쪽 `ethtool`로 그대로** 한다.
+> - 이 EPHY 드라이버가 속도 강제·광고 제한을 실제로 받는지는 미확인이다(드라이버 ethtool ops — HIL에서 확인).
+> - 받지 않으면 **차선**: 장치는 sysfs(`/sys/class/net/eth0/{carrier,speed,duplex}`, `bringup-check.sh` N1)로 읽고, 강제·광고 제한은 상대(PC) 쪽 `ethtool`로 한다(F-005 방식).
 
 | # | 목적 | 준비물 | 절차 · 명령 | 기대값 | 판정 | 불합격 시 차선 | verifiable |
 |---|---|---|---|---|---|---|---|
-| 6-1 (T1) | 100M 자동 협상 | 스위치 | 스위치에 연결한다. 장치에서 `cat /sys/class/net/eth0/speed /sys/class/net/eth0/duplex` · `ping -c 1000 -i 0.2 <PC>` · `ip -s link show eth0` | `100` / `full`, 손실 0, RX errors 0 | 모두 맞으면 합격 | 링크가 없으면 J5 핀(1/2/3/6 = TXP/TXN/RXP/RXN, `boards.py` L106–113), PCB 쌍 비아 교차(D-003 #31) 확인 | 예 |
-| 6-2 (T2) | 10M 강제 | PC 직결 | PC: `sudo ethtool -s <if> speed 10 duplex full autoneg off`. 장치 쪽은 자동 협상 그대로라 병렬 감지 → **10/half**가 정상일 수 있다. 장치 `speed`·`duplex`를 기록한다 · `ping -c 1000 -i 0.2` · `ip -s link` | 링크 업, 손실 0, RX 오류 0 (R-013 T2) | 링크가 서고 손실이 0이면 합격 (듀플렉스 불일치에 따른 늦은 충돌은 기록) | **실패 = 10BASE-T 자동 극성 보정 없음**(R-013 L66) → 다음 판에서 회로도 RJ45 쪽 P/N 반전(O-47 · D-003 #31 차선). 100M만 쓰면 T1만으로 운용 가능 | 예 |
-| 6-3 (T3) | 10M만 광고하는 상대 | PC 직결 | PC: `sudo ethtool -s <if> autoneg on advertise 0x002` (10baseT/Full만) | 장치 `speed` = `10`, `duplex` = `full` | 10M으로 협상하면 합격 | 6-2와 같음 | 예 |
-| 6-4 (T4) | 직결·크로스 (Auto MDI-X) | 랜선 2종 | PC에 직결 케이블로, 이어서 크로스 케이블로 각각 6-1 절차 | 두 경우 모두 100/full, 손실 0 (TRM 18.2.2 Auto MDI-X 지원, R-013 L10) | 둘 다 맞으면 합격 | 한쪽만 되면 MDI-X 미동작 → 스위치 경유만 지원으로 기록 | 예 |
+| 6-1 (T1) | 100M 자동 협상 | 스위치 | 스위치에 연결한다. 장치에서 `ethtool eth0` · `ping -c 1000 -i 0.2 <PC>` · `ip -s link show eth0` | `Speed: 100Mb/s`, `Duplex: Full`, `Link detected: yes`, 손실 0, RX errors 0 (R-013 T1) | 모두 맞으면 합격 | 링크가 없으면 J5 핀(1/2/3/6 = TXP/TXN/RXP/RXN, `boards.py` L106–113), PCB 쌍 비아 교차(D-003 #31) 확인 | 예 |
+| 6-2 (T2) | 10M 강제 | PC 직결 | 장치: `ethtool -s eth0 speed 10 duplex full autoneg off`, PC도 같은 값으로 고정(`sudo ethtool -s <if> speed 10 duplex full autoneg off`). 장치 `ethtool eth0` · `ping -c 1000 -i 0.2` · `ip -s link`. 끝나면 장치 `ethtool -s eth0 autoneg on` | 링크 업, 10Mb/s Full, 손실 0, RX 오류 0 (R-013 T2) | 모두 맞으면 합격 | 장치 `ethtool -s`가 `Operation not supported`면 PC 쪽만 고정하는 F-005 방식(장치는 병렬 감지로 10/half일 수 있음 — 기록). **링크 실패 = 10BASE-T 자동 극성 보정 없음**(R-013 L66) → 다음 판에서 회로도 RJ45 쪽 P/N 반전(O-47 · D-003 #31 차선). 100M만 쓰면 T1만으로 운용 가능 | 예 |
+| 6-3 (T3) | 10M만 광고 | PC 직결 | ① 장치: `ethtool -s eth0 autoneg on advertise 0x002`(10baseT/Full만), PC는 자동 협상 그대로. 확인 뒤 장치 `ethtool -s eth0 advertise 0x00f`로 되돌림 ② 상대 쪽: PC `sudo ethtool -s <if> autoneg on advertise 0x002`, 장치는 기본 | 두 경우 모두 `Speed: 10Mb/s`, `Duplex: Full` | 둘 다 맞으면 합격 | 장치 쪽 명령이 거부되면 ②만으로 판정(F-005 방식). 실패 시 6-2와 같은 차선 | 예 |
+| 6-4 (T4) | 직결·크로스 (Auto MDI-X) | 랜선 2종 | PC에 직결 케이블로, 이어서 크로스 케이블로 각각 6-1 절차. 장치 `ethtool eth0`의 `MDI-X:` 줄도 기록(드라이버가 보고하면) | 두 경우 모두 100/Full, 손실 0 (TRM 18.2.2 Auto MDI-X 지원, R-013 L10) | 둘 다 맞으면 합격 | 한쪽만 되면 MDI-X 미동작 → 스위치 경유만 지원으로 기록 | 예 |
 | 6-5 | 노출 닫힘 (D-003 #30) | 콘솔, PC | `bringup-check.sh` N2·N3 · PC에서 `mosquitto_sub -h <장치IP> -t '#' -W 3` | 1883은 루프백만 열림 → PC 접속 실패. `rtsp_pass`가 비어 있으면 554도 닫힘 | N2·N3 PASS이고 PC 접속이 실패하면 합격 | 열려 있으면 출하 전 차단 필수 → FW 결함 보고 | 예 |
 
 ## 7. USB-C · microSD · 버튼 · 상태 LED
@@ -173,13 +175,76 @@
 | 7-5 | 상태 LED | 콘솔, 눈 | `ls /sys/class/leds/`로 이름을 확인한다(DTS 노드 `status_led`, label 없음 → 노드 이름일 것으로 추정). 그 뒤 `echo 1 > /sys/class/leds/<이름>/brightness` → `echo 0 > …` | D6(청색) 켜짐 → 꺼짐 (gpio-leds, portc 12 = gpio428, 기본 끔, F-003 2절) | 켜지고 꺼지면 합격 | 2-5 portc 베이스 확인 | 아니오 (눈) |
 | 7-6 | 전원 LED | 눈 | 전원을 넣는다 | D3 켜짐 | 켜지면 합격 | — | 아니오 |
 
-## 8. 열 (M-003 · O-31)
+## 8. 열 (M-003 2차 · O-31 · O-71)
+
+### 8.0 판정 근거 수치
+
+**계산값:** M-003 2차 `analysis2.md`(`4752a68`)의 H3 바깥 핀 9×20 방열판, 정상 상태, 설치 자세 +Y 위.
+
+| 조건 | T_amb | 방열판(내부) | 바깥 방열판 | 안 공기 | 벽 | SoC 접합(추정) | LED 접합(추정) |
+|---|---|---|---|---|---|---|---|
+| A 듀티 25% | 25 | 42.0 | 38.5 | 44.8 | 32.7 | 50.0 | 57.1 |
+| A 듀티 25% | 40 | 56.9 | 53.3 | 59.4 | 47.3 | 64.9 | 71.9 |
+| A+B 듀티 25% | 25 | 46.1 | 41.5 | 46.5 | 33.9 | 54.1 | 61.2 |
+| A+B 듀티 25% | 40 | 61.0 | 56.3 | 61.1 | 48.4 | 69.0 | 76.0 |
+| LED 끔 | 25 | 37.7 | 35.3 | 43.0 | 31.5 | 45.7 | 37.7 |
+
+- 계산 가정은 analysis2에 있다: 코어 2.0W, 보드 1.0W, 흑색 아노다이즈 ε 0.85. 이 가정이 많아서 analysis2는 R에 **25% 여유**를 두었다(L29). 측정값 비교에도 같은 25%를 쓴다.
+
+**부품 정격:**
+- **VSMA1085400** (Vishay 80294 Rev. 1.4, Absolute Maximum Ratings)
+  - Tj = **145 °C**
+  - Tamb −40~+125 °C
+  - RthJSP,real 6~9 K/W
+  - IF 1.5 A, PV 5.33 W
+- **SG2002** (Datasheet V1.0 온도 표)
+  - 권장 접합온도 Tjunc: −30 ~ **85~105 °C**
+  - 파괴 접합온도: +125 °C
+  - Tjunc 최대 **115 °C**(DRAM 때문에 125에서 낮춤)
+- **안 공기 상승 목표 ≤ 25 K** (D-003 #26 갱신, analysis2 ① 머리말)
+
+### 8.1 측정 위치와 방법
 
 | # | 목적 | 준비물 | 절차 · 명령 | 기대값 | 판정 | 불합격 시 차선 | verifiable |
 |---|---|---|---|---|---|---|---|
-| 8-1 | 측정 위치 | 열전대 4ch 또는 열화상 | ① 전면 아랫면 열 패드 TP_A(IRA_SET·IRA_M 분할, O-43) ② TP_B1/B2(스트링 B, O-69) ③ AL8860 U4·U5 윗면 ④ SoC(코어 모듈 차폐/방열면) ⑤ 외함 옆판(알루미늄, M-003) ⑥ 실내 기온. 위치 근거: `mechanical/stack-reference.md` L433~465 | — | — | — | 예 |
-| 8-2 | **IR A+B 듀티 25% + SoC 부하 30분** | 1-9와 같은 부하 | 1-9 절차 1~3을 그대로 30분 이상 유지한다(D-003 #26 "듀티 25% 연속 30분"). 1분 간격으로 ①~⑥을 기록하고, 끝에서 5분 동안 변화 <1°C/5min이면 안정으로 본다 | 추정: A ΔT 9.5K · B 7.0K, 보드→방열판 ≈5.6K (D-003 #26). 외함→공기 약 55 K/W가 병목(M-003 1차, 가정). LED 추정 접합 ≈95°C를 허용 안으로 봄(D-003 #29, 실측 판정) | **합격 온도 상한 수치는 아직 없다**(M-003 2차 결과가 오면 갱신). 지금은 ① 기록 ② DRV8837·AL8860 열 차단(150°C급)이 일어나지 않음 ③ 12V_IR가 끊기지 않음 ④ 외함 손으로 만질 수 있는 정도인지 사진 기록 | 기록 · ②③이 충족되면 잠정 합격 | O-31 차선: 0.3A 연속 / MCPCB LED 서브보드 · M-003 차선: 핀 옆판 또는 금속 외함 · FW 차선: `ir_on_ratio` 하향(설정 한 줄) | 예 (수치) / 판정 상한은 대기 |
-| 8-3 | SoC 온도 | 콘솔 | `cat /sys/class/thermal/thermal_zone*/temp` (있으면) 1분 간격 | 기록 (경로 존재는 미확인) | 기록 | — | 예 |
+| 8-1 | 측정 위치 | 열전대 K형 0.1mm × 8ch (로거 1초 간격), 캡톤 테이프, 열화상(보조) | ① **TP_A1**(−9.5…−0.3, 넷 IRA_SET) ② **TP_A2**(+0.3…+9.5, 넷 IRA_M) ③ **TP_B1**(IRB_SET) ④ **TP_B2**(IRB_M): 전면 아랫면 노출 패드(`mechanical/stack-reference.md` L442–443·L545). 조립하면 절연 패드(INS_PAD_A)와 방열 기둥에 덮이므로, **조립 전에** 패드 가장자리에 열전대를 붙이고 리드를 빼낸다 ⑤ **방열판(내부)**: 기둥 밑동 ⑥ **바깥 방열판**: 핀 뿌리 가운데 ⑦ **외함 벽**: 벽 바깥 가운데 ⑧ **안 공기**: 외함 가운데 허공(벽·부품에 닿지 않게) ⑨ **주변**: 장치에서 30cm, 바람 없는 곳 ⑩ SoC: `cat /sys/class/thermal/thermal_zone*/temp`(있으면 — 경로는 미확인) | — | — | — | 예 |
+| 8-1a | **전기 주의** | 캡톤 테이프 | TP_A/TP_B 패드는 LED 애노드 넷(12V_IR 쪽)이다. 열전대 끝을 캡톤으로 절연하고, 서로 다른 패드끼리 열전대로 이어지지 않게 한다 | 열전대 채널 사이 저항이 개방(> 1MΩ) | 개방이면 합격 | 절연을 다시 한다 | 예 |
+| 8-2 | **IR A+B 듀티 25% + SoC 부하** | 1-9와 같은 부하 | 1-9 절차 1~3을 그대로 유지한다(밤 모드 + 사람 감지 + RTSP·iperf3). 설치 자세는 +Y 위(analysis2 가정), 주변 온도는 20~30 °C, 바람이 없어야 한다. **열평형 판정: 모든 채널이 5분 동안 변화 ≤ 0.5 K**(최소 30분 뒤부터, D-003 #26). 평형에 이르면 그 5분 평균을 측정값으로 쓴다 | 8.0 표의 A+B · 25 °C 줄 (주변 온도 차이는 아래 ΔT로 맞춘다) | 8.2절 판정 | 8.2절 차선 | 예 |
+| 8-3 | A만 (스트링 B 끔과의 비교) | 같은 부하 | B 스트링을 빼고 시험할 수 있으면(B DNP 판) 같은 절차로 A만 한 번 더 한다. 없으면 생략하고 기록한다 | 8.0 표의 A · 25 °C 줄 | 8.2절 판정 | — | 예 |
+| 8-4 | LED 끔 기준선 | 낮 모드 + 사람 감지 + 이더넷 부하 | 8-2와 같지만 IR은 끈다 | 8.0 표의 LED 끔 줄 | 기록 (모델 대조용) | — | 예 |
+
+### 8.2 판정 (측정한 주변 온도 Ta에서 ΔT = T − Ta로 바꿔 쓴다)
+
+**① 정격 판정 (필수)**
+- 측정한 ΔT를 **주변 40 °C로 옮겨**(T40 = 40 + ΔT) 정격과 비교한다.
+
+| 대상 | 추정식 | 합격선 | 근거 · 여유 | 계산값 (T40, A+B) |
+|---|---|---|---|---|
+| LED 접합 | T40(TP_A1/A2/B1/B2 중 최고) + 0.78 W × 9 K/W (= +7.0 K) | **≤ 125 °C** | VSMA Tj 145 °C에서 20 K 여유(가정이 많은 열 경로). 0.78 W = 스트링 평균 1.55 W ÷ LED 2개, 빛으로 나가는 몫을 빼지 않은 보수값. 9 K/W는 RthJSP 상한 | 76.0 |
+| SoC 접합 | thermal_zone이 있으면 T40(zone). 없으면 T40(방열판 내부) + 8.0 K (analysis2: SoC 접합 − 방열판 내부 = 50.0 − 42.0) | **≤ 85 °C** | SG2002 권장 접합 상한 85~105 °C의 아래쪽 값. DRAM 115 °C까지 30 K 여유 | 69.0 |
+| 안 공기 | ΔT(안 공기) | **≤ 25 K** | D-003 #26 갱신 목표 | 21.5 K |
+
+**② 모델 대조 (계산값 + 25% 여유)**
+- 측정 ΔT가 아래 상한 이하면 M-003 계산이 맞는 것으로 본다(A+B, 25 °C 계산값 기준).
+
+| 위치 | 계산 ΔT | 상한 (×1.25) |
+|---|---|---|
+| 방열판(내부) | 21.1 K | 26.4 K |
+| 바깥 방열판 | 16.5 K | 20.6 K |
+| 안 공기 | 21.5 K | 25.0 K (①의 목표가 더 낮음) |
+| 벽 | 8.9 K | 11.1 K |
+
+A만 시험했을 때의 상한(계산값 × 1.25): 방열판(내부) 21.3 K · 바깥 방열판 16.9 K · 안 공기 24.8 K · 벽 9.6 K.
+
+**결과 판정**
+- **합격:** ①과 ②가 모두 맞는다.
+- **잠정 합격:** ①은 맞고 ②만 넘는다. 실측 ΔT를 mechanical에 넘겨 모델을 갱신하게 하고, 마진을 다시 계산한다.
+- **불합격:** ① 중 하나라도 넘는다. 이때는 바로 IR을 끄고 차선으로 간다.
+- **차선 순서** (analysis2 "차선 순서 (orch)"):
+  1. 방열판 확대 / 핀 추가 (mechanical)
+  2. 듀티 상한 하향: `daynight.conf`의 `ir_on_ratio`. 설정 한 줄이고, FW 강제 상한은 0.25 그대로 둔다
+  3. 0.3 A 연속 (O-31 차선. analysis2에 따르면 열 이득 없이 조사만 줄어드는 점에 주의)
+  4. MCPCB LED 서브보드 (K13)
 
 ## 9. 실행 순서 (권장)
 
@@ -188,7 +253,7 @@
 3. 1-6 ~ 1-8 (부팅된 상태에서 순서 파형)
 4. `sh bringup-check.sh` 한 번 → FAIL 항목부터 해당 절로 간다
 5. 3 → 4 → 5 → 6 → 7
-6. 마지막으로 1-9 + 8-2 (최악 부하 30분, 같은 회차)
+6. 마지막으로 1-9 + 8-2 (최악 부하, 열평형 = 5분 변화 ≤ 0.5 K까지, 같은 회차) → 8-4 (LED 끔 기준선)
 7. `rtsp_pass` 비움 · `daynight.conf` 원래 값 · `bringup-check.sh` 다시 실행해 N2·N3 PASS 확인
 
 ## 10. 사전 시험 (하드웨어 없이)
@@ -197,7 +262,7 @@
 |---|---|---|---|
 | 문법 (busybox sh / dash / bash) | `busybox sh -n` · `dash -n` · `bash -n firmware/scripts/bringup-check.sh` | 0 / 0 / 0 | — |
 | shellcheck | `shellcheck -s sh -S warning firmware/scripts/bringup-check.sh` | 0 | 경고 0 |
-| 가짜 트리 시험 | `firmware/scripts/test-bringup-check.sh` (기대 종료 코드와 다르면 0이 아닌 값 · recamera-os-builder 컨테이너, `ROOT=` 가짜 `/sys`·`/proc`·`/run`·`/etc` 트리 3개) | 0 | 낮 정상 FAIL 0 (rc 0) · 밤 정상(켬 25%) FAIL 0 (rc 0) · 고장 주입 4건(DT model · persond 없음 · 켬 50% · 1883 0.0.0.0) → **FAIL 4 (rc 4)**, 주입한 것만 잡힘 |
+| 가짜 트리 시험 | `firmware/scripts/test-bringup-check.sh` (기대 종료 코드와 다르면 0이 아닌 값 · recamera-os-builder 컨테이너, `ROOT=` 가짜 `/sys`·`/proc`·`/run`·`/etc` 트리 3개) | 0 | 낮 정상 FAIL 0 (rc 0) · 밤 정상(켬 25%) FAIL 0 (rc 0) · 고장 주입 5건(DT model · persond 없음 · 켬 50% · ethtool 없음 · 1883 0.0.0.0) → **FAIL 5 (rc 5)**, 주입한 것만 잡힘 |
 
 - 가짜 트리 시험이 보여 주는 것은 판정 논리뿐이다. 하드웨어 명령(C2·C3 `i2cget`, F1 `mosquitto_sub`)은 이 시험에서 SKIP된다.
 - 보드에서 처음 돌릴 때 B2의 portc 라벨 매칭이 맞는지도 함께 확인한다. 맞지 않으면 SKIP과 함께 목록을 찍는다.
@@ -206,8 +271,40 @@
 
 | # | 분기점 | 선택 | 이유 | 차선책 |
 |---|---|---|---|---|
-| F5-1 | 이더넷 시험에 `ethtool`이 없음 | 장치는 sysfs로 읽고, 강제는 PC 쪽 `ethtool` | 이미지 변경 없이 R-013 T1~T4의 판정 조건을 지킬 수 있다 | 이미지에 `ethtool` 추가 (F-00x 제안) |
+| F5-1 | 이더넷 시험의 `ethtool` | F-005: 장치 sysfs + PC 쪽 `ethtool` → **F-006: 이미지에 `ethtool` 추가(O-70), 장치 쪽 명령이 1안** | R-013 T1~T4 명령을 그대로 쓴다. 크기 증가는 rootfs 사용량 약 393 KiB | 드라이버가 받지 않으면 F-005 방식 |
 | F5-2 | 판정 자동화 범위 | 소프트웨어로 읽을 수 있는 것만 `bringup-check.sh`에 넣는다(종료 코드 = FAIL 수) | 전압·파형·열은 계측기 판단이 필요하다 | 계측기 원격 제어 자동화 |
 | F5-3 | 1-9 이더넷 부하 | RTSP 재생 + iperf3 양방향 90M | 둘 다 이미지·PC에 이미 있다. RTSP는 시험 동안만 열고 닫는다(D-003 #30) | iperf3만 (RTSP 비밀번호를 쓰지 않는 쪽) |
 | F5-4 | 스트링 B | 회로가 A와 공통 제어(CTRL·12V_IR·EN)라 FW 변경 없음, 실측 항목만 추가 | `boards.py` L211–218, C18 ③ | B를 따로 제어하려면 회로 변경(별도 CTRL FET + GPIO) — hardware 결정 |
-| F5-5 | 열 합격 상한 | 수치를 두지 않고 기록 + 열 차단·eFuse 끊김 없음으로 잠정 판정 | 근거 문서에 상한 수치가 없다(M-003 2차 대기) | M-003 2차 결과로 갱신 |
+| F5-5 | 열 합격선 (F-006 O-71) | ① 부품 정격 판정(주변 40 °C 환산: LED Tj ≤ 125 °C = 145 − 20 K, SoC ≤ 85 °C = SG2002 권장 하단, 안 공기 ≤ 25 K)을 필수로, ② M-003 2차 계산값 × 1.25(analysis2의 25% 여유)를 모델 대조로 | 계산은 가정이 많아 단독 합격선으로 쓰기 어렵고, 정격만 보면 모델 오류를 놓친다 | 정격 여유를 줄임(LED 135 °C, SoC 105 °C) — 사용자 결정 |
+
+## 12. F-006 이미지 빌드 기록 (O-70 ethtool)
+
+| 단계 | 명령 | 종료 코드 | 결과 |
+|---|---|---|---|
+| 패치 | `firmware/patches/reCamera-OS/0003-openhw-ethtool.patch` — `external/buildroot/configs/cvitek_CV181X_musl_riscv64_defconfig`에 `BR2_PACKAGE_ETHTOOL=y` 한 줄 추가. 빌드 때마다 `setenv.sh`가 이 defconfig로 buildroot를 다시 설정한다 | — | — |
+| 적용 | `bash firmware/scripts/apply-f004.sh` (→ `apply-f003.sh`: 0001·0002는 표시 파일로 건너뛰고 0003만 적용) | 0 | `apply-f006-1.log` |
+| 빌드 | hc 칸 `openhw-fw-build`, `CPUSET=0-3 MEM=16g JLEVEL=4 slot --label F-006 --timeout-min 240 -- build-baseline.sh build` | **0** | 455초, 02:40:47 KST 종료 · `f006-build-1.log` |
+| collect | `OUT_DIR=…/out-f006 build-baseline.sh collect` | 0 | 아래 해시 |
+
+| 파일 (`out-f006/`) | 크기 (B) | sha256 |
+|---|---|---|
+| `sg2002_reCamera_0.2.4_emmc.zip` (= `upgrade.zip`) | 153,022,474 | `1553210f338a0d1c0934605acac29c651c812f7b1c6eb3da2f2ef142a502b168` |
+| `sg2002_reCamera_0.2.4_emmc_ota.zip` | 151,811,291 | `3b66f1cf570324b42cccf582c658d8dfa26673edeee708bc15776925cda08676` |
+| `sg2002_reCamera_0.2.4_emmc_recovery.zip` | 611,823 | `2408d6257431fb51d44be1ce2de9e001cd16f5b22865cad63264f86e508131bc` |
+| `sg2002_reCamera_0.2.4_emmc_sd_compat.zip` | 148,453,409 | `15bd3e5747fe89780880bd329d27441ac72e3a0f43e262838bd4c8394838cd39` |
+| `sg2002_reCamera_0.2.4_emmc_swu.zip` | 148,443,255 | `391502a4fa23917c86d715d8e4cc7ba9193846d08a515c7aef67b170afd45ee8` |
+
+**rootfs 확인** (`debugfs`, `rootfs_ext4.emmc`):
+- `/usr/sbin/ethtool`: 380,144 B, RISC-V musl ELF. buildroot `ethtool-5.10`, `BR2_PACKAGE_ETHTOOL_PRETTY_PRINT=y`가 따라 켜졌다.
+- 모델 `yolox_nano_person_416_bf16_cv181x.cvimodel` sha256 `eee83a22…`. F-004c와 같다.
+
+**크기 증가 (F-004c → F-006):**
+
+| 항목 | F-004c | F-006 | 증가 |
+|---|---|---|---|
+| buildroot `target/` | 433,840,472 B | 434,244,728 B | **+404,256 B (약 395 KiB)** |
+| rootfs 빈 블록 (1 KiB, 전체 520,192) | 63,562 | 63,169 | 사용 +393 KiB. 남은 여유 약 61.7 MiB |
+| `emmc.zip` | 151,408,636 B | 153,022,474 B | +1,613,838 B |
+
+- `emmc.zip` 증가가 rootfs 증가보다 크다. 원인은 확인하지 않았다. 추정으로는 같은 빌드에서 sscma-node·daynight를 dirclean 뒤 다시 빌드해 압축 대상 바이트가 바뀐 것이 섞였다.
+- **HIL 미확인:** 이 EPHY 드라이버가 `ethtool -s`(속도 강제·광고 제한)를 받는지 확인하지 않았다(6절).
