@@ -2,7 +2,7 @@
 	(version "E")
 	(design
 		(source "C:\\workspace_python\\OpenHW\\.harness-worktrees\\t-20261126-165741-b193\\hardware\\schematic\\front\\front.kicad_sch")
-		(date "2026-11-26T17:39:04")
+		(date "2026-11-26T18:03:03")
 		(tool "Eeschema 10.0.8")
 		(sheet
 			(number "1")
@@ -11,7 +11,7 @@
 			(title_block
 				(title "OpenHW front (sensor) board - reCamera Core 2002 J1 mate")
 				(company "OpenHW PoC")
-				(rev "C-002b")
+				(rev "C-004")
 				(date "2026-11-26")
 				(source "front.kicad_sch")
 				(comment
@@ -93,7 +93,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "d6857ff5-f9ff-4946-a2dc-8afebca4397e")
+			(tstamps "971c8b38-0b81-4bfc-bad8-66c550f7686b")
 			(units
 				(unit
 					(name "A")
@@ -147,7 +147,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "3f3b20a0-d8d5-4c07-81aa-1a46743c9e41")
+			(tstamps "324720a6-e33f-4cd4-8a2d-0eeff2800328")
 			(units
 				(unit
 					(name "A")
@@ -201,7 +201,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "08c897b5-76ca-41eb-92b8-65e35839d11a")
+			(tstamps "9bfa3144-c58b-4bb5-a5c3-59055ab2344b")
 			(units
 				(unit
 					(name "A")
@@ -255,7 +255,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "716d6fb9-6bd3-487b-a80b-cdf10e855a7a")
+			(tstamps "afca1840-c633-4f14-9a27-a1c1290ccd98")
 			(units
 				(unit
 					(name "A")
@@ -309,7 +309,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "11bc337c-60c4-41ad-8f04-2462ccc38e09")
+			(tstamps "5879c631-c6bf-43ec-b4a9-08513b674cb3")
 			(units
 				(unit
 					(name "A")
@@ -366,7 +366,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "90e43b05-2abb-4cc5-b232-e925a3842473")
+			(tstamps "462242ee-b50f-4ce9-a3f2-34e86818ede8")
 			(units
 				(unit
 					(name "A")
@@ -420,7 +420,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "56bacf70-b418-44d0-840b-bb2c223378d3")
+			(tstamps "e874e25c-46fa-4f02-a5ec-75036b57444d")
 			(units
 				(unit
 					(name "A")
@@ -474,7 +474,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "29539916-d922-4fb2-848e-9d9bb632757e")
+			(tstamps "1a84d4ad-b408-4d16-8263-f0d9b03f2624")
 			(units
 				(unit
 					(name "A")
@@ -528,7 +528,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "3a756b6f-817c-40c1-b8f9-97010761ad26")
+			(tstamps "86161e4f-a232-459d-8962-e8f66d98ff6f")
 			(units
 				(unit
 					(name "A")
@@ -571,9 +571,6 @@
 				(value "front.kicad_sch")
 			)
 			(property
-				(name "dnp")
-			)
-			(property
 				(name "ki_keywords")
 				(value "cap capacitor")
 			)
@@ -585,7 +582,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "157a5766-be0e-45c5-91c4-d5dde5671e5a")
+			(tstamps "8df56781-d463-41cc-a644-c38e00463afe")
 			(units
 				(unit
 					(name "A")
@@ -639,7 +636,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "de6200c4-e873-4d27-9c80-33c01c93bae3")
+			(tstamps "e4ce81c5-c50d-44c2-8d58-159bb5f2c530")
 			(units
 				(unit
 					(name "A")
@@ -693,7 +690,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "68d40520-d705-4bc9-8c1b-a158c4283755")
+			(tstamps "4fde2e53-c7cb-430d-80f0-f0af8f46e866")
 			(units
 				(unit
 					(name "A")
@@ -747,7 +744,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "6ad972ac-93e8-4829-8f6a-7faac3d52d7e")
+			(tstamps "6b0e342d-b502-413d-af43-e31a5bdfee52")
 			(units
 				(unit
 					(name "A")
@@ -764,7 +761,7 @@
 		)
 		(comp
 			(ref "C14")
-			(value "10uF/25V")
+			(value "10uF/50V X7R")
 			(footprint "Capacitor_SMD:C_1206_3216Metric")
 			(fields
 				(field
@@ -801,7 +798,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "0374e92c-7b0b-457d-b915-84b02e137053")
+			(tstamps "a82fcb93-03aa-49db-8b5f-01cc57c85f82")
 			(units
 				(unit
 					(name "A")
@@ -855,7 +852,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "ec73ca82-af0b-4913-93e1-418e81f8a206")
+			(tstamps "1af48341-bf59-4d7e-9cd5-66b8902dfb76")
 			(units
 				(unit
 					(name "A")
@@ -872,7 +869,7 @@
 		)
 		(comp
 			(ref "C16")
-			(value "10uF/25V")
+			(value "10uF/50V X7R")
 			(footprint "Capacitor_SMD:C_1206_3216Metric")
 			(fields
 				(field
@@ -912,7 +909,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "5aa38a32-7fc8-4567-bdd7-f24b549e2146")
+			(tstamps "7ddeaee2-d86b-46c7-b25b-c44ec3fd3f57")
 			(units
 				(unit
 					(name "A")
@@ -969,7 +966,61 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "a6d376c6-28dd-4ef7-bdc4-d1bba49a5eda")
+			(tstamps "d8645cc3-dbb7-4b88-84ad-f906279d7b51")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "C18")
+			(value "1uF")
+			(footprint "Capacitor_SMD:C_0402_1005Metric")
+			(fields
+				(field
+					(name "Footprint") "Capacitor_SMD:C_0402_1005Metric")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description")
+				)
+			)
+			(libsource
+				(lib "Device")
+				(part "C")
+				(description "Unpolarized capacitor")
+			)
+			(property
+				(name "Sheetname")
+				(value "front")
+			)
+			(property
+				(name "Sheetfile")
+				(value "front.kicad_sch")
+			)
+			(property
+				(name "ki_keywords")
+				(value "cap capacitor")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "C_*")
+			)
+			(sheetpath
+				(names "/")
+				(tstamps "/")
+			)
+			(tstamps "a4d602f7-50ac-4f6f-afcc-e450a4f84e32")
 			(units
 				(unit
 					(name "A")
@@ -986,9 +1037,11 @@
 		)
 		(comp
 			(ref "D1")
-			(value "SS24 (40V 2A)")
+			(value "SS24 (40V 2A, SMA)")
 			(footprint "Diode_SMD:D_SMA")
 			(fields
+				(field
+					(name "MPN") "Vishay SS24-E3/61T (DO-214AC/SMA) - check pending")
 				(field
 					(name "Footprint") "Diode_SMD:D_SMA")
 				(field
@@ -1002,6 +1055,10 @@
 				(lib "Device")
 				(part "D_Schottky")
 				(description "Schottky diode")
+			)
+			(property
+				(name "MPN")
+				(value "Vishay SS24-E3/61T (DO-214AC/SMA) - check pending")
 			)
 			(property
 				(name "Sheetname")
@@ -1023,7 +1080,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "62bcd77f-a7e0-46a7-a10b-0ace8b56c27d")
+			(tstamps "1bca5e75-dd41-4080-a771-2c2d6546719c")
 			(units
 				(unit
 					(name "A")
@@ -1040,9 +1097,11 @@
 		)
 		(comp
 			(ref "D2")
-			(value "SS24 (40V 2A)")
+			(value "SS24 (40V 2A, SMA)")
 			(footprint "Diode_SMD:D_SMA")
 			(fields
+				(field
+					(name "MPN") "Vishay SS24-E3/61T (DO-214AC/SMA) - check pending")
 				(field
 					(name "Footprint") "Diode_SMD:D_SMA")
 				(field
@@ -1056,6 +1115,10 @@
 				(lib "Device")
 				(part "D_Schottky")
 				(description "Schottky diode")
+			)
+			(property
+				(name "MPN")
+				(value "Vishay SS24-E3/61T (DO-214AC/SMA) - check pending")
 			)
 			(property
 				(name "Sheetname")
@@ -1080,7 +1143,67 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "a4314ff3-ba6b-458b-ad1f-9f0a937d6882")
+			(tstamps "2b481a71-7b68-4369-8003-043233c530ba")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "D3")
+			(value "BAT54WS")
+			(footprint "Diode_SMD:D_SOD-323")
+			(fields
+				(field
+					(name "Note") "V-004 R3: RESET discharges first when CAM_EN falls")
+				(field
+					(name "Footprint") "Diode_SMD:D_SOD-323")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description")
+				)
+			)
+			(libsource
+				(lib "Device")
+				(part "D_Schottky")
+				(description "Schottky diode")
+			)
+			(property
+				(name "Note")
+				(value "V-004 R3: RESET discharges first when CAM_EN falls")
+			)
+			(property
+				(name "Sheetname")
+				(value "front")
+			)
+			(property
+				(name "Sheetfile")
+				(value "front.kicad_sch")
+			)
+			(property
+				(name "ki_keywords")
+				(value "diode Schottky")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "TO-???* *_Diode_* *SingleDiode* D_*")
+			)
+			(sheetpath
+				(names "/")
+				(tstamps "/")
+			)
+			(tstamps "7db8b968-a591-4f99-a1b7-6cccc0db0624")
 			(units
 				(unit
 					(name "A")
@@ -1101,7 +1224,7 @@
 			(footprint "openhw:Vishay_VSMA1085600_3.4x3.4mm")
 			(fields
 				(field
-					(name "MPN") "Vishay VSMA1085400 (+-40deg, same land as VSMA1085600, drawing 6.550-5366.9-3)")
+					(name "MPN") "Vishay VSMA1085400 (+-40deg; package drawing 6.550-5367.01-4; land drawing 6.550-5366.9-3 = VSMA1085600 land)")
 				(field
 					(name "Footprint") "openhw:Vishay_VSMA1085600_3.4x3.4mm")
 				(field
@@ -1118,7 +1241,7 @@
 			)
 			(property
 				(name "MPN")
-				(value "Vishay VSMA1085400 (+-40deg, same land as VSMA1085600, drawing 6.550-5366.9-3)")
+				(value "Vishay VSMA1085400 (+-40deg; package drawing 6.550-5367.01-4; land drawing 6.550-5366.9-3 = VSMA1085600 land)")
 			)
 			(property
 				(name "Sheetname")
@@ -1140,7 +1263,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "369f755a-a244-4334-a105-b078661a8d58")
+			(tstamps "2a8fe28f-b39b-4c20-ba0e-85e1c71b0b21")
 			(units
 				(unit
 					(name "A")
@@ -1200,7 +1323,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "ae6f91ad-2868-44e1-af36-6cd4b65fb806")
+			(tstamps "a9e62b76-2f21-4753-bd81-9356471b9f60")
 			(units
 				(unit
 					(name "A")
@@ -1221,7 +1344,7 @@
 			(footprint "openhw:Vishay_VSMA1085600_3.4x3.4mm")
 			(fields
 				(field
-					(name "MPN") "Vishay VSMA1085400 (+-40deg, same land as VSMA1085600, drawing 6.550-5366.9-3)")
+					(name "MPN") "Vishay VSMA1085400 (+-40deg; package drawing 6.550-5367.01-4; land drawing 6.550-5366.9-3 = VSMA1085600 land)")
 				(field
 					(name "Footprint") "openhw:Vishay_VSMA1085600_3.4x3.4mm")
 				(field
@@ -1238,7 +1361,7 @@
 			)
 			(property
 				(name "MPN")
-				(value "Vishay VSMA1085400 (+-40deg, same land as VSMA1085600, drawing 6.550-5366.9-3)")
+				(value "Vishay VSMA1085400 (+-40deg; package drawing 6.550-5367.01-4; land drawing 6.550-5366.9-3 = VSMA1085600 land)")
 			)
 			(property
 				(name "Sheetname")
@@ -1263,7 +1386,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "0ace8e7d-4bff-4b21-b84c-4c2449ff76a0")
+			(tstamps "23d9297b-54ad-4a79-b870-309504abc025")
 			(units
 				(unit
 					(name "A")
@@ -1326,7 +1449,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "776ea9d0-8ccb-4b1a-8177-7a2670b69c71")
+			(tstamps "a814af0e-86bf-4f20-a498-6bed9e2805c4")
 			(units
 				(unit
 					(name "A")
@@ -1392,7 +1515,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "ca10f7dc-0e06-4633-9e0c-ba1afb377959")
+			(tstamps "39ce35d2-a186-4207-b007-1ebddaa91c34")
 			(units
 				(unit
 					(name "A")
@@ -1626,7 +1749,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "c052bc48-5af9-412c-9aeb-5b3281869fdc")
+			(tstamps "8746dd3f-dfea-4717-a51f-e4926b6f2db5")
 			(units
 				(unit
 					(name "A")
@@ -1695,7 +1818,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "58d4c505-9499-4a14-a47c-c3d36eca10e0")
+			(tstamps "eb76a97f-cf05-4542-b4b8-cf38c62f0ff6")
 			(units
 				(unit
 					(name "A")
@@ -1827,7 +1950,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "be64243e-07ad-40f9-892a-dc06e0a9f9b7")
+			(tstamps "40e1156d-2c77-437b-bddd-5f48ab8ea5ab")
 			(units
 				(unit
 					(name "A")
@@ -1859,11 +1982,11 @@
 		)
 		(comp
 			(ref "L1")
-			(value "68uH Isat>=1.5A")
+			(value "47uH Irms>=1.3A Isat>=2A")
 			(footprint "Inductor_SMD:L_Bourns_SRN6045TA")
 			(fields
 				(field
-					(name "Note") "AL8860 DS39014 example MSOP Rs=0.1 L=68uH")
+					(name "MPN") "Bourns SRN6045TA-470M (Irms 1.6A, Isat 2.0A per V-004 R10)")
 				(field
 					(name "Footprint") "Inductor_SMD:L_Bourns_SRN6045TA")
 				(field
@@ -1879,8 +2002,8 @@
 				(description "Inductor")
 			)
 			(property
-				(name "Note")
-				(value "AL8860 DS39014 example MSOP Rs=0.1 L=68uH")
+				(name "MPN")
+				(value "Bourns SRN6045TA-470M (Irms 1.6A, Isat 2.0A per V-004 R10)")
 			)
 			(property
 				(name "Sheetname")
@@ -1902,7 +2025,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "b0d7c4db-cc96-4818-8974-9fe521a2b4b0")
+			(tstamps "f737dc4f-4c86-49b2-9c9e-9ecf09900b90")
 			(units
 				(unit
 					(name "A")
@@ -1919,11 +2042,11 @@
 		)
 		(comp
 			(ref "L2")
-			(value "68uH Isat>=1.5A")
+			(value "47uH Irms>=1.3A Isat>=2A")
 			(footprint "Inductor_SMD:L_Bourns_SRN6045TA")
 			(fields
 				(field
-					(name "Note") "AL8860 DS39014 example MSOP Rs=0.1 L=68uH")
+					(name "MPN") "Bourns SRN6045TA-470M (Irms 1.6A, Isat 2.0A per V-004 R10)")
 				(field
 					(name "Footprint") "Inductor_SMD:L_Bourns_SRN6045TA")
 				(field
@@ -1939,8 +2062,8 @@
 				(description "Inductor")
 			)
 			(property
-				(name "Note")
-				(value "AL8860 DS39014 example MSOP Rs=0.1 L=68uH")
+				(name "MPN")
+				(value "Bourns SRN6045TA-470M (Irms 1.6A, Isat 2.0A per V-004 R10)")
 			)
 			(property
 				(name "Sheetname")
@@ -1965,7 +2088,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "58111d2c-1dab-4adf-9e3a-c43ce7b22f39")
+			(tstamps "93e30228-db7b-41f1-8fb2-3870164b98a5")
 			(units
 				(unit
 					(name "A")
@@ -2025,7 +2148,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "cc11a702-2644-4790-8b29-aa09d79d930a")
+			(tstamps "ec1fb95f-020b-4235-acd7-435421ff4a70")
 			(units
 				(unit
 					(name "A")
@@ -2072,7 +2195,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "20e6aa78-3766-4ef9-a193-75cd50bb5d2d")
+			(tstamps "8f2271ef-eeba-419c-baac-76cfb7b9ab9d")
 			(units
 				(unit
 					(name "A")
@@ -2129,7 +2252,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "c5630da5-185d-4c61-b218-8ef4f3c658a5")
+			(tstamps "8be779a9-dfcb-4c2e-a55a-979d7bb83f9a")
 			(units
 				(unit
 					(name "A")
@@ -2186,7 +2309,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "46fb3ad5-b3fd-4c77-8420-316029e230af")
+			(tstamps "e5152a02-a38f-4297-8939-b4213110a654")
 			(units
 				(unit
 					(name "A")
@@ -2248,7 +2371,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "55cde12a-5d3a-466a-808c-fe905194d0ad")
+			(tstamps "3cd7f4ad-f4f3-4a1f-900e-182f1523850e")
 			(units
 				(unit
 					(name "A")
@@ -2302,7 +2425,72 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "3af32ac0-c6ff-466b-83c4-f39c15eb126c")
+			(tstamps "e134ff66-2ae4-4f64-b249-b8d0997b8794")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "3")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "Q6")
+			(value "DMG2305UX")
+			(footprint "Package_TO_SOT_SMD:SOT-23")
+			(fields
+				(field
+					(name "MPN") "Diodes DMG2305UX")
+				(field
+					(name "Note") "CAM_1V8 switch (V-004 R1, O-33): RDS(on) <=200mR @ VGS -1.8V, VGS(th) -0.5..-0.9V (DS36196 Rev 8-2); AO3401A unsuitable")
+				(field
+					(name "Footprint") "Package_TO_SOT_SMD:SOT-23")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description")
+				)
+			)
+			(libsource
+				(lib "Transistor_FET")
+				(part "Q_PMOS_GSD")
+				(description "P-MOSFET transistor, gate/source/drain")
+			)
+			(property
+				(name "MPN")
+				(value "Diodes DMG2305UX")
+			)
+			(property
+				(name "Note")
+				(value "CAM_1V8 switch (V-004 R1, O-33): RDS(on) <=200mR @ VGS -1.8V, VGS(th) -0.5..-0.9V (DS36196 Rev 8-2); AO3401A unsuitable")
+			)
+			(property
+				(name "Sheetname")
+				(value "front")
+			)
+			(property
+				(name "Sheetfile")
+				(value "front.kicad_sch")
+			)
+			(property
+				(name "ki_keywords")
+				(value "transistor PMOS P-MOS P-MOSFET")
+			)
+			(sheetpath
+				(names "/")
+				(tstamps "/")
+			)
+			(tstamps "6c65b294-7603-4ac1-904a-d1e4eb65b593")
 			(units
 				(unit
 					(name "A")
@@ -2359,7 +2547,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "87f7463d-e2b9-4afb-a71e-9b1485fcf3a9")
+			(tstamps "c6df7ec1-6db2-42db-be20-c6759c3ac974")
 			(units
 				(unit
 					(name "A")
@@ -2413,7 +2601,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "4fc570e6-b8f2-407d-8351-5ef0cf8d7e81")
+			(tstamps "b210cb38-1fd0-4836-b226-8d2db3d6c8ac")
 			(units
 				(unit
 					(name "A")
@@ -2467,7 +2655,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "b9de4427-a24e-465e-9bff-4d4cddecaa8c")
+			(tstamps "fef767dd-8a57-425b-a518-acdef69a3b53")
 			(units
 				(unit
 					(name "A")
@@ -2521,7 +2709,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "33019e5d-c430-40b1-903f-7adf6bd1e8e7")
+			(tstamps "4c72560e-ca7f-435b-8d35-e305e1db7326")
 			(units
 				(unit
 					(name "A")
@@ -2575,7 +2763,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "eba5cde4-dcbd-4806-ad20-114e6882e716")
+			(tstamps "35e52866-974e-4ab0-8351-7e5dd33f8b6f")
 			(units
 				(unit
 					(name "A")
@@ -2629,7 +2817,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "a9ab902b-6174-4097-9e18-fb7c427df7a2")
+			(tstamps "a7dc3020-5ba0-407e-bfaa-0764656ed41b")
 			(units
 				(unit
 					(name "A")
@@ -2683,7 +2871,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "7549a69f-0e0a-4faa-87da-5ebe9e0261bd")
+			(tstamps "1efe710d-970d-4b35-9b7a-3010c972f583")
 			(units
 				(unit
 					(name "A")
@@ -2737,7 +2925,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "4b286437-dccb-4c2f-a1b2-1a34f8198bcd")
+			(tstamps "d5da53c3-9a26-4482-9e88-4f2fe007afbf")
 			(units
 				(unit
 					(name "A")
@@ -2791,7 +2979,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "f6b367b9-92a1-4a56-854a-d38ff830d5ed")
+			(tstamps "978e09ba-c404-42c2-951b-ef506e6f317c")
 			(units
 				(unit
 					(name "A")
@@ -2845,7 +3033,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "8a38829d-7768-481f-a320-0a2e769e03d7")
+			(tstamps "38630d72-00e7-443b-a101-580be051a730")
 			(units
 				(unit
 					(name "A")
@@ -2902,7 +3090,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "a5733226-ff21-4e3a-af4e-dc0df99127b7")
+			(tstamps "31ce64f0-9f0d-4323-b436-894f5b08eda1")
 			(units
 				(unit
 					(name "A")
@@ -2956,7 +3144,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "83e987e8-f1b6-4482-8f45-aa79f3f8e831")
+			(tstamps "16a1a1dc-739c-4425-9d52-718203550495")
 			(units
 				(unit
 					(name "A")
@@ -3010,7 +3198,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "45407997-9538-405d-8907-3cb011cc8b8c")
+			(tstamps "6d1e22f6-5cf7-4119-96cf-f943dbeb6a3d")
 			(units
 				(unit
 					(name "A")
@@ -3067,7 +3255,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "dcd36c0f-8bd1-4bfa-8908-75c721ba9699")
+			(tstamps "17b98f07-2dad-46a2-9f12-9b17baa4b37c")
 			(units
 				(unit
 					(name "A")
@@ -3121,7 +3309,64 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "16b2eaf4-0605-4a94-b934-baaeee45ea03")
+			(tstamps "e5daba88-cd3b-4ff4-8a2d-34e6a8474983")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "R16")
+			(value "10k")
+			(footprint "Resistor_SMD:R_0402_1005Metric")
+			(fields
+				(field
+					(name "Footprint") "Resistor_SMD:R_0402_1005Metric")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description")
+				)
+			)
+			(libsource
+				(lib "Device")
+				(part "R")
+				(description "Resistor")
+			)
+			(property
+				(name "Sheetname")
+				(value "front")
+			)
+			(property
+				(name "Sheetfile")
+				(value "front.kicad_sch")
+			)
+			(property
+				(name "dnp")
+			)
+			(property
+				(name "ki_keywords")
+				(value "R res resistor")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "R_*")
+			)
+			(sheetpath
+				(names "/")
+				(tstamps "/")
+			)
+			(tstamps "6c7936e1-4fe6-426c-bb42-1168f8c9c51f")
 			(units
 				(unit
 					(name "A")
@@ -3175,7 +3420,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "2a63e147-82cb-40eb-bf4b-ba7fb7c48756")
+			(tstamps "09890699-64a7-4743-9e00-3d56daad3a50")
 			(units
 				(unit
 					(name "A")
@@ -3189,7 +3434,7 @@
 		)
 		(comp
 			(ref "TP2")
-			(value "FRONT_3V3")
+			(value "FRONT_2V8")
 			(footprint "TestPoint:TestPoint_Pad_D1.0mm")
 			(fields
 				(field
@@ -3226,7 +3471,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "29415efa-8230-4bb1-a537-10315a6ea5a7")
+			(tstamps "0635bc5a-44b4-4ddf-8c48-52d75b5519eb")
 			(units
 				(unit
 					(name "A")
@@ -3277,7 +3522,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "cea6e661-327d-4a38-9f6c-27c306631187")
+			(tstamps "a9050c8f-d2c2-48e9-9ba1-eee43b74392f")
 			(units
 				(unit
 					(name "A")
@@ -3328,7 +3573,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "cde2a2c9-1d9d-411e-a86d-4e4468a047d9")
+			(tstamps "ef2e7c16-e951-4a61-b794-9c6097b3c787")
 			(units
 				(unit
 					(name "A")
@@ -3379,7 +3624,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "db045be0-24cc-4fb0-a629-3407a7dbac3c")
+			(tstamps "30bb698e-4547-4a5f-8a01-649324c2b5af")
 			(units
 				(unit
 					(name "A")
@@ -3430,7 +3675,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "65c00156-d9b0-41ca-a222-59eb8a5a7236")
+			(tstamps "de6adbc4-0103-4759-a6c8-ac603e979f7c")
 			(units
 				(unit
 					(name "A")
@@ -3481,7 +3726,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "c55492a9-999d-47eb-a7b5-94b8ffe13c54")
+			(tstamps "c5cd595a-edec-47de-a1ba-e154675d8b60")
 			(units
 				(unit
 					(name "A")
@@ -3532,7 +3777,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "d09760be-2cb6-4aca-acd2-bbfa544d2972")
+			(tstamps "ab4b3b08-b03d-498c-9127-f76dda8cb139")
 			(units
 				(unit
 					(name "A")
@@ -3583,7 +3828,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "8ed9a8e8-e6cb-40b8-b81c-5966e929d2cc")
+			(tstamps "34052dbf-ed78-4eb7-9e22-a15313c33cfb")
 			(units
 				(unit
 					(name "A")
@@ -3634,7 +3879,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "49dca03f-3c7d-485c-bf3d-334dba76e921")
+			(tstamps "0ab0fe78-a40d-4b8d-8db8-97e942b1d6c6")
 			(units
 				(unit
 					(name "A")
@@ -3685,7 +3930,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "b5afa107-7a50-4c52-b378-8ba2734f1c48")
+			(tstamps "850ee2b6-eca9-485b-badc-238924294df3")
 			(units
 				(unit
 					(name "A")
@@ -3736,7 +3981,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "b231a306-a503-49cc-b518-69bc9a280a74")
+			(tstamps "37b8bede-85da-41ec-9452-b36819b95d8a")
 			(units
 				(unit
 					(name "A")
@@ -3787,7 +4032,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "f055a499-7782-4d92-aa8a-5b6f37565cef")
+			(tstamps "11bd4c0f-e285-428c-84f3-699fdf3d02a5")
 			(units
 				(unit
 					(name "A")
@@ -3838,7 +4083,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "5048f21c-cfe6-4fb6-a099-5a611b5312a2")
+			(tstamps "771654d3-4a7f-4dd9-82a5-50bbde525024")
 			(units
 				(unit
 					(name "A")
@@ -3889,7 +4134,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "454f5f5a-9446-4bb2-918a-4cb4f4e7b98d")
+			(tstamps "5c8c36e2-e016-4fa0-bd27-998f4de565bc")
 			(units
 				(unit
 					(name "A")
@@ -3940,7 +4185,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "74eda610-976f-47c1-98f2-91961ffeea68")
+			(tstamps "f94c22b8-c237-4542-b310-525ebaeeac44")
 			(units
 				(unit
 					(name "A")
@@ -3991,7 +4236,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "f65fc467-3431-482b-8d69-62feefe9b4ad")
+			(tstamps "8b150e85-e325-4730-bde7-3548acc01da1")
 			(units
 				(unit
 					(name "A")
@@ -4042,7 +4287,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "c0a93351-202e-4c07-8370-6207faa805c6")
+			(tstamps "4301ddc2-556f-402f-9757-fe4e3dc4cb25")
 			(units
 				(unit
 					(name "A")
@@ -4093,7 +4338,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "05dee040-663a-4278-b405-339545c36ba0")
+			(tstamps "717ba206-08a1-4584-94ca-6126046ac61b")
 			(units
 				(unit
 					(name "A")
@@ -4144,7 +4389,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "665b256d-7e06-41cd-b2e4-2191e164b4bd")
+			(tstamps "8ae922e0-28fa-4334-890d-6880da2e9e19")
 			(units
 				(unit
 					(name "A")
@@ -4195,7 +4440,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "86f18f0c-fad5-48a3-ace9-8c15a8b13ea3")
+			(tstamps "f2df7293-6cb9-4628-9d95-c2bbd4659540")
 			(units
 				(unit
 					(name "A")
@@ -4246,7 +4491,58 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "9d6f1414-b9e0-40fe-b803-eb97b39c7a1e")
+			(tstamps "c62db4eb-281d-4581-b253-a5050f853919")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "TP23")
+			(value "CAM_1V8")
+			(footprint "TestPoint:TestPoint_Pad_D1.0mm")
+			(fields
+				(field
+					(name "Footprint") "TestPoint:TestPoint_Pad_D1.0mm")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description")
+				)
+			)
+			(libsource
+				(lib "Connector")
+				(part "TestPoint")
+				(description "test point")
+			)
+			(property
+				(name "Sheetname")
+				(value "front")
+			)
+			(property
+				(name "Sheetfile")
+				(value "front.kicad_sch")
+			)
+			(property
+				(name "ki_keywords")
+				(value "test point tp")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "Pin* Test*")
+			)
+			(sheetpath
+				(names "/")
+				(tstamps "/")
+			)
+			(tstamps "6b69ad38-5aff-41e6-b9e7-287b38b39e13")
 			(units
 				(unit
 					(name "A")
@@ -4260,13 +4556,13 @@
 		)
 		(comp
 			(ref "U1")
-			(value "RT9013-33GB")
+			(value "RT9013-28GB")
 			(footprint "Package_TO_SOT_SMD:SOT-23-5")
 			(fields
 				(field
-					(name "MPN") "Richtek RT9013-33GB (LCSC C47773) / alt Diodes AP2112K-3.3")
+					(name "MPN") "Richtek RT9013-28GB (stock check pending)")
 				(field
-					(name "Note") "pin4 BP left open (optional bypass)")
+					(name "Note") "symbol AP2112K has same SOT-23-5 pinout; pin4 = NC (DS9013, V-004 R12)")
 				(field
 					(name "Footprint") "Package_TO_SOT_SMD:SOT-23-5")
 				(field
@@ -4283,11 +4579,11 @@
 			)
 			(property
 				(name "MPN")
-				(value "Richtek RT9013-33GB (LCSC C47773) / alt Diodes AP2112K-3.3")
+				(value "Richtek RT9013-28GB (stock check pending)")
 			)
 			(property
 				(name "Note")
-				(value "pin4 BP left open (optional bypass)")
+				(value "symbol AP2112K has same SOT-23-5 pinout; pin4 = NC (DS9013, V-004 R12)")
 			)
 			(property
 				(name "Sheetname")
@@ -4309,7 +4605,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "44d314a6-3f5d-4001-b553-9f2cffb35eaa")
+			(tstamps "56c8434c-cb50-44ba-99c9-ac4b5f8b0fd8")
 			(units
 				(unit
 					(name "A")
@@ -4384,7 +4680,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "e2a1cf8a-c2bb-4fb8-80be-e3f870243898")
+			(tstamps "38b63ecc-82fd-472b-940e-864568c49a8e")
 			(units
 				(unit
 					(name "A")
@@ -4465,7 +4761,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "4e192ba6-7775-4b4d-ac07-ba313d2833ed")
+			(tstamps "215a3106-e6ba-4e8e-bb9d-9652ea75b0fb")
 			(units
 				(unit
 					(name "A")
@@ -4537,7 +4833,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "d351ac3c-bb81-4f58-a384-ac43ccbc89c6")
+			(tstamps "7def1810-8cd0-455f-9537-aa8322b2d94a")
 			(units
 				(unit
 					(name "A")
@@ -4627,7 +4923,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "e1d3747f-5b46-46d7-843f-bee2968dd345")
+			(tstamps "1950fe77-9dda-4e26-89d5-502edd3c866c")
 			(units
 				(unit
 					(name "A")
@@ -4714,7 +5010,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "c2708450-2037-4e10-bf57-99249a850696")
+			(tstamps "7b7772ad-0bdf-4824-a4f8-4cf0924cfd5d")
 			(units
 				(unit
 					(name "A")
@@ -5872,6 +6168,42 @@
 			)
 		)
 		(libpart
+			(lib "Transistor_FET")
+			(part "Q_PMOS_GSD")
+			(description "P-MOSFET transistor, gate/source/drain")
+			(fields
+				(field
+					(name "Reference") "Q")
+				(field
+					(name "Value") "Q_PMOS_GSD")
+				(field
+					(name "Footprint")
+				)
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description") "P-MOSFET transistor, gate/source/drain")
+			)
+			(pins
+				(pin
+					(num "1")
+					(name "G")
+					(type "input")
+				)
+				(pin
+					(num "2")
+					(name "S")
+					(type "passive")
+				)
+				(pin
+					(num "3")
+					(name "D")
+					(type "passive")
+				)
+			)
+		)
+		(libpart
 			(lib "openhw")
 			(part "LTR-329ALS-01")
 			(description "Ambient light sensor, I2C 0x29, VDD 2.4-3.6V, VIO 1.7-3.6V, no INT pin (DS86-2014-0006 Rev C)")
@@ -6057,6 +6389,49 @@
 		)
 		(net
 			(code "3")
+			(name "/CAM_1V8")
+			(class "PWR_LOGIC")
+			(node
+				(ref "C11")
+				(pin "1")
+				(pintype "passive")
+			)
+			(node
+				(ref "C18")
+				(pin "1")
+				(pintype "passive")
+			)
+			(node
+				(ref "Q6")
+				(pin "3")
+				(pinfunction "D_3")
+				(pintype "passive")
+			)
+			(node
+				(ref "R10")
+				(pin "1")
+				(pintype "passive")
+			)
+			(node
+				(ref "R9")
+				(pin "1")
+				(pintype "passive")
+			)
+			(node
+				(ref "TP23")
+				(pin "1")
+				(pinfunction "1_1")
+				(pintype "passive")
+			)
+			(node
+				(ref "X1")
+				(pin "4")
+				(pinfunction "Vdd_4")
+				(pintype "power_in")
+			)
+		)
+		(net
+			(code "4")
 			(name "/CAM_AVDD")
 			(class "Default")
 			(node
@@ -6095,9 +6470,15 @@
 			)
 		)
 		(net
-			(code "4")
+			(code "5")
 			(name "/CAM_EN")
 			(class "Default")
+			(node
+				(ref "D3")
+				(pin "1")
+				(pinfunction "K_1")
+				(pintype "passive")
+			)
 			(node
 				(ref "J1")
 				(pin "48")
@@ -6134,7 +6515,7 @@
 			)
 		)
 		(net
-			(code "5")
+			(code "6")
 			(name "/CAM_I2C2_SCL")
 			(class "Default")
 			(node
@@ -6168,7 +6549,7 @@
 			)
 		)
 		(net
-			(code "6")
+			(code "7")
 			(name "/CAM_I2C2_SDA")
 			(class "Default")
 			(node
@@ -6202,7 +6583,7 @@
 			)
 		)
 		(net
-			(code "7")
+			(code "8")
 			(name "/CAM_IOVDD")
 			(class "Default")
 			(node
@@ -6230,7 +6611,7 @@
 			)
 		)
 		(net
-			(code "8")
+			(code "9")
 			(name "/CAM_MCLK")
 			(class "Default")
 			(node
@@ -6252,7 +6633,7 @@
 			)
 		)
 		(net
-			(code "9")
+			(code "10")
 			(name "/CAM_PG")
 			(class "Default")
 			(node
@@ -6268,6 +6649,12 @@
 				(pintype "passive")
 			)
 			(node
+				(ref "Q6")
+				(pin "1")
+				(pinfunction "G_1")
+				(pintype "input")
+			)
+			(node
 				(ref "R4")
 				(pin "2")
 				(pintype "passive")
@@ -6279,7 +6666,7 @@
 			)
 		)
 		(net
-			(code "10")
+			(code "11")
 			(name "/CAM_PG_AV")
 			(class "Default")
 			(node
@@ -6300,7 +6687,7 @@
 			)
 		)
 		(net
-			(code "11")
+			(code "12")
 			(name "/CAM_RESET")
 			(class "Default")
 			(node
@@ -6309,9 +6696,20 @@
 				(pintype "passive")
 			)
 			(node
+				(ref "D3")
+				(pin "2")
+				(pinfunction "A_2")
+				(pintype "passive")
+			)
+			(node
 				(ref "J3")
 				(pin "24")
 				(pinfunction "Pin_24_24")
+				(pintype "passive")
+			)
+			(node
+				(ref "R16")
+				(pin "1")
 				(pintype "passive")
 			)
 			(node
@@ -6327,7 +6725,7 @@
 			)
 		)
 		(net
-			(code "12")
+			(code "13")
 			(name "/CAM_RX0_0N")
 			(class "CSI_100")
 			(node
@@ -6344,7 +6742,7 @@
 			)
 		)
 		(net
-			(code "13")
+			(code "14")
 			(name "/CAM_RX0_0P")
 			(class "CSI_100")
 			(node
@@ -6361,7 +6759,7 @@
 			)
 		)
 		(net
-			(code "14")
+			(code "15")
 			(name "/CAM_RX0_1N")
 			(class "CSI_100")
 			(node
@@ -6378,7 +6776,7 @@
 			)
 		)
 		(net
-			(code "15")
+			(code "16")
 			(name "/CAM_RX0_1P")
 			(class "CSI_100")
 			(node
@@ -6395,7 +6793,7 @@
 			)
 		)
 		(net
-			(code "16")
+			(code "17")
 			(name "/CAM_RX0_CLKN")
 			(class "CSI_100")
 			(node
@@ -6412,7 +6810,7 @@
 			)
 		)
 		(net
-			(code "17")
+			(code "18")
 			(name "/CAM_RX0_CLKP")
 			(class "CSI_100")
 			(node
@@ -6429,14 +6827,9 @@
 			)
 		)
 		(net
-			(code "18")
+			(code "19")
 			(name "/CORE_1V8")
 			(class "PWR_LOGIC")
-			(node
-				(ref "C11")
-				(pin "1")
-				(pintype "passive")
-			)
 			(node
 				(ref "J1")
 				(pin "49")
@@ -6456,7 +6849,13 @@
 				(pintype "passive")
 			)
 			(node
-				(ref "R10")
+				(ref "Q6")
+				(pin "2")
+				(pinfunction "S_2")
+				(pintype "passive")
+			)
+			(node
+				(ref "R12")
 				(pin "1")
 				(pintype "passive")
 			)
@@ -6466,25 +6865,14 @@
 				(pintype "passive")
 			)
 			(node
-				(ref "R9")
-				(pin "1")
-				(pintype "passive")
-			)
-			(node
 				(ref "TP3")
 				(pin "1")
 				(pinfunction "1_1")
 				(pintype "passive")
 			)
-			(node
-				(ref "X1")
-				(pin "4")
-				(pinfunction "Vdd_4")
-				(pintype "power_in")
-			)
 		)
 		(net
-			(code "19")
+			(code "20")
 			(name "/CORE_3V3")
 			(class "PWR_LOGIC")
 			(node
@@ -6529,9 +6917,9 @@
 			)
 		)
 		(net
-			(code "20")
-			(name "/FRONT_3V3")
-			(class "PWR_LOGIC")
+			(code "21")
+			(name "/FRONT_2V8")
+			(class "Default")
 			(node
 				(ref "C12")
 				(pin "1")
@@ -6583,7 +6971,7 @@
 			)
 		)
 		(net
-			(code "21")
+			(code "22")
 			(name "/GND")
 			(class "Default")
 			(node
@@ -6628,6 +7016,11 @@
 			)
 			(node
 				(ref "C17")
+				(pin "2")
+				(pintype "passive")
+			)
+			(node
+				(ref "C18")
 				(pin "2")
 				(pintype "passive")
 			)
@@ -6882,7 +7275,7 @@
 				(pintype "passive")
 			)
 			(node
-				(ref "R12")
+				(ref "R16")
 				(pin "2")
 				(pintype "passive")
 			)
@@ -6981,7 +7374,7 @@
 			)
 		)
 		(net
-			(code "22")
+			(code "23")
 			(name "/ICR_A")
 			(class "Default")
 			(node
@@ -7004,7 +7397,7 @@
 			)
 		)
 		(net
-			(code "23")
+			(code "24")
 			(name "/ICR_B")
 			(class "Default")
 			(node
@@ -7027,7 +7420,7 @@
 			)
 		)
 		(net
-			(code "24")
+			(code "25")
 			(name "/ICR_NSLEEP")
 			(class "Default")
 			(node
@@ -7043,7 +7436,7 @@
 			)
 		)
 		(net
-			(code "25")
+			(code "26")
 			(name "/IRA_K")
 			(class "Default")
 			(node
@@ -7060,7 +7453,7 @@
 			)
 		)
 		(net
-			(code "26")
+			(code "27")
 			(name "/IRA_M")
 			(class "Default")
 			(node
@@ -7077,7 +7470,7 @@
 			)
 		)
 		(net
-			(code "27")
+			(code "28")
 			(name "/IRA_SET")
 			(class "Default")
 			(node
@@ -7105,7 +7498,7 @@
 			)
 		)
 		(net
-			(code "28")
+			(code "29")
 			(name "/IRA_SW")
 			(class "Default")
 			(node
@@ -7140,7 +7533,7 @@
 			)
 		)
 		(net
-			(code "29")
+			(code "30")
 			(name "/IRB_K")
 			(class "Default")
 			(node
@@ -7157,7 +7550,7 @@
 			)
 		)
 		(net
-			(code "30")
+			(code "31")
 			(name "/IRB_M")
 			(class "Default")
 			(node
@@ -7174,7 +7567,7 @@
 			)
 		)
 		(net
-			(code "31")
+			(code "32")
 			(name "/IRB_SET")
 			(class "Default")
 			(node
@@ -7196,7 +7589,7 @@
 			)
 		)
 		(net
-			(code "32")
+			(code "33")
 			(name "/IRB_SW")
 			(class "Default")
 			(node
@@ -7225,7 +7618,7 @@
 			)
 		)
 		(net
-			(code "33")
+			(code "34")
 			(name "/IR_CTRL")
 			(class "Default")
 			(node
@@ -7254,7 +7647,7 @@
 			)
 		)
 		(net
-			(code "34")
+			(code "35")
 			(name "/IR_CUT")
 			(class "Default")
 			(node
@@ -7276,7 +7669,7 @@
 			)
 		)
 		(net
-			(code "35")
+			(code "36")
 			(name "/IR_PWM")
 			(class "Default")
 			(node
@@ -7293,7 +7686,7 @@
 			)
 			(node
 				(ref "R12")
-				(pin "1")
+				(pin "2")
 				(pintype "passive")
 			)
 			(node
@@ -7304,7 +7697,7 @@
 			)
 		)
 		(net
-			(code "36")
+			(code "37")
 			(name "/LIGHT_SENSE")
 			(class "Default")
 			(node
@@ -7332,7 +7725,7 @@
 			)
 		)
 		(net
-			(code "37")
+			(code "38")
 			(name "/MCLK_OSC")
 			(class "Default")
 			(node
@@ -7348,7 +7741,7 @@
 			)
 		)
 		(net
-			(code "38")
+			(code "39")
 			(name "/SPARE1")
 			(class "Default")
 			(node
@@ -7365,7 +7758,7 @@
 			)
 		)
 		(net
-			(code "39")
+			(code "40")
 			(name "/VIN")
 			(class "PWR_5V")
 			(node
@@ -7433,7 +7826,7 @@
 			)
 		)
 		(net
-			(code "40")
+			(code "41")
 			(name "/WH_PWM")
 			(class "Default")
 			(node
@@ -7455,7 +7848,7 @@
 			)
 		)
 		(net
-			(code "41")
+			(code "42")
 			(name "unconnected-(J1-Pin_1-Pad1)")
 			(class "Default")
 			(node
@@ -7466,7 +7859,7 @@
 			)
 		)
 		(net
-			(code "42")
+			(code "43")
 			(name "unconnected-(J1-Pin_3-Pad3)")
 			(class "Default")
 			(node
@@ -7477,7 +7870,7 @@
 			)
 		)
 		(net
-			(code "43")
+			(code "44")
 			(name "unconnected-(J1-Pin_4-Pad4)")
 			(class "Default")
 			(node
@@ -7488,7 +7881,7 @@
 			)
 		)
 		(net
-			(code "44")
+			(code "45")
 			(name "unconnected-(J1-Pin_6-Pad6)")
 			(class "Default")
 			(node
@@ -7499,7 +7892,7 @@
 			)
 		)
 		(net
-			(code "45")
+			(code "46")
 			(name "unconnected-(J1-Pin_19-Pad19)")
 			(class "Default")
 			(node
@@ -7510,7 +7903,7 @@
 			)
 		)
 		(net
-			(code "46")
+			(code "47")
 			(name "unconnected-(J1-Pin_21-Pad21)")
 			(class "Default")
 			(node
@@ -7521,7 +7914,7 @@
 			)
 		)
 		(net
-			(code "47")
+			(code "48")
 			(name "unconnected-(J1-Pin_23-Pad23)")
 			(class "Default")
 			(node
@@ -7532,7 +7925,7 @@
 			)
 		)
 		(net
-			(code "48")
+			(code "49")
 			(name "unconnected-(J1-Pin_25-Pad25)")
 			(class "Default")
 			(node
@@ -7543,7 +7936,7 @@
 			)
 		)
 		(net
-			(code "49")
+			(code "50")
 			(name "unconnected-(J1-Pin_27-Pad27)")
 			(class "Default")
 			(node
@@ -7554,7 +7947,7 @@
 			)
 		)
 		(net
-			(code "50")
+			(code "51")
 			(name "unconnected-(J1-Pin_28-Pad28)")
 			(class "Default")
 			(node
@@ -7565,7 +7958,7 @@
 			)
 		)
 		(net
-			(code "51")
+			(code "52")
 			(name "unconnected-(J1-Pin_29-Pad29)")
 			(class "Default")
 			(node
@@ -7576,7 +7969,7 @@
 			)
 		)
 		(net
-			(code "52")
+			(code "53")
 			(name "unconnected-(J1-Pin_30-Pad30)")
 			(class "Default")
 			(node
@@ -7587,7 +7980,7 @@
 			)
 		)
 		(net
-			(code "53")
+			(code "54")
 			(name "unconnected-(J1-Pin_31-Pad31)")
 			(class "Default")
 			(node
@@ -7598,7 +7991,7 @@
 			)
 		)
 		(net
-			(code "54")
+			(code "55")
 			(name "unconnected-(J1-Pin_40-Pad40)")
 			(class "Default")
 			(node
@@ -7609,7 +8002,7 @@
 			)
 		)
 		(net
-			(code "55")
+			(code "56")
 			(name "unconnected-(J1-Pin_44-Pad44)")
 			(class "Default")
 			(node
@@ -7620,7 +8013,7 @@
 			)
 		)
 		(net
-			(code "56")
+			(code "57")
 			(name "unconnected-(J1-Pin_50-Pad50)")
 			(class "Default")
 			(node
@@ -7631,7 +8024,7 @@
 			)
 		)
 		(net
-			(code "57")
+			(code "58")
 			(name "unconnected-(J1-Pin_52-Pad52)")
 			(class "Default")
 			(node
@@ -7642,7 +8035,7 @@
 			)
 		)
 		(net
-			(code "58")
+			(code "59")
 			(name "unconnected-(J1-Pin_54-Pad54)")
 			(class "Default")
 			(node
@@ -7653,7 +8046,7 @@
 			)
 		)
 		(net
-			(code "59")
+			(code "60")
 			(name "unconnected-(J1-Pin_56-Pad56)")
 			(class "Default")
 			(node
@@ -7664,7 +8057,7 @@
 			)
 		)
 		(net
-			(code "60")
+			(code "61")
 			(name "unconnected-(J1-Pin_58-Pad58)")
 			(class "Default")
 			(node
@@ -7675,7 +8068,7 @@
 			)
 		)
 		(net
-			(code "61")
+			(code "62")
 			(name "unconnected-(J1-Pin_60-Pad60)")
 			(class "Default")
 			(node
@@ -7686,7 +8079,7 @@
 			)
 		)
 		(net
-			(code "62")
+			(code "63")
 			(name "unconnected-(U1-NC-Pad4)")
 			(class "Default")
 			(node
@@ -7697,7 +8090,7 @@
 			)
 		)
 		(net
-			(code "63")
+			(code "64")
 			(name "unconnected-(U4-NC-Pad7)")
 			(class "Default")
 			(node
@@ -7708,7 +8101,7 @@
 			)
 		)
 		(net
-			(code "64")
+			(code "65")
 			(name "unconnected-(U5-NC-Pad7)")
 			(class "Default")
 			(node
