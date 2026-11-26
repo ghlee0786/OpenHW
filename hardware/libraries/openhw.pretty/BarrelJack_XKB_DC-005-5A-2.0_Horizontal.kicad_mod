@@ -3,7 +3,7 @@
 	(generator "pcbnew")
 	(generator_version "10.0")
 	(layer "F.Cu")
-	(descr "XKB DC-005-5A-2.0 DC jack 5.5x2.1, THT right angle. Pin spacing per XKB drawing Rev A1 as read by V-004 R6: 1-2 5.90, pin 3 at 3.0 / 4.70, slots 1.0x3.5. Derived from KiCad Connector_BarrelJack:BarrelJack_Horizontal (body outline kept, verify vs XKB drawing). Body per XKB X-DC-005-5A-2.0 Rev A1 2025-04-22: 14.0 x 9.0, front -13.6, rear +0.4 (R-009). 3D model is the KiCad generic 6.0-pitch jack (substitute).")
+	(descr "XKB DC-005-5A-2.0 DC jack 5.5x2.1, THT right angle. Pin spacing per XKB drawing Rev A1 as read by V-004 R6: 1-2 5.90, pin 3 at 3.0 / 4.70, slots 1.0x3.5. Derived from KiCad Connector_BarrelJack:BarrelJack_Horizontal (body outline kept, verify vs XKB drawing). Body per XKB X-DC-005-5A-2.0 Rev A1 2025-04-22: 14.0 x 9.0, front -13.6, rear +0.4 (R-009). 3D model is the KiCad generic 6.0-pitch jack (substitute). Silk keeps 0.2 inside a board edge at body front x=-13.6 (C-008).")
 	(tags "Power Jack")
 	(property "Reference" "REF**"
 		(at -8.45 5.75 0)
@@ -89,7 +89,7 @@
 		(uuid "2449a5ea-ba4a-4eaa-9a02-9999e733925e")
 	)
 	(fp_line
-		(start -13.710 -4.610)
+		(start -13.300 -4.610)
 		(end 0.510 -4.610)
 		(stroke
 			(width 0.12)
@@ -119,7 +119,7 @@
 		(uuid "bdfb940e-d57c-4f64-b157-8a64a33616d1")
 	)
 	(fp_line
-		(start -13.710 4.610)
+		(start -13.300 4.610)
 		(end -5.360 4.610)
 		(stroke
 			(width 0.12)
@@ -137,16 +137,6 @@
 		)
 		(layer "F.SilkS")
 		(uuid "72bb0bfb-cbbe-42c2-96d8-6dc1d0626175")
-	)
-	(fp_line
-		(start -13.710 -4.610)
-		(end -13.710 4.610)
-		(stroke
-			(width 0.12)
-			(type solid)
-		)
-		(layer "F.SilkS")
-		(uuid "9594612b-c4d5-490b-bf0e-205f1dcc545f")
 	)
 	(pad "1" thru_hole rect
 		(at 0 0)
