@@ -9,7 +9,7 @@
    "R2",
    "R3"
   ],
-  "schematic_commit": "a61dc63"
+  "schematic_commit": "7760f38"
  },
  "model": {
   "source": "계산 (ngspice .op)",
@@ -25,16 +25,16 @@
    "op": "<=",
    "limit": 5.25,
    "unit": "V",
-   "value": 5.29779,
+   "value": 5.19578,
    "corner": "VFB max · R ±1%",
-   "pass": false
+   "pass": true
   },
   {
    "name": "출력 최소 (VFB 0.581, R2 −1%, R3 +1%)",
    "op": ">=",
    "limit": 4.75,
    "unit": "V",
-   "value": 4.86292,
+   "value": 4.76972,
    "corner": "VFB min · R ±1%",
    "pass": true
   },
@@ -43,12 +43,12 @@
    "op": "<=",
    "limit": 6.0,
    "unit": "V",
-   "value": 5.29779,
+   "value": 5.19578,
    "corner": "",
    "pass": true
   }
  ],
- "verdict": "fail",
+ "verdict": "pass",
  "waveforms": [],
  "netlist": "hardware/sim/SIM-B1.cir",
  "tool": {
@@ -57,5 +57,5 @@
   "sha256": "59225971… (7z, firmware 설치·검증 — orch O-81)",
   "path": "C:/Users/gh/tools/ngspice/47/Spice64/bin/ngspice_con.exe"
  },
- "notes": "전형값 5.077 V. 대안 R3 = 13.5k(E192, 1%) 이면 4.799~5.228 V. VFB 공차 ±2.5% 는 온도 전 범위 값이며 Figure 5-5 의 전형 온도 변화는 ±0.5% 안."
+ "notes": "R2 78.7k / R3 10.7k (C-019), 전형값 4.980 V. C-018 까지 100k/13.3k 는 최악 5.298 V 로 fail. 코어 VIN 저전압 차단 3.0 V 까지 여유 1.77 V. VFB 공차 ±2.5% 는 온도 전 범위 값."
 }

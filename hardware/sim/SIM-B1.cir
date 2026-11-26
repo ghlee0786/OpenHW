@@ -1,8 +1,8 @@
-* SIM-B1 TPS54302 FB 분압 DC (VFB 최대·최소 × R2 100k/R3 13.3k ±1%) — .op
+* SIM-B1 TPS54302 FB 분압 DC (VFB 최대·최소 × R2 78.7k/R3 10.7k ±1%) — .op
 Vref1 r1 0 0.611
 Vref2 r2 0 0.581
-Eo1 o1 0 VALUE = { v(r1) * (1 + 101k / 13.167k) }
-Eo2 o2 0 VALUE = { v(r2) * (1 + 99k / 13.433k) }
+Eo1 o1 0 VALUE = { v(r1) * (1 + 79487 / 10593) }
+Eo2 o2 0 VALUE = { v(r2) * (1 + 77913 / 10807) }
 .control
 op
 let vmax = v(o1)

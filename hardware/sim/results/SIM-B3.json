@@ -13,7 +13,7 @@
    "C23",
    "C19"
   ],
-  "schematic_commit": "a61dc63"
+  "schematic_commit": "7760f38"
  },
  "model": {
   "source": "데이터시트 동작 모델 (평균 전류 모드)",
@@ -29,7 +29,7 @@
    "op": "<=",
    "limit": 0.25,
    "unit": "V",
-   "value": 0.138408,
+   "value": 0.141782,
    "corner": "VIN 12 V, C 유효 69.9 µF",
    "pass": true
   },
@@ -38,7 +38,7 @@
    "op": "<=",
    "limit": 40000.0,
    "unit": "Hz",
-   "value": 19985.6315,
+   "value": 18226.5886,
    "corner": "1.3 A",
    "pass": true
   },
@@ -47,7 +47,7 @@
    "op": ">=",
    "limit": 45,
    "unit": "deg",
-   "value": 107.709297,
+   "value": 99.860872,
    "corner": "1.3 A",
    "pass": true
   }

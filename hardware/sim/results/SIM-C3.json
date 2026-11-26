@@ -16,7 +16,7 @@
    "R22",
    "C21"
   ],
-  "schematic_commit": "a61dc63"
+  "schematic_commit": "7760f38"
  },
  "model": {
   "source": "레벨 1 MOSFET(전형) + 코어 레일 등가(가정)",
@@ -32,16 +32,16 @@
    "op": "<=",
    "limit": 0.166,
    "unit": "V",
-   "value": 0.229876,
-   "corner": "Q1 게이트 직접(R4 100k / Q3), Q2 게이트 R5 10k",
-   "pass": false
+   "value": 0.046189,
+   "corner": "C-019: Q1 게이트 R20 1k + C20 4.7 nF, Q2 R5 10k + C21 4.7 nF (밀러)",
+   "pass": true
   },
   {
    "name": "CAM_EN 켬: CORE_1V8 강하 (C-018 R17 4.7k·R18·C19 4.7n)",
    "op": "<=",
    "limit": 0.09,
    "unit": "V",
-   "value": 0.017633,
+   "value": 0.017634,
    "corner": "",
    "pass": true
   },
@@ -55,7 +55,7 @@
    "pass": true
   }
  ],
- "verdict": "fail",
+ "verdict": "pass",
  "waveforms": [
   "hardware/sim/png/SIM-C3-cam.png",
   "hardware/sim/png/SIM-C3-sd.png"

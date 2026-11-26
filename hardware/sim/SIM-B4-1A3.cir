@@ -30,8 +30,8 @@ Vin vin 0 PWL(0 0 100u 12)
 X1 vin sw fb TPS54302 params: L=1e-05 FSW=400000.0
 Cout sw ce 6.993e-05
 Resr ce 0 2m
-Rtop vs fb 100k
-Rbot fb 0 13.3k
+Rtop vs fb 78700
+Rbot fb 0 10700
 Cff vs fb 75p
 Vinj sw vs 0
 Rld sw 0 3.846

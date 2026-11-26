@@ -7,7 +7,7 @@
   "refs": [
    "U2"
   ],
-  "schematic_commit": "a61dc63"
+  "schematic_commit": "7760f38"
  },
  "model": {
   "source": "데이터시트 동작 모델 (문턱 비교기)",

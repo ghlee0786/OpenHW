@@ -11,7 +11,8 @@ import matplotlib.pyplot as plt
 HERE = os.path.dirname(os.path.abspath(__file__))
 NG = os.environ.get('NGSPICE', r'C:\Users\gh\tools\ngspice\47\Spice64\bin\ngspice_con.exe')
 CRITERIA_COMMIT = '64bde61'  # d00a3ac + A4(781961b) + 개정 1 ef3c0d0 + 개정 2 (R-021 GST40A12-P1J)
-SCH_COMMIT = 'a61dc63'  # C-018 (R6 6.04k, R17 4.7k, C19 4.7nF)
+SCH_COMMIT = '7760f38'  # C-019 (R2 78.7k / R3 10.7k, 전면 R20·C20·C21) — C-018 R6 6.04k 포함
+FB_R2, FB_R3 = 78.7e3, 10.7e3   # 캐리어 TPS54302 FB 분압 (C-019; C-018 까지 100k/13.3k)
 TOOL = {'name': 'ngspice', 'version': 'ngspice-47 (공식 SourceForge ng-spice-rework/47/ngspice-47_64.7z)',
         'sha256': '59225971… (7z, firmware 설치·검증 — orch O-81)', 'path': NG.replace('\\', '/')}
 for d in ('results', 'png'): os.makedirs(os.path.join(HERE, d), exist_ok=True)
@@ -293,13 +294,13 @@ def sim_b():
     vals = []
     for vfb in BK['VFB']:
         for s in (-1, 1):
-            r2 = 100e3 * (1 + 0.01 * s); r3 = 13.3e3 * (1 - 0.01 * s)
+            r2 = FB_R2 * (1 + 0.01 * s); r3 = FB_R3 * (1 - 0.01 * s)
             vals.append(vfb * (1 + r2 / r3))
-    net = f"""* SIM-B1 TPS54302 FB 분압 DC (VFB 최대·최소 × R2 100k/R3 13.3k ±1%) — .op
+    net = f"""* SIM-B1 TPS54302 FB 분압 DC (VFB 최대·최소 × R2 {FB_R2 / 1e3:g}k/R3 {FB_R3 / 1e3:g}k ±1%) — .op
 Vref1 r1 0 {BK['VFB'][2]}
 Vref2 r2 0 {BK['VFB'][0]}
-Eo1 o1 0 VALUE = {{ v(r1) * (1 + 101k / 13.167k) }}
-Eo2 o2 0 VALUE = {{ v(r2) * (1 + 99k / 13.433k) }}
+Eo1 o1 0 VALUE = {{ v(r1) * (1 + {FB_R2 * 1.01:.6g} / {FB_R3 * 0.99:.6g}) }}
+Eo2 o2 0 VALUE = {{ v(r2) * (1 + {FB_R2 * 0.99:.6g} / {FB_R3 * 1.01:.6g}) }}
 .control
 op
 let vmax = v(o1)
@@ -315,15 +316,13 @@ quit
     tmp = tempfile.mkdtemp(); subprocess.run([NG, '-b', os.path.join(HERE, 'SIM-B1.cir')], cwd=tmp, capture_output=True)
     sv = {l.split()[0]: float(l.split()[1]) for l in open(os.path.join(tmp, 'b1.dat'))}
     vmax, vmin = sv['vmax'], sv['vmin']
-    # 제안 대안(R3 13.5k E192) 도 같이 계산해 notes 에
-    alt = (BK['VFB'][0] * (1 + 99e3 / (13.5e3 * 1.01)), BK['VFB'][2] * (1 + 101e3 / (13.5e3 * 0.99)))
     out.append(save('SIM-B1', 'TPS54302 출력 전압 공차 (FB 분압 최악)', 'carrier', ['U1', 'R2', 'R3'],
         {'source': '계산 (ngspice .op)', 'url': DS['TPS54302'], 'license': '—', 'behavioral': True, 'basis': 'SLVSDG6C 5.5 VFB 0.581/0.596/0.611 V (−40~125 °C); Equation 3 VOUT = VFB(1+R2/R3)'},
         [chk('출력 최대 (VFB 0.611, R2 +1%, R3 −1%)', '<=', 5.25, vmax, 'V', 'VFB max · R ±1%'),
          chk('출력 최소 (VFB 0.581, R2 −1%, R3 +1%)', '>=', 4.75, vmin, 'V', 'VFB min · R ±1%'),
          chk('출력 최대 < D7 SMBJ6.0A VRWM', '<=', 6.0, vmax, 'V', '')],
         [], 'SIM-B1.cir',
-        f'전형값 {BK["VFB"][1] * (1 + 100 / 13.3):.3f} V. 대안 R3 = 13.5k(E192, 1%) 이면 {alt[0]:.3f}~{alt[1]:.3f} V. VFB 공차 ±2.5% 는 온도 전 범위 값이며 Figure 5-5 의 전형 온도 변화는 ±0.5% 안.'))
+        f'R2 {FB_R2 / 1e3:g}k / R3 {FB_R3 / 1e3:g}k (C-019), 전형값 {BK["VFB"][1] * (1 + FB_R2 / FB_R3):.3f} V. C-018 까지 100k/13.3k 는 최악 5.298 V 로 fail. 코어 VIN 저전압 차단 3.0 V 까지 여유 {vmin - 3.0:.2f} V. VFB 공차 ±2.5% 는 온도 전 범위 값.'))
     # --- B2 리플 (스위칭 모델)
     vin = VIN12[2]; L = L1['L'] * (1 - L1['TOL']); fsw = BK['FSW'][0]; iout = 1.3
     D = (5.0 + iout * (BK['RLS'] + L1['DCR'])) / (vin + iout * (BK['RLS'] - BK['RHS']))
@@ -376,8 +375,8 @@ Vin vin 0 {vin}
 X1 vin sw fb TPS54302 params: L={L1['L']} FSW={BK['FSW'][1]}
 Cout sw ce {c:.4g}
 Resr ce 0 2m
-Rtop vs fb 100k
-Rbot fb 0 13.3k
+Rtop vs fb {FB_R2:g}
+Rbot fb 0 {FB_R3:g}
 Cff vs fb {cff}
 {extra}
 {analysis}
@@ -516,8 +515,8 @@ def sim_a4():
 {buck_subckt(BK['VFB'][1], BK['ILIM_HS'][0])}
 Xbk in12 v5 fb TPS54302 params: L={L1['L']} FSW={BK['FSW'][1]}
 Cv5 v5 0 {4 * 22e-6 * dcbias()[0]:.4g}
-Rtop v5 fb 100k
-Rbot fb 0 13.3k
+Rtop v5 fb {FB_R2:g}
+Rbot fb 0 {FB_R3:g}
 Cff v5 fb 75p
 Rld v5 0 {5 / 1.3:.4g}
 Vpwm pwm 0 PULSE(0 1 9m 1u 1u 0.5m 2m)
@@ -657,13 +656,16 @@ C33 c33 0 12u
 V18 s18 0 1.8
 R18p s18 c18 0.1
 C18p c18 0 8.5u
-* 전면 CAM_EN (1 ms): Q3 → CAM_PG, Q7 → CAM_1V8_PD
+* 전면 CAM_EN (1 ms): Q3 → CAM_PG (→ R20 1k → Q1, → R5 10k → Q2), Q7 → CAM_1V8_PD
 Ven en 0 PULSE(0 1 1m 1u 1u 1 2)
 R4 c33 pg 100k
 Sq3 pg 0 en 0 SQ
 R5 pg pgav 10k
-Mq1 iov pg c33 c33 PAO
-Cg1 pg c33 645p
+Rf20 pg pgio 1k
+Cf20 pgio iov 4.7n
+Mq1 iov pgio c33 c33 PAO
+Cg1 pgio c33 645p
+Cf21 pgav avd 4.7n
 Mq2 avd pgav c33 c33 PAO
 Cg2 pgav c33 645p
 C7 iov 0 1u
@@ -715,7 +717,7 @@ quit
     out.append(save('SIM-C3', '스위치 켬 순간 코어 레일 강하 (CAM_EN · SD0_PWR_EN)', 'carrier+front', ['front Q1', 'Q2', 'Q3', 'Q6', 'Q7', 'R18', 'C19', 'carrier Q2', 'R22', 'C21'],
         {'source': '레벨 1 MOSFET(전형) + 코어 레일 등가(가정)', 'url': DS['AO3401A'] + ' · ' + DS['DMG2305UX'] + ' · ' + DS['CORE'], 'license': '이 저장소 작성', 'behavioral': True,
          'basis': '코어 레일: 이상 전원 + 0.1 Ω(SIM-001b 와 같은 가정) + 로컬 C (코어 SCH 03 출력 C, DC 바이어스 감액 가정). 센서 레일 부하 30 mA, X1 450 Ω, SD 카드 10 µF·0.2 A (가정)'},
-        [chk('CAM_EN 켬: CORE_3V3 강하', '<=', 0.166, d33c, 'V', 'Q1 게이트 직접(R4 100k / Q3), Q2 게이트 R5 10k'),
+        [chk('CAM_EN 켬: CORE_3V3 강하', '<=', 0.166, d33c, 'V', 'C-019: Q1 게이트 R20 1k + C20 4.7 nF, Q2 R5 10k + C21 4.7 nF (밀러)'),
          chk('CAM_EN 켬: CORE_1V8 강하 (C-018 R17 4.7k·R18·C19 4.7n)', '<=', 0.09, d18, 'V', ''),
          chk('SD0_PWR_EN 켬: CORE_3V3 강하', '<=', 0.166, d33s, 'V', 'R22 47k / C21 100 nF')],
         pngs, 'SIM-C3.cir', f'기준선 CORE_3V3 {b33:.3f} V, CORE_1V8 {b18:.3f} V (0.1 Ω 경로 강하 포함). 코어 쪽 실제 디커플링(SoC 주변 C)은 더 크므로 강하는 이보다 작을 수 있다.'))
@@ -730,8 +732,8 @@ def sim_d():
 {buck_subckt(BK['VFB'][1], BK['ILIM_HS'][0])}
 Xbk in12 v5 fb TPS54302 params: L={L1['L']} FSW={BK['FSW'][1]}
 Cv5 v5 0 {4 * 22e-6 * dcbias()[0]:.4g}
-Rtop v5 fb 100k
-Rbot fb 0 13.3k
+Rtop v5 fb {FB_R2:g}
+Rbot fb 0 {FB_R3:g}
 Cff v5 fb 75p
 * 코어: 5V 부하 0.3 A (3V3 뜬 뒤), 3V3 = VIN > 4 V 뒤 1 ms 램프 (SY80004 소프트 스타트 가정), 1V8 = 3V3 따라 (SGM2036)
 Bon33 e33 0 V = v(v5) > 4.0 ? 1 : 0

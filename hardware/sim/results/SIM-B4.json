@@ -7,7 +7,7 @@
   "refs": [
    "U1"
   ],
-  "schematic_commit": "a61dc63"
+  "schematic_commit": "7760f38"
  },
  "model": {
   "source": "데이터시트 동작 모델 (평균 전류 모드)",
@@ -23,7 +23,7 @@
    "op": "<=",
    "limit": 4.0,
    "unit": "%",
-   "value": 0.081204,
+   "value": 0.102987,
    "corner": "",
    "pass": true
   },
@@ -32,7 +32,7 @@
    "op": "<=",
    "limit": 10.0,
    "unit": "ms",
-   "value": 4.793,
+   "value": 4.791,
    "corner": "",
    "pass": true
   },
@@ -41,7 +41,7 @@
    "op": "<=",
    "limit": 4.0,
    "unit": "%",
-   "value": 0.104635,
+   "value": 0.110269,
    "corner": "",
    "pass": true
   },
@@ -50,7 +50,7 @@
    "op": "<=",
    "limit": 10.0,
    "unit": "ms",
-   "value": 4.793,
+   "value": 4.791,
    "corner": "",
    "pass": true
   }
