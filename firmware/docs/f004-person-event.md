@@ -8,7 +8,7 @@
 | 감지 앱 `persond` | 완료. 호스트 시험 33/33, 통합 시험 16/16 통과 |
 | `daynight` 끄는 순서 수정 | 완료. 시험 40/40 통과 |
 | 이미지 빌드 | 종료 코드 0 |
-| **사람 감지 모델** | **미완료.** 라이선스가 확인된 모델이 없다. Apache-2.0 YOLOX-Nano를 변환했지만, 변환한 cvimodel이 호스트 모의 실행 검증에서 3회 연속 실패했다. 같은 원인으로 3회 실패하면 멈추는 규칙에 따라 중단했다. **이미지에 모델은 넣지 않았다** |
+| **사람 감지 모델** | **완료 (F-004c, 9절).** YOLOX-Nano(Apache-2.0)를 전체 BF16 cv181x cvimodel로 변환했다. 호스트 모의 검증에서 8.1 기준 K1~K5를 모두 통과했다(`verify rc=0`). 이미지 `out-f004c`에 들어 있다. 실물(HIL) 정확도와 FPS는 미확인이다 |
 
 - 보드가 없어 **추론 정확도·FPS·HIL은 미검증**이다.
 
@@ -141,7 +141,7 @@
 | F4-8 | 검증을 통과하지 못한 모델 | 이미지에 넣지 않는다 | 틀린 결과를 내는 모델을 출하하지 않는다 | — |
 
 ## 7. 미확인 / 남은 일
-- **모델:** F-004b(8절)에서 Transpose 앞 자르기로 1회 재변환했지만 **불합격**이었다. 모델 경로 **D**로 마감한다(모델 없이, bring-up 뒤로). 실제 원인은 Slice가 아니라 헤드 출력(obj 채널이 0)이다. 다음 시도는 orch·사용자가 결정한다.
+- **모델:** F-004c(9절)에서 전체 BF16 변환이 합격했다. 남은 일은 보드에서 다음을 확인하는 것이다: sscma-node가 BF16 cvimodel과 `[1,10647,6] f32` 출력을 받는지, 추론 FPS(BF16은 INT8보다 느리다), 정렬 프레임 입력.
 - **HIL:** sscma-node가 persond 요청으로 노드를 실제로 만들고 시작하는지, RTSP 재생, 추론 FPS, 이벤트 지연.
 - **Node-RED와 충돌:** 사용자가 Node-RED flow로 camera 노드를 따로 만들면 카메라가 겹친다. 지금 이미지에는 사용자 flow가 없다(`/home/recamera/.node-red/flows.json` 없음).
 - **야간 IR 영상에서의 정확도:** COCO(가시광) 가중치라 성능이 떨어질 수 있다.
@@ -278,3 +278,76 @@ ONNX 최고 점수가 0.66~0.93인 사람 이미지 10장에서도 cvimodel 최�
 - 그래프는 F-004b의 새 그래프(`7b6f254`, 채널 축 Slice)다. 변환한 cvimodel은 `models-candidate/`에 둔다.
 - 모델 파일 이름을 `yolox_nano_person_416_bf16_cv181x.cvimodel`로 바꿨다. persond 기본값, `persond.conf`, 통합 시험, 패키지 패치, `apply-f004.sh`를 같이 바꿨다.
 - CPU 후처리는 바뀌지 않는다. 출력은 그대로 `[1,10647,6] f32`이고 sscma-node YoloV5 형식이다.
+
+### 9.3 K-2 결과 — **합격 (원인 K 1회째에 해결)**
+
+| 단계 | 명령 | 종료 코드 | 결과 · 로그 |
+|---|---|---|---|
+| 변환 | `QUANT=BF16 OUT_DIR=…/models-candidate slot --label F-004c-model -- bash firmware/models/convert-yolox-person.sh` | **0** (30 s) | `f004c-model-1.log` |
+| 검증 | `verify_cvimodel.py yolox_nano_person_416.onnx …bf16_cv181x.cvimodel COCO2017 20 …/000000162130.jpg` | **0** | **VERIFY PASSED** · `f004c-verify-1.log` |
+
+| # | 값 | 판정 |
+|---|---|---|
+| K1 판정 일치 | 21/21 = 100 % | ok |
+| K2 점수 차 (사람 이미지 10장) | 평균 0.013, 최대 0.055 | ok |
+| K3 대응 박스 IoU (ONNX 검출 24개) | 평균 0.944 | ok |
+| K4 검출 수 같음 | 20/21, 최대 차 1 (`000000009400.jpg` 7 → 8) | ok |
+| K5 사람 없는 이미지 | 검출 0 | ok |
+
+**모델 출처와 해시:**
+- 원본: `https://github.com/Megvii-BaseDetection/YOLOX/releases/download/0.1.1rc0/yolox_nano.onnx`. Apache-2.0이고 가중치는 COCO로 학습됐다(1절). sha256 `c789161ed43c8269fcd4e67c67eeeb4e80c622da2eb296a20bc6007bd18a0b7d`.
+- sscma 형식 ONNX(`yolox_to_sscma.py`, `7b6f254`): sha256 `e475ee4e0e1fd44018662f8a697f30231279b385cf255c08b43690a3b628f010`.
+- **cvimodel `yolox_nano_person_416_bf16_cv181x.cvimodel`:** sha256 **`eee83a224e203248e141ad51426cb6c151f1597c9d5e5b893c66c661baea9835`**, 2,808,720 B.
+- 변환 도구: tpu-mlir 1.28.1, `sophgo/tpuc_dev:v3.4`.
+- `model_transform`: `--mean 0,0,0 --scale 1,1,1 --pixel_format bgr --keep_aspect_ratio`.
+- `model_deploy`: `--quantize BF16 --processor cv181x --quant_input --customization_format RGB_PACKED --fuse_preprocess --aligned_input`.
+- 입력은 `images_raw [1,1,416,1280] uint8`(RGB 행 정렬), 출력은 `output_sscma [1,10647,6] f32`다.
+
+**persond 연결:**
+- 기본 모델 경로를 `/usr/share/openhw/models/yolox_nano_person_416_bf16_cv181x.cvimodel`로 바꿨다(`persond.c`, `persond.conf`).
+- CPU 후처리는 추가되지 않았다. sscma-node의 YoloV5 후처리를 그대로 쓴다.
+
+**호스트 시험 재실행** (`f004c-hosttest-1.log`):
+
+| 시험 | 종료 코드 | 결과 |
+|---|---|---|
+| persond 단위 `make test` | 0 | pass=33 fail=0 |
+| persond 통합 `test_integration.sh` | 0 | pass=16 fail=0 |
+| daynight 단위 `make test` | 0 | pass=40 fail=0 |
+
+**이미지 빌드** (hc 칸 `openhw-fw-build`, `CPUSET=0-3 MEM=16g JLEVEL=4`, `slot --label F-004c --timeout-min 240`):
+
+| 차례 | 종료 코드 | 결과 |
+|---|---|---|
+| `apply-f004.sh` 1 → 빌드 1 | 0 / **0** (421 s) | **rootfs에 모델이 없다** → 원인 M |
+| 원인 M 수정(`9050e16`) → `apply-f004.sh` 2 → 빌드 2 | 0 / **0** (366 s) | 모델이 들어갔다 |
+| `collect` → `out-f004c/` | 0 | — |
+
+**원인 M (1회, 해결):**
+- `apply-f003.sh`는 적용한 패치 이름을 표시 파일 `.openhw-applied`에 남긴다. 그래서 내용을 고친 `0002-openhw-persond.patch`가 다시 적용되지 않았다.
+- 그 결과 볼륨의 `openhw-persond.mk`가 옛 `int8` 파일 이름을 찾았고, 모델을 설치하지 않았다.
+- 수정: `apply-f004.sh`가 0002 패치로 새로 만드는 패키지 파일(`openhw-persond/Config.in`, `openhw-persond.mk`)을 패치에서 매번 다시 만든다.
+
+| 파일 (`out-f004c/`) | sha256 |
+|---|---|
+| `sg2002_reCamera_0.2.4_emmc.zip` (= `upgrade.zip`) | `00b685a0034651a645b00745c05aa7f7155194f68a563f36be025cdfa9328a52` |
+| `sg2002_reCamera_0.2.4_emmc_ota.zip` | `e5622b3d59236df6c2877fcff2e90efcb82566af060363e1ef1316f7d1cd3852` |
+| `sg2002_reCamera_0.2.4_emmc_recovery.zip` | `22cd0a26c4699bb135b70c3c0c3003a99947fe5a4e183918ed181e69ae941152` |
+| `sg2002_reCamera_0.2.4_emmc_sd_compat.zip` | `e7e44e3fc484306be5dcd745a79a2a334e31d5bb7e557f161dc8f62ca5584962` |
+| `sg2002_reCamera_0.2.4_emmc_swu.zip` | `7fd232927ebe25a14a45f48e38fffa5c989b787dcf86f8535c7982581c8f8538` |
+
+**rootfs 확인** (`debugfs`, `rootfs_ext4.emmc`):
+- `/usr/share/openhw/models/yolox_nano_person_416_bf16_cv181x.cvimodel`: 2,808,720 B, sha256 `eee83a22…`. 검증한 파일과 같다.
+- `/usr/bin/persond`: 19,216 B, RISC-V musl. 문자열에 BF16 모델 경로가 있다.
+- 함께 있는 파일: `/etc/openhw/persond.conf`, `/etc/init.d/S97persond`, `/usr/bin/daynight`, `S96daynight`.
+
+**네트워크 (D-003 #30 그대로):**
+- `persond.conf`는 `event_host = localhost`, `rtsp_pass =`(비어 있음)이다. 그래서 RTSP 노드는 만들지 않는다.
+- mosquitto 1883은 로컬 전용이다.
+
+**미확인 (HIL):**
+- 보드의 sscma-node가 BF16 cvimodel을 불러 실제로 검출하는지
+- 추론 FPS: BF16은 INT8보다 느릴 것으로 예상한다
+- 카메라 정렬 프레임 입력
+- 야간 IR 영상에서의 정확도
+- 호스트 모의 결과를 실물 동작의 증거로 보지 않는다.
