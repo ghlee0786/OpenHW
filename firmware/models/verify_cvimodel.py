@@ -29,6 +29,16 @@ def letterbox(img, size=416):
     return out
 
 
+def aligned_rgb(bgr, align=64):
+    """--aligned_input cvimodel 입력 [1,1,H,ceil(W*3/64)*64] uint8: 행마다 RGB_PACKED 뒤 0 패딩.
+    [1,H,W,3] 을 그대로 주면 모의 실행기가 평탄화해 받아 둘째 행부터 픽셀이 밀린다(원인 L, F-004c)."""
+    h, w = bgr.shape[:2]
+    stride = (w * 3 + align - 1) // align * align
+    out = np.zeros((1, 1, h, stride), np.uint8)
+    out[0, 0, :, :w * 3] = cv2.cvtColor(bgr, cv2.COLOR_BGR2RGB).reshape(h, w * 3)
+    return out
+
+
 def iou(a, b):
     ax1, ay1, ax2, ay2 = a[0] - a[2] / 2, a[1] - a[3] / 2, a[0] + a[2] / 2, a[1] + a[3] / 2
     bx1, by1, bx2, by2 = b[0] - b[2] / 2, b[1] - b[3] / 2, b[0] + b[2] / 2, b[1] + b[3] / 2
@@ -56,8 +66,7 @@ def main(onnx_path, cvimodel, folder, count, negative):
     for f in files:
         bgr = letterbox(cv2.imread(f))
         ref = sess.run(None, {name: bgr.transpose(2, 0, 1)[None].astype(np.float32)})[0][0]
-        rgb = cv2.cvtColor(bgr, cv2.COLOR_BGR2RGB)[None]            # RGB_PACKED uint8 NHWC
-        outs = model_inference({"images_raw": rgb}, cvimodel)   # cvimodel 입력 이름 (model_tool --info)
+        outs = model_inference({"images_raw": aligned_rgb(bgr)}, cvimodel)   # 입력 이름 (model_tool --info)
         got = np.array(list(outs.values())[-1], np.float32).reshape(ref.shape)
         rs, gs = float(ref[:, 4].max()), float(got[:, 4].max())
         rd, gd = detect(ref), detect(got)

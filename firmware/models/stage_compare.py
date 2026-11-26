@@ -8,6 +8,7 @@ import sys
 import cv2
 import numpy as np
 from tools.model_runner import mlir_inference, model_inference
+from verify_cvimodel import aligned_rgb
 
 N = "yolox_nano_person_416"
 IMG = sys.argv[1] if len(sys.argv) > 1 else "/w/tpu-mlir/regression/dataset/COCO2017/000000085329.jpg"
@@ -35,7 +36,7 @@ def cos(a, b):
 
 bgr = letterbox(cv2.imread(IMG))
 top = mlir_inference({"images": bgr.transpose(2, 0, 1)[None].astype(np.float32)}, N + ".mlir", dump_all=True)
-cvi = model_inference({"images_raw": cv2.cvtColor(bgr, cv2.COLOR_BGR2RGB)[None]}, N + "_int8_cv181x.cvimodel", dump_all=True)
+cvi = model_inference({"images_raw": aligned_rgb(bgr)}, N + "_int8_cv181x.cvimodel", dump_all=True)
 
 print("== 최종 출력 열별 [x,y,w,h,score,person] (앞 3549 행) ==")
 a = np.asarray(top["output_sscma_Transpose"], np.float32).reshape(-1, 6)[:3549]
