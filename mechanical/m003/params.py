@@ -41,7 +41,7 @@ P['back_clr'] = 0.6       # [가정] RJ45 아래끝–뒷벽
 P['x_in_min'] = -25.0     # [M002 K20] 하니스 통로 → 외함 −X 안쪽 벽 ≤ −25.0
 P['al_gap'] = 0.75        # [M002b] 갭 패드 Tflex P340 1.0t 를 0.75 로 압축
 P['al_t'] = 2.0           # [가정] 5052 판
-P['led_out_deg'] = 30.0   # [가정] LED A 바깥쪽(+Y) 빛을 벽이 가리지 않는 각
+P['led_out_deg'] = 32.0   # [M-003 2차] LED A 바깥쪽(+Y) 빛을 벽이 가리지 않는 각 — VFOV/2 28.5° + 주머니 테두리 여유 (30°면 주머니 위끝이 28.0°에서 자름)
 P['step_z0'] = 8.0        # [가정] +Y 벽 45° 단 시작 높이 (microSD 쪽은 보드 가까이)
 P['win_t'] = 3.0          # [M001] PMMA
 P['ledge_t'] = 1.2        # [가정] 창 받침 턱 두께
@@ -58,9 +58,13 @@ P['ins_hole_d'] = 4.0; P['ins_len'] = 4.0; P['boss_d'] = 7.2   # [DS] CNC Kitche
 P['cov_screws'] = [(-21.4, -8.0), (18.4, 8.0), (-21.4, -32.9), (18.4, -32.9)]  # 덮개 M2.5×8
 P['post_d'] = 4.6; P['post_hole'] = 1.9; P['post_cb_d'] = 3.8; P['post_cb_top'] = 3.0   # 적층 기둥 (M1.6×8 뒤에서)
 P['tripod'] = (0.0, -4.0); P['tripod_boss_d'] = 14.0; P['tripod_boss_h'] = 6.7; P['tripod_hole_d'] = 8.0  # [가정·미확인] 1/4"-20 인서트
-P['al_y'] = (-32.0, 18.0); P['al_z'] = (-23.0, 28.0)          # 알루미늄 옆판
+# [M-003 2차 K32] +X 바깥 방열판 (흑색 아노다이즈 Al 6061): 바닥판이 +X 면 바깥을 덮고, 받침대가 창을 지나 안쪽 x_al_in 까지, 세로(Y) 핀
+P['hs_y'] = (-36.0, 22.0)          # 바닥판·핀 Y 범위 (중력 방향 길이 58)
+P['hs_zpad'] = 0.5                 # 바닥판 z = 외형 z 범위 − 0.5
+P['hs_tb'] = 3.0; P['hs_n'] = 9; P['hs_H'] = 20.0; P['hs_t'] = 1.5   # analysis2.py H3 (방열판→공기 5.6 K/W @25°C)
+P['hs_ped_clr'] = 0.3              # 받침대 ↔ 벽 창 틈
 P['al_win_y'] = (-28.0, 14.0); P['al_win_z'] = (-19.0, 24.0)  # +X 벽 창
-P['al_holes'] = [(-30.0, -21.0), (16.0, -21.0), (-30.0, 26.0), (16.0, 26.0)]  # (y, z) M2.5
+P['al_holes_y'] = (-31.0, 17.0); P['al_holes_z_near'] = (-21.0, 21.0)  # M2.5 관통 + 안쪽 너트 — z 는 가장 가까운 핀 사이 중심으로 맞춤
 P['flange'] = ((18.0, 20.0), (-19.5, 19.5), (-4.5, 2.9))       # 방열판 +X 플랜지 (방열판과 일체, 판 아래로) — 캐리어 C_1210 윗끝 z −5.48 위 0.98
 P['spr_xy'] = ((-18.0, 20.0), (-19.5, 19.5)); P['spr_gap'] = 1.3; P['spr_t'] = 1.0   # [M002] 방열판 (AL_SPREADER_TAB_PX)
 P['pillar_a'] = ((-9.5, 9.5), (16.5, 19.5))                     # [M002b] 기둥 A (일체 보스), 윗면 도피 홈 slot_w × 0.5
@@ -96,4 +100,13 @@ def derive(p=P):
     rise = d['z_bez_in'] - d['z_led_top']
     d['y_in_hi'] = math.ceil((p['led_a_y'] + rise * math.tan(math.radians(p['led_out_deg']))) * 2) / 2
     d['y_out_hi'] = d['y_in_hi'] + p['t_w']
+    # 바깥 방열판
+    d['hs_z'] = (d['z_back_out'] + p['hs_zpad'], d['z_bez_out'] - p['hs_zpad'])
+    W = d['hs_z'][1] - d['hs_z'][0]
+    pitch = (W - p['hs_t']) / (p['hs_n'] - 1)
+    d['hs_fin_zc'] = [d['hs_z'][0] + p['hs_t'] / 2 + k * pitch for k in range(p['hs_n'])]
+    gaps = [(a + b) / 2 for a, b in zip(d['hs_fin_zc'], d['hs_fin_zc'][1:])]
+    d['al_holes'] = [(y, min(gaps, key=lambda gz: abs(gz - z))) for z in p['al_holes_z_near'] for y in p['al_holes_y']]
+    d['x_hs_base'] = (d['x_out_max'], d['x_out_max'] + p['hs_tb'])
+    d['x_hs_tip'] = d['x_hs_base'][1] + p['hs_H']
     return d

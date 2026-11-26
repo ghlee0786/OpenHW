@@ -85,12 +85,17 @@ def parts(d):
     # +X 벽: 알루미늄 옆판 창 + 나사 구멍
     cuts.append(box(d['x_in_max'] - 1, xo1 + 1, d['al_win_y'][0], d['al_win_y'][1], d['al_win_z'][0], d['al_win_z'][1]))
     for (y, z) in d['al_holes']:
-        cuts.append(xcyl(y, z, d['x_in_max'] - 0.5, xo1 + 1, 1.4))
+        cuts.append(xcyl(y, z, d['x_in_max'] - 1, xo1 + 1, 1.4))
     P['HOUSING'] = ('d', ('u', ('d', outer, cavity), *adds), *cuts)
 
-    # ---------- 알루미늄 옆판 (+X, 방열) ----------
-    al = box(d['x_al_in'], d['x_in_max'], d['al_y'][0], d['al_y'][1], d['al_z'][0], d['al_z'][1])
-    P['AL_SIDE_PLATE'] = ('d', al, *[xcyl(y, z, d['x_al_in'] - 1, d['x_in_max'] + 1, 1.05) for (y, z) in d['al_holes']])
+    # ---------- 바깥 방열판 (+X, 흑색 아노다이즈 Al): 바닥판 + 창을 지나는 받침대 + 세로 핀 ----------
+    (hb0, hb1), (hy0, hy1), (hz0, hz1) = d['x_hs_base'], d['hs_y'], d['hs_z']
+    c = d['hs_ped_clr']
+    hs = [box(hb0, hb1, hy0, hy1, hz0, hz1),
+          box(d['x_al_in'], hb0 + 0.01, d['al_win_y'][0] + c, d['al_win_y'][1] - c, d['al_win_z'][0] + c, d['al_win_z'][1] - c)]
+    for zc_ in d['hs_fin_zc']:
+        hs.append(box(hb1 - 0.01, d['x_hs_tip'], hy0, hy1, zc_ - d['hs_t'] / 2, zc_ + d['hs_t'] / 2))
+    P['AL_HEATSINK_PX'] = ('d', ('u', *hs), *[xcyl(y, z, hb0 - 1, hb1 + 1, 1.4) for (y, z) in d['al_holes']])
 
     # ---------- 앞 덮개 (창 받침 + 렌즈 관 + ALS 관) ----------
     zw, zo = d['z_win_in'], d['z_bez_out']
@@ -162,6 +167,8 @@ def parts(d):
     for (x, y) in d['holes']:
         heads.append(zcyl(x, y, d['z_fr_top'], d['z_fr_top'] + 1.6, 1.5))           # 전면 M1.6 머리
         heads.append(zcyl(x, y, zc - d['post_cb_top'] - 1.6, zc - d['post_cb_top'], 1.5))  # 뒤 M1.6×8 머리
+    for (y, z) in d['al_holes']:
+        heads.append(box(d['x_in_max'] - 2.0, d['x_in_max'], y - 2.5, y + 2.5, z - 2.5, z + 2.5))   # M2.5 너트 (안쪽)
     P['HW_SCREW_HEADS'] = ('u', *heads)
     # ---------- 3D 모델 없는 부품 대체 블록 (간섭 검사용) ----------
     B = {}

@@ -3,7 +3,7 @@ import adsk.core, adsk.fusion, os
 
 OUT = r"C:\workspace_python\OpenHW\.harness-worktrees\t-20261127-013549-8089\mechanical\m003\out"
 STL = ['HOUSING', 'FRONT_COVER']                                     # FDM 출력
-STEP = ['HOUSING', 'FRONT_COVER', 'AL_SIDE_PLATE', 'SPREADER_M003', 'LENS_WIN_PMMA', 'WIN_A_PMMA', 'WIN_B_PMMA',
+STEP = ['HOUSING', 'FRONT_COVER', 'AL_HEATSINK_PX', 'SPREADER_M003', 'LENS_WIN_PMMA', 'WIN_A_PMMA', 'WIN_B_PMMA',
         'ALS_WIN_PMMA', 'FOAM_LENS_RING', 'FOAM_ALS_GASKET', 'INS_PADS_P340', 'GAP_PAD_PX']
 
 

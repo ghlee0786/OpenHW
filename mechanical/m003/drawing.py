@@ -124,14 +124,18 @@ dim(ax, xo0, xo1, zb - 4)
 ax.set_xlim(xo0 - 6, xo1 + 4); ax.set_ylim(zb - 8, d['step_z0'] + 4)
 # 6 +X 면 (y, z)
 ax = axs[1][2]
-frame(ax, '⑥ +X 면 (+X에서 봄) — 알루미늄 옆판 창·나사')
+frame(ax, '⑥ +X 면 (+X에서 봄) — 바깥 방열판·핀·나사')
 ax.add_patch(Polygon(profile_yz(), closed=True, **K))
 (wy0, wy1), (wz0, wz1) = d['al_win_y'], d['al_win_z']
 ax.add_patch(Rectangle((wy0, wz0), wy1 - wy0, wz1 - wz0, **H))
-ax.add_patch(Rectangle((d['al_y'][0], d['al_z'][0]), d['al_y'][1] - d['al_y'][0], d['al_z'][1] - d['al_z'][0], **HID))
+(hy0, hy1), (hz0, hz1) = d['hs_y'], d['hs_z']
+ax.add_patch(Rectangle((hy0, hz0), hy1 - hy0, hz1 - hz0, **HID))
+for zc_ in d['hs_fin_zc']:
+    ax.plot([hy0, hy1], [zc_, zc_], lw=0.5, c='#555')
 for (y, z) in d['al_holes']:
     ax.add_patch(Circle((y, z), 1.4, **H))
-label(ax, wy0 + 1, wz1 + 1, '창 %.0f×%.0f / 옆판 5052 %.0f×%.0f×%.1f (점선) / M2.5 4곳' % (wy1 - wy0, wz1 - wz0, d['al_y'][1] - d['al_y'][0], d['al_z'][1] - d['al_z'][0], d['al_t']))
+label(ax, hy0, hz1 + 1, '벽 창 %.0fx%.0f / 바깥 방열판 %.0fx%.1fx%.0f + 세로 핀 %dx%.0fx%.1f (회색 선) / M2.5 4곳 (핀 사이)' % (
+    wy1 - wy0, wz1 - wz0, hy1 - hy0, hz1 - hz0, d['hs_tb'], d['hs_n'], d['hs_H'], d['hs_t']))
 ax.set_xlim(yo0 - 6, d['y_out_hi'] + 6); ax.set_ylim(zb - 8, zo + 4)
 fig.suptitle('M-003 외함 2D 도면 (단위 mm, 원점 O = 코어 중심·아랫면, +Z 앞) — params.py 기준, 검은선 외형 / 빨간선 개구·구멍 / 파란 점선 보스·숨은선', fontsize=9)
 fig.tight_layout(rect=(0, 0, 1, 0.97))
