@@ -1,8 +1,8 @@
 (export
 	(version "E")
 	(design
-		(source "C:\\workspace_python\\OpenHW\\.harness-worktrees\\t-20261127-022827-8d8a\\hardware\\schematic\\front\\front.kicad_sch")
-		(date "2026-11-27T02:31:39")
+		(source "C:\\workspace_python\\OpenHW\\.harness-worktrees\\t-20261126-171922-251f\\hardware\\schematic\\front\\front.kicad_sch")
+		(date "2026-11-27T05:11:45")
 		(tool "Eeschema 10.0.8")
 		(sheet
 			(number "1")
@@ -11,8 +11,8 @@
 			(title_block
 				(title "OpenHW front (sensor) board - reCamera Core 2002 J1 mate")
 				(company "OpenHW PoC")
-				(rev "C-011")
-				(date "2026-11-26")
+				(rev "C-017")
+				(date "2026-11-27")
 				(source "front.kicad_sch")
 				(comment
 					(number "1")
@@ -1030,6 +1030,60 @@
 			)
 		)
 		(comp
+			(ref "C19")
+			(value "10nF")
+			(footprint "Capacitor_SMD:C_0402_1005Metric")
+			(fields
+				(field
+					(name "Footprint") "Capacitor_SMD:C_0402_1005Metric")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description")
+				)
+			)
+			(libsource
+				(lib "Device")
+				(part "C")
+				(description "Unpolarized capacitor")
+			)
+			(property
+				(name "Sheetname")
+				(value "front")
+			)
+			(property
+				(name "Sheetfile")
+				(value "front.kicad_sch")
+			)
+			(property
+				(name "ki_keywords")
+				(value "cap capacitor")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "C_*")
+			)
+			(sheetpath
+				(names "/")
+				(tstamps "/")
+			)
+			(tstamps "d5d0055a-5bdc-4943-a563-68f8b4aba90a")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+			)
+		)
+		(comp
 			(ref "D1")
 			(value "SS24 (40V 2A, SMA)")
 			(footprint "Diode_SMD:D_SMA")
@@ -1703,15 +1757,15 @@
 		)
 		(comp
 			(ref "J2")
-			(value "PicoBlade 53261-0271 (CLA216 lead)")
-			(footprint "Connector_Molex:Molex_PicoBlade_53261-0271_1x02-1MP_P1.25mm_Horizontal")
+			(value "CLA216 lead solder pads 2P 2.54mm")
+			(footprint "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical")
 			(fields
 				(field
-					(name "MPN") "Molex 53261-0271 (LCSC C177225); alt JST SM02B-GHS-TB (O-34)")
+					(name "MPN") "- (solder pads only, no header fitted; excluded from BOM/CPL)")
 				(field
-					(name "Note") "pin1=ICR_A=red(+) assumed: IN1=1 pulse -> filter open (night), IN2=1 -> closed (day). Housing length and wire order: G2 physical check before PCB release")
+					(name "Note") "C-016/O-84: CLA216 leads soldered directly (connector family not identifiable from official data). pin1 (square pad) = ICR_A = red(+) assumed: IN1=1 pulse -> filter open (night), IN2=1 -> closed (day); polarity check on hardware")
 				(field
-					(name "Footprint") "Connector_Molex:Molex_PicoBlade_53261-0271_1x02-1MP_P1.25mm_Horizontal")
+					(name "Footprint") "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical")
 				(field
 					(name "Datasheet")
 				)
@@ -1720,17 +1774,17 @@
 				)
 			)
 			(libsource
-				(lib "Connector_Generic_MountingPin")
-				(part "Conn_01x02_MountingPin")
-				(description "Generic connectable mounting pin connector, single row, 01x02, script generated (kicad-library-utils/schlib/autogen/connector/)")
+				(lib "Connector_Generic")
+				(part "Conn_01x02")
+				(description "Generic connector, single row, 01x02, script generated (kicad-library-utils/schlib/autogen/connector/)")
 			)
 			(property
 				(name "MPN")
-				(value "Molex 53261-0271 (LCSC C177225); alt JST SM02B-GHS-TB (O-34)")
+				(value "- (solder pads only, no header fitted; excluded from BOM/CPL)")
 			)
 			(property
 				(name "Note")
-				(value "pin1=ICR_A=red(+) assumed: IN1=1 pulse -> filter open (night), IN2=1 -> closed (day). Housing length and wire order: G2 physical check before PCB release")
+				(value "C-016/O-84: CLA216 leads soldered directly (connector family not identifiable from official data). pin1 (square pad) = ICR_A = red(+) assumed: IN1=1 pulse -> filter open (night), IN2=1 -> closed (day); polarity check on hardware")
 			)
 			(property
 				(name "Sheetname")
@@ -1741,12 +1795,18 @@
 				(value "front.kicad_sch")
 			)
 			(property
+				(name "exclude_from_bom")
+			)
+			(property
+				(name "exclude_from_pos_files")
+			)
+			(property
 				(name "ki_keywords")
 				(value "connector")
 			)
 			(property
 				(name "ki_fp_filters")
-				(value "Connector*:*_1x??-1MP*")
+				(value "Connector*:*_1x??_*")
 			)
 			(sheetpath
 				(names "/")
@@ -1762,9 +1822,6 @@
 						)
 						(pin
 							(num "2")
-						)
-						(pin
-							(num "MP")
 						)
 					)
 				)
@@ -2514,7 +2571,7 @@
 			(footprint "Package_TO_SOT_SMD:SOT-523")
 			(fields
 				(field
-					(name "Note") "V-004b N1: Q6 gate pulled to its own source (CORE_1V8), driven by CAM_EN (S401 pattern)")
+					(name "Note") "V-004b N1: Q6 gate pulled to its own source (CORE_1V8), driven by CAM_EN (S401 pattern); C-017: via R18 1k")
 				(field
 					(name "Footprint") "Package_TO_SOT_SMD:SOT-523")
 				(field
@@ -2531,7 +2588,7 @@
 			)
 			(property
 				(name "Note")
-				(value "V-004b N1: Q6 gate pulled to its own source (CORE_1V8), driven by CAM_EN (S401 pattern)")
+				(value "V-004b N1: Q6 gate pulled to its own source (CORE_1V8), driven by CAM_EN (S401 pattern); C-017: via R18 1k")
 			)
 			(property
 				(name "Sheetname")
@@ -3331,60 +3388,6 @@
 			)
 		)
 		(comp
-			(ref "R15")
-			(value "10k")
-			(footprint "Resistor_SMD:R_0402_1005Metric")
-			(fields
-				(field
-					(name "Footprint") "Resistor_SMD:R_0402_1005Metric")
-				(field
-					(name "Datasheet")
-				)
-				(field
-					(name "Description")
-				)
-			)
-			(libsource
-				(lib "Device")
-				(part "R")
-				(description "Resistor")
-			)
-			(property
-				(name "Sheetname")
-				(value "front")
-			)
-			(property
-				(name "Sheetfile")
-				(value "front.kicad_sch")
-			)
-			(property
-				(name "ki_keywords")
-				(value "R res resistor")
-			)
-			(property
-				(name "ki_fp_filters")
-				(value "R_*")
-			)
-			(sheetpath
-				(names "/")
-				(tstamps "/")
-			)
-			(tstamps "9e5c6459-1a93-4dd7-93b3-35b881c7cf88")
-			(units
-				(unit
-					(name "A")
-					(pins
-						(pin
-							(num "1")
-						)
-						(pin
-							(num "2")
-						)
-					)
-				)
-			)
-		)
-		(comp
 			(ref "R16")
 			(value "10k")
 			(footprint "Resistor_SMD:R_0402_1005Metric")
@@ -3481,6 +3484,114 @@
 				(tstamps "/")
 			)
 			(tstamps "8e9393f7-2183-44bb-837a-f8594a0db1f8")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "R18")
+			(value "1k")
+			(footprint "Resistor_SMD:R_0402_1005Metric")
+			(fields
+				(field
+					(name "Footprint") "Resistor_SMD:R_0402_1005Metric")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description")
+				)
+			)
+			(libsource
+				(lib "Device")
+				(part "R")
+				(description "Resistor")
+			)
+			(property
+				(name "Sheetname")
+				(value "front")
+			)
+			(property
+				(name "Sheetfile")
+				(value "front.kicad_sch")
+			)
+			(property
+				(name "ki_keywords")
+				(value "R res resistor")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "R_*")
+			)
+			(sheetpath
+				(names "/")
+				(tstamps "/")
+			)
+			(tstamps "2a3e25ba-13fe-4906-9770-4833606ac2e8")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "R19")
+			(value "10k")
+			(footprint "Resistor_SMD:R_0402_1005Metric")
+			(fields
+				(field
+					(name "Footprint") "Resistor_SMD:R_0402_1005Metric")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description")
+				)
+			)
+			(libsource
+				(lib "Device")
+				(part "R")
+				(description "Resistor")
+			)
+			(property
+				(name "Sheetname")
+				(value "front")
+			)
+			(property
+				(name "Sheetfile")
+				(value "front.kicad_sch")
+			)
+			(property
+				(name "ki_keywords")
+				(value "R res resistor")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "R_*")
+			)
+			(sheetpath
+				(names "/")
+				(tstamps "/")
+			)
+			(tstamps "823ba71f-45d7-4b84-922d-3116330bd000")
 			(units
 				(unit
 					(name "A")
@@ -4669,6 +4780,57 @@
 			)
 		)
 		(comp
+			(ref "TP24")
+			(value "ALS_INT_RSV")
+			(footprint "TestPoint:TestPoint_Pad_D1.0mm")
+			(fields
+				(field
+					(name "Footprint") "TestPoint:TestPoint_Pad_D1.0mm")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description")
+				)
+			)
+			(libsource
+				(lib "Connector")
+				(part "TestPoint")
+				(description "test point")
+			)
+			(property
+				(name "Sheetname")
+				(value "front")
+			)
+			(property
+				(name "Sheetfile")
+				(value "front.kicad_sch")
+			)
+			(property
+				(name "ki_keywords")
+				(value "test point tp")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "Pin* Test*")
+			)
+			(sheetpath
+				(names "/")
+				(tstamps "/")
+			)
+			(tstamps "f650e27f-4eab-404e-af19-cc5b6c551df3")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+					)
+				)
+			)
+		)
+		(comp
 			(ref "U1")
 			(value "RT9013-28GB")
 			(footprint "Package_TO_SOT_SMD:SOT-23-5")
@@ -5121,7 +5283,7 @@
 				(names "/")
 				(tstamps "/")
 			)
-			(tstamps "2a3e25ba-13fe-4906-9770-4833606ac2e8")
+			(tstamps "7b69cce2-99b0-4fe8-a93e-6a4c35d5d49d")
 			(units
 				(unit
 					(name "A")
@@ -5172,6 +5334,40 @@
 				(pin
 					(num "1")
 					(name "1")
+					(type "passive")
+				)
+			)
+		)
+		(libpart
+			(lib "Connector_Generic")
+			(part "Conn_01x02")
+			(description "Generic connector, single row, 01x02, script generated (kicad-library-utils/schlib/autogen/connector/)")
+			(footprints
+				(fp "Connector*:*_1x??_*")
+			)
+			(fields
+				(field
+					(name "Reference") "J")
+				(field
+					(name "Value") "Conn_01x02")
+				(field
+					(name "Footprint")
+				)
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description") "Generic connector, single row, 01x02, script generated (kicad-library-utils/schlib/autogen/connector/)")
+			)
+			(pins
+				(pin
+					(num "1")
+					(name "Pin_1")
+					(type "passive")
+				)
+				(pin
+					(num "2")
+					(name "Pin_2")
 					(type "passive")
 				)
 			)
@@ -5640,45 +5836,6 @@
 				(pin
 					(num "60")
 					(name "Pin_60")
-					(type "passive")
-				)
-			)
-		)
-		(libpart
-			(lib "Connector_Generic_MountingPin")
-			(part "Conn_01x02_MountingPin")
-			(description "Generic connectable mounting pin connector, single row, 01x02, script generated (kicad-library-utils/schlib/autogen/connector/)")
-			(footprints
-				(fp "Connector*:*_1x??-1MP*")
-			)
-			(fields
-				(field
-					(name "Reference") "J")
-				(field
-					(name "Value") "Conn_01x02_MountingPin")
-				(field
-					(name "Footprint")
-				)
-				(field
-					(name "Datasheet")
-				)
-				(field
-					(name "Description") "Generic connectable mounting pin connector, single row, 01x02, script generated (kicad-library-utils/schlib/autogen/connector/)")
-			)
-			(pins
-				(pin
-					(num "1")
-					(name "Pin_1")
-					(type "passive")
-				)
-				(pin
-					(num "2")
-					(name "Pin_2")
-					(type "passive")
-				)
-				(pin
-					(num "MP")
-					(name "MountPin")
 					(type "passive")
 				)
 			)
@@ -6493,8 +6650,9 @@
 				(pintype "passive")
 			)
 			(node
-				(ref "R15")
-				(pin "2")
+				(ref "TP24")
+				(pin "1")
+				(pinfunction "1_1")
 				(pintype "passive")
 			)
 		)
@@ -6513,6 +6671,11 @@
 				(pintype "passive")
 			)
 			(node
+				(ref "C19")
+				(pin "2")
+				(pintype "passive")
+			)
+			(node
 				(ref "Q6")
 				(pin "3")
 				(pinfunction "D_3")
@@ -6520,6 +6683,11 @@
 			)
 			(node
 				(ref "R10")
+				(pin "1")
+				(pintype "passive")
+			)
+			(node
+				(ref "R19")
 				(pin "1")
 				(pintype "passive")
 			)
@@ -6552,11 +6720,31 @@
 			(name "/CAM_1V8_G")
 			(class "Default")
 			(node
+				(ref "C19")
+				(pin "1")
+				(pintype "passive")
+			)
+			(node
 				(ref "Q6")
 				(pin "1")
 				(pinfunction "G_1")
 				(pintype "input")
 			)
+			(node
+				(ref "R17")
+				(pin "2")
+				(pintype "passive")
+			)
+			(node
+				(ref "R18")
+				(pin "2")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "5")
+			(name "/CAM_1V8_PD")
+			(class "Default")
 			(node
 				(ref "Q7")
 				(pin "3")
@@ -6564,13 +6752,13 @@
 				(pintype "passive")
 			)
 			(node
-				(ref "R17")
-				(pin "2")
+				(ref "R18")
+				(pin "1")
 				(pintype "passive")
 			)
 		)
 		(net
-			(code "5")
+			(code "6")
 			(name "/CAM_AVDD")
 			(class "Default")
 			(node
@@ -6609,7 +6797,7 @@
 			)
 		)
 		(net
-			(code "6")
+			(code "7")
 			(name "/CAM_EN")
 			(class "Default")
 			(node
@@ -6654,7 +6842,7 @@
 			)
 		)
 		(net
-			(code "7")
+			(code "8")
 			(name "/CAM_I2C2_SCL")
 			(class "Default")
 			(node
@@ -6688,7 +6876,7 @@
 			)
 		)
 		(net
-			(code "8")
+			(code "9")
 			(name "/CAM_I2C2_SDA")
 			(class "Default")
 			(node
@@ -6722,7 +6910,7 @@
 			)
 		)
 		(net
-			(code "9")
+			(code "10")
 			(name "/CAM_IOVDD")
 			(class "Default")
 			(node
@@ -6750,7 +6938,7 @@
 			)
 		)
 		(net
-			(code "10")
+			(code "11")
 			(name "/CAM_MCLK")
 			(class "Default")
 			(node
@@ -6772,7 +6960,7 @@
 			)
 		)
 		(net
-			(code "11")
+			(code "12")
 			(name "/CAM_PG")
 			(class "Default")
 			(node
@@ -6799,7 +6987,7 @@
 			)
 		)
 		(net
-			(code "12")
+			(code "13")
 			(name "/CAM_PG_AV")
 			(class "Default")
 			(node
@@ -6820,7 +7008,7 @@
 			)
 		)
 		(net
-			(code "13")
+			(code "14")
 			(name "/CAM_RESET")
 			(class "Default")
 			(node
@@ -6858,7 +7046,7 @@
 			)
 		)
 		(net
-			(code "14")
+			(code "15")
 			(name "/CAM_RX0_0N")
 			(class "CSI_100")
 			(node
@@ -6875,7 +7063,7 @@
 			)
 		)
 		(net
-			(code "15")
+			(code "16")
 			(name "/CAM_RX0_0P")
 			(class "CSI_100")
 			(node
@@ -6892,7 +7080,7 @@
 			)
 		)
 		(net
-			(code "16")
+			(code "17")
 			(name "/CAM_RX0_1N")
 			(class "CSI_100")
 			(node
@@ -6909,7 +7097,7 @@
 			)
 		)
 		(net
-			(code "17")
+			(code "18")
 			(name "/CAM_RX0_1P")
 			(class "CSI_100")
 			(node
@@ -6926,7 +7114,7 @@
 			)
 		)
 		(net
-			(code "18")
+			(code "19")
 			(name "/CAM_RX0_CLKN")
 			(class "CSI_100")
 			(node
@@ -6943,7 +7131,7 @@
 			)
 		)
 		(net
-			(code "19")
+			(code "20")
 			(name "/CAM_RX0_CLKP")
 			(class "CSI_100")
 			(node
@@ -6960,7 +7148,7 @@
 			)
 		)
 		(net
-			(code "20")
+			(code "21")
 			(name "/CORE_1V8")
 			(class "PWR_LOGIC")
 			(node
@@ -6993,11 +7181,6 @@
 				(pintype "passive")
 			)
 			(node
-				(ref "R15")
-				(pin "1")
-				(pintype "passive")
-			)
-			(node
 				(ref "R17")
 				(pin "1")
 				(pintype "passive")
@@ -7010,7 +7193,7 @@
 			)
 		)
 		(net
-			(code "21")
+			(code "22")
 			(name "/CORE_3V3")
 			(class "PWR_LOGIC")
 			(node
@@ -7055,7 +7238,7 @@
 			)
 		)
 		(net
-			(code "22")
+			(code "23")
 			(name "/FRONT_2V8")
 			(class "Default")
 			(node
@@ -7109,7 +7292,7 @@
 			)
 		)
 		(net
-			(code "23")
+			(code "24")
 			(name "/GND")
 			(class "Default")
 			(node
@@ -7306,12 +7489,6 @@
 				(pintype "passive")
 			)
 			(node
-				(ref "J2")
-				(pin "MP")
-				(pinfunction "MountPin_MP")
-				(pintype "passive")
-			)
-			(node
 				(ref "J3")
 				(pin "10")
 				(pinfunction "Pin_10_10")
@@ -7424,6 +7601,11 @@
 				(pintype "passive")
 			)
 			(node
+				(ref "R19")
+				(pin "2")
+				(pintype "passive")
+			)
+			(node
 				(ref "R2")
 				(pin "2")
 				(pintype "passive")
@@ -7518,7 +7700,7 @@
 			)
 		)
 		(net
-			(code "24")
+			(code "25")
 			(name "/ICR_A")
 			(class "Default")
 			(node
@@ -7541,7 +7723,7 @@
 			)
 		)
 		(net
-			(code "25")
+			(code "26")
 			(name "/ICR_B")
 			(class "Default")
 			(node
@@ -7564,7 +7746,7 @@
 			)
 		)
 		(net
-			(code "26")
+			(code "27")
 			(name "/ICR_NSLEEP")
 			(class "Default")
 			(node
@@ -7580,7 +7762,7 @@
 			)
 		)
 		(net
-			(code "27")
+			(code "28")
 			(name "/IRA_K")
 			(class "Default")
 			(node
@@ -7597,7 +7779,7 @@
 			)
 		)
 		(net
-			(code "28")
+			(code "29")
 			(name "/IRA_M")
 			(class "Default")
 			(node
@@ -7614,7 +7796,7 @@
 			)
 		)
 		(net
-			(code "29")
+			(code "30")
 			(name "/IRA_SET")
 			(class "Default")
 			(node
@@ -7642,7 +7824,7 @@
 			)
 		)
 		(net
-			(code "30")
+			(code "31")
 			(name "/IRA_SW")
 			(class "Default")
 			(node
@@ -7677,7 +7859,7 @@
 			)
 		)
 		(net
-			(code "31")
+			(code "32")
 			(name "/IRB_K")
 			(class "Default")
 			(node
@@ -7694,7 +7876,7 @@
 			)
 		)
 		(net
-			(code "32")
+			(code "33")
 			(name "/IRB_M")
 			(class "Default")
 			(node
@@ -7711,7 +7893,7 @@
 			)
 		)
 		(net
-			(code "33")
+			(code "34")
 			(name "/IRB_SET")
 			(class "Default")
 			(node
@@ -7733,7 +7915,7 @@
 			)
 		)
 		(net
-			(code "34")
+			(code "35")
 			(name "/IRB_SW")
 			(class "Default")
 			(node
@@ -7762,7 +7944,7 @@
 			)
 		)
 		(net
-			(code "35")
+			(code "36")
 			(name "/IR_CTRL")
 			(class "Default")
 			(node
@@ -7791,7 +7973,7 @@
 			)
 		)
 		(net
-			(code "36")
+			(code "37")
 			(name "/IR_CUT")
 			(class "Default")
 			(node
@@ -7813,7 +7995,7 @@
 			)
 		)
 		(net
-			(code "37")
+			(code "38")
 			(name "/IR_PWM")
 			(class "Default")
 			(node
@@ -7841,7 +8023,7 @@
 			)
 		)
 		(net
-			(code "38")
+			(code "39")
 			(name "/LIGHT_SENSE")
 			(class "Default")
 			(node
@@ -7869,7 +8051,7 @@
 			)
 		)
 		(net
-			(code "39")
+			(code "40")
 			(name "/MCLK_OSC")
 			(class "Default")
 			(node
@@ -7885,7 +8067,7 @@
 			)
 		)
 		(net
-			(code "40")
+			(code "41")
 			(name "/SPARE1")
 			(class "Default")
 			(node
@@ -7902,7 +8084,7 @@
 			)
 		)
 		(net
-			(code "41")
+			(code "42")
 			(name "/VIN")
 			(class "PWR_5V")
 			(node
@@ -7970,7 +8152,7 @@
 			)
 		)
 		(net
-			(code "42")
+			(code "43")
 			(name "/WH_PWM")
 			(class "Default")
 			(node
@@ -7992,7 +8174,7 @@
 			)
 		)
 		(net
-			(code "43")
+			(code "44")
 			(name "unconnected-(J1-Pin_1-Pad1)")
 			(class "Default")
 			(node
@@ -8003,7 +8185,7 @@
 			)
 		)
 		(net
-			(code "44")
+			(code "45")
 			(name "unconnected-(J1-Pin_3-Pad3)")
 			(class "Default")
 			(node
@@ -8014,7 +8196,7 @@
 			)
 		)
 		(net
-			(code "45")
+			(code "46")
 			(name "unconnected-(J1-Pin_4-Pad4)")
 			(class "Default")
 			(node
@@ -8025,7 +8207,7 @@
 			)
 		)
 		(net
-			(code "46")
+			(code "47")
 			(name "unconnected-(J1-Pin_6-Pad6)")
 			(class "Default")
 			(node
@@ -8036,7 +8218,7 @@
 			)
 		)
 		(net
-			(code "47")
+			(code "48")
 			(name "unconnected-(J1-Pin_19-Pad19)")
 			(class "Default")
 			(node
@@ -8047,7 +8229,7 @@
 			)
 		)
 		(net
-			(code "48")
+			(code "49")
 			(name "unconnected-(J1-Pin_21-Pad21)")
 			(class "Default")
 			(node
@@ -8058,7 +8240,7 @@
 			)
 		)
 		(net
-			(code "49")
+			(code "50")
 			(name "unconnected-(J1-Pin_23-Pad23)")
 			(class "Default")
 			(node
@@ -8069,7 +8251,7 @@
 			)
 		)
 		(net
-			(code "50")
+			(code "51")
 			(name "unconnected-(J1-Pin_25-Pad25)")
 			(class "Default")
 			(node
@@ -8080,7 +8262,7 @@
 			)
 		)
 		(net
-			(code "51")
+			(code "52")
 			(name "unconnected-(J1-Pin_27-Pad27)")
 			(class "Default")
 			(node
@@ -8091,7 +8273,7 @@
 			)
 		)
 		(net
-			(code "52")
+			(code "53")
 			(name "unconnected-(J1-Pin_28-Pad28)")
 			(class "Default")
 			(node
@@ -8102,7 +8284,7 @@
 			)
 		)
 		(net
-			(code "53")
+			(code "54")
 			(name "unconnected-(J1-Pin_29-Pad29)")
 			(class "Default")
 			(node
@@ -8113,7 +8295,7 @@
 			)
 		)
 		(net
-			(code "54")
+			(code "55")
 			(name "unconnected-(J1-Pin_30-Pad30)")
 			(class "Default")
 			(node
@@ -8124,7 +8306,7 @@
 			)
 		)
 		(net
-			(code "55")
+			(code "56")
 			(name "unconnected-(J1-Pin_31-Pad31)")
 			(class "Default")
 			(node
@@ -8135,7 +8317,7 @@
 			)
 		)
 		(net
-			(code "56")
+			(code "57")
 			(name "unconnected-(J1-Pin_40-Pad40)")
 			(class "Default")
 			(node
@@ -8146,7 +8328,7 @@
 			)
 		)
 		(net
-			(code "57")
+			(code "58")
 			(name "unconnected-(J1-Pin_44-Pad44)")
 			(class "Default")
 			(node
@@ -8157,7 +8339,7 @@
 			)
 		)
 		(net
-			(code "58")
+			(code "59")
 			(name "unconnected-(J1-Pin_50-Pad50)")
 			(class "Default")
 			(node
@@ -8168,7 +8350,7 @@
 			)
 		)
 		(net
-			(code "59")
+			(code "60")
 			(name "unconnected-(J1-Pin_52-Pad52)")
 			(class "Default")
 			(node
@@ -8179,7 +8361,7 @@
 			)
 		)
 		(net
-			(code "60")
+			(code "61")
 			(name "unconnected-(J1-Pin_54-Pad54)")
 			(class "Default")
 			(node
@@ -8190,7 +8372,7 @@
 			)
 		)
 		(net
-			(code "61")
+			(code "62")
 			(name "unconnected-(J1-Pin_56-Pad56)")
 			(class "Default")
 			(node
@@ -8201,7 +8383,7 @@
 			)
 		)
 		(net
-			(code "62")
+			(code "63")
 			(name "unconnected-(J1-Pin_58-Pad58)")
 			(class "Default")
 			(node
@@ -8212,7 +8394,7 @@
 			)
 		)
 		(net
-			(code "63")
+			(code "64")
 			(name "unconnected-(J1-Pin_60-Pad60)")
 			(class "Default")
 			(node
@@ -8223,7 +8405,7 @@
 			)
 		)
 		(net
-			(code "64")
+			(code "65")
 			(name "unconnected-(U1-NC-Pad4)")
 			(class "Default")
 			(node
@@ -8234,7 +8416,7 @@
 			)
 		)
 		(net
-			(code "65")
+			(code "66")
 			(name "unconnected-(U4-NC-Pad7)")
 			(class "Default")
 			(node
@@ -8245,7 +8427,7 @@
 			)
 		)
 		(net
-			(code "66")
+			(code "67")
 			(name "unconnected-(U5-NC-Pad7)")
 			(class "Default")
 			(node

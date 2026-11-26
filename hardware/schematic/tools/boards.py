@@ -26,6 +26,7 @@ nets = {}
 for p in range(1, 61):
     n = bm.get(str(p), '')
     if n.startswith('unconnected') or n.startswith('SD1_') or 'GPIO13' in n: continue   # NC flag
+    if n == 'PWR_WAKEUP1': continue   # C-016/O-83: core wake input left unconnected (ALS is i2c-dev polled, D-003 #18)
     n = ren.get(n, n).replace('/3V3', '')
     nets[str(p)] = n
 s.add('J1', 'Connector_Generic:Conn_02x30_Odd_Even', 'HC-PBB05-2-60-M-H4.0 (ST-BTB-058060-A)', 'openhw:BTB_ST-BTB-058060-A_2x30_P0.5mm', nets,
@@ -63,13 +64,13 @@ s.add('C23', 'Device:C', '22uF/25V X7R', 'Capacitor_SMD:C_1210_3225Metric', {'1'
 s.add('D7', 'Device:D_Zener', 'SMBJ6.0A', 'Diode_SMD:D_SMB', {'1': '5V_SYS', '2': 'GND'}, fields={'MPN': 'SMBJ6.0A (VRWM 6.0V > Vout max 5.30V, V-004b R5)', 'Note': 'unidirectional TVS, K=1'})
 s.add('D3', 'Device:LED', 'PWR green', 'LED_SMD:LED_0603_1608Metric', {'2': 'PWR_LED_A', '1': 'GND'})
 R(s, 'R4', '2.2k', '5V_SYS', 'PWR_LED_A')
-s.block('EFUSE','12V_IR eFuse TPS26600 (IR LED 전원)',['SHDN = IR_LED_EN (1.8V GPIO, 10k 풀다운 = 기본 끔) · UVLO = IN · OVP/MODE/RTN = GND (O-21)','ILIM 8.06k = 약 1.49A (2스트링 최악 1.22A, 분기 C2-4) · dVdT 22nF'],cols=4)
+s.block('EFUSE','12V_IR eFuse TPS26600 (IR LED 전원)',['SHDN = IR_LED_EN (1.8V GPIO, 10k 풀다운 = 기본 끔) · UVLO = IN · OVP/MODE/RTN = GND (O-21)','ILIM 6.98k = 약 1.72A (C-017/O-87: 2스트링 맥놀이 20µs 창 1.585A 여유, 분기 C2-4) · dVdT 22nF'],cols=4)
 # --- 12V_IR eFuse TPS26600 (O-21, V-002: SHDN + 10k pulldown, UVLO=IN, OVP/MODE=RTN, ILIM per 2 strings)
 s.add('U2', 'Power_Management:TPS26600PWP', 'TPS26600PWPR', 'Package_SO:HTSSOP-16-1EP_4.4x5mm_P0.65mm_EP3.4x5mm_Mask2.66x2.46mm_ThermalVias',
       {'1': '12V_IN', '2': '12V_IN', '3': '12V_IN', '5': 'GND', '7': 'IR_LED_EN', '8': 'GND', '9': 'GND', '11': 'EFUSE_ILIM', '12': 'EFUSE_DVDT', '15': '12V_IR', '16': '12V_IR', '17': 'GND'},
       fields={'MPN': 'TI TPS26600PWPR (LCSC C544399)', 'Note': 'UVLO=IN (no UVLO); OVP=RTN internal 33V; MODE open = circuit-breaker + auto-retry (C-004 C4-6); RTN=GND allowed (SLVSDG2G, reverse polarity handled by Q1); FLT/IMON unused (leave floating per datasheet)'})
 R(s, 'R5', '10k', 'IR_LED_EN', 'GND')
-R(s, 'R6', '8.06k 1%', 'EFUSE_ILIM', 'GND')
+R(s, 'R6', '6.98k 1%', 'EFUSE_ILIM', 'GND')  # C-017/O-87 S2 (was 8.06k)
 C(s, 'C9', '22nF', 'EFUSE_DVDT', 'GND')
 C(s, 'C10', '1uF/25V', '12V_IN', 'GND', 'Capacitor_SMD:C_0603_1608Metric')
 C(s, 'C11', '10uF/25V', '12V_IR', 'GND', 'Capacitor_SMD:C_1206_3216Metric')
@@ -165,8 +166,9 @@ f.add('U2', 'Driver_Motor:DRV8837', 'DRV8837DSGR', 'openhw:Texas_DSG0008A_WSON-8
 R(f, 'R1', '10k', 'FRONT_2V8', 'ICR_NSLEEP')
 C(f, 'C3', '10uF', 'VIN', 'GND', 'Capacitor_SMD:C_0603_1608Metric'); C(f, 'C4', '100nF', 'VIN', 'GND'); C(f, 'C5', '100nF', 'FRONT_2V8', 'GND')
 R(f, 'R2', '100k', 'IR_CUT', 'GND'); R(f, 'R3', '100k', 'WH_PWM', 'GND')
-f.add('J2', 'Connector_Generic_MountingPin:Conn_01x02_MountingPin', 'PicoBlade 53261-0271 (CLA216 lead)', 'Connector_Molex:Molex_PicoBlade_53261-0271_1x02-1MP_P1.25mm_Horizontal',
-      {'1': 'ICR_A', '2': 'ICR_B', 'MP': 'GND'}, fields={'MPN': 'Molex 53261-0271 (LCSC C177225); alt JST SM02B-GHS-TB (O-34)', 'Note': 'pin1=ICR_A=red(+) assumed: IN1=1 pulse -> filter open (night), IN2=1 -> closed (day). Housing length and wire order: G2 physical check before PCB release'})
+f.add('J2', 'Connector_Generic:Conn_01x02', 'CLA216 lead solder pads 2P 2.54mm', 'Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical',
+      {'1': 'ICR_A', '2': 'ICR_B'}, in_bom=False,
+      fields={'MPN': '- (solder pads only, no header fitted; excluded from BOM/CPL)', 'Note': 'C-016/O-84: CLA216 leads soldered directly (connector family not identifiable from official data). pin1 (square pad) = ICR_A = red(+) assumed: IN1=1 pulse -> filter open (night), IN2=1 -> closed (day); polarity check on hardware'})
 f.add('MH1', 'Mechanical:MountingHole', 'CLA216-ICR M12 holder', 'openhw:M12_Holder_20mm_CLA216-ICR', {}, fields={'MPN': 'Commonlands CLA216-ICR'})
 f.block('SENS','센서 모듈 DF30 24P (BXF4677-GC2053) · 24MHz · 전원 스위치',['모듈 3.3V 전원 3핀 ← CAM_EN 스위치 · CAM_1V8(Q6, 게이트 Q7/R17 → 자기 소스 풀업, N1) = MCLK(OE=VDD)·I2C 풀업 · RESET RC + BAT54 · C6 DNP 유지','MCLK 24MHz 발진기 (BTB에 MCLK 없음, 계약 9절) · 모듈↔J3 번호 대응은 추론 → 실물 도통'],cols=5)
 # --- sensor module DF30 24P (BXF4677-GC2053) - pin numbering = S401 J2
@@ -191,7 +193,11 @@ R(f, 'R16', '10k', 'CAM_RESET', 'GND', dnp=True)
 f.add('Q6', 'Transistor_FET:Q_PMOS_GSD', 'DMG2305UX', 'Package_TO_SOT_SMD:SOT-23', {'1': 'CAM_1V8_G', '2': 'CORE_1V8', '3': 'CAM_1V8'}, fields={'MPN': 'Diodes DMG2305UX', 'Note': 'CAM_1V8 switch (V-004 R1, O-33): RDS(on) <=200mR @ VGS -1.8V, VGS(th) -0.5..-0.9V (DS36196 Rev 8-2); AO3401A unsuitable'})
 C(f, 'C18', '1uF', 'CAM_1V8', 'GND')
 R(f, 'R17', '10k', 'CORE_1V8', 'CAM_1V8_G')
-f.add('Q7', 'Transistor_FET:DMG1012T', 'DMG1012T', 'Package_TO_SOT_SMD:SOT-523', {'1': 'CAM_EN', '2': 'GND', '3': 'CAM_1V8_G'}, fields={'Note': 'V-004b N1: Q6 gate pulled to its own source (CORE_1V8), driven by CAM_EN (S401 pattern)'})
+f.add('Q7', 'Transistor_FET:DMG1012T', 'DMG1012T', 'Package_TO_SOT_SMD:SOT-523', {'1': 'CAM_EN', '2': 'GND', '3': 'CAM_1V8_PD'}, fields={'Note': 'V-004b N1: Q6 gate pulled to its own source (CORE_1V8), driven by CAM_EN (S401 pattern); C-017: via R18 1k'})
+# C-017/O-87 S1: Miller soft start for Q6 (inrush 5.11A -> 0.133A, on 36us, SIM-001b) · S4: CAM_1V8 bleeder
+R(f, 'R18', '1k', 'CAM_1V8_PD', 'CAM_1V8_G')
+C(f, 'C19', '10nF', 'CAM_1V8_G', 'CAM_1V8')
+R(f, 'R19', '10k', 'CAM_1V8', 'GND')
 # MCLK 24MHz (OT7EL89, OE=CAM_EN, supply CORE_1V8 always-on)
 f.add('X1', 'Oscillator:ASE-xxxMHz', 'OT7EL89CJI-111YLC-24M', 'Oscillator:Oscillator_SMD_SiT_PQFN-4Pin_2.0x1.6mm',
       {'1': 'CAM_1V8', '2': 'GND', '3': 'MCLK_OSC', '4': 'CAM_1V8'}, fields={'MPN': 'YXC OT7EL89CJI-111YLC-24M (LCSC C5280583)', 'Note': '2016 4P OE/GND/OUT/VDD; footprint SiT 2.0x1.6 - verify land vs YXC drawing'})
@@ -231,11 +237,11 @@ f.block('FPC','보드 간 JST GH 6P (직선 케이블 J7-n ↔ J4-(7−n), O-41)
 # FPC 10P (symmetric, mirror of carrier J7)
 f.add('J4', 'Connector_Generic_MountingPin:Conn_01x06_MountingPin', 'JST GH 6P (board link)', 'Connector_JST:JST_GH_SM06B-GHS-TB_1x06-1MP_P1.25mm_Horizontal', {**fpc, '3': 'ALS_INT_RSV', '4': 'SPARE1'},
       fields={'MPN': 'JST SM06B-GHS-TB', 'Note': 'C-009/O-41: straight cable J7-n <-> J4-(7-n) (both -X entry, U-bend); pins 3/4 swapped vs carrier J7'})
-R(f, 'R15', '10k', 'CORE_1V8', 'ALS_INT_RSV')
+# C-016/O-83: R15 10k ALS_INT_RSV pull-up removed (J2-32 unconnected, LTR-329ALS-01 has no INT; ALS_INT_RSV = harness spare only)
 f.block('TP','시험점 (계약 11절)',cols=9)
 # test points
 for i, n in enumerate(['VIN', 'FRONT_2V8', 'CORE_1V8', 'CORE_3V3', 'CAM_AVDD', 'CAM_IOVDD', 'CAM_MCLK', 'CAM_EN', 'CAM_RESET', 'ICR_A', 'ICR_B',
-                       'IRA_SW', 'IRA_SET', 'IR_PWM', 'IR_CTRL', 'LIGHT_SENSE', 'CAM_I2C2_SDA', 'CAM_I2C2_SCL', '12V_IR', 'GND', 'GND', 'SPARE1', 'CAM_1V8']):
+                       'IRA_SW', 'IRA_SET', 'IR_PWM', 'IR_CTRL', 'LIGHT_SENSE', 'CAM_I2C2_SDA', 'CAM_I2C2_SCL', '12V_IR', 'GND', 'GND', 'SPARE1', 'CAM_1V8', 'ALS_INT_RSV']):  # TP24 ALS_INT_RSV: C-016 harness spare end
     TP(f, f'TP{i+1}', n)
 os.makedirs(f'{OUT}/front', exist_ok=True)
 report['front'] = f.write(f'{OUT}/front/front.kicad_sch')

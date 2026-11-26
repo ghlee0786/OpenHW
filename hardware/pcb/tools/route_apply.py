@@ -63,7 +63,8 @@ def main():
             ol.Append(MM(x), MM(y))
         b.Add(z)
     nets = {n: b.FindNet(n) for n in {t["net"] for t in r["tracks"]} | {v["net"] for v in r["vias"]} | {"/GND"}}
-    twist = [(a["layer"], a["rect"]) for a in r.get("areas", []) if a["name"] == "DP_TWIST"]
+    # enclosedByArea 규칙 영역(DP_TWIST · DP_TUNE · DP_BRK, V-005 RQ-7 · V-006) 경계에서 트랙을 나눈다
+    twist = [(a["layer"], a["rect"]) for a in r.get("areas", []) if a["name"] in ("DP_TWIST", "DP_TUNE", "DP_BRK")]
     for t in r["tracks"]:
         for pa, pb in split_at(t, twist):
             s = pcbnew.PCB_TRACK(b)

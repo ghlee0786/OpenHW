@@ -32,6 +32,12 @@ for board in ("carrier", "front"):
     ns.setdefault("meta", {"version": 5})
     ds = d.setdefault("board", {}).setdefault("design_settings", {})
     ds["rules"] = NC["board_rules"]
+    # V-006 조건2-① (review 3d88931): D-003 기록 없는 무시 금지 — KiCad 기본 ignore 4종을 켠다.
+    #   footprint_filters_mismatch 만 무시(회로도 심벌 풋프린트 필터 경고, 제조와 무관 — D-003 기록 요청)
+    sev = ds.setdefault("rule_severities", {})
+    for k in ("footprint_type_mismatch", "missing_courtyard", "track_not_centered_on_via", "tuning_profile_track_geometries"):
+        sev[k] = "error"
+    sev["footprint_filters_mismatch"] = "ignore"
     ds["track_widths"] = [0.0, 0.15, 0.20, 0.30, 0.60, 1.00, 1.50]
     ds["via_dimensions"] = [{"diameter": 0.0, "drill": 0.0}, {"diameter": 0.65, "drill": 0.30}, {"diameter": 0.80, "drill": 0.40}]
     ds["diff_pair_dimensions"] = [{"gap": 0.0, "via_gap": 0.0, "width": 0.0},

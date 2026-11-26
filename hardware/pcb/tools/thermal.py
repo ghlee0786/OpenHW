@@ -108,14 +108,14 @@ def pre_route(B, board_name, LAYERS, CLR, EPS, G):
                 B.add_via(net, (round(float(x), 4), round(float(y), 4)), TVIA)
                 got.append((x, y))
                 n += 1
-        # V-005 RQ-9 (D-003 #29 LED당 4개): 0.8 격자로 4개가 안 나오면(B LED 2개) 0.2 격자에서 이미 둔 비아와 0.9 이상 떨어진 자리를 더한다
+        # V-005 RQ-9 (D-003 #29 LED당 4개): 0.8 격자로 4개가 안 나오면(B LED 2개) 0.2 격자에서 이미 둔 비아와 0.8 이상 떨어진 자리를 더한다
         if n < 4:
             for x in np.arange(x0, x1 + 1e-6, 0.2):
                 for y in np.arange(y0, y1 + 1e-6, 0.2):
                     if n >= 4:
                         break
-                    # 구멍 간격은 사각 창(0.75) 대신 모든 비아 중심 거리 0.9(구멍 0.3 → 가장자리 0.6)로 본다
-                    if any((x - v["pos"][0]) ** 2 + (y - v["pos"][1]) ** 2 < 0.9 ** 2 for v in B.vias):
+                    # 구멍 간격은 사각 창(0.75) 대신 모든 비아 중심 거리 0.8(구멍 0.3 → 가장자리 0.5, DRU fab_hole_to_hole 0.45 + 0.05)로 본다
+                    if any((x - v["pos"][0]) ** 2 + (y - v["pos"][1]) ** 2 < 0.8 ** 2 for v in B.vias):
                         continue
                     if in_any_pad(x, y, 0.45) or not free_for(nid, x, y, TVIA["dia"] / 2, holes=False):
                         continue

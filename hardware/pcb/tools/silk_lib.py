@@ -89,6 +89,35 @@ def graft(saved, src):
     open(saved, "w", encoding="utf-8", newline="").write("".join(out))
 
 
+# M-007 (mechanical cdce9bd §1): 대체 3D 모델 — 원점 · 회전 · 오프셋 0, 배율 1. 같은 풋프린트를 쓰는 모든 부품에 붙는다
+MODELS = ("USB_C_Receptacle_HRO_TYPE-C-31-M-12", "RJ45_Hanrun_HR911105A_Horizontal", "L_Bourns_SRP7028A_7.3x6.6mm",
+          "SOT-523", "Oscillator_SMD_SiT_PQFN-4Pin_2.0x1.6mm")
+
+
+def set_model(path, name):
+    """사본의 (model "...") 경로를 저장소 mechanical/models 의 대체 모델로 바꾼다(없으면 블록을 더한다). 모델은 그림이 아니라 E4 대조 밖."""
+    if name not in MODELS or not (ROOT / "mechanical/models" / f"{name}.step").exists():
+        return
+    uri = "${KIPRJMOD}/../../../mechanical/models/" + f"{name}.step"
+    t = open(path, encoding="utf-8").read()
+    blk = (f'\t(model "{uri}"\n\t\t(offset\n\t\t\t(xyz 0 0 0)\n\t\t)\n\t\t(scale\n\t\t\t(xyz 1 1 1)\n\t\t)\n'
+           f'\t\t(rotate\n\t\t\t(xyz 0 0 0)\n\t\t)\n\t)\n')
+    i = t.find("\t(model ")
+    if i >= 0:
+        j, depth = i + 1, 0
+        while True:
+            depth += t[j] == "("
+            depth -= t[j] == ")"
+            j += 1
+            if depth == 0:
+                break
+        t = t[:i] + blk.rstrip("\n") + t[j:]
+    else:
+        k = t.rstrip().rfind(")")
+        t = t[:k] + blk + t[k:]
+    open(path, "w", encoding="utf-8", newline="").write(t)
+
+
 def src_path(lib):
     return SRC.get(lib, STD / f"{lib}.pretty")
 
@@ -134,6 +163,7 @@ def fix_types(board):
         lp.mkdir(parents=True, exist_ok=True)
         IO.FootprintSave(str(lp), fp)
         graft(lp / f"{name}.kicad_mod", sp)
+        set_model(lp / f"{name}.kicad_mod", name)
         src = f"{lib}:{name}" if lib in SRC else "${KICAD10_FOOTPRINT_DIR}/" + f"{lib}.pretty/{name}.kicad_mod"
         rows.append((f"{lib}.pretty/{name}.kicad_mod", src, sha(sp)))
     # O-74b: copy = 사본 파일(이 폴더 기준), source = 원본(KiCad 10.0.8 표준 또는 프로젝트 라이브러리:이름), sha256 = 원본 파일

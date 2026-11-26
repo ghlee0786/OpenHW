@@ -714,61 +714,106 @@ def main():
     INTRA = {"CSI_100": 0.1, "USB_90": 0.1, "MDI_100": 0.1}  # V-005 RQ-5·6: 쌍 안 차 목표 0 (판정 ≤0.1)
     tune_areas = []
     def intra_tune(i, short, partner, need, lim):
-        """짧은 넷(short)의 이 쌍 트랙 직선에 굴곡을 넣어 need 만큼 늘린다. 남은 차를 돌려준다."""
+        """짧은 넷(short)의 이 쌍 트랙 직선에 굴곡을 넣어 need 만큼 늘린다. 남은 차를 돌려준다.
+        굴곡 모양: 차가 작으면 45° 삼각(높이 ≤0.45), 크면 45° 모서리 사다리꼴(높이 H ≤0.8, 모서리 c 0.2) — 꺾임은 모두 45°.
+        짝에서 멀어지는 쪽으로만 내어 쌍 안 간격 ≤ 0.17 + H < DP_TUNE 상한 1.0 (DRU dp_tuning_gap)."""
         w = i["w"]
-        hh, top, gsp = 0.45, 0.3, 0.3
-        per = 2 * hh * (math.sqrt(2) - 1)  # 굴곡 하나가 더하는 길이
-        unit = 2 * hh + top + gsp
+        top, gsp, cc_ = 0.3, 0.3, 0.2
+        K2 = 4 * cc_ * (2 - math.sqrt(2))  # 사다리꼴: 굴곡 하나 = 2H − K2
         pid = B.netid[partner]
         placed = 0
+
+        def shape(a, u, nrm, Ls, k, H):
+            """k 개 굴곡의 점 목록과 발 길이. H ≤ 2c 이면 삼각(높이 H)."""
+            tri = H <= 2 * cc_
+            foot1 = (2 * H + top) if tri else (4 * cc_ + top)
+            foot = k * foot1 + (k - 1) * gsp
+            if foot + 0.8 > Ls:
+                return None
+            p = a + u * (Ls - foot) / 2
+            pts = []
+            for _ in range(k):
+                if tri:
+                    q1 = p + u * H + nrm * H
+                    q2 = q1 + u * top
+                    q3 = q2 + u * H - nrm * H
+                    pts += [p, q1, q2, q3]
+                else:
+                    q1 = p + (u + nrm) * cc_
+                    q2 = q1 + nrm * (H - 2 * cc_)
+                    q3 = q2 + (u + nrm) * cc_
+                    q4 = q3 + u * top
+                    q5 = q4 + (u - nrm) * cc_
+                    q6 = q5 - nrm * (H - 2 * cc_)
+                    q7 = q6 + (u - nrm) * cc_
+                    pts += [p, q1, q2, q3, q4, q5, q6, q7]
+                    q3 = q7
+                p = q3 + u * gsp
+            return [tuple(x) for x in pts]
+
+        def add_of(k, H):
+            return k * (2 * H * (math.sqrt(2) - 1) if H <= 2 * cc_ else 2 * H - K2)
+
         # 긴 직선부터, 들어가는 만큼 굴곡을 나눠 넣는다
         for t in sorted([t for t in B.tracks if t["net"] == short], key=lambda t: -math.dist(t["a"], t["b"])):
             if need <= lim / 2:
                 break
             a, b = np.array(t["a"]), np.array(t["b"])
             Ls = math.dist(a, b)
-            kmax = int((Ls - 0.8 + gsp) / unit)
-            if kmax < 1:
+            if Ls < 1.5:
                 break
-            k = min(kmax, math.ceil(need / per))
-            hk = min(hh, need / (k * 2 * (math.sqrt(2) - 1)))
-            foot = k * (2 * hk + top) + (k - 1) * gsp
             L = LAYERS.index(t["layer"])
             u = (b - a) / Ls
             nrm = np.array([-u[1], u[0]])
             m = (a + b) / 2
             r, c = B.cell(*(m + nrm * 2 * i["half"]))
             nrm = nrm * (-1 if B.occ[L, r, c] == pid else 1)  # 짝이 있는 쪽의 반대
-            p = a + u * (Ls - foot) / 2
-            new = [tuple(a)]
-            for j in range(k):
-                q1 = p + u * hk + nrm * hk
-                q2 = q1 + u * top
-                q3 = q2 + u * hk - nrm * hk
-                new += [tuple(p), tuple(q1), tuple(q2), tuple(q3)]
-                p = q3 + u * gsp
-            new.append(tuple(b))
-            ok = True
-            mrg = int((w / 2 + HS_CLR + EPS) / G) + 1
-            for (x0, y0), (x1, y1) in zip(new[:-1], new[1:]):
-                for tt in np.linspace(0, 1, 30):
-                    rr, cc = B.cell(x0 + (x1 - x0) * tt, y0 + (y1 - y0) * tt)
-                    blk = B.occ[L, rr - mrg:rr + mrg + 1, cc - mrg:cc + mrg + 1]
-                    tb = B.trk[L, rr - mrg:rr + mrg + 1, cc - mrg:cc + mrg + 1]
-                    if np.any((blk != 0) & (blk != B.netid[short]) & ~((blk == pid) & tb)):
-                        ok = False
-                        break
-                if not ok:
+            # 후보: 굴곡 수 k 를 줄여 가며, 그 k 로 need 를 채우는 높이(최대 0.8) — 못 채우면 최대 높이로 일부만
+            got = None
+            kmax = max(1, int((Ls - 0.8 + gsp) / (4 * cc_ + top + gsp)))
+            kneed = max(1, math.ceil(need / (2 * 0.8 - K2)))
+            best = None
+            # 굴곡 수: 필요한 최소 수 → 더 많게(낮은 굴곡) → 더 적게. 다 채우는 첫 후보를 쓰고, 없으면 가장 많이 채우는 후보
+            for k in sorted(range(1, kmax + 1), key=lambda k_: (k_ < kneed, abs(k_ - kneed))):
+                if got:
                     break
-            if not ok:
+                per = need / k
+                H = per / (2 * (math.sqrt(2) - 1)) if per <= 2 * (2 * cc_) * (math.sqrt(2) - 1) else (per + K2) / 2
+                H = min(H, 0.8)
+                for HH in sorted({H, min(H, 0.6), min(H, 0.45), min(H, 0.3)}, reverse=True):
+                    body = shape(a, u, nrm, Ls, k, HH)
+                    if body is None:
+                        continue
+                    new = [tuple(a)] + body + [tuple(b)]
+                    ok = True
+                    mrg = int((w / 2 + HS_CLR + EPS) / G) + 1
+                    for (x0, y0), (x1, y1) in zip(new[:-1], new[1:]):
+                        for tt in np.linspace(0, 1, 30):
+                            rr, cc = B.cell(x0 + (x1 - x0) * tt, y0 + (y1 - y0) * tt)
+                            blk = B.occ[L, rr - mrg:rr + mrg + 1, cc - mrg:cc + mrg + 1]
+                            tb = B.trk[L, rr - mrg:rr + mrg + 1, cc - mrg:cc + mrg + 1]
+                            if np.any((blk != 0) & (blk != B.netid[short]) & ~((blk == pid) & tb)):
+                                ok = False
+                                break
+                        if not ok:
+                            break
+                    if ok:
+                        if add_of(k, HH) >= need - 1e-6:
+                            got = (new, add_of(k, HH), k)
+                            break
+                        if best is None or add_of(k, HH) > best[1]:
+                            best = (new, add_of(k, HH), k)
+            got = got or best
+            if not got:
                 continue
+            new, _, k_got = got
             B.tracks.remove(t)
             for x0y0, x1y1 in zip(new[:-1], new[1:]):
                 B.add_track(short, L, (round(x0y0[0], 4), round(x0y0[1], 4)), (round(x1y1[0], 4), round(x1y1[1], 4)), w)
             add = sum(math.dist(p_, q_) for p_, q_ in zip(new[:-1], new[1:])) - Ls
             i["lens"][short] += add
             need -= add
-            placed += k
+            placed += k_got
             xs = [q[0] for q in new]
             ys = [q[1] for q in new]
             tune_areas.append({"name": "DP_TUNE", "layer": LAYERS[L], "rect": [min(xs) - 0.3, min(ys) - 0.3, max(xs) + 0.3, max(ys) + 0.3]})
@@ -881,7 +926,30 @@ def main():
                     B.add_track(net, L, a, b, w)
                 if kk < len(segs) - 1:
                     B.add_via(net, pts[-1], vtype)
+                    if vtype is VIA_PWR:  # R-020 RQ-18: 전원 층 바꿈은 비아 2개 병렬(Ø0.40 하나 1.81A < 최악 1.84A)
+                        twin_via(net, pts[-1], vtype, (L, segs[kk + 1][0]), min(w, 0.8))
             return True
+        return False
+
+    def twin_via(net, pos, vtype, lays, w):
+        """pos 옆(중심 0.9mm)에 같은 넷 비아를 하나 더 두고, 두 층에서 짧은 트랙으로 잇는다. 자리가 없으면 기록만."""
+        nid = B.netid[net]
+        rad = vtype["dia"] / 2
+        m = int((max(rad, w / 2) + CLR + EPS) / G) + 1
+        for ang in range(0, 360, 45):
+            q = (round(pos[0] + 0.9 * math.cos(math.radians(ang)), 4), round(pos[1] + 0.9 * math.sin(math.radians(ang)), 4))
+            r, c = B.cell(*q)
+            ok = all(not np.any((B.occ[Lx, r - m:r + m + 1, c - m:c + m + 1] != 0) & (B.occ[Lx, r - m:r + m + 1, c - m:c + m + 1] != nid))
+                     for Lx in range(4))
+            hv = int(rad / G) + 1
+            ok = ok and not B.hardvia[r - hv:r + hv + 1, c - hv:c + hv + 1].any()
+            ok = ok and all(math.dist(q, v["pos"]) >= 0.85 for v in B.vias if v["net"] != net or math.dist(v["pos"], pos) > 1e-6)
+            if ok:
+                B.add_via(net, q, vtype)
+                for Lx in lays:
+                    B.add_track(net, Lx, pos, q, w)
+                return True
+        B.failed.append(f"{net} 병렬 비아 자리 없음 {pos}")
         return False
 
     retry = []
@@ -913,7 +981,8 @@ def main():
         hs = nc["name"] in HS
         layers = [0, 3] if hs else [0, 3, 2]
         widths = [nc["track_width"]]
-        minw = {"PWR_12V_IN": 0.8, "PWR_12V_IR": 0.55, "PWR_5V": 0.3}.get(nc["name"], 0.15)
+        # 좁힐 수 있는 최소 폭(IPC-2152 외층 1oz ΔT10K, R-020): 5V_SYS 최악 1.3A → 0.6(RQ-17, 0.30 은 1.03A), PWR_LOGIC 1.0A → 0.3(RQ-19)
+        minw = {"PWR_12V_IN": 0.8, "PWR_12V_IR": 0.55, "PWR_5V": 0.6, "PWR_LOGIC": 0.3}.get(nc["name"], 0.15)
         if minw < widths[0]:
             widths += sorted({max(minw, widths[0] / 2), minw}, reverse=True)
         elif nc["name"] == "Default":
@@ -1022,7 +1091,9 @@ def main():
                     B.add_via("/GND", B.xy(r, c), VIA)
                     n_st += 1
         print(f"GND 이음 비아 {n_st}")
-    for tname, tnets, r in twist_rects:
+    # 넷 전체 P/N 차(꼬임 구간 · 순서 잇기 단선 포함, V-005 A8 판정 방식)를 쌍 구간 굴곡으로 보정 — 꼬임 쌍과 순서 잇기(USB) 쌍
+    whole = [(tname, tnets) for tname, tnets, r in twist_rects] +         [(i["name"], (i["P"], i["N"])) for i in infos if i["P"] in chained or i["N"] in chained]
+    for tname, tnets in whole:
         info = next((i for i in infos if i["P"] in tnets), None)
         if not info:
             continue
@@ -1030,7 +1101,7 @@ def main():
         d_ = tot[info["P"]] - tot[info["N"]]
         lim = INTRA[netclass(info["P"])["name"]]
         if abs(d_) > lim:
-            print(f"꼬임 {tname}: 넷 전체 P/N 차 {d_:+.2f} mm → 쌍 구간에서 보정")
+            print(f"넷 전체 {tname}: P/N 차 {d_:+.2f} mm → 쌍 구간에서 보정")
             intra_tune(info, *((info["P"], info["N"]) if d_ < 0 else (info["N"], info["P"])), abs(d_), lim)
     report["twist"] = []
     for tname, tnets, r in twist_rects:

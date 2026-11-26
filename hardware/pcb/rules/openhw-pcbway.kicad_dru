@@ -43,9 +43,10 @@
 
 # 비결합 4mm (P-003에서 3→4): 전면 CSI는 짝 BTB 탈출(0.5 피치) + DF30 탈출(0.4 피치) + 층 바꿈 쌍 비아(간격 0.9)
 # 세 곳이 구조상 필요해 최소 약 3.3mm가 나온다(DRC 실측). 800Mbps 레인에서 4mm 비결합은 약 24ps 구간.
+# V-006: 선폭 최소 #21 0.15 (P-003 의 0.14 완화 되돌림)
 (rule "csi_100_pair"
   (condition "A.hasNetclass('CSI_100')")
-  (constraint track_width (min 0.14mm) (opt 0.15mm) (max 0.16mm))
+  (constraint track_width (min 0.15mm) (opt 0.15mm) (max 0.16mm))
   (constraint diff_pair_gap (min 0.15mm) (opt 0.16mm) (max 0.18mm))
   (constraint diff_pair_uncoupled (max 4mm))
   (constraint skew (max 1.0mm)))
@@ -56,7 +57,7 @@
 #  비결합으로 잡힌다(DRC 실측 10.2mm). 480Mbps(UI 2083ps)에서 12mm ≈ 72ps, 보정 전 쌍 안 차 2.45mm(≈15ps)를 없앤 대가.
 (rule "mdi_100_pair"
   (condition "A.hasNetclass('MDI_100')")
-  (constraint track_width (min 0.14mm) (opt 0.15mm) (max 0.16mm))
+  (constraint track_width (min 0.15mm) (opt 0.15mm) (max 0.16mm))
   (constraint diff_pair_gap (min 0.15mm) (opt 0.16mm) (max 0.18mm))
   (constraint diff_pair_uncoupled (max 6mm)))
 
@@ -72,20 +73,21 @@
   (constraint clearance (min 0.30mm)))
 
 # 쌍 안 길이 보정 굴곡(P-003): 짧은 선에만 짝 반대쪽으로 넣은 45° 굴곡 구간(규칙 영역 DP_TUNE, 배선기가 넣음).
-# 굴곡 높이(≤0.45)만큼 쌍 안 간격이 벌어지는 것은 보정의 결과다 — 그 구간에서만 간격 상한을 1.0mm로. (탈출 구역과 겹치면 뒤에 오는 탈출 규칙이 이긴다)
+# 굴곡 높이(≤0.8)만큼 쌍 안 간격이 벌어지는 것은 보정의 결과다 — 그 구간에서만 간격 상한을 1.0mm로.
+# V-006: DP_TUNE · DP_BRK 도 enclosedByArea — 배선 적용 단계(route_apply.py)가 영역 경계에서 트랙을 나눠 안쪽 조각만 완화를 받는다. (탈출 구역과 겹치면 뒤에 오는 탈출 규칙이 이긴다)
 (rule "dp_tuning_gap"
-  (condition "(A.hasNetclass('CSI_100') || A.hasNetclass('MDI_100') || A.hasNetclass('USB_90')) && A.intersectsArea('DP_TUNE')")
+  (condition "(A.hasNetclass('CSI_100') || A.hasNetclass('MDI_100') || A.hasNetclass('USB_90')) && A.enclosedByArea('DP_TUNE')")
   (constraint diff_pair_gap (min 0.15mm) (max 1.0mm)))
 
 # 고속 탈출 구역 (P-003): 커넥터·ESD 패드 간격(0.4/0.5mm 피치 커넥터, USBLC6 1.9, SOD-323 2.1)에서 쌍이 쌍 간격으로 모이는 구간.
 # 배선기(route.py)가 쌍마다 패드 둘레+탈출점 사각형을 계산해 규칙 영역 DP_BRK(제한 없음)로 넣는다. 그 안에서만:
 #  쌍 안 간격 상한 = 패드 간격, 다른 고속 넷 트랙과 간격 = 제조 최소 0.16(P-001). 구역 밖은 위 규칙 그대로.
 (rule "dp_breakout_pair"
-  (condition "(A.hasNetclass('CSI_100') || A.hasNetclass('MDI_100') || A.hasNetclass('USB_90')) && A.intersectsArea('DP_BRK')")
+  (condition "(A.hasNetclass('CSI_100') || A.hasNetclass('MDI_100') || A.hasNetclass('USB_90')) && A.enclosedByArea('DP_BRK')")
   (constraint diff_pair_gap (min 0.15mm) (max 2.2mm)))
 
 (rule "dp_breakout_spacing"
-  (condition "(A.hasNetclass('CSI_100') || A.hasNetclass('MDI_100') || A.hasNetclass('USB_90')) && A.Type == 'Track' && B.Type == 'Track' && !A.isCoupledDiffPair() && A.intersectsArea('DP_BRK')")
+  (condition "(A.hasNetclass('CSI_100') || A.hasNetclass('MDI_100') || A.hasNetclass('USB_90')) && A.Type == 'Track' && B.Type == 'Track' && !A.isCoupledDiffPair() && A.enclosedByArea('DP_BRK')")
   (constraint clearance (min 0.16mm)))
 
 # MDI P/N 꼬임 구간 (P-003, O-47): 캐리어 J1(코어 J2 짝)에서 오는 TX·RX 쌍과 RJ45(HR911105A 표준 핀 배정) 사이에서 P/N 순서가

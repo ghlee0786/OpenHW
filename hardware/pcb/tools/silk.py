@@ -14,6 +14,9 @@ import sys
 
 import pcbnew
 
+sys.path.insert(0, __import__("os").path.dirname(__import__("os").path.abspath(__file__)))
+import thermal  # noqa: E402  (K21 열 패드 사각형)
+
 MM, TO = pcbnew.FromMM, pcbnew.ToMM
 W = 0.15          # 실크 선폭 (RQ-10)
 CLR_MASK = 0.15   # 실크–마스크 개구 (DRU fab_silk_to_pad)
@@ -283,6 +286,11 @@ def place_refs(b, edge, log):
         for fp, g in silk_items(b, s):
             g.TransformShapeToPolygon(si, g.GetLayer(), MM(CLR_SILK), ERR, pcbnew.ERROR_OUTSIDE)
         o.BooleanAdd(si)
+        # IR LED 열 구리(K21 노출 패드 = 뒷면 마스크 개구, 열 비아 자리)는 배선 단계에서 생긴다 — 두 면 모두 글자 금지(+0.3)
+        board = "front" if any(f.GetReference().startswith("D_IR") for f in b.GetFootprints()) else "carrier"
+        for _, tp in thermal.TP[board]:
+            x0, y0, x1, y1 = thermal.rectK(tp)
+            o.BooleanAdd(rect_poly(x0 - 0.3, y0 - 0.3, x1 + 0.3, y1 + 0.3))
         obst[s] = o
         c = pcbnew.SHAPE_POLY_SET()
         for fp in b.GetFootprints():

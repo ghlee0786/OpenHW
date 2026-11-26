@@ -1,8 +1,6 @@
 
 # ---- 캐리어 전용 (P-003) ----
-# U2 TPS26600PWPR 풋프린트(KiCad 표준 HTSSOP-16 ..._ThermalVias)의 열 비아 Ø0.2.
-# PCBWay 현행 표 capabilities.html: CNC 드릴 0.15–6.0mm, 추가 요금은 <0.2mm (P-001 §2 #3) → Ø0.2는 표준 범위.
-# 구판 표(<0.3 추가 요금)와 상충하므로 견적 때 확인한다(P-001 §6). 이 풋프린트 패드에만 적용한다.
-(rule "u2_htssop_thermal_vias"
-  (condition "A.Type == 'Pad' && A.memberOfFootprint('U2')")
-  (constraint hole_size (min 0.20mm)))
+# V-006 조건2-① (orch O-86 ④): U2 TPS26600PWPR 풋프린트(KiCad 표준 HTSSOP-16 ..._ThermalVias)의 열 비아 구멍 Ø0.2 예외
+#   (u2_htssop_thermal_vias, hole_size min 0.20)를 없앴다 → 공통 fab_min_drill 0.30 이 그대로 적용된다.
+#   풋프린트의 구멍은 회로도 풋프린트 지정(FPID)과 O-74b 사본 규칙(구멍은 원본 그대로) 때문에 pcb 쪽에서 바꿀 수 없다.
+#   남는 위반 수와 이유는 orch 에 보고하고(D-003 기록 대상), 회로도 풋프린트를 열 비아 없는 변형으로 바꾸는 안을 함께 낸다.
