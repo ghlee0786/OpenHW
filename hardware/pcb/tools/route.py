@@ -568,7 +568,7 @@ def main():
             starts = {(L, c0[0] - r0, c0[1] - cc0) for L in sL}
             targets = {(L, c1[0] - r0, c1[1] - cc0) for L in eL}
             nov = [(c0[0] - r0, c0[1] - cc0), (c1[0] - r0, c1[1] - cc0)]  # 탈출점 1.2mm 안에는 쌍 비아 금지
-            path = B.astar(win, starts, targets, passable, viaok, layers, via_cost=60.0, pair_off=(VIA["dia"] + 0.25) / 2 / G,
+            path = B.astar(win, starts, targets, passable, viaok, layers, via_cost=160.0, pair_off=(VIA["dia"] + 0.25) / 2 / G,
                            start_dir=sd, end_dir=ed, cap=4_000_000, no_via_near=(nov, 1.2 / G), min_run=6)
             if not path:
                 diag = {f"start L{L}": bool(passable[L][r, c]) for L, r, c in starts} | \
@@ -951,7 +951,8 @@ def main():
             # 끝이 같은 넷 비아 구리 안의 아무 칸이면 비아 중심까지 잇는다(track_not_centered_on_via, P-003 In2)
             lastL, lastc = segs[-1]
             ep = B.xy(*lastc[-1])
-            vv = next((v for v in B.vias if v["net"] == net and 1e-6 < math.dist(v["pos"], ep) < v["dia"] / 2), None)
+            # 트랙이 비아 구리 밖으로 나가지 않는 경우만(끝 + 반폭 ≤ 비아 반지름) — 아니면 이웃 패드와 단락(P-003 J1 5V)
+            vv = next((v for v in B.vias if v["net"] == net and 1e-6 < math.dist(v["pos"], ep) <= v["dia"] / 2 - w / 2), None)
             if vv:
                 segs[-1] = (lastL, list(lastc) + [None])
             for kk, (L, cells) in enumerate(segs):
