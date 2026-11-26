@@ -11,9 +11,11 @@
 
 | 파일 | 출처 | sha256 |
 |---|---|---|
-| `inputs/bom-full.csv` | research R-008 레인 t-20261126-171912-e7d2 커밋 **9a5fbfb** `docs/research/bom-full.csv` (`git show`, R-012 전선 MPN 반영) | 9738121e9c01933115b5878f6485ebda92f1d54977f6240df696d5161e09fa02 |
+| `inputs/bom-full.csv` | research R-016 레인 t-20261127-021842-688a의 `docs/research/bom-full.csv` (같은 커밋, **IR 스트링 B 실장 — O-69**). 이전 판: R-008 9a5fbfb (sha256 9738121e…fa02) | 321c7402b6f58fb225580d1707a2eb017520f563f75192fbf01fc9f53808890a |
 | `inputs/carrier-kicad-bom.csv` | 회로도 **c653eac** `hardware/schematic/carrier/carrier.kicad_sch`(sha256 1f7cb20b…62b0)를 `git show`로 꺼내 `kicad-cli sch export bom`으로 내보냄 | 3c597c2ec691b0ca3bfe4fe8e48ae14848c6cbaee718313650fe46eea7149a58 |
 | `inputs/front-kicad-bom.csv` | 같은 방법 (`front.kicad_sch` sha256 4bd5b354…1b304) | c4f429b83e7ae6de4293e304dfd6ebb0a37604c8a8f4c7fd24ce24466c8c0eab |
+
+- R-016 (2026-11-27): main eb0da0f의 회로도(C-011 `83728da`)로 다시 내보냈다(종료 0). 결과는 위 두 파일과 바이트까지 같았다(sha256 동일). 그래서 KiCad 입력은 바꾸지 않았다.
 
 KiCad 내보내기 명령(KiCad 10.0.8, 종료 코드 carrier 0 · front 0):
 
@@ -56,6 +58,20 @@ python -I make_pcbway_bom.py --bom-full <csv> --kicad-carrier <csv> --kicad-fron
 | front | **39** | 62 | 50 | 12 | 참조 62 · DNP 12 **일치** | D_IR_A1·A2 (VSMA1085400, Digi-Key) · D_IR_B1·B2 (DNS) · MH1 CLA216-ICR (Manual) |
 
 - 일반 실행 `python -I make_pcbway_bom.py` → **종료 코드 0**
+
+### R-016 재생성 (2026-11-27, IR 스트링 B 실장 — O-69)
+
+| 보드 | 행 | 참조 지정자 | 실장 | DNS | KiCad 일치 (TP 제외) | 위탁 (Consigned) |
+|---|---|---|---|---|---|---|
+| carrier | 50 | 73 | 66 | 7 | 참조 73 · DNP 7 일치 | 없음 (출력 변화 없음) |
+| front | 39 | 62 | **58** | **4** (C6, Q4, R11, R16) | 참조 62 일치 · **DNP 불일치 8 — 회로도 DNP 해제 대기** | D_IR_A1·A2 · **D_IR_B1·B2** (VSMA1085400, Digi-Key) · MH1 (Manual) |
+
+- `python -I make_pcbway_bom.py` → **종료 코드 1**. stderr 출력: 「불일치 [front DNP] BOM에만: [] / KiCad에만: ['C16', 'C17', 'D2', 'D_IR_B1', 'D_IR_B2', 'L2', 'R14', 'U5']」
+  - 회로도(schematic 소관)에는 이 8개가 아직 `dnp yes`로 남아 있어서 생기는 **예정된 차이**다. 다른 차이는 없다.
+  - 목록과 근거는 `docs/research/r016-ir-string-b.md`에 있다.
+- 확인 실행: 위 8개의 DNP만 지운 front KiCad BOM(scratchpad, 커밋하지 않음)을 `--kicad-front`로 주고 `--out`은 scratchpad로 했다 → **종료 코드 0**. 출력 CSV 2개는 일반 실행 결과와 바이트까지 같다(`cmp`).
+- schematic이 DNP를 해제하면 `inputs/front-kicad-bom.csv`를 다시 내보내고 생성기를 다시 돌린다. 종료 코드 0이 나와야 끝난다.
+
 - 음성 시험: carrier KiCad BOM에서 C23을 뺀 입력 → **종료 코드 1** (「BOM에만: ['C23']」 출력)
 - 음성 시험: 입력 파일 없음 → **종료 코드 2**
 

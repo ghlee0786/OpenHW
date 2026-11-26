@@ -5,21 +5,21 @@ Item #,*Designator,*Qty,Manufacturer,*Mfg Part #,Description / Value,*Package/Fo
 4,C6,1,Samsung,CL05B104KO5NNNC,100nF,C_0402_1005Metric,DNS,DNS - do not purchase/place; Turnkey; Source: C1525
 5,C14,1,Samsung,CL31B106KBHNNNE,10uF/50V X7R,C_1206_3216Metric,SMD,Turnkey; Source: C89632
 6,C15,1,Samsung,CL05B104KB54PNC,100nF/50V,C_0402_1005Metric,SMD,Turnkey; Source: C307331
-7,C16,1,Samsung,CL31B106KBHNNNE,10uF/50V X7R,C_1206_3216Metric,DNS,DNS - do not purchase/place; Turnkey; Source: C89632
-8,C17,1,Samsung,CL05B104KB54PNC,100nF/50V,C_0402_1005Metric,DNS,DNS - do not purchase/place; Turnkey; Source: C307331
+7,C16,1,Samsung,CL31B106KBHNNNE,10uF/50V X7R,C_1206_3216Metric,SMD,Turnkey; Source: C89632
+8,C17,1,Samsung,CL05B104KB54PNC,100nF/50V,C_0402_1005Metric,SMD,Turnkey; Source: C307331
 9,D1,1,Vishay,SS24S-E3/61T,"SS24 (40V 2A, SMA)",D_SMA,SMD,Turnkey; Source: C84317
-10,D2,1,Vishay,SS24S-E3/61T,"SS24 (40V 2A, SMA)",D_SMA,DNS,DNS - do not purchase/place; Turnkey; Source: C84317
+10,D2,1,Vishay,SS24S-E3/61T,"SS24 (40V 2A, SMA)",D_SMA,SMD,Turnkey; Source: C84317
 11,D3,1,Diodes,BAT54WS-7-F,BAT54WS,D_SOD-323,SMD,Turnkey; Source: C124205
 12,D_IR_A1,1,Vishay,VSMA1085400,VSMA1085400,Vishay_VSMA1085600_3.4x3.4mm,SMD,Consigned; Source: Digi-Key 751-VSMA1085400CT-ND (LCSC C6604340 stock 3)
 13,D_IR_A2,1,Vishay,VSMA1085400,VSMA1085400,Vishay_VSMA1085600_3.4x3.4mm,SMD,Consigned; Source: Digi-Key 751-VSMA1085400CT-ND (LCSC C6604340 stock 3)
-14,D_IR_B1,1,Vishay,VSMA1085400,VSMA1085400,Vishay_VSMA1085600_3.4x3.4mm,DNS,DNS - do not purchase/place; Consigned; Source: Digi-Key 751-VSMA1085400CT-ND (LCSC C6604340 stock 3)
-15,D_IR_B2,1,Vishay,VSMA1085400,VSMA1085400,Vishay_VSMA1085600_3.4x3.4mm,DNS,DNS - do not purchase/place; Consigned; Source: Digi-Key 751-VSMA1085400CT-ND (LCSC C6604340 stock 3)
+14,D_IR_B1,1,Vishay,VSMA1085400,VSMA1085400,Vishay_VSMA1085600_3.4x3.4mm,SMD,Consigned; Source: Digi-Key 751-VSMA1085400CT-ND (LCSC C6604340 stock 3)
+15,D_IR_B2,1,Vishay,VSMA1085400,VSMA1085400,Vishay_VSMA1085600_3.4x3.4mm,SMD,Consigned; Source: Digi-Key 751-VSMA1085400CT-ND (LCSC C6604340 stock 3)
 16,J1,1,HCTL,HC-PBB05-2-60-F-H4.0-G1-R-P-04,HC-PBB05-2-60-F-H4.0 (ST-BTB-058060-B),BTB_ST-BTB-058060-B_2x30_P0.5mm,SMD,Turnkey; Gate G1: BTB mating check before production; Source: C41421025
 17,J2,1,Molex,53261-0271,PicoBlade 53261-0271 (CLA216 lead),Molex_PicoBlade_53261-0271_1x02-1MP_P1.25mm_Horizontal,SMD,Turnkey; Source: C177225
 18,J3,1,Hirose,DF30FC-24DS-0.4V(81),DF30FC-24DS-0.4V(81),Hirose_DF30FC-24DS-0.4V_2x12_P0.4mm,SMD,Turnkey; Source: C5137456
 19,J4,1,JST,SM06B-GHS-TB(LF)(SN),JST GH 6P (board link),JST_GH_SM06B-GHS-TB_1x06-1MP_P1.25mm_Horizontal,SMD,Turnkey; Source: C133065
 20,L1,1,Bourns,SRN6045TA-470M,47uH Irms>=1.3A Isat>=2A,L_Bourns_SRN6045TA,SMD,"Turnkey; Source: LCSC C5151734 / Digi-Key (stock 11,160)"
-21,L2,1,Bourns,SRN6045TA-470M,47uH Irms>=1.3A Isat>=2A,L_Bourns_SRN6045TA,DNS,"DNS - do not purchase/place; Turnkey; Source: LCSC C5151734 / Digi-Key (stock 11,160)"
+21,L2,1,Bourns,SRN6045TA-470M,47uH Irms>=1.3A Isat>=2A,L_Bourns_SRN6045TA,SMD,"Turnkey; Source: LCSC C5151734 / Digi-Key (stock 11,160)"
 22,MH1,1,Commonlands,CLA216-ICR,CLA216-ICR M12 holder,M12_Holder_20mm_CLA216-ICR,Manual,"Consigned; Not soldered: mechanical part, customer mounts; Source: Commonlands"
 23,"Q1,Q2",2,AOS,AO3401A,AO3401A,SOT-23,SMD,Turnkey; Source: C15127
 24,"Q3,Q5,Q7",3,Diodes,DMG1012T-7,DMG1012T,SOT-523,SMD,Turnkey; Source: C20512
@@ -31,10 +31,10 @@ Item #,*Designator,*Qty,Manufacturer,*Mfg Part #,Description / Value,*Package/Fo
 30,"R9,R10",2,UNI-ROYAL,0402WGF4701TCE,4.7k,R_0402_1005Metric,SMD,Turnkey; Source: C25900
 31,"R11,R16",2,UNI-ROYAL,0402WGF1002TCE,10k,R_0402_1005Metric,DNS,DNS - do not purchase/place; Turnkey; Source: C25744
 32,R13,1,UNI-ROYAL,1206W4F100LT5E,0.1R 1% 0.25W,R_1206_3216Metric,SMD,Turnkey; Source: C25334
-33,R14,1,UNI-ROYAL,1206W4F100LT5E,0.1R 1% 0.25W,R_1206_3216Metric,DNS,DNS - do not purchase/place; Turnkey; Source: C25334
+33,R14,1,UNI-ROYAL,1206W4F100LT5E,0.1R 1% 0.25W,R_1206_3216Metric,SMD,Turnkey; Source: C25334
 34,U1,1,Richtek,RT9013-28GB,RT9013-28GB,SOT-23-5,SMD,Turnkey; Source: C2972227
 35,U2,1,Texas Instruments,DRV8837DSGR,DRV8837DSGR,Texas_DSG0008A_WSON-8-1EP_2x2mm_P0.5mm_EP0.9x1.6mm,SMD,Turnkey; Source: C39159
 36,U3,1,Lite-On,LTR-329ALS-01,LTR-329ALS-01,Lite-On_LTR-329ALS-01_2x2mm_P1.2mm,SMD,Turnkey; Source: C284894
 37,U4,1,Diodes,AL8860MP-13,AL8860MP-13,Diodes_MSOP-8EP_3x3mm_P0.65mm_EP1.7x2.0mm_AL8860,SMD,Turnkey; Source: C500782
-38,U5,1,Diodes,AL8860MP-13,AL8860MP-13,Diodes_MSOP-8EP_3x3mm_P0.65mm_EP1.7x2.0mm_AL8860,DNS,DNS - do not purchase/place; Turnkey; Source: C500782
+38,U5,1,Diodes,AL8860MP-13,AL8860MP-13,Diodes_MSOP-8EP_3x3mm_P0.65mm_EP1.7x2.0mm_AL8860,SMD,Turnkey; Source: C500782
 39,X1,1,YXC,OT7EL89CJI-111YLC-24M,OT7EL89CJI-111YLC-24M,Oscillator_SMD_SiT_PQFN-4Pin_2.0x1.6mm,SMD,Turnkey; Source: C5280583
