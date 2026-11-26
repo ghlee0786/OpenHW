@@ -30,7 +30,10 @@
 | M-001d | orch | mechanical t18x | R-007 수치 반영, 받침+블록 2.03 > CLA216 공동 약 1.2 간섭 해소(스페이서/컷아웃/재배치 비교), 초점 BFL 재계산 | mechanical/** (M-001 레인) | z표·충돌 0 목표·선택 근거, 커밋 | completed — 커밋 c05bb28. K15 받침 0.75+스페이서 1.5, 실제 충돌 0, 전체 53.3mm, 칼라 광차단, PCB 허용 높이표 §3.6 |
 | P-003 | orch (단계 5) | pcb t190 | 캐리어·전면 보드 배치·배선·DRC·STEP (GUI 소유권 schematic→pcb, 창 닫힘 확인 후) | hardware/schematic/<보드>/*.kicad_pcb, hardware/pcb/** | DRC 종료 코드·미연결, 차동 길이표, STEP sha256, 스크린샷, 레인·커밋 | running |
 | R-008 | orch | research t18s | 회로도 BOM 내보내기 → 견적용 전체 BOM + R-004와 차이표 | docs/research/bom-full.csv, r008-bom-diff.md | 21열·행 수, 차이표, 미확정 MPN, 레인·커밋 | running |
-| V-004 | orch (단계 4 독립 검토) | review t191 | C-002 회로 독립 검토(전원·보호·구동·I2C·PHY·USB·BTB·FPC) | validation/review-V004-C002.md | 판정표·수정안, ERC 재실행, 레인·커밋 | queued (V-003 뒤) |
+| V-004 | orch (단계 4 독립 검토) | review t191 | C-002 회로 독립 검토(전원·보호·구동·I2C·PHY·USB·BTB·FPC) | validation/review-V004-C002.md | 판정표·수정안, ERC 재실행, 레인·커밋 | running (기준 276fc89, C-003 변경분은 나중에 추가 절) |
+| V-003 결과 | — | review t191 | (완료) L-001 독립 대조 | validation/review-V003-L001.md | — | completed — 레인 t-20261126-165808-da7a 커밋 e0cbdea. 전면 -B는 B.Cu 뒤집기+180°만 맞음, AL8860 EP 랜드·BTB courtyard·M12 홀더 속성/구멍·DRV8837 3D·FFC 1A 신호 전용 지적 |
+| C-003 | orch (V-003 반영) | schematic t18z | 라이브러리 수정(BTB courtyard·실크, AL8860 파생 랜드, M12 홀더 Ø1.7·속성, DRV8837 3D) + 12V_IR 커넥터 정격 재검토 | hardware/libraries/**, hardware/schematic/** (C-002 레인) | ERC 0 유지, 의도 변경만 차이, 커밋 | running |
+| C-002b | lead O-28 | schematic t18z | 회로도 가독성 정리(기능 블록 계층 시트·주석), 참조 지정자 불변 | hardware/schematic/** (C-002 레인) | 넷리스트 동일 증명, ERC 0, SVG 경로, 커밋 | running (C-003과 별도 커밋) |
 
 ## 운영 변경 (2026-11-26, 사용자 지시 · lead 전달)
 - 의견 묻지 않고 진행: 사람 쪽 미정값은 D-003(lead 레인 t-20261126-144135-5470 docs/decisions/D-003-working-defaults.md, 커밋 8ac5ce5) 값으로 확정 취급. 새 갈림길은 기본값 선택 → 아래 「분기 기록」에 분기점·선택·이유·차선책 → lead 요약 보고. 문제 시 해당 행으로 돌아가 차선책.
@@ -69,3 +72,5 @@
 | O-26 | GC2053 모듈 + ICR 실장 (O-18) | 모듈 홀더 제거 → 센서 블록 받침 접착, CLA216-ICR 전면 보드 고정 / 게이트 G2: 발주 전 S401 1장 홀더 분리·높이 실측(구매는 사용자 지시) | ICR 공간 확보 유일안, 계산상 MBFL 충족 | ICR 일체형 모듈(판매자 문의 필요) → 모듈 홀더에 렌즈만(ICR 없음, 요구 미충족) |
 | G1/G2 | 발주 전 게이트 | G1 짝 BTB 실물 결합(1번 핀·VIN 정격) · G2 센서 홀더 분리·높이 실측 | 둘 다 실물 필요 → 사용자 구매 지시 전엔 PCB 발주 불가 | — |
 | O-27 | KiCad GUI 소유권 (G-001: schematic 단독) | 회로도 완료 → schematic이 창을 모두 닫고 보고한 뒤 pcb로 이전, pcb도 G-001 방식(스크린샷·창 제목 확인) | 단일 작성자 유지하며 PCB 단계도 사용자에게 보이게 | pcb는 pcbnew Python/파일만, GUI는 확인용 |
+| O-28 | 회로도 가독성 정리 시점 (lead 분기) | C-002b를 C-003과 함께 지금 C-002 레인에서(별도 커밋), P-003은 회로도 가져오기를 schematic 최종 커밋까지 보류하고 그동안 보드 설정·BTB 면 판정·배치/배선 계획 | 시트 구조·커넥터 변경이 어차피 생기므로 PCB가 한 번만 가져오게, 같은 파일 동시 편집 없음 | P-003 첫 DRC 뒤 정리(재연결 필요) / 정리 없이 V-004 |
+| — | VS Code 키 입력 사고 | lead 확인: 메인 체크아웃 미커밋 변경 없음, VS Code 미저장 표시 없음 → 추가 조치 없음 | GUI 작업자 키 입력 전 포커스 확인 의무 | — |
