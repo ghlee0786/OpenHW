@@ -13,6 +13,9 @@ VOL="${VOL:-openhw-recamera-sdk}"
 IMAGE="recamera-os-builder"
 OUT_DIR="${OUT_DIR:-C:/Users/gh/.local/share/openhw-tools/recamera-sdk/out-$TAG}"
 STEP="${1:-all}"
+# CPUSET: 빌드 컨테이너가 쓸 CPU. SDK Makefile 은 NPROC := $(shell nproc) 이라 cpuset 으로 -j 가 정해진다(소스 수정 없음).
+CPU_OPT=()
+[ -n "${CPUSET:-}" ] && CPU_OPT=(--cpuset-cpus "$CPUSET")
 
 clone() {
   docker volume create "$VOL" >/dev/null
@@ -30,7 +33,7 @@ image() {
 }
 
 build() {
-  docker run --rm -v "$VOL":/work --workdir /work/src -e HOME=/work/home "$IMAGE" bash -c '
+  docker run --rm "${CPU_OPT[@]}" -v "$VOL":/work --workdir /work/src -e HOME=/work/home "$IMAGE" bash -c '
     set -e
     id builder >/dev/null 2>&1 || useradd -m -u 1000 -s /bin/bash builder
     mkdir -p /work/home && chown -R 1000:1000 /work/home

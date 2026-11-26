@@ -1,7 +1,7 @@
 # F-002 reCamera-OS 0.2.4 원본 기준 빌드
 
 - 배정: orch t18r F-002 · 작성: firmware t18w · 레인 t-20261126-161240-92e6 · 날짜 2026-11-26
-- **상태: 미완료.** 3번째 빌드가 호스트 메모리 부족으로 중단됐다(빌드 오류가 아님). 다시 시작은 지시를 받은 뒤 한다.
+- **상태: 미완료.** 3번째와 4번째(-j4) 빌드가 모두 호스트 메모리 부족으로 멈췄다. Claude Code가 백그라운드 명령을 중단했고, 빌드 오류나 VM 안의 OOM은 아니다. 다시 시작은 지시를 받은 뒤 한다.
 - 소스는 바꾸지 않았다. 빌드 산출물이 아직 없어 해시도 없다. 보드가 없어 **HIL은 미검증**이다. 빌드가 성공해도 실물 동작을 뜻하지 않는다.
 
 ## 호스트 환경
@@ -51,6 +51,7 @@ node harness/cli.js slot -- bash firmware/scripts/build-baseline.sh collect   # 
 | 2 | build | 16:36 | 227초 | **2** | buildroot `wireless_tools` 링크 오류(아래 원인 B) |
 | 2' | serial | 16:44 | 약 1분 | 0 | `wireless_tools`를 `-j1`로 먼저 빌드 |
 | 3 | build | 16:46 | — | 없음(강제 종료) | 호스트 메모리 부족으로 Claude Code가 백그라운드 명령을 중단했다(아래 원인 C). 로그 마지막은 `ive` 샘플 링크(`sample_thresh_U16`) |
+| 4 | build (`CPUSET=0-3`, nproc 4 = -j4, orch O-19) | 16:47:33 | 약 37분 | 없음(강제 종료) | 원인 C 2회째. 시작 때 VM `free -m` available 28,181MB. 17:25에는 VM used 25,437MB / available 5,832MB, 빌드 컨테이너 단독 21.37GiB였다. buildroot가 V8(`obj/deps/v8/... [1118/2096]`)과 ffmpeg를 함께 컴파일하던 중이다. VM `dmesg`에 oom 줄은 없다. slot과 bash가 끝난 뒤에도 컨테이너 `ab48b7011bc5`가 줄 밖에서 계속 돌아 `docker stop` 했다. 정지 뒤 VM available 28,221MB, 호스트 여유 6,951MB |
 
 ## 실패 원인 판정 (원인마다 따로 센다)
 
@@ -58,7 +59,7 @@ node harness/cli.js slot -- bash firmware/scripts/build-baseline.sh collect   # 
 |---|---|---|---|---|
 | A. slot 시간 제한 | 1 | `build-1.log` 8043행 `[pilot] slot: ... ran past 15 min — stopping it` | 빌드 오류 아님. `slot` 기본 제한이 15분 | `--timeout-min 180`. **부작용:** slot이 bash만 끝내서 빌더 컨테이너는 줄 밖에서 계속 돌았다 → 직접 `docker stop` |
 | B. wireless_tools 병렬 빌드 경합 | 1 | `build-2.log` 20531–20540행: `/usr/bin/ld: iwmulticall.o: Relocations in generic ELF (EM: 243)` → `file in wrong format` → `make[3]: *** [...wireless_tools-30.pre9/.stamp_target_installed] Error 2`. 141개 패키지 중 이 패키지만 `.stamp_built`(07:39:13)가 `.stamp_configured`(07:39:36)보다 이르다. SDK `build/Makefile` 600행은 buildroot를 `make -j${NPROC}`(32)로 돌리고, `.config`는 `BR2_PER_PACKAGE_DIRECTORIES=y`이다 | RISC-V 오브젝트(EM 243)를 설치 단계에서 호스트 `gcc`가 다시 링크했다. 병렬 실행 중 `iwmulticall.o`가 다시 만들어져 생긴 경합으로 판정 | 소스는 그대로 두고 `wireless_tools-dirclean wireless_tools`를 `-j1`로 먼저 빌드했다(종료 코드 0). 3번째 시도에서는 이 지점을 넘었다 |
-| C. 호스트 메모리 부족 | 1 | Claude Code 알림: "stopped because the system is running low on memory". 직후 여유 3.3 GB / 64 GB, `vmmemWSL` 27 GB | 빌드 오류 아님. 다른 프로젝트의 WSL 배포판과 컨테이너가 같은 VM 메모리를 쓰고 있음 | 다시 시작하지 않았다. 줄 밖에 남은 빌더 컨테이너는 직접 `docker stop` 했다 |
+| C. 호스트 메모리 부족 | **2** (3·4번째 시도) | 4번째 시도: -j4인데도 V8 컴파일 단계에서 빌드 컨테이너가 21.37GiB까지 커졌다. VM은 31.2GiB 한도 안이라 OOM은 없었지만, VM 메모리(vmmemWSL)가 늘면서 호스트 여유가 줄어 Claude Code가 명령을 중단했다. 3번째 시도의 근거는 다음과 같다: | Claude Code 알림: "stopped because the system is running low on memory". 직후 여유 3.3 GB / 64 GB, `vmmemWSL` 27 GB | 빌드 오류 아님. 다른 프로젝트의 WSL 배포판과 컨테이너가 같은 VM 메모리를 쓰고 있음 | 다시 시작하지 않았다. 줄 밖에 남은 빌더 컨테이너는 직접 `docker stop` 했다 |
 
 ## 다시 시작하는 방법 (지시 후)
 - 볼륨에 빌드 중간 결과가 남아 있어 `build` 단계는 이어서 진행된다.
