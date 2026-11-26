@@ -315,10 +315,27 @@ A만 시험했을 때의 상한(계산값 × 1.25): 방열판(내부) 21.3 K · 
 
 - 모두 Python 3 표준 라이브러리만 쓴다. 외부 명령은 `ffprobe`·`ffmpeg`(① 도구)과 `mosquitto_sub`(② 직접 구독)이다.
 - 장치의 1883은 루프백 전용이다(D-003 #30). 그래서 이벤트·invoke는 **ssh 파이프 + `--stdin`**으로 받는다.
-- **설치가 필요한 것 (목록만, 설치는 사용자가 정한다):**
-  - `ffmpeg`/`ffprobe`: 이 PC에는 다른 프로젝트 경로에 있다(`C:/workspace_cpp/nvr-deps/ffmpeg/bin`).
-  - ② 직접 구독을 쓰려면 `mosquitto-clients`.
-  - `ssh` 클라이언트: Windows 기본 OpenSSH.
+- **설치 (F-008, 사용자 허가 2026-11-27 · orch O-79):** ffmpeg/ffprobe만 설치했다.
+  - 위치: `C:/Users/gh/tools/ffmpeg/9.0.2/ffmpeg-9.0.2-essentials_build/bin/` (`ffmpeg.exe`·`ffprobe.exe`·`ffplay.exe`).
+    - 사용자 홈 아래 격리 설치이고, PATH·시스템 설정은 바꾸지 않았다.
+    - 받은 zip은 빈 폴더 `C:/Users/gh/tools/ffmpeg/_download-9.0.2/`에 두었다.
+  - 배포처: ffmpeg.org 다운로드 페이지(https://ffmpeg.org/download.html)가 링크하는 gyan.dev Windows 빌드.
+  - 버전: **9.0.2 essentials** — `https://www.gyan.dev/ffmpeg/builds/packages/ffmpeg-9.0.2-essentials_build.zip`.
+    - 서버 Last-Modified: 2026-09-19 07:10:16 GMT. 공개된 지 2주를 넘겼다.
+    - 최신 9.1(2026-11-20)은 2주가 안 돼서 쓰지 않았다.
+  - zip sha256 `60f467265b1e312373dbcd92200c2618a74850f98d3d078e94296bb3fa2047ba`. 배포처 공개값(같은 URL + `.sha256`)과 **일치**한다.
+  - 압축 푼 실행 파일 sha256:
+    - `ffmpeg.exe`: `3256173f3f8bffd7df12227c68adf68025edb1832273a9530688a7bb1ed8edec`
+    - `ffprobe.exe`: `f0d36ecbbdd3bcfac3efa078c96c7271c2e68b3810595552ac3b7f17e9a65c52`
+    - `ffplay.exe`: `befbbd00a25965365f7fb3eed6ad5aa5f805eb70fabc567883a006de3b26c06f`
+  - 압축 해제 전 zip 안의 경로를 검사했다(절대경로·`..` 0건, 49개).
+  - **쓰는 법:** PATH를 바꾸지 않는다. 다음 둘 중 하나로 bin 폴더를 준다.
+    - `rtsp_check.py --ffmpeg-dir C:/Users/gh/tools/ffmpeg/9.0.2/ffmpeg-9.0.2-essentials_build/bin <하위 명령> …` (하위 명령 앞에 둔다)
+    - 환경 변수 `OPENHW_FFMPEG_DIR`
+    - 둘 다 없으면 PATH를 본다.
+  - **설치하지 않은 것:**
+    - OpenSSH 클라이언트: Windows 내장 `C:\Windows\System32\OpenSSH\ssh.exe`가 있다.
+    - `mosquitto-clients`: 장치 1883이 루프백 전용이라(D-003 #30) PC에서 직접 구독하지 않고 `event_log.py record --stdin`(ssh 파이프)을 쓴다. 필요해지면 다시 결정한다.
 - **Windows Git Bash에서는** 한글 출력이 깨지므로 `PYTHONIOENCODING=utf-8`을 붙인다(PowerShell은 그대로 된다). 판정은 종료 코드라 영향이 없다. 이 PC에서 `rtsp_check.py probe`(파일)와 `current_csv.py` 스모크 시험은 rc 0이었다.
 
 | 도구 | 하는 일 | 종료 코드 | 절차서 |
@@ -336,3 +353,21 @@ A만 시험했을 때의 상한(계산값 × 1.25): 방열판(내부) 21.3 K · 
 - 네트워크는 127.0.0.1만 쓴다: 가짜 RTSP(videotestsrc 720p 15fps, `:8554`), mosquitto(`:18830`).
 - 판정: 시험 20건(R1~R8 · E1~E4 · F1~F3 · C1~C5)의 종료 코드를 기대값과 맞춘다. 고장 주입(30fps 기대, 서버 없음, 5fps 파일, 1초 끊김, 위반 4건 이벤트, 낮은 score, FPS 하한, 30분 미만, 뒤 30분만 2.0 A)을 포함한다.
 - 스크립트 종료 코드 = 기대와 다른 시험 수.
+
+**F-008 시험 (격리 설치한 ffmpeg 9.0.2)**
+- Windows 호스트 스모크: PATH에서 다른 ffmpeg 경로를 빼고 돌렸다(설치본만 쓰는지 확인).
+
+| # | 명령 | 종료 코드 | 결과 |
+|---|---|---|---|
+| S0 | `rtsp_check.py probe src.mkv` (폴더 지정 없음) | 1 (기대) | `ffprobe 없음 — --ffmpeg-dir 또는 OPENHW_FFMPEG_DIR …` |
+| S1 | `rtsp_check.py --ffmpeg-dir <bin> probe src.mkv --expect-fps 15` | 0 | 720p 15fps 6초 파일: fps 15.00 · max_gap 0.067 s |
+| S2 | `OPENHW_FFMPEG_DIR=<bin> rtsp_check.py record src.mkv rec.mkv --seconds 4` | 0 | — |
+| S3 | `… probe rec.mkv --expect-fps 15` | 0 | fps 14.30 · max_gap 0.267 s |
+| S4 | `… probe src.mkv --expect-fps 30` (고장 주입) | 1 (기대) | fps 15 < 27 |
+
+- 컨테이너 `test_host_tools.sh` 재실행(2026-11-27 04:10)은 **돌리지 못했다**.
+  - 메시지: `failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine`
+  - Docker Desktop 프로세스가 없다. 이 칸이 끈 것이 아니다.
+  - 다른 프로젝트도 함께 쓰는 환경이라, 이 칸이 켜지 않고 orch에 보고했다.
+  - 이 시험은 컨테이너 안의 apt ffmpeg를 쓰므로 F-008 설치와는 무관하다. `rtsp_check.py` 변경(`--ffmpeg-dir`)만 다시 확인하면 된다.
+  - 마지막 통과 기록: F-007, 20/20, 종료 0.
