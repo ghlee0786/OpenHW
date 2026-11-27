@@ -1,10 +1,11 @@
 """M-007 03: 기계 판정 (Fusion, M007_assembly 문서) → validation/runtime/vd001/m007_judge.json
 J1 바디 쌍 간섭 (의도된 쌍은 asm_spec.INTENDED 이름 규칙으로 제외·목록) · J2 최소 틈 표 · J3 플러그·카드 삽입 공간 ·
 J4 광축 ↔ 렌즈 창 중심 어긋남 · J5 LED 직접광 광선 추적 (시야 방향마다 처음 맞는 바디가 PMMA 창인지) · J6 짝 BTB 결합 높이."""
-import adsk.core, adsk.fusion, json, math, os
+import adsk.core, adsk.fusion, re, json, math, os
 
-LANE = r"C:\workspace_python\OpenHW\.harness-worktrees\t-20261127-040816-30c6"
-OUT = LANE + r"\validation\runtime\vd001"
+LANE = r"C:\workspace_python\OpenHW"   # 소스 체크아웃 — mechanical/fusion_run.py 가 실행하는 스크립트의 체크아웃으로 바꿈
+MAIN = r"C:\workspace_python\OpenHW"   # 산출물(validation/runtime) — main 체크아웃 (O-100)
+OUT = MAIN + r"\validation\runtime\vd001"
 
 
 def run(_c):
@@ -32,18 +33,29 @@ def run(_c):
         for b in o.bRepBodies:
             if not b.isSolid or not b.isLightBulbOn:
                 continue
-            if tn in ('REF_CARRIER', 'REF_FRONT'):
-                boards.append((b, tn))
+            if tn in ('REF_CARRIER', 'REF_FRONT'):   # 보드 바디는 KiCad 모델 이름으로 (M-010: pcb 가 실제 모델을 연결 → 같은 부품 대체 블록과 구분)
+                boards.append((b, 'BOARD_PART:' + re.sub(r' \(\d+\)$', '', o.component.name)))
             else:
                 nm = o.component.name if tn == 'REF_STACK' else (b.name if tn in ('ENC_BLOCKS', 'HARNESS_GH6P') else tn)
                 if tn.endswith('_M008') and tn != 'DF30_M008':
                     nm = tn
                 named.append((b, nm))
 
+    # M-010: 3D 모델이 모두 연결된 보드의 대체 블록은 뺀다 (asm_spec.SUBST_BLOCKS, run_all.py 의 models_missing.json)
+    mmj = os.path.join(OUT, 'boards', 'models_missing.json')
+    after = json.load(open(mmj, encoding='utf-8')).get('missing_after_apply', {}) if os.path.exists(mmj) else {}
+    drop = [n for bd, ns in s['SUBST_BLOCKS'].items() if bd in after and not after[bd] for n in ns]
+    named = [(b, n) for b, n in named if n not in drop]
+    res['dropped_blocks'] = drop
+
     def sig(b):
         bb = b.boundingBox
         return (round(b.volume, 6), round(bb.minPoint.x, 4), round(bb.minPoint.y, 4), round(bb.minPoint.z, 4), round(bb.maxPoint.z, 4))
     table = {sig(b): n for b, n in named}
+    btable = {sig(b): n for b, n in boards}
+    bvol = {}
+    for b, n in boards:
+        bvol.setdefault(round(b.volume, 6), []).append((b.boundingBox, n))
 
     def intended(a, b, where):
         cx, cy, cz = (where[0] + where[1]) / 2, (where[2] + where[3]) / 2, (where[4] + where[5]) / 2
@@ -68,11 +80,22 @@ def run(_c):
         it = r.item(i)
         a, b = table.get(sig(it.entityOne)), table.get(sig(it.entityTwo))
         ib = it.interferenceBody.boundingBox
+        ic = ib.minPoint.copy(); ic.x = (ib.minPoint.x + ib.maxPoint.x) / 2; ic.y = (ib.minPoint.y + ib.maxPoint.y) / 2; ic.z = (ib.minPoint.z + ib.maxPoint.z) / 2
+
+        def bname(e):   # 간섭 결과의 보드 바디는 프록시가 아닐 수 있어 sig 가 다름 → 같은 부피 + 겹친 곳 가운데를 품는 보드 바디
+            n = btable.get(sig(e))
+            if n:
+                return n
+            for bb_, nm_ in bvol.get(round(e.volume, 6), []):
+                if bb_.contains(ic):
+                    return nm_
+            return None
+        ba_, bb2 = bname(it.entityOne), bname(it.entityTwo)
         where = [round(v * 10, 2) for v in (ib.minPoint.x, ib.maxPoint.x, ib.minPoint.y, ib.maxPoint.y, ib.minPoint.z, ib.maxPoint.z)]
         vol = round(it.interferenceBody.volume * 1000, 3)
         if a is None and b is None:
             continue                     # 보드 안 (KiCad 부품 모델 ↔ 자기 보드) — 판정 밖
-        a = a or 'BOARD_PART'; b = b or 'BOARD_PART'
+        a = a or ba_ or 'BOARD_PART'; b = b or bb2 or 'BOARD_PART'
         why = intended(a, b, where)
         (j1['intended'] if why else j1['fail']).append({'a': a, 'b': b, 'mm3': vol, 'at': where, 'why': why})
     res['J1'] = j1; res['fail'] += len(j1['fail'])

@@ -3,8 +3,9 @@
 입력 풋프린트: validation/runtime/vd001/ren002/pcbsrc/hardware/libraries/openhw.pretty (audit_models.py 가 pcb 커밋에서 꺼냄)."""
 import adsk.core, adsk.fusion, re, os
 
-LANE = r"C:\workspace_python\OpenHW\.harness-worktrees\t-20261127-040816-30c6"
-SRC = LANE + r"\validation\runtime\vd001\ren002\pcbsrc"
+LANE = r"C:\workspace_python\OpenHW"   # 소스 체크아웃 — mechanical/fusion_run.py 가 실행하는 스크립트의 체크아웃으로 바꿈
+MAIN = r"C:\workspace_python\OpenHW"   # 산출물(validation/runtime) — main 체크아웃 (O-100)
+SRC = MAIN + r"\validation\runtime\vd001\ren002\pcbsrc"
 
 
 def fab_and_pads(path):
