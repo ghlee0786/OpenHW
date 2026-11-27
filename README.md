@@ -1,22 +1,144 @@
-# OpenHW — 소량 완전기능 PoC 임베디드 개발
-## 사용자 의도
-제품은 아직 미정이다. PCBWay 같은 제조사로 극소량 제작하며 실제 기능이 동작하는 PoC가 목표다. 크기/전원/MCU/무선규격은 제품 요구에 따라 정한다. 단가만이 아니라 소량조달/배송/조립/NRE/디버깅/재제작을 합한 비용을 최적화한다.
-## 운영
-Herdr App 화면, Core hc 세션, Pilot 레인/검사. Claude Opus 5.5: 총괄/오케스트레이터/조사/검토 high, 설계 구현/펌웨어/기구 medium. 총괄은 사용자와 제품 범위/우선순위/결정을 정하고 실행 오케스트레이터에게 전달. 실행 오케스트레이터가 나머지 작업자에게 규칙+업무+완료조건+소유파일을 배정하고 결과를 회수. 두 총괄이 같은 작업자를 동시에 지휘하지 않는다.
-현재는 환경 준비 및 기획 대기. 임의 제품/BOM/보드/펌웨어를 만들거나 제조 주문하지 않는다. 구매/유료서비스/제조발주/클라우드 업로드는 별도 사용자 지시 후. 하네스 보호를 해제하지 않는다.
-## 단계와 판정
-1. 제품 기획: 용도/기능/인터페이스/환경/크기/전원/목표 수량/실측 합격 기준을 결정 기록. 미정값은 미정으로 유지.
-2. 조사/BOM: 후보 비교, 제조사 MPN, 정확한 패키지, 수량, 1/5/10개 단가, MOQ/재고/납기/배송/NRE, 대체품과 확인일. 공식 데이터시트 URL/리비전/해시를 확보. 가격 검색 결과만으로 호환 확정 금지.
-3. HW/FW 계약: 전압/전력예산/핀맵/버스주소/클록/부트/디버그/테스트포인트/보호회로를 공동 확정. MCU에 맞는 SDK/컴파일러/프로그래머는 그 뒤 선정.
-4. 회로도: 데이터시트 권장 회로와 동작 범위/기동/리셋/디커플링 검토. 심벌 핀번호↔패키지↔풋프린트 패드 대조. 풋프린트 치수/원점/극성/실크/3D모델 단위와 높이 확인. KiCad ERC 및 독립 회로 검토.
-5. PCB: 제조사 실제 주문 공정/스택업에 맞는 선폭/간격/드릴/환형링/마스크/동박/임피던스 규칙을 출처+확인일로 기록. 배치 후 전원·귀환경로·아날로그/디지털·RF·열·차동쌍/길이/안테나 keepout 등 해당 회로 규칙 검토. 임의 최저 제조한계나 자동라우팅 결과를 최적 설계로 주장 금지.
-6. 제조: KiCad DRC/회로도-PCB 일치/미배선, 제조 DFM, Gerber+drill+스택업+BOM+CPL+조립도+README+해시. 모든 파일 같은 설계 리비전. Gerber viewer 재검토와 독립 승인 전 발주 금지.
-7. 기구: PCB STEP를 Fusion으로 가져와 mm/좌표/보드두께/부품높이/커넥터/나사/공차/조립순서/간섭 확인, 케이스 설계. Fusion 간섭 검사는 전기 ERC/DRC를 대체하지 않는다. 3D 렌더만으로 기능/조립 검증 완료 판정 금지.
-8. 실물: 전류제한 전원으로 bring-up, 전원레일/소모전류/프로그래밍/통신/센서/부하/열/전체 기능을 요구사항과 매칭. ERC/DRC 통과는 실물 기능 검증이 아니다.
-## MCP 및 CAD 소유권
-Find MCP로 도구 탐색→공식 공급자/라이선스/Windows버전/쓰기범위 확인→격리 설치→initialize/tools/list→복사본 읽기/쓰기/재조회 검증 후 사용. 단순 등록은 연결 완료 아님.
-EDA KiCad 10, 기구 Fusion 공식 로컬 MCP(127.0.0.1:27182/mcp) 우선. CAD 파일과 GUI 활성문서는 단일 작성자만 소유하고 오케스트레이터가 시간대를 직렬 배정. schematic 파일 편집 실험 기능은 복사본과 백업에서 검증 전 끈다. PCB Editor 활성 보드 경로를 반드시 확인한다.
-도구의 공식 CLI ERC/DRC 결과와 종료코드가 기준. 풋프린트/핀맵/3D매칭 및 시각 검토는 별도. 결과에는 verifiable 예/아니오 및 근거를 기록한다.
-## 파일
-기획 docs/planning, 조사 docs/research, 결정 docs/decisions, 회로 hardware/schematic, PCB hardware/pcb, 라이브러리 hardware/libraries, 데이터시트 hardware/datasheets, firmware, mechanical, manufacturing, validation. 원본 CAD/Fusion과 STEP 교환본은 구별한다.
-역할/주소/UUID는 orchestration/pane-ledger.json. 요청 원문/답은 orchestration/user-desk, 배정/진척은 orchestration/request-ledger.md. 구현은 Pilot 레인에서만, 공용 저장소/동일 CAD 동시 편집 금지.
+<!-- 수치는 저장소 결과 파일에서 읽은 값이다(기준 커밋 main 1898e1f, 2026-11-27). 값마다 출처 경로를 표 각주와 docs/readme/*.svg 주석에 적었다. -->
+
+<div align="center">
+
+# OpenHW — SG2002 엣지 AI 카메라
+
+**구매한 SG2002 코어 모듈에 직접 설계한 PCB 두 장을 붙이고, 렌즈·IR-cut·IR 조명까지 한 몸으로 묶은 오픈 하드웨어 카메라 PoC**
+
+[![License: Apache-2.0](https://img.shields.io/badge/License-Apache--2.0-blue.svg)](LICENSE)
+[![KiCad 10](https://img.shields.io/badge/KiCad-10-314CB0.svg)](hardware/schematic)
+[![Status](https://img.shields.io/badge/Status-%EA%B0%80%EC%83%81%20%EC%84%A4%EA%B3%84%20%EC%A7%84%ED%96%89-orange.svg)](#진행-현황)
+[![SoC: SG2002](https://img.shields.io/badge/SoC-SG2002-6f42c1.svg)](#무엇인가)
+
+<img src="docs/readme/media/front_spin.gif" alt="전면 보드 3D 회전" width="420">
+
+</div>
+
+> **English summary**
+> OpenHW is an open-hardware edge-AI camera proof of concept built around the SG2002 SoC.
+> A purchased core module (reCamera Core 2002) sits between two boards we designed in KiCad 10:
+> a 40×40 mm front board (image sensor, M12 lens, IR-cut filter, 850 nm IR LEDs, ambient light sensor)
+> and a 40×54 mm carrier board (12 V input and protection, 5 V buck, 10/100 Ethernet, USB-C, microSD).
+> The device runs Linux and detects people on the on-chip NPU.
+> The project is in the virtual-design stage: schematics pass ERC with zero violations, 25 of 25 circuit simulations pass,
+> and the front board passes DRC with zero violations and zero unconnected items, while carrier routing is still in progress.
+> Hardware design files are released under the Apache License 2.0.
+
+## 무엇인가
+
+- **엣지 AI 카메라 노드**다. 카메라 영상을 보드 안의 NPU로 바로 분석해 사람을 감지하고, 이벤트를 유선 이더넷으로 보낸다.
+- **세 층으로 쌓는다.** 아래부터 차례로 다음과 같다.
+  - 캐리어 보드(직접 설계)
+  - SG2002 코어 모듈(구매품, reCamera Core 2002)
+  - 전면 보드(직접 설계)
+- 보드 사이는 0.5 mm 60핀 BTB 커넥터로 바로 꽂고, 전면과 캐리어 사이 전원·제어는 GH 6핀 하니스로 잇는다.
+- **광학을 보드 설계에 함께 넣었다.**
+  - M12 고정초점 렌즈(수평 화각 약 90°)의 광축을 PCB 배치 기준으로 삼았다.
+  - 광학 부품은 주야 전환용 IR-cut 필터, 850 nm IR LED(자리 4개, PoC는 2개 실장), 주야 판별용 조도센서다.
+- **지금은 가상 설계 단계다.** 회로도·시뮬레이션·PCB·3D 조립 검증까지 컴퓨터 안에서 끝내는 것이 목표이고, 실물 제작은 그 뒤다.
+
+## 한눈에 보기
+
+<p align="center"><img src="docs/readme/stack.svg" alt="3층 적층 구조: 전면 보드, 코어 모듈, 캐리어 보드" width="100%"></p>
+
+<p align="center"><img src="docs/readme/block.svg" alt="시스템 블록도: 전원, 영상, 제어, 네트워크 흐름" width="100%"></p>
+
+<p align="center"><img src="docs/readme/pipeline.svg" alt="설계 흐름과 단계별 진행 상태" width="100%"></p>
+
+<p align="center"><img src="docs/readme/numbers.svg" alt="핵심 수치: ERC 0, 시뮬레이션 25/25, 전면 DRC 0" width="100%"></p>
+
+> 그림은 움직이는 SVG다. 운영체제에서 「동작 줄이기」를 켜면 멈춘 그림으로 보인다. 밝은·어두운 테마를 따른다.
+
+## 사양
+
+| 항목 | 전면 보드 | 캐리어 보드 | 코어 모듈 (구매품) |
+|---|---|---|---|
+| 크기 | 40 × 40 mm | 40 × 54 mm | — |
+| 층 · 두께 | 4층 · 1.6 mm | 4층 · 1.6 mm | — |
+| 주요 부품 | 이미지 센서 모듈 GC2053 (2 MP, MIPI CSI, 24핀 BTB) · 24 MHz 발진기 · IR-cut 구동 DRV8837 · IR LED 구동 AL8860 ×2 · 850 nm IR LED 자리 4개 (2직렬 × 2줄, PoC는 1줄 실장) · 조도센서 LTR-329 · 2.8 V LDO | 12 V DC 잭 · 퓨즈·역접속 보호 · eFuse TPS26600 (IR 전원) · 5 V 강압 TPS54302 · RJ45 10/100 · USB-C · microSD · 디버그 UART · ESD 보호 | SG2002 SoC (NPU) · 8 GB |
+| 보드 간 연결 | BTB 60핀 (암) · GH 6핀 | BTB 60핀 (수) · GH 6핀 | BTB 60핀 ×2 |
+| 풋프린트 수 | 100 (시험점 포함) | 103 (시험점 포함) | — |
+
+| 시스템 | 값 |
+|---|---|
+| 입력 전원 | 12 V DC |
+| 네트워크 | 유선 이더넷 10/100 |
+| 저장 | 이벤트 전송 기본 + microSD 슬롯 |
+| 운영체제 | Linux (벤더 커널 5.10) |
+| 감지 | 사람 감지 — YOLOX-Nano, NPU용 BF16 모델 |
+| BTB 결합 높이 | 8.0 mm |
+
+출처: [D-003 작업 기본값](docs/decisions/D-003-working-defaults.md) #1 #4 #5 #7 #8 #10 #11 #15 #17 #19 #21 #25 #44 · 보드 파일 [`carrier.kicad_pcb`](hardware/schematic/carrier/carrier.kicad_pcb) · [`front.kicad_pcb`](hardware/schematic/front/front.kicad_pcb)(부품 값·풋프린트 수·층 수) · [`params.md`](mechanical/m003/params.md)(btb_h 8.0)
+
+## 진행 현황
+
+2026-11-27 기준이다. 표시는 저장소의 결과 파일 값을 따른다.
+
+- [x] 제품 기획과 작업 기본값 — [`product-brief.md`](docs/planning/product-brief.md), [`D-003`](docs/decisions/D-003-working-defaults.md)
+- [x] 회로도 2장 ERC 위반 0 — [`carrier-erc.json`](hardware/schematic/carrier/carrier-erc.json) · [`front-erc.json`](hardware/schematic/front/front-erc.json)
+- [x] 회로 시뮬레이션 25/25 통과 (ngspice-47) — [`hardware/sim/results/`](hardware/sim/results)
+- [x] 전면 보드 DRC 위반 0 · 미연결 0 · 회로도 일치 0 — [`front-drc.json`](hardware/pcb/drc/front-drc.json)
+- [ ] 캐리어 보드 배선 마무리 — 현재 DRC 위반 7 · 미연결 35 — [`carrier-drc.json`](hardware/pcb/drc/carrier-drc.json)
+- [x] 3D 모델 빠짐 0 · 조립 판정 실패 0 (중간 보드 기준, 최종 보드로 다시 판정 예정) — [`judge.md`](mechanical/m007/judge.md)
+- [ ] 케이스 — 1차 설계 [`m003-enclosure.md`](mechanical/m003/m003-enclosure.md), 최종 보드 기준 확정 대기
+- [ ] 최종 렌더
+- [ ] 실물 제작과 bring-up (가상 설계가 끝난 뒤)
+
+## 저장소 지도
+
+| 폴더 | 내용 |
+|---|---|
+| [`hardware/schematic/`](hardware/schematic) | KiCad 프로젝트 2개(`carrier/`, `front/`) — 회로도·PCB·ERC 결과 |
+| [`hardware/pcb/`](hardware/pcb) | PCB 규칙·DRC 결과·STEP·배치 계획과 배선 도구 |
+| [`hardware/libraries/`](hardware/libraries) | 프로젝트 심벌·풋프린트 라이브러리와 파생 고지 |
+| [`hardware/sim/`](hardware/sim) | 회로 시뮬레이션 넷리스트·결과·파형 |
+| [`hardware/datasheets/`](hardware/datasheets) | 공개 라이선스 데이터시트·참고 설계 원본과 [목록](hardware/datasheets/INDEX.md) |
+| [`firmware/`](firmware) | Linux 이미지 패치·앱(사람 감지, 주야 전환)·모델 |
+| [`mechanical/`](mechanical) | 적층 기준 모델·조립 판정·케이스 설계 |
+| [`docs/`](docs) | 기획(`planning/`), 결정(`decisions/`), 조사(`research/`), 검토(`review/`), 이 README의 그림(`readme/`) |
+| [`manufacturing/`](manufacturing) | 부품표(BOM) 정리 |
+| [`validation/`](validation) | 독립 검토 기록 |
+
+그 밖의 점(.)으로 시작하는 폴더와 자동화 폴더는 작업 환경 설정이며 설계 내용이 아니다.
+
+### KiCad로 열기
+
+1. KiCad 10을 설치한다.
+2. `hardware/schematic/front/front.kicad_pro` 또는 `hardware/schematic/carrier/carrier.kicad_pro`를 연다.
+3. 프로젝트 라이브러리는 각 프로젝트의 `fp-lib-table`·`sym-lib-table`이 저장소 안 경로로 잡는다.
+
+## 검증 방법
+
+모든 판정은 도구의 종료 코드와 결과 파일로 한다. 그림이나 의견으로 통과를 정하지 않는다.
+
+| 검사 | 명령 (저장소 루트) | 결과 파일 |
+|---|---|---|
+| ERC | `kicad-cli sch erc --severity-all --exit-code-violations --format json -o hardware/schematic/front/front-erc.json hardware/schematic/front/front.kicad_sch` | `hardware/schematic/*/*-erc.json` |
+| DRC | `kicad-cli pcb drc --format json --severity-all --schematic-parity --exit-code-violations -o hardware/pcb/drc/front-drc.json hardware/schematic/front/front.kicad_pcb` | `hardware/pcb/drc/*-drc.json` |
+| 회로 시뮬레이션 | [`hardware/sim/README.md`](hardware/sim/README.md)의 실행 방법 (종료 코드 = fail + error 수) | `hardware/sim/results/SIM-*.json` |
+| 3D 조립 판정 | `python -I -B mechanical/m007/run_all.py` (종료 코드 = 불합격 수) | [`mechanical/m007/judge.md`](mechanical/m007/judge.md) |
+
+캐리어는 위 명령의 `front`를 `carrier`로 바꾼다. ERC·DRC는 위반이 있으면 종료 코드가 0이 아니다.
+
+## 결정 기록
+
+설계 중 갈림길마다 「분기점 · 선택 · 이유 · 차선책」을 남겼다.
+
+- [D-003 작업 기본값](docs/decisions/D-003-working-defaults.md) — 센서·전원·적층·규칙 등 50여 개 결정
+- [D-001 SoC 선택](docs/decisions/D-001-soc.md) · [D-002 모듈 + 캐리어 구조](docs/decisions/D-002-module-carrier.md) · [HW/FW 인터페이스](docs/decisions/hw-fw-interface.md)
+
+## 라이선스 · 제3자 고지
+
+- 이 저장소의 설계 파일과 문서는 [Apache License 2.0](LICENSE)을 따른다.
+- 제3자 자료는 각 폴더의 라이선스를 그대로 유지한다. 저작권 표기는 각 폴더의 `LICENSE*` 파일 원문을 따른다. 근거는 [`hardware/datasheets/INDEX.md`](hardware/datasheets/INDEX.md)다.
+
+| 경로 | 라이선스 | 비고 |
+|---|---|---|
+| `hardware/datasheets/sophgo/` | BSD 2-Clause | SG2002 데이터시트·TRM·참고 회로도 원본 |
+| `hardware/datasheets/seeed/` | Apache 2.0 (저장소) · 코어 회로도 PDF는 CC BY-SA 4.0 | 참고 전용 원본. 수정하지 않았다 |
+| `hardware/datasheets/antmicro/` | Apache 2.0 | 참고 풋프린트 원본 |
+| `hardware/libraries/` 파생 풋프린트 | Apache 2.0 | 원저작물 고지는 [`hardware/libraries/README.md`](hardware/libraries/README.md) · [`licenses/Apache-2.0.txt`](hardware/libraries/licenses/Apache-2.0.txt) |
+| 사람 감지 모델 YOLOX-Nano | Apache 2.0 | [D-003](docs/decisions/D-003-working-defaults.md) #19 |
+
+라이선스가 표기되지 않았거나 배포가 제한된 데이터시트는 저장소에 넣지 않았고, 링크와 sha256만 [INDEX.md](hardware/datasheets/INDEX.md)에 남겼다.
