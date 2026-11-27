@@ -16,7 +16,7 @@
 - 다시 돌리기: `python hardware/sim/run_all.py`
   - `results/*.json`(SIM-result-format), `png/*.png`, `SIM-*.cir`, `SIM-A5-current-order.md`를 모두 다시 만든다.
   - 종료 코드 = fail + error 수
-- 도구: ngspice-47 공식 판. 경로는 `C:/Users/gh/tools/ngspice/47/Spice64/bin/ngspice_con.exe`(firmware가 설치, orch O-81)이고 환경변수 `NGSPICE`로 바꿀 수 있다.
+- 도구: ngspice-47 공식 판. 실행 파일은 환경변수 `NGSPICE`로 준다(없으면 PATH 의 `ngspice_con`).
   - KiCad 10 내장 시뮬레이터는 쓰지 않았다(배치 실행·재현은 공식 판으로).
 
 ## 결과

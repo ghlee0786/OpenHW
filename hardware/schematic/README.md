@@ -69,7 +69,7 @@
 
 - **ERC:** `kicad-cli sch erc --severity-all --exit-code-violations` → 캐리어 종료 0·위반 0, 전면 종료 0·위반 0.
 - **그림 (verifiable 아니오, 사용자·lead 확인용):** `kicad-cli sch export svg` (종료 0, 파일 생성 확인)
-  - `C:/workspace_python/OpenHW/validation/runtime/kicad-gui/C-002b/carrier.svg` · `front.svg`
+  - `validation/runtime/kicad-gui/C-002b/carrier.svg` · `front.svg`
   - 미리보기 PNG: `carrier-preview.png` · `front-preview.png` · `*-preview-topleft.png`
 - **GUI는 쓰지 않았다** (O-27, 소유권 pcb).
 
@@ -311,7 +311,7 @@
 
 ## 9. GUI 스크린샷 (verifiable 아니오 — 사용자 확인용)
 
-`C:/workspace_python/OpenHW/validation/runtime/kicad-gui/`
+`validation/runtime/kicad-gui/`
 
 | 작업 | 파일 | 볼 것 |
 |---|---|---|

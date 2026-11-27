@@ -62,7 +62,7 @@
   "name": "ngspice",
   "version": "ngspice-47 (공식 SourceForge ng-spice-rework/47/ngspice-47_64.7z)",
   "sha256": "59225971… (7z, firmware 설치·검증 — orch O-81)",
-  "path": "C:/Users/gh/tools/ngspice/47/Spice64/bin/ngspice_con.exe"
+  "path": "ngspice_con.exe"
  },
  "notes": "0 A 가 아니라 0.1 A 에서 시작(평균 모델에 펄스 스킵이 없어 0 A 경계가 의미 없음). Gcs 역산·2차 샘플 지연은 근사 — 교차 주파수·위상 여유는 실측(주입)으로 확인 권장."
 }

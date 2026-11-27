@@ -55,7 +55,7 @@
   "name": "ngspice",
   "version": "ngspice-47 (공식 SourceForge ng-spice-rework/47/ngspice-47_64.7z)",
   "sha256": "59225971… (7z, firmware 설치·검증 — orch O-81)",
-  "path": "C:/Users/gh/tools/ngspice/47/Spice64/bin/ngspice_con.exe"
+  "path": "ngspice_con.exe"
  },
  "notes": "R2 78.7k / R3 10.7k (C-019), 전형값 4.980 V. C-018 까지 100k/13.3k 는 최악 5.298 V 로 fail. 코어 VIN 저전압 차단 3.0 V 까지 여유 1.77 V. VFB 공차 ±2.5% 는 온도 전 범위 값."
 }
