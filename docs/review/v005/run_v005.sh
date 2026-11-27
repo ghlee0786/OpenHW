@@ -13,7 +13,9 @@ ROOT="$(git rev-parse --show-toplevel)"
 # O-100: 결과(validation/runtime)는 main 체크아웃에 — 레인 worktree 안은 accept 때 지워짐. MAIN_ROOT 로 바꿀 수 있음
 MAIN="${MAIN_ROOT:-$(cd "$(git rev-parse --path-format=absolute --git-common-dir)/.." && pwd)}"
 HERE="$ROOT/docs/review/v005"
-KDIR="${KICAD_BIN:-/c/Users/gh/AppData/Local/Programs/KiCad/10.0/bin}"
+# KiCad 10 bin 폴더: KICAD_BIN 으로 주거나, 없으면 사용자 설치 기본 자리(%LOCALAPPDATA%)
+KDIR="${KICAD_BIN:-$(cygpath -u "${LOCALAPPDATA:-}")/Programs/KiCad/10.0/bin}"
+[ -x "$KDIR/kicad-cli.exe" ] || { echo "kicad-cli 없음: $KDIR (KICAD_BIN 으로 지정)"; exit 1; }
 KCLI="$KDIR/kicad-cli.exe"; KPY="$KDIR/python.exe"
 OUT="$MAIN/validation/runtime/v005/$C"
 WORK="${2:-$OUT/snap}"
