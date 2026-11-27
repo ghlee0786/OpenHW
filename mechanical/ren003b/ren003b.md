@@ -1,0 +1,99 @@
+# REN-003b Blender 제품 렌더 파이프라인 (헤드리스, O-125 2단계)
+
+- 범위: `mechanical/ren003b/` 안 파일만 새로 썼다. `mechanical/ren003/materials.py`·`m003`·`m010`·`ren002`는 읽기만 했다. Fusion은 쓰지 않았다.
+- 한 명령:
+  ```
+  python -I -B mechanical/ren003b/run.py                 # 저해상도 시험 (현재 외함, 컷 6 + 턴테이블 24프레임)
+  python -I -B mechanical/ren003b/run.py --final         # 4K 컷 6 + 턴테이블 200프레임 1080p + 대표본
+  python -I -B mechanical/ren003b/run.py --design A --final   # 시안 히어로 4K 1장
+  ```
+- 종료 코드 = 불합격 항목 수. 기계 증거만 판정한다. **사실감·보기 품질은 verifiable 아니오**(사람 확인 전까지 통과 아님).
+
+## 1. 파일
+
+| 파일 | 하는 일 |
+|---|---|
+| `prep.py` | 메시 준비. 보드 GLB(커밋 사본 → `kicad-cli pcb export glb`, 또는 있는 GLB 복사), 외함 STEP → STL(gmsh OpenCASCADE 삼각화, 곡면 오차 ≤ 0.01 mm), 부품 STL 복사, `index.json` |
+| `scene.py` | Blender 장면. 재질 · 베벨 · HDRI · 무한 배경 · 카메라 · 컷 6종 · 턴테이블, `scene_report.json` |
+| `materials_ext.py` | 재질 확장(새 재질 6종, 시안 부품 이름 규칙, 미세 질감 노드). `materials.py`는 고치지 않는다 |
+| `fetch_hdri.py` · `assets.json` | CC0 HDRI 받기와 출처 · 라이선스 · sha256 기록 |
+| `run.py` | 한 명령: 준비 → HDRI 확인 → 렌더 → 1600px 축소 → MP4 → 판정 → `report.json` |
+
+## 2. 입력을 바꾸는 법 (메시만 바꿔 다시 돌리기)
+
+| 인자 | 기본값 (main 체크아웃 `validation/runtime/vd001/`) | 뜻 |
+|---|---|---|
+| `--case` | `case/step` | 외함 STEP/STL 폴더. STEP은 곡면 오차 0.01 mm로 삼각화한다 |
+| `--extra` | `render/mesh` | 외함 폴더에 없는 부품 STL(렌즈 · 나사 · 하니스 · 코어 등). `none`이면 안 쓴다 |
+| `--boards-from` | `render/mesh` | 보드 GLB 폴더. `--pcb <커밋>`을 주면 그 커밋 보드를 새로 내보낸다 |
+| `--design A` | — | `design/A/`의 부품 STL + 보드로 히어로 1장. 같은 폴더의 통짜 STEP은 쓰지 않는다 |
+
+- 출력은 main 체크아웃 `validation/runtime/vd001/render/blender-b/<tag>/`이다(O-100, 커밋하지 않음).
+- 대표본은 `--final`이고 전부 통과일 때만 `docs/renders/final/blender-product.png`(히어로 1600px) · `blender-turntable.mp4`로 복사한다.
+- 도구 경로는 환경 변수로 바꾼다: `BLENDER`, `FFMPEG_BIN`, `KICAD_BIN`, `OPENHW_HDRI_DIR`, `OPENHW_MAIN`.
+
+## 3. 장면 설정
+
+| 항목 | 값 |
+|---|---|
+| 조명 | CC0 HDRI `studio_small_09` 2k (Poly Haven, 세기 0.7 · 회전 110°) + KEY · RIM 면광. 무한 배경(바닥이 곡면으로 벽이 됨) |
+| 카메라 | 85~100 mm, f/8 피사계 심도(초점은 제품 앞쪽), hero · rear · inuse는 주제를 3분할선에 |
+| 색 관리 | AgX (Medium High Contrast), 노출 `--exposure` |
+| 메시 | 겹친 꼭짓점 합침 → 30° 넘는 모서리만 날카롭게 → 베벨 0.3 mm(3단) → Weighted Normal. 얇은 패드 · 폼 · 창은 베벨 제외 |
+| 엔진 | Cycles, OptiX GPU(없으면 CUDA → CPU), 적응 샘플링, OptiX 디노이즈 |
+| 해상도 | 시험 960×540 · 48 샘플 / 최종 3840×2160 · 256 샘플, 축소본 긴 변 1600 px |
+| 턴테이블 | 제품만 돈다(카메라 · 조명 고정). 최종 200프레임 @ 25 fps = 8 s, 1920×1080, libx264 |
+
+컷 (제품을 돌리고 카메라는 정면 쪽에 둔다 — 무한 배경 벽이 늘 뒤에 있다):
+
+| 컷 | 제품 yaw · 고도 · 렌즈 | 내용 |
+|---|---|---|
+| `hero` | 34° · 16° · 90 mm | 앞 3/4 |
+| `front` | 0° · 4° · 100 mm | 정면 |
+| `rear` | 146° · 18° · 90 mm | 뒤 3/4 (포트 · 방열) |
+| `exploded` | −42° · 20° · 85 mm | 분해도(부품을 제품 축 방향으로 벌림, 바닥 그림자) |
+| `section` | 78° · 12° · 100 mm | 단면(제품 x > 0 절반을 불리언으로 잘라 냄) |
+| `inuse` | 카메라 방위 36° · 고도 −12° · 85 mm | 벽 브래킷에 달린 모습(무광 벽, 내장 브래킷 소품 또는 시안의 브래킷 부품) |
+
+## 4. 재질
+
+- `materials.py` `MATS` 37종을 그대로 Principled 재질로 만든다. 부품 이름은 `NAME_RULES` → 없으면 `materials_ext.EXT_NAME_RULES` 순으로 본다. 어느 쪽에도 없으면 「재질 빠짐」으로 세고 판정에서 불합격이다.
+- 보드는 GLB 재질 원값 + 모델 이름 + 참조 번호로 `body_key()`를 부른다. `keep`(못 가른 색)은 빠짐이다.
+- 보충 규칙 2개(REN-002 `scene.py`와 같음): 하니스 6선 색(`HARNESS_GH6P__n`), 렌즈 조각 중 맨 앞 것은 유리.
+- 확장(`materials_ext.py`, 값은 보기용 가정):
+
+| 대상 | 덧입힌 것 |
+|---|---|
+| 무광 흑색 플라스틱 (`petg` · `plastic` · `holder` · `conn_black`) | 미세 잡음 요철(입자 약 0.12 mm) + 거칠기 0.45~0.55 얼룩. `materials.py`의 FDM 층 결 범프는 뗀다 |
+| 양극산화 알루미늄 (`anod` · `al` · `mount`) | 한 방향으로 늘인 잡음(헤어라인) + 이방성 0.7 |
+| IR 투과 앞유리 (`ir_glass`, 새 재질) | 짙은 검정 · 투과 0.3 · 코팅 0.3 · 박막 110 nm |
+| 렌즈 유리 (`glass`) | 코팅 1.0 + 박막 420 nm(보라 · 초록 기미) |
+| 투명 창 (`pmma` 등) | 코팅 + 그림자 광선은 통과(창 안쪽에 빛이 들어가게) |
+| 고무 · 폼 (`rubber`(새) · `foam`) | 미세 요철 + 약한 sheen |
+| 나사 · 쉘 (`steel` · `brass` · `shield` · `lens`) | 거칠기 얼룩 + 이방성 0.35 |
+| 실크 라벨 | 앞 덮개 아래 가장자리에 「OpenHW」 글자(시안은 음각이 있어 뺀다) |
+
+## 5. 시험 결과 (기계 증거)
+
+| 실행 | 결과 |
+|---|---|
+| 1단계 기본 장면 (EEVEE 960×540, M-010 최종 메시, 48프레임) — 커밋 `b32d5f2` | 종료 0. 객체 190 · 재질 37/37 · 빠짐 0 · 스틸 3 · MP4 48프레임 |
+| 2단계 저해상도 시험 `run.py` (현재 외함 `case/step` + `render/mesh`, Cycles 960×540 · 48 샘플) | 종료 0. 삼각화 0.01 mm(STEP 13개) · HDRI sha256 일치 · OptiX + 디노이즈 · 재질 37/37(+6) · 빠짐 0 · 베벨 11개 · 컷 6/6 · 단면 190객체 · 턴테이블 24/24 · MP4 h264 |
+| 시안 A · B 히어로 `run.py --design A|B --final` | 종료 0. 3840×2160 · 256 샘플 · 빠짐 0. 출력 `render/blender-b/design/{A,B}_hero.png` · `_hero_1600.jpg` |
+
+- `--final` 전체 세트(4K 컷 6 + 200프레임)는 아직 돌리지 않았다. 사용자가 시안을 고른 뒤 최종 메시로 돌린다(O-125 3단계).
+
+## 6. 분기점 · 가정 · 미확인
+
+| 분기점 | 고른 것 | 이유 | 차선 |
+|---|---|---|---|
+| STEP → 메시 | gmsh의 OpenCASCADE 삼각화(선형 편차 0.01 mm · 각 편차 0.1 rad) | Blender에 STEP 가져오기가 없다. 격자 생성보다 평면이 큰 삼각형으로 남아 베벨이 깨끗하다 | Fusion 고해상도 STL(시안은 이쪽) |
+| 뒤 3/4 · 단면 컷 | 카메라가 아니라 제품을 돌림 | 무한 배경 벽이 늘 화면 뒤에 있다 | 배경을 원형으로 |
+| 시안의 브래킷 부품 | 히어로에서 숨기고 사용 장면에서만 보임 | 브래킷 없는 시안과 비교가 안 되고 구도가 달라진다 | 히어로에 같이 |
+| 시안끼리 같은 카메라 | 틀 반지름 62 mm 고정 | 시안마다 크기가 달라도 거리 · 조명이 같다 | 시안마다 맞춤 |
+| FDM 층 결 | 뗌 | O-125는 사출 제품 표면 | `materials.py` 그대로 |
+| IR 앞유리 | 투과 0.3 · 코팅 0.3 | 코팅 1.0이면 흰 스튜디오가 비쳐 검정이 회색으로 뜬다 | 투과 0.55 |
+
+- 가정: 재질 확장 값은 모두 보기용이다(측정값 아님). HDRI 회전 · 조명 세기는 제품 반지름 60 mm 기준으로 잡았다.
+- 미확인: 사실감 · 구도 · 색은 사람이 봐야 한다. 턴테이블 1080p 200프레임의 렌더 시간은 재지 않았다.
+- 알려진 한계: 히어로에서 투명 PMMA 창(현재 외함)은 비스듬히 보면 안쪽 무광 면이 얼룩으로 비친다. 시안의 IR 앞유리에는 해당 없다.
