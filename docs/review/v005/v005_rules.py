@@ -711,27 +711,40 @@ if any(a['group'] == 'SD_' for a in esc['areas']):
                 L_ = mm(t.GetLength()); w_ = mm(t.GetWidth())
                 adj[a_].append((c_, L_, w_)); adj[c_].append((a_, L_, w_))
             best = {n_: (0.0, 9.9) for n_ in adj if p.HitTest(V(*n_), FM(0.02))}
+            prev = {}
             todo = sorted(best)
             while todo:
                 n_ = min(todo, key=lambda q: best[q][0]); todo.remove(n_)
                 for m_, L_, w_ in adj[n_]:
                     cand = (best[n_][0] + L_, min(best[n_][1], w_))
                     if cand[0] <= 3.0 and (m_ not in best or cand[0] < best[m_][0] - 1e-9):
-                        best[m_] = cand; todo.append(m_)
+                        best[m_] = cand; prev[m_] = n_; todo.append(m_)
+            # 그 부품의 다른 GND 패드 — 경로가 그 패드를 거치는지 본다 (D-003 #64 보완: 핀 8 은 핀 3 을 거쳐 비아에 닿음)
+            sib = [q for q in fp.Pads() if q.GetNetname() in GND_NETS and q.GetNumber() != p.GetNumber()]
+
+            def through(n_):
+                out_ = []
+                while n_ in prev:
+                    for q in sib:
+                        if q.HitTest(V(*n_), FM(0.02)) and q.GetNumber() not in out_:
+                            out_.append(q.GetNumber())
+                    n_ = prev[n_]
+                return out_
             vl = []
             for v in vias:
                 if v.GetNetname() != p.GetNetname():
                     continue
                 vx, vy, vr = mm(v.GetPosition().x), mm(v.GetPosition().y), mm(v.GetWidth(pcbnew.F_Cu)) / 2
                 if p.HitTest(v.GetPosition(), FM(0.02)):
-                    ln_, mw_ = 0.0, None
+                    ln_, mw_, th_ = 0.0, None, []
                 else:
-                    near_ = [best[n_] for n_ in best if math.hypot(n_[0] - vx, n_[1] - vy) <= vr + 1e-6]
+                    near_ = [(best[n_], n_) for n_ in best if math.hypot(n_[0] - vx, n_[1] - vy) <= vr + 1e-6]
                     if not near_:
                         continue
-                    ln_, mw_ = min(near_)
+                    (ln_, mw_), nn_ = min(near_)
+                    th_ = through(nn_)
                 ok_ = ln_ <= ESD_LEN + 1e-6 and (mw_ is None or mw_ >= ESD_W - 1e-6)
-                vl.append(dict(at=[round(vx, 3), round(vy, 3)], dia=round(vr * 2, 3), drill=round(mm(v.GetDrill()), 3), len=round(ln_, 3), min_w=mw_, ok=ok_))
+                vl.append(dict(at=[round(vx, 3), round(vy, 3)], dia=round(vr * 2, 3), drill=round(mm(v.GetDrill()), 3), len=round(ln_, 3), min_w=mw_, ok=ok_, through=th_))
             esd.append(dict(ref=fp.GetReference(), pad=p.GetNumber(), at=[round(mm(p.GetPosition().x), 3), round(mm(p.GetPosition().y), 3)],
                             vias=vl, n_ok=sum(1 for x_ in vl if x_['ok'])))
 R['esd_gnd'] = dict(len_max=ESD_LEN, width_min=ESD_W, pads=esd)

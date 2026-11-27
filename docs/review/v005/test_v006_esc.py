@@ -154,6 +154,14 @@ G_in = gnd_stub(sd_gnd[0][0], sd_gnd[0][1], 0.0, 0.25)      # 패드 안 비아 
 G_ok = gnd_stub(sd_gnd[1][0], sd_gnd[1][1], 0.7, 0.25)      # 0.7 mm · 폭 0.25 → 조건 맞음
 G_thin = gnd_stub(sd_gnd[2][0], sd_gnd[2][1], 0.7, 0.15)    # 폭 0.15 → 조건 안 맞음
 G_long = gnd_stub(sd_gnd[3][0], sd_gnd[3][1], 1.4, 0.25)    # 1.4 mm → 조건 안 맞음
+# O-123: 같은 부품의 두 GND 패드(sd_gnd[0] ↔ sd_gnd[1])를 0.25 트랙으로 잇는다 — sd_gnd[0] 에서 G_ok 로 가는 경로는 sd_gnd[1] 을 거친다
+assert sd_gnd[0][0].GetReference() == sd_gnd[1][0].GetReference()
+_t = pcbnew.PCB_TRACK(b)
+_t.SetStart(pcbnew.VECTOR2I(FM(pxy(sd_gnd[0][1])[0]), FM(pxy(sd_gnd[0][1])[1]))); _t.SetEnd(pcbnew.VECTOR2I(FM(pxy(sd_gnd[1][1])[0]), FM(pxy(sd_gnd[1][1])[1])))
+_t.SetWidth(FM(0.25)); _t.SetLayer(pcbnew.F_Cu if sd_gnd[0][1].IsOnLayer(pcbnew.F_Cu) else pcbnew.B_Cu); _t.SetNet(b.FindNet(sd_gnd[0][1].GetNetname())); b.Add(_t)
+PAD0 = (sd_gnd[0][0].GetReference(), sd_gnd[0][1].GetNumber()); PAD1 = (sd_gnd[1][0].GetReference(), sd_gnd[1][1].GetNumber())
+PAD2 = (sd_gnd[2][0].GetReference(), sd_gnd[2][1].GetNumber()); PAD3 = (sd_gnd[3][0].GetReference(), sd_gnd[3][1].GetNumber())
+D01 = math.hypot(pxy(sd_gnd[0][1])[0] - pxy(sd_gnd[1][1])[0], pxy(sd_gnd[0][1])[1] - pxy(sd_gnd[1][1])[1])
 pcb = os.path.join(BD, 'carrier.kicad_pcb')
 pcbnew.SaveBoard(pcb, b)
 RES = os.path.join(W, 'res'); os.makedirs(RES)
@@ -165,8 +173,11 @@ E = json.load(open(rj, encoding='utf-8'))['esc_vias']
 EG = json.load(open(rj, encoding='utf-8'))['esd_gnd']['pads']
 
 
-def esd_via(pos):
+def esd_via(pos, pad=None):
+    """pad = (부품, 패드 번호) 를 주면 그 패드의 기록에서만 찾는다"""
     for x_ in EG:
+        if pad is not None and (x_['ref'], x_['pad']) != pad:
+            continue
         for v_ in x_['vias']:
             if abs(v_['at'][0] - pos[0]) < 2e-3 and abs(v_['at'][1] - pos[1]) < 2e-3:
                 return v_
@@ -258,18 +269,43 @@ Y_nobase = cond2(DRU_OK, d003=HD + ROW62 + ROW63, tx=1.2, unc=7.5, unc_ar=6.5, b
 Y_nopairs = cond2(DRU_OK, d003=HD + ROW62 + ROW63, nopairs=True)
 Z_esd_bad = cond2(DRU_OK, esd=[dict(ref='U4', pad='3', n_ok=2, vias=[]), dict(ref='U4', pad='8', n_ok=1, vias=[]), dict(ref='U5', pad='3', n_ok=0, vias=[])])
 Z_esd_ok = cond2(DRU_OK, esd=[dict(ref='U4', pad='3', n_ok=2, vias=[]), dict(ref='U4', pad='8', n_ok=1, vias=[])])
+# O-123 / D-003 #64 보완: 핀 8 은 핀 3 을 거쳐 ≤1.8 mm 허용
+ROW64 = '| 64 | 캐리어 SD ESD 어레이 GND | SD_ESC 에만 0.50/0.20 비아 허용. ESD GND는 핀마다 가능하면 비아 2개, 패드→비아 ≤1mm·폭 ≥0.25. O-123 보완(가): GND 핀 8(U4.8 1.776mm·U5.8 1.421mm)은 같은 GND 핀 3을 거쳐 비아에 닿는 ≤1.8mm 허용, 핀 3 비아는 1개 | 근거 | 차선 |\n'
+ROW64_OLD = '| 64 | 캐리어 SD ESD 어레이 GND | SD_ESC 에만 0.50/0.20 비아 허용. ESD GND는 핀마다 가능하면 비아 2개, 패드→비아 ≤1mm·폭 ≥0.25 | 근거 | 차선 |\n'
+
+
+def P(pad, ln, w=0.25, th=()):
+    return dict(ref='U4', pad=pad, n_ok=0, vias=[dict(at=[0, 0], len=ln, min_w=w, ok=ln <= 1.0 and w >= 0.25, through=list(th))])
+
+
+V6 = lambda r_: r_['_all']['2.V6']
+W_ok = cond2(DRU_OK, d003=HD + ROW64, esd=[P('3', 1.0), P('8', 1.776, th=['3'])])
+W_old = cond2(DRU_OK, d003=HD + ROW64_OLD, esd=[P('3', 1.0), P('8', 1.776, th=['3'])])
+W_long = cond2(DRU_OK, d003=HD + ROW64, esd=[P('3', 1.0), P('8', 1.9, th=['3'])])
+W_direct = cond2(DRU_OK, d003=HD + ROW64, esd=[P('3', 1.0), P('8', 1.5)])
+W_pin3 = cond2(DRU_OK, d003=HD + ROW64, esd=[P('3', 1.5, th=['8']), P('8', 0.5)])
+W_thin = cond2(DRU_OK, d003=HD + ROW64, esd=[P('3', 1.0), P('8', 1.776, w=0.2, th=['3'])])
 CASES = [
     ('영역 3개 인식, J1_ESC 는 J1 둘레 1.0 (통과) · J1_FAR 는 멀다 (불합격) · SD_ESC 는 U4·U5 둘레 0.6 (통과)',
      {a['name']: a['beyond_ok'] for a in E['areas']} == {'J1_ESC': True, 'J1_FAR': False, 'SD_ESC': True} and {a['name']: a['group'] for a in E['areas']}['SD_ESC'] == 'SD_'),
     ('#64 SD_ESC 안 0.50/0.20, U4·U5 핀 넷 → 영역 안·넷 통과(음성)', (at(E['inside'], SDok) or {}).get('area') == 'SD_ESC' and at(E['non_j1_net'], SDok) is None),
     ('#64 SD_ESC 안 0.50/0.20, J1 넷이지만 U4·U5 넷 아님 → 불합격(양성)', (at(E['non_j1_net'], SDbad) or {}).get('area') == 'SD_ESC'),
-    ('#64 ESD GND: 패드 안 비아 → 조건 맞음(음성)', (esd_via(G_in) or {}).get('ok') is True and esd_via(G_in)['len'] == 0),
-    ('#64 ESD GND: 0.7 mm · 폭 0.25 → 조건 맞음(음성)', (esd_via(G_ok) or {}).get('ok') is True and abs(esd_via(G_ok)['len'] - 0.7) < 0.02),
-    ('#64 ESD GND: 폭 0.15 → 조건 안 맞음(양성)', (esd_via(G_thin) or {}).get('ok') is False and abs(esd_via(G_thin)['min_w'] - 0.15) < 1e-3),
-    ('#64 ESD GND: 1.4 mm → 조건 안 맞음(양성)', (esd_via(G_long) or {}).get('ok') is False and abs(esd_via(G_long)['len'] - 1.4) < 0.02),
+    ('#64 ESD GND: 패드 안 비아 → 조건 맞음(음성)', (esd_via(G_in, PAD0) or {}).get('ok') is True and esd_via(G_in, PAD0)['len'] == 0),
+    ('#64 ESD GND: 0.7 mm · 폭 0.25 → 조건 맞음(음성), 다른 패드를 거치지 않음', (esd_via(G_ok, PAD1) or {}).get('ok') is True and abs(esd_via(G_ok, PAD1)['len'] - 0.7) < 0.02
+     and esd_via(G_ok, PAD1)['through'] == []),
+    ('#64 ESD GND: 폭 0.15 → 조건 안 맞음(양성)', (esd_via(G_thin, PAD2) or {}).get('ok') is False and abs(esd_via(G_thin, PAD2)['min_w'] - 0.15) < 1e-3),
+    ('#64 ESD GND: 1.4 mm → 조건 안 맞음(양성)', (esd_via(G_long, PAD3) or {}).get('ok') is False and abs(esd_via(G_long, PAD3)['len'] - 1.4) < 0.02),
+    ('O-123 경로가 같은 부품의 다른 GND 패드를 거치면 그 패드 번호와 합친 길이를 기록', (esd_via(G_ok, PAD0) or {}).get('through') == [PAD1[1]]
+     and abs(esd_via(G_ok, PAD0)['len'] - (D01 + 0.7)) < 0.03 and esd_via(G_ok, PAD0)['ok'] is False),
     ('#64 cond2 V6: 비아 0 인 핀 1 → 불합격, 1개뿐인 핀은 참고란에(양성)', Z_esd_bad['_all']['2.V6']['pass'] is False and Z_esd_bad['_all']['2.V6']['value'] == 1
      and 'U5.3' in Z_esd_bad['_all']['2.V6']['note'] and 'U4.8' in Z_esd_bad['_all']['2.V6']['note']),
     ('#64 cond2 V6: 모든 핀에 1개 이상 → 통과(음성)', Z_esd_ok['_all']['2.V6']['pass'] is True),
+    ('O-123 핀 8 이 핀 3 을 거쳐 1.776 ≤ 1.8 → 통과(음성), 참고란에 경유 길이', V6(W_ok)['pass'] is True and '1.776' in V6(W_ok)['note'] and '1.8' in V6(W_ok)['title']),
+    ('O-123 D-003 #64 에 보완 문구가 없으면 1.776 은 불합격(양성)', V6(W_old)['pass'] is False and 'U4.8' in V6(W_old)['note']),
+    ('O-123 핀 3 경유라도 1.9 > 1.8 불합격(양성)', V6(W_long)['pass'] is False),
+    ('O-123 핀 3 을 거치지 않은 1.5 는 불합격(양성) — 예외는 핀 3 경유만', V6(W_direct)['pass'] is False),
+    ('O-123 예외는 핀 8 만 — 핀 3 이 핀 8 을 거쳐 1.5 는 불합격(양성)', V6(W_pin3)['pass'] is False and 'U4.3' in V6(W_pin3)['note']),
+    ('O-123 핀 3 경유 1.776 이라도 폭 0.2 는 불합격(양성)', V6(W_thin)['pass'] is False),
     ('#64 cond2 V2: SD_ESC 영역은 있는데 규칙 없음 → 불합격(양성)', C_norule['2.V2']['pass'] is False and 'SD_ESC' in C_norule['2.V2']['note']),
     ('#64 cond2 V2: SD_ESC 규칙이 intersectsArea → 불합격(양성)', C_sdinter['2.V2']['pass'] is False),
     ('A 정상 0.50/0.20 → 영역 안, 불합격 아님(음성)', at(E['inside'], A_) is not None and at(E['inside_fail'], A_) is None and at(E['non_j1_net'], A_) is None),
