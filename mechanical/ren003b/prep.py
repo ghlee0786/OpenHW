@@ -1,11 +1,12 @@
 """REN-003b 1) 메시 준비 (시스템 파이썬, Fusion · Blender 없이) — 보드 GLB 와 외함 STL 을 한 폴더에 만든다.
 
-  python -I -B mechanical/ren003b/prep.py [--pcb <커밋>] [--enclosure <STEP/STL 폴더>] [--out <메시 폴더>] [--boards-from <GLB 폴더>]
+  python -I -B mechanical/ren003b/prep.py [--pcb <커밋>] [--enclosure <STEP/STL 폴더>] [--extra <STL 폴더>] [--out <메시 폴더>]
+        [--boards-from <GLB 폴더>] [--deflection 0.01]
 
 - 보드: `git archive <커밋>` 사본 → REN-002 `apply_models.py`(사본에만 적용, 3D 모델 연결) → `kicad-cli pcb export glb`
   (--subst-models, --user-origin 100x100mm = 코어 중심, 트랙 · 패드 · 면 · 실크 · 마스크 포함) → board_carrier.glb · board_front.glb
   `--boards-from` 을 주면 내보내지 않고 그 폴더의 GLB 를 복사한다.
-- 외함: `--enclosure` 폴더의 *.step 을 gmsh(OpenCASCADE)로 삼각형 메시(mm, 이진 STL)로 바꾼다. *.stl 은 그대로 복사한다.
+- 외함: `--enclosure` 폴더의 *.step 을 gmsh(OpenCASCADE 삼각화, 곡면 오차 ≤ --deflection mm)로 이진 STL(mm)로 바꾼다. *.stl 은 그대로 복사한다.
   같은 이름의 STEP 과 STL 이 있으면 STEP 을 쓴다. → M-010 최종 STEP/STL 이 나오면 이 인자만 바꿔 다시 돌린다.
 - 출력: <out>/board_<보드>.glb · <이름>.stl · index.json (파일 · 원본 · sha256 · 삼각형 수 · bbox mm)
 - 기본 출력: main 체크아웃 validation/runtime/vd001/render/blender-b/mesh (O-100)
@@ -29,6 +30,7 @@ MAIN = os.path.abspath(os.environ.get('OPENHW_MAIN') or os.path.dirname(subproce
     ['git', '-C', HERE, 'rev-parse', '--path-format=absolute', '--git-common-dir'], capture_output=True, text=True).stdout.strip()))
 KICAD = os.path.join(os.environ.get('KICAD_BIN') or os.path.expandvars(r'%LOCALAPPDATA%\Programs\KiCad\10.0\bin'), 'kicad-cli.exe')
 BOARDS = ('carrier', 'front')
+DEFLECTION = 0.01   # mm — STEP 삼각화 곡면 오차 (--deflection)
 
 
 def sha(p):
@@ -74,12 +76,19 @@ def step_to_stl(path, out):
         gmsh.model.occ.importShapes(path)
         gmsh.model.occ.synchronize()
         bb = [round(v, 3) for v in gmsh.model.getBoundingBox(-1, -1)]
-        gmsh.option.setNumber('Mesh.MeshSizeMin', 0.15)
-        gmsh.option.setNumber('Mesh.MeshSizeMax', 6.0)
-        gmsh.option.setNumber('Mesh.MeshSizeFromCurvature', 32)   # 원 한 바퀴 32 조각
         gmsh.option.setNumber('Mesh.Binary', 1)
-        gmsh.model.mesh.generate(2)
+        # CAD 곡면 삼각화(OpenCASCADE): 곡면 오차(선형 편차) DEFLECTION mm 이하, 각 편차 0.1 rad — O-125 「≤ 0.01 mm」
+        gmsh.option.setNumber('Mesh.StlLinearDeflection', DEFLECTION)
+        gmsh.option.setNumber('Mesh.StlLinearDeflectionRelative', 0)
+        gmsh.option.setNumber('Mesh.StlAngularDeflection', 0.1)
+        gmsh.model.mesh.importStl()
         n = sum(len(t) for t in gmsh.model.mesh.getElements(2)[1])
+        if n == 0:      # 삼각화 표현이 없으면 격자 생성으로
+            gmsh.option.setNumber('Mesh.MeshSizeMin', 0.05)
+            gmsh.option.setNumber('Mesh.MeshSizeMax', 4.0)
+            gmsh.option.setNumber('Mesh.MeshSizeFromCurvature', 96)
+            gmsh.model.mesh.generate(2)
+            n = sum(len(t) for t in gmsh.model.mesh.getElements(2)[1])
         gmsh.write(out)
         return n, bb
     finally:
@@ -95,12 +104,16 @@ def stl_info(path):
 
 
 def main():
+    global DEFLECTION
     ap = argparse.ArgumentParser()
     ap.add_argument('--pcb', default='995b872', help='보드 커밋 (캐리어 · 전면 같은 커밋)')
     ap.add_argument('--enclosure', default=os.path.join(LANE, 'mechanical', 'm003', 'out', 'step'), help='외함 STEP/STL 폴더')
     ap.add_argument('--out', default=os.path.join(MAIN, 'validation', 'runtime', 'vd001', 'render', 'blender-b', 'mesh'))
     ap.add_argument('--boards-from', default=None, help='이미 만든 board_*.glb 폴더 (내보내기 건너뜀)')
+    ap.add_argument('--extra', default=None, help='덧붙일 STL 폴더 — --enclosure 에 없는 이름만 복사 (렌즈 · 나사 · 하니스 등)')
+    ap.add_argument('--deflection', type=float, default=DEFLECTION, help='STEP 삼각화 곡면 오차 mm')
     a = ap.parse_args()
+    DEFLECTION = a.deflection
     os.makedirs(a.out, exist_ok=True)
     for f in glob.glob(os.path.join(a.out, '*.stl')) + glob.glob(os.path.join(a.out, '*.glb')):
         os.remove(f)
@@ -124,6 +137,9 @@ def main():
     if not names:
         print('외함 메시 없음:', a.enclosure)
         bad += 1
+    if a.extra:
+        for p in sorted(glob.glob(os.path.join(a.extra, '*.stl'))):
+            names.setdefault(os.path.splitext(os.path.basename(p))[0], p)
     for name, p in sorted(names.items()):
         o = os.path.join(a.out, name + '.stl')
         try:
@@ -133,7 +149,7 @@ def main():
             else:
                 n, bb = step_to_stl(p, o)
             index.append({'file': name + '.stl', 'kind': 'enclosure', 'source': os.path.basename(p), 'source_sha256': sha(p), 'sha256': sha(o),
-                          'triangles': n, 'bbox_mm': bb})
+                          'triangles': n, 'bbox_mm': bb, 'deflection_mm': None if p.lower().endswith('.stl') else DEFLECTION})
             print('외함 %s: 삼각형 %d' % (name, n))
         except Exception as e:      # 한 부품이 실패해도 나머지는 계속
             print('외함 %s 실패: %s' % (name, e))
