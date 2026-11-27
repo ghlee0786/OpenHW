@@ -38,5 +38,105 @@
    }
   },
   "fails": []
+ },
+ "carrier": {
+  "board": "carrier",
+  "pcb": "995b872",
+  "models_applied": "changed footprints 0",
+  "models_missing": [],
+  "gif": {
+   "path": "docs/readme/media/carrier_spin.gif",
+   "bytes": 2965353,
+   "size": [
+    720,
+    540
+   ],
+   "frames": 40,
+   "fps": 12,
+   "loop": 0,
+   "sha256": "4ce6f414200ff2519c6bf34d3c551210ba0aa9b68b793870e6ba9ff2f29b5bd7",
+   "render": "kicad-cli pcb render --quality high --perspective --floor --zoom 0.8 --rotate -40,0,<0..360> "
+  },
+  "png": {
+   "top": {
+    "path": "docs/readme/media/carrier_top.png",
+    "bytes": 76326,
+    "size": [
+     686,
+     916
+    ],
+    "sha256": "2753f7c5d93328ac526d379d07a677e8457ed8d889b54d63fd8827207d69452b"
+   },
+   "bottom": {
+    "path": "docs/readme/media/carrier_bottom.png",
+    "bytes": 55360,
+    "size": [
+     686,
+     916
+    ],
+    "sha256": "85628aa944caf9969a3180683a7ea7ff8015722c924e3bd8dc79b4d0c14e2016"
+   }
+  },
+  "renders": {
+   "top": {
+    "path": "docs/renders/carrier/carrier-top.png",
+    "bytes": 149626,
+    "size": [
+     1568,
+     1568
+    ],
+    "sha256": "38aad4c562e12567e767938967b13991752cc1752f01b8d346bfe20fe0fcb6e9"
+   },
+   "bottom": {
+    "path": "docs/renders/carrier/carrier-bottom.png",
+    "bytes": 109024,
+    "size": [
+     1568,
+     1568
+    ],
+    "sha256": "9b2bd0a08ecade37bd142ca087f166613381c1ba3a65d3cad8045e0e84532fb3"
+   },
+   "iso": {
+    "path": "docs/renders/carrier/carrier-iso.png",
+    "bytes": 171298,
+    "size": [
+     1568,
+     1568
+    ],
+    "sha256": "bdd48ea6f0bfcd256af640864342b4b7269e976958a5b9ec6973833c897c3fd8"
+   },
+   "iso-back": {
+    "path": "docs/renders/carrier/carrier-iso-back.png",
+    "bytes": 80374,
+    "size": [
+     1568,
+     1568
+    ],
+    "sha256": "00455b7d563cacb2e11b27f5374451523e7b90ee7445519c22c4164461cdeaa5"
+   }
+  },
+  "fails": []
+ },
+ "stack": {
+  "board": "stack",
+  "pcb": "carrier 995b872 · front 995b872",
+  "models_applied": "전면·캐리어 사본 apply_models",
+  "models_missing": [],
+  "gif": {
+   "path": "docs/readme/media/stack_spin.gif",
+   "bytes": 1647245,
+   "size": [
+    720,
+    540
+   ],
+   "frames": 40,
+   "fps": 12,
+   "loop": 0,
+   "sha256": "8401de1fe1265e04344832d3c04a1068e73dbfae8b421853dcc26e71470c7b29",
+   "render": "kicad-cli pcb render --quality high --perspective --floor --zoom 0.45 --rotate -62,0,<0..360> --pivot 0,0,-1"
+  },
+  "png": {},
+  "renders": {},
+  "fails": []
  }
 }
