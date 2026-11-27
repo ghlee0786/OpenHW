@@ -116,7 +116,11 @@ text('SPA', 140, 124, h=1.0, th=0.2); line(138.0, 124.72, 142.0, 124.72)        
 text('A90', 104, 136, ang=90); text('A180', 110, 136, ang=180)                  # S8 앞면 각도 0·90·180 → 3종
 text('BNM', 120, 136, layer=pcbnew.B_SilkS, mirror=False)                        # S8m 뒷면 비거울
 via = pcbnew.PCB_VIA(b); via.SetPosition(V(135, 132)); via.SetWidth(FM(0.6)); via.SetDrill(FM(0.3)); b.Add(via)
-line(134.0, 132.0, 136.0, 132.0)                 # S1v·S1h 비아 위
+via.SetFrontTentingMode(pcbnew.TENTING_MODE_NOT_TENTED); via.SetBackTentingMode(pcbnew.TENTING_MODE_NOT_TENTED)
+line(134.0, 132.0, 136.0, 132.0)                 # S1v·S1h 안 덮인 비아 위 → 불합격
+via2 = pcbnew.PCB_VIA(b); via2.SetPosition(V(141, 132)); via2.SetWidth(FM(0.6)); via2.SetDrill(FM(0.3)); b.Add(via2)
+via2.SetFrontTentingMode(pcbnew.TENTING_MODE_TENTED); via2.SetBackTentingMode(pcbnew.TENTING_MODE_TENTED)
+line(140.0, 132.0, 142.0, 132.0)                 # 덮인 비아 위 → 허용 (D-003 #58)
 
 pcb = os.path.join(WORK, 'inject.kicad_pcb')
 pcbnew.SaveBoard(pcb, b)
@@ -166,8 +170,9 @@ CASES = [
     ('S7 떨어진 글자(음성)', not has('S7_text_text', lambda x: 'OKT' in (x['text'].get('text'), x['other'].get('text')))),
     ('S8 앞면 3방향(양성)', has('S8_orient_gt2', lambda x: x['side'] == 'F')),
     ('S8m 뒷면 비거울(양성)', has('S8m_mirror', lambda x: x.get('text') == 'BNM')),
-    ('S1v 비아 위 실크(양성)', has('S1v_over_via', lambda x: near(x['at'], 135, 132))),
-    ('S1h 구멍 위 실크(양성)', has('S1h_over_hole', lambda x: near(x['at'], 135, 132))),
+    ('S1v 안 덮인 비아 위 실크(양성)', has('S1v_over_via', lambda x: near(x['at'], 135, 132))),
+    ('S1h 안 덮인 비아 구멍 위 실크(양성)', has('S1h_over_hole', lambda x: near(x['at'], 135, 132))),
+    ('S1v·S1h·S1 덮인(tented) 비아 위 실크 허용(음성, D-003 #58)', not any(has(k, lambda x: near(x['at'], 141, 132)) for k in ('S1v_over_via', 'S1h_over_hole', 'S1_on_mask_open'))),
     ('S9 다이오드 캐소드 쪽 표시 ok(음성)', P1.get('D10', {}).get('verdict') in ('ok', 'ok_marker')),
     ('S9 캐소드 반대쪽 표시 wrong_side(양성)', P1.get('D11', {}).get('verdict') == 'wrong_side'),
     ('S9 LED 표시 없음 missing(양성)', P1.get('D12', {}).get('verdict') == 'missing'),
@@ -175,6 +180,9 @@ CASES = [
     ('S9 SOT-23 삼각 지움 missing(양성)', P1.get('Q11', {}).get('verdict') == 'missing'),
     ('S9 SOT-23 90° 회전 ok(음성)', P1.get('Q12', {}).get('verdict') in ('ok', 'ok_marker')),
     ('S9 USB-C 면제', P1.get('J10', {}).get('verdict') == 'exempt'),
+    # V-006a: 참조 필드는 Reference()·GetFields() 두 길로 나옴 — 한 번만 센다 (부품 14개 모두 앞면 실크 참조)
+    ('참조 한 번만 셈 (앞면 실크 참조 14)', R['counts']['F']['ref'] == 14),
+    ('S7 자기 참조끼리 겹침 없음(음성)', not has('S7_text_text', lambda x: x['text'].get('owner') == x['other'].get('owner') and x['text'].get('at') == x['other'].get('at'))),
 ]
 fail = 0
 for name, ok in CASES:

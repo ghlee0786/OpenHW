@@ -104,7 +104,7 @@ for b in BOARDS:
             add('2.A13x', b, 'B.Mask 개구 안 다른 넷 구리', len(ru.get('bmask_other_net_exposed', [])), 0, not ru.get('bmask_other_net_exposed'), [frr])
     si, fs = J('silk_%s.json' % b)
     if si is not None:
-        names = {'S1_on_mask_open': '패드·노출 동박 위 실크', 'S1v_over_via': '비아 위 실크', 'S1h_over_hole': '구멍 위 실크',
+        names = {'S1_on_mask_open': '패드·노출 동박 위 실크', 'S1v_over_via': '안 덮인 비아 위 실크 (덮인 비아는 허용, D-003 #58)', 'S1h_over_hole': '열린 구멍 위 실크',
                  'S2_clear_lt_0p15': '실크–마스크 개구 < 0.15', 'S3_line_lt_0p15': '실크 선폭 < 0.15', 'S4_text': '글자 높이·획 미달',
                  'S4r_ratio_lt_1to5': '글자 획/높이 < 1:5', 'S5_edge': '외곽까지 < 0.30', 'S6_ref_hidden': '부품 아래 숨는 참조',
                  'S6a_ref_far': '자기 부품에서 먼 참조', 'S6a_ref_ambiguous': '다른 부품이 더 가까운 참조', 'S7_text_text': '글자 겹침',
