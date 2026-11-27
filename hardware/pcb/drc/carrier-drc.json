@@ -1,7 +1,7 @@
 {
     "$schema": "https://schemas.kicad.org/drc.v1.json",
     "coordinate_units": "mm",
-    "date": "2026-11-27T12:10:37",
+    "date": "2026-11-27T12:34:29",
     "ignored_checks": [
         {
             "description": "Footprint doesn't match symbol's footprint filters",
@@ -21,43 +21,20 @@
             "description": "Missing connection between items",
             "items": [
                 {
-                    "description": "패드 1 [/SD_PWR_3V3]의 R16 위F.Cu",
+                    "description": "패드 1 [/SD_PWR_3V3]의 R14 위F.Cu",
                     "pos": {
-                        "x": 98.34156,
-                        "y": 94.258131
+                        "x": 99.589187,
+                        "y": 93.538857
                     },
-                    "uuid": "d5fbac9a-6694-417f-8fd1-0904e5b48068"
+                    "uuid": "9c67f8e3-d769-4d2e-8b3f-731899182fc7"
                 },
                 {
-                    "description": "배선 [/SD_PWR_3V3] on F.Cu, 길이 0.1414 mm",
+                    "description": "배선 [/SD_PWR_3V3] on F.Cu, 길이 0.1000 mm",
                     "pos": {
-                        "x": 99.6,
-                        "y": 94.35
+                        "x": 98.6,
+                        "y": 94.5
                     },
-                    "uuid": "3da50f01-a732-45e1-ab95-d530eca0df8c"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "패드 7 [/SDIO_D0]의 J4 위B.Cu",
-                    "pos": {
-                        "x": 96.145,
-                        "y": 96.46
-                    },
-                    "uuid": "0d5e6897-8e27-4973-bc87-ec6dad23b062"
-                },
-                {
-                    "description": "배선 [/SDIO_D0] on GND_PWR, 길이 0.4243 mm",
-                    "pos": {
-                        "x": 99.35,
-                        "y": 94.7
-                    },
-                    "uuid": "2e872699-20c0-4553-97d4-e0c68b73d8f5"
+                    "uuid": "44bfe9cf-83e9-450a-8158-cb8ec115acaf"
                 }
             ],
             "severity": "error",
@@ -75,12 +52,12 @@
                     "uuid": "8b23fe14-bd84-494c-93b6-f43a85cab288"
                 },
                 {
-                    "description": "배선 [/SDIO_D0] on GND_PWR, 길이 6.6000 mm",
+                    "description": "패드 2 [/SDIO_D0]의 R14 위F.Cu",
                     "pos": {
-                        "x": 109.45,
-                        "y": 102.55
+                        "x": 100.609187,
+                        "y": 93.538857
                     },
-                    "uuid": "612bf633-ac66-40b7-9ef5-63a5791891a6"
+                    "uuid": "413ac6a3-9cd2-4e88-a6c5-ade0e1a3f416"
                 }
             ],
             "severity": "error",
@@ -89,37 +66,6 @@
         {
             "description": "Missing connection between items",
             "items": [
-                {
-                    "description": "구역 'AUTO_GND_B.Cu' [/GND] on B.Cu, 우선순위 0",
-                    "pos": {
-                        "x": 79.95,
-                        "y": 79.95
-                    },
-                    "uuid": "6f79b13d-fcae-4c8f-84e5-3e083b49d59b"
-                },
-                {
-                    "description": "구역 'AUTO_GND_F.Cu' [/GND] on F.Cu, 우선순위 0",
-                    "pos": {
-                        "x": 79.95,
-                        "y": 79.95
-                    },
-                    "uuid": "be9ff6d3-4934-4ace-920d-16c83cdb68c8"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "구역 'AUTO_GND_F.Cu' [/GND] on F.Cu, 우선순위 0",
-                    "pos": {
-                        "x": 79.95,
-                        "y": 79.95
-                    },
-                    "uuid": "be9ff6d3-4934-4ace-920d-16c83cdb68c8"
-                },
                 {
                     "description": "SH의 PTH 패드[/GND]J3",
                     "pos": {
@@ -127,6 +73,14 @@
                         "y": 104.32
                     },
                     "uuid": "33da78e8-bf98-44fb-8efe-6526c3ea3548"
+                },
+                {
+                    "description": "구역 'AUTO_GND_F.Cu' [/GND] on F.Cu, 우선순위 0",
+                    "pos": {
+                        "x": 79.95,
+                        "y": 79.95
+                    },
+                    "uuid": "be9ff6d3-4934-4ace-920d-16c83cdb68c8"
                 }
             ],
             "severity": "error",
@@ -135,14 +89,6 @@
         {
             "description": "Missing connection between items",
             "items": [
-                {
-                    "description": "구역 'AUTO_GND_F.Cu' [/GND] on F.Cu, 우선순위 0",
-                    "pos": {
-                        "x": 79.95,
-                        "y": 79.95
-                    },
-                    "uuid": "be9ff6d3-4934-4ace-920d-16c83cdb68c8"
-                },
                 {
                     "description": "구역 'AUTO_GND_B.Cu' [/GND] on B.Cu, 우선순위 0",
                     "pos": {
@@ -150,6 +96,14 @@
                         "y": 79.95
                     },
                     "uuid": "6f79b13d-fcae-4c8f-84e5-3e083b49d59b"
+                },
+                {
+                    "description": "구역 'AUTO_GND_F.Cu' [/GND] on F.Cu, 우선순위 0",
+                    "pos": {
+                        "x": 79.95,
+                        "y": 79.95
+                    },
+                    "uuid": "be9ff6d3-4934-4ace-920d-16c83cdb68c8"
                 }
             ],
             "severity": "error",
@@ -158,14 +112,6 @@
         {
             "description": "Missing connection between items",
             "items": [
-                {
-                    "description": "구역 'AUTO_GND_F.Cu' [/GND] on F.Cu, 우선순위 0",
-                    "pos": {
-                        "x": 79.95,
-                        "y": 79.95
-                    },
-                    "uuid": "be9ff6d3-4934-4ace-920d-16c83cdb68c8"
-                },
                 {
                     "description": "구역 'AUTO_GND_B.Cu' [/GND] on B.Cu, 우선순위 0",
                     "pos": {
@@ -173,44 +119,6 @@
                         "y": 79.95
                     },
                     "uuid": "6f79b13d-fcae-4c8f-84e5-3e083b49d59b"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "구역 'AUTO_GND_F.Cu' [/GND] on F.Cu, 우선순위 0",
-                    "pos": {
-                        "x": 79.95,
-                        "y": 79.95
-                    },
-                    "uuid": "be9ff6d3-4934-4ace-920d-16c83cdb68c8"
-                },
-                {
-                    "description": "구역 'AUTO_GND_B.Cu' [/GND] on B.Cu, 우선순위 0",
-                    "pos": {
-                        "x": 79.95,
-                        "y": 79.95
-                    },
-                    "uuid": "6f79b13d-fcae-4c8f-84e5-3e083b49d59b"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "구역 'AUTO_GND_F.Cu' [/GND] on F.Cu, 우선순위 0",
-                    "pos": {
-                        "x": 79.95,
-                        "y": 79.95
-                    },
-                    "uuid": "be9ff6d3-4934-4ace-920d-16c83cdb68c8"
                 },
                 {
                     "description": "구역 'AUTO_GND_F.Cu' [/GND] on F.Cu, 우선순위 0",
@@ -236,6 +144,29 @@
                     "uuid": "be9ff6d3-4934-4ace-920d-16c83cdb68c8"
                 },
                 {
+                    "description": "구역 'AUTO_GND_In1.Cu' [/GND] on GND, 우선순위 0",
+                    "pos": {
+                        "x": 79.95,
+                        "y": 79.95
+                    },
+                    "uuid": "2a110134-049f-423b-9724-f7700e04277c"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "구역 'AUTO_GND_In1.Cu' [/GND] on GND, 우선순위 0",
+                    "pos": {
+                        "x": 79.95,
+                        "y": 79.95
+                    },
+                    "uuid": "2a110134-049f-423b-9724-f7700e04277c"
+                },
+                {
                     "description": "구역 'AUTO_GND_F.Cu' [/GND] on F.Cu, 우선순위 0",
                     "pos": {
                         "x": 79.95,
@@ -251,20 +182,20 @@
             "description": "Missing connection between items",
             "items": [
                 {
-                    "description": "패드 B4 [/USB_VBUS]의 J3 위B.Cu",
+                    "description": "구역 'AUTO_GND_F.Cu' [/GND] on F.Cu, 우선순위 0",
                     "pos": {
-                        "x": 87.24,
-                        "y": 97.55
+                        "x": 79.95,
+                        "y": 79.95
                     },
-                    "uuid": "b38e8419-7159-4475-9ce2-b16ccfb8d1ad"
+                    "uuid": "be9ff6d3-4934-4ace-920d-16c83cdb68c8"
                 },
                 {
-                    "description": "비아 [/USB_VBUS] on F.Cu - B.Cu",
+                    "description": "구역 'AUTO_GND_F.Cu' [/GND] on F.Cu, 우선순위 0",
                     "pos": {
-                        "x": 90.95,
-                        "y": 97.7
+                        "x": 79.95,
+                        "y": 79.95
                     },
-                    "uuid": "12f179fa-ebaf-4a9e-a2da-16ecb92b7e69"
+                    "uuid": "be9ff6d3-4934-4ace-920d-16c83cdb68c8"
                 }
             ],
             "severity": "error",
@@ -274,20 +205,20 @@
             "description": "Missing connection between items",
             "items": [
                 {
-                    "description": "배선 [/SDIO_CLK] on B.Cu, 길이 1.3435 mm",
+                    "description": "패드 1 [/USB_VBUS]의 C12 위B.Cu",
                     "pos": {
-                        "x": 97.05,
-                        "y": 94.9
+                        "x": 91.324,
+                        "y": 97.144
                     },
-                    "uuid": "a52a6b2c-5289-4b25-a908-6a07fdbf7f13"
+                    "uuid": "70f55166-fbe5-448b-81e4-b68c6c29cd87"
                 },
                 {
-                    "description": "배선 [/SDIO_CLK] on F.Cu, 길이 0.5657 mm",
+                    "description": "패드 5 [/USB_VBUS]의 U3 위F.Cu",
                     "pos": {
-                        "x": 96.45,
-                        "y": 92.1
+                        "x": 91.9375,
+                        "y": 98.0
                     },
-                    "uuid": "18b4efd8-ae4a-4930-87cc-632323aa6ef0"
+                    "uuid": "e7bee85b-9ef5-440c-8ddc-25ee46522882"
                 }
             ],
             "severity": "error",
@@ -297,12 +228,219 @@
             "description": "Missing connection between items",
             "items": [
                 {
-                    "description": "비아 [/SDIO_CLK] on F.Cu - B.Cu",
+                    "description": "패드 1 [/USB_VBUS]의 C12 위B.Cu",
                     "pos": {
-                        "x": 100.65,
-                        "y": 100.35
+                        "x": 91.324,
+                        "y": 97.144
                     },
-                    "uuid": "8482c4f4-33a1-43a3-94fe-0e62193ed905"
+                    "uuid": "70f55166-fbe5-448b-81e4-b68c6c29cd87"
+                },
+                {
+                    "description": "배선 [/USB_VBUS] on B.Cu, 길이 0.0500 mm",
+                    "pos": {
+                        "x": 87.95,
+                        "y": 97.35
+                    },
+                    "uuid": "a75de194-b581-490a-9e29-a28275f8d863"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "패드 1 [/USB_VBUS]의 R9 위F.Cu",
+                    "pos": {
+                        "x": 107.795381,
+                        "y": 88.082523
+                    },
+                    "uuid": "35939284-3d9e-45b1-97f6-80bed436ecc6"
+                },
+                {
+                    "description": "패드 5 [/USB_VBUS]의 U3 위F.Cu",
+                    "pos": {
+                        "x": 91.9375,
+                        "y": 98.0
+                    },
+                    "uuid": "e7bee85b-9ef5-440c-8ddc-25ee46522882"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "패드 1 [/5V_SYS]의 D7 위F.Cu",
+                    "pos": {
+                        "x": 99.830908,
+                        "y": 97.980002
+                    },
+                    "uuid": "ea75d414-610f-4875-9ca2-2cf22d1e467a"
+                },
+                {
+                    "description": "패드 1 [/5V_SYS]의 TP2 위B.Cu",
+                    "pos": {
+                        "x": 101.95,
+                        "y": 104.95
+                    },
+                    "uuid": "6ae761f4-9dbf-4052-b3bc-d00540ca20a5"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "패드 2 [/5V_SYS]의 L1 위F.Cu",
+                    "pos": {
+                        "x": 103.963673,
+                        "y": 104.323943
+                    },
+                    "uuid": "3239cee4-c432-4072-b500-802f6c4468d3"
+                },
+                {
+                    "description": "패드 1 [/5V_SYS]의 TP2 위B.Cu",
+                    "pos": {
+                        "x": 101.95,
+                        "y": 104.95
+                    },
+                    "uuid": "6ae761f4-9dbf-4052-b3bc-d00540ca20a5"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "패드 1 [/5V_SYS]의 C19 위F.Cu",
+                    "pos": {
+                        "x": 108.48,
+                        "y": 118.3
+                    },
+                    "uuid": "28100822-8764-490f-99b9-982721a2b06c"
+                },
+                {
+                    "description": "패드 1 [/5V_SYS]의 C23 위F.Cu",
+                    "pos": {
+                        "x": 111.059067,
+                        "y": 118.849289
+                    },
+                    "uuid": "b2937e17-b152-452c-a471-b50c72e79165"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "패드 1 [/5V_SYS]의 R2 위F.Cu",
+                    "pos": {
+                        "x": 108.51,
+                        "y": 117.2
+                    },
+                    "uuid": "e999cffc-161d-45fc-b74f-585038e11c62"
+                },
+                {
+                    "description": "패드 1 [/5V_SYS]의 C19 위F.Cu",
+                    "pos": {
+                        "x": 108.48,
+                        "y": 118.3
+                    },
+                    "uuid": "28100822-8764-490f-99b9-982721a2b06c"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "배선 [/5V_SYS] on B.Cu, 길이 0.0500 mm",
+                    "pos": {
+                        "x": 112.2,
+                        "y": 101.25
+                    },
+                    "uuid": "b58cd594-19fa-4a8a-96c3-aaf7e8ac152b"
+                },
+                {
+                    "description": "배선 [/5V_SYS] on F.Cu, 길이 2.5000 mm",
+                    "pos": {
+                        "x": 105.4,
+                        "y": 103.1
+                    },
+                    "uuid": "01fb5f8d-42b1-4939-81c7-14e6384a876e"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "패드 1 [/5V_SYS]의 C20 위F.Cu",
+                    "pos": {
+                        "x": 117.07422,
+                        "y": 115.379827
+                    },
+                    "uuid": "ea966054-0425-491c-8cdd-b64923ef5722"
+                },
+                {
+                    "description": "패드 1 [/5V_SYS]의 R4 위B.Cu",
+                    "pos": {
+                        "x": 117.968899,
+                        "y": 112.760498
+                    },
+                    "uuid": "b42cbe40-19a4-40a1-9a5d-31842dab014c"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "배선 [/5V_SYS] on B.Cu, 길이 0.4000 mm",
+                    "pos": {
+                        "x": 117.7,
+                        "y": 112.6
+                    },
+                    "uuid": "9a7281fa-fc39-4d7c-9bca-cf4185d079be"
+                },
+                {
+                    "description": "배선 [/5V_SYS] on F.Cu, 길이 0.9000 mm",
+                    "pos": {
+                        "x": 115.65,
+                        "y": 110.95
+                    },
+                    "uuid": "706ebd2b-6be2-4a0f-819e-999ccf467823"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "배선 [/SDIO_CLK] on B.Cu, 길이 0.0500 mm",
+                    "pos": {
+                        "x": 98.65,
+                        "y": 97.1
+                    },
+                    "uuid": "786237b0-ba3a-449e-bea4-79cd6abf450b"
                 },
                 {
                     "description": "패드 52 [/SDIO_CLK]의 J1 위F.Cu",
@@ -320,20 +458,20 @@
             "description": "Missing connection between items",
             "items": [
                 {
-                    "description": "배선 [/SDIO_CLK] on GND_PWR, 길이 0.1118 mm",
+                    "description": "패드 2 [/SDIO_CMD]의 U4 위F.Cu",
                     "pos": {
-                        "x": 100.65,
-                        "y": 100.35
+                        "x": 97.060765,
+                        "y": 91.81925
                     },
-                    "uuid": "8c81ccc7-ac81-43b8-9f33-5eb05d71c2ea"
+                    "uuid": "76541d60-c989-4ae9-8691-7b5bc8a3dc64"
                 },
                 {
-                    "description": "배선 [/SDIO_CLK] on B.Cu, 길이 0.0500 mm",
+                    "description": "배선 [/SDIO_CMD] on B.Cu, 길이 1.3500 mm",
                     "pos": {
-                        "x": 98.65,
-                        "y": 97.1
+                        "x": 100.85,
+                        "y": 94.55
                     },
-                    "uuid": "40a549d6-2169-4f5d-8deb-28cfbc5aba12"
+                    "uuid": "4d1ab5ec-2444-4c5b-b77b-8de17d55b1cb"
                 }
             ],
             "severity": "error",
@@ -351,12 +489,35 @@
                     "uuid": "3accf1d3-7f7b-4863-b4f8-0de1a0b39b5f"
                 },
                 {
-                    "description": "배선 [/SDIO_CMD] on B.Cu, 길이 1.9000 mm",
+                    "description": "패드 48 [/SDIO_CMD]의 J1 위F.Cu",
                     "pos": {
-                        "x": 107.05,
-                        "y": 104.4
+                        "x": 109.8,
+                        "y": 104.25
                     },
-                    "uuid": "47bb78f0-dcf9-4262-9d6c-822c19bd1228"
+                    "uuid": "6e4d2ac3-9f9c-4fc4-b91e-ef06126e7846"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "패드 2 [/SDIO_D1]의 R15 위F.Cu",
+                    "pos": {
+                        "x": 97.518495,
+                        "y": 95.675683
+                    },
+                    "uuid": "ce493bad-e824-403e-9f14-cbe09eb6a646"
+                },
+                {
+                    "description": "패드 44 [/SDIO_D1]의 J1 위F.Cu",
+                    "pos": {
+                        "x": 109.8,
+                        "y": 103.25
+                    },
+                    "uuid": "799ca16f-ac95-4b01-b108-111e7adf3762"
                 }
             ],
             "severity": "error",
@@ -374,12 +535,12 @@
                     "uuid": "4d723628-ff76-4d43-96ca-cbfd107a8485"
                 },
                 {
-                    "description": "배선 [/SDIO_D1] on B.Cu, 길이 0.3808 mm",
+                    "description": "패드 2 [/SDIO_D1]의 R15 위F.Cu",
                     "pos": {
-                        "x": 96.75,
-                        "y": 93.45
+                        "x": 97.518495,
+                        "y": 95.675683
                     },
-                    "uuid": "8502958b-bdd2-4b58-9c0f-783e04f157f7"
+                    "uuid": "ce493bad-e824-403e-9f14-cbe09eb6a646"
                 }
             ],
             "severity": "error",
@@ -388,37 +549,6 @@
         {
             "description": "Missing connection between items",
             "items": [
-                {
-                    "description": "패드 44 [/SDIO_D1]의 J1 위F.Cu",
-                    "pos": {
-                        "x": 109.8,
-                        "y": 103.25
-                    },
-                    "uuid": "799ca16f-ac95-4b01-b108-111e7adf3762"
-                },
-                {
-                    "description": "배선 [/SDIO_D1] on F.Cu, 길이 0.8485 mm",
-                    "pos": {
-                        "x": 106.75,
-                        "y": 102.25
-                    },
-                    "uuid": "0e4070f8-03c9-4fb8-9269-7d89d4c0be7c"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "배선 [/BUCK_SW] on F.Cu, 길이 0.4243 mm",
-                    "pos": {
-                        "x": 107.15,
-                        "y": 113.1
-                    },
-                    "uuid": "f9569682-f198-4256-b98a-0a53278b5cd9"
-                },
                 {
                     "description": "패드 1 [/BUCK_SW]의 L1 위F.Cu",
                     "pos": {
@@ -426,6 +556,14 @@
                         "y": 104.323943
                     },
                     "uuid": "9b55fce0-16eb-4472-a3a4-5e35f8f74711"
+                },
+                {
+                    "description": "배선 [/BUCK_SW] on F.Cu, 길이 2.1500 mm",
+                    "pos": {
+                        "x": 108.6,
+                        "y": 113.4
+                    },
+                    "uuid": "88bcb608-bb44-44ea-8652-172a95247943"
                 }
             ],
             "severity": "error",
@@ -435,20 +573,20 @@
             "description": "Missing connection between items",
             "items": [
                 {
-                    "description": "배선 [/USB_DET] on F.Cu, 길이 0.3808 mm",
+                    "description": "패드 2 [/USB_DET]의 R9 위F.Cu",
                     "pos": {
-                        "x": 104.3,
-                        "y": 95.7
+                        "x": 108.815381,
+                        "y": 88.082523
                     },
-                    "uuid": "9fdd7e34-fd71-4701-a4eb-26fdacba89a4"
+                    "uuid": "b3d0a07e-d444-430f-b974-09aba0bdb76e"
                 },
                 {
-                    "description": "배선 [/USB_DET] on GND_PWR, 길이 0.4031 mm",
+                    "description": "패드 1 [/USB_DET]의 TP10 위B.Cu",
                     "pos": {
-                        "x": 104.15,
-                        "y": 95.35
+                        "x": 109.45,
+                        "y": 84.95
                     },
-                    "uuid": "c35764e5-92f5-4e1c-a183-c62d76ec7927"
+                    "uuid": "79cb3f57-028d-4eb3-92f0-3cbae9ec095e"
                 }
             ],
             "severity": "error",
@@ -458,13 +596,28 @@
             "description": "Missing connection between items",
             "items": [
                 {
-                    "description": "패드 1 [/BUCK_FB]의 R3 위F.Cu",
+                    "description": "패드 2 [/USB_DET]의 R9 위F.Cu",
                     "pos": {
-                        "x": 108.375929,
-                        "y": 111.984772
+                        "x": 108.815381,
+                        "y": 88.082523
                     },
-                    "uuid": "beb2a5c0-c92d-4612-8c09-ebd4ce9b495b"
+                    "uuid": "b3d0a07e-d444-430f-b974-09aba0bdb76e"
                 },
+                {
+                    "description": "패드 1 [/USB_DET]의 C22 위F.Cu",
+                    "pos": {
+                        "x": 106.841697,
+                        "y": 91.121769
+                    },
+                    "uuid": "0ec11755-776c-450b-9188-98a7191cc221"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
                 {
                     "description": "패드 4 [/BUCK_FB]의 U1 위F.Cu",
                     "pos": {
@@ -472,6 +625,14 @@
                         "y": 115.95
                     },
                     "uuid": "07985d29-05fa-4260-8e0a-8939c28c3759"
+                },
+                {
+                    "description": "패드 2 [/BUCK_FB]의 R2 위F.Cu",
+                    "pos": {
+                        "x": 107.49,
+                        "y": 117.2
+                    },
+                    "uuid": "736d3419-6812-4eb7-bc67-d1607e6d3df5"
                 }
             ],
             "severity": "error",
@@ -480,6 +641,60 @@
         {
             "description": "Missing connection between items",
             "items": [
+                {
+                    "description": "패드 4 [/BUCK_FB]의 U1 위F.Cu",
+                    "pos": {
+                        "x": 107.1375,
+                        "y": 115.95
+                    },
+                    "uuid": "07985d29-05fa-4260-8e0a-8939c28c3759"
+                },
+                {
+                    "description": "배선 [/BUCK_FB] on B.Cu, 길이 0.1414 mm",
+                    "pos": {
+                        "x": 108.3,
+                        "y": 112.8
+                    },
+                    "uuid": "fae85328-a475-4cdb-9bef-e6cb48a3281c"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "패드 2 [/BUCK_FB]의 C19 위F.Cu",
+                    "pos": {
+                        "x": 107.52,
+                        "y": 118.3
+                    },
+                    "uuid": "e6ecc67f-9687-4b4c-ac59-468054c56fc0"
+                },
+                {
+                    "description": "패드 2 [/BUCK_FB]의 R2 위F.Cu",
+                    "pos": {
+                        "x": 107.49,
+                        "y": 117.2
+                    },
+                    "uuid": "736d3419-6812-4eb7-bc67-d1607e6d3df5"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "패드 1 [/SD0_PWR_EN]의 R12 위F.Cu",
+                    "pos": {
+                        "x": 95.985034,
+                        "y": 103.640751
+                    },
+                    "uuid": "d57676f8-8f44-4e03-b9de-04ba25468d66"
+                },
                 {
                     "description": "패드 38 [/SD0_PWR_EN]의 J1 위F.Cu",
                     "pos": {
@@ -487,14 +702,6 @@
                         "y": 101.75
                     },
                     "uuid": "b054a17c-6d88-4817-ab84-056c71802d23"
-                },
-                {
-                    "description": "배선 [/SD0_PWR_EN] on GND_PWR, 길이 2.6163 mm",
-                    "pos": {
-                        "x": 109.35,
-                        "y": 106.4
-                    },
-                    "uuid": "db87d747-c8df-457e-807c-b5dd21a5909b"
                 }
             ],
             "severity": "error",
@@ -504,20 +711,66 @@
             "description": "Missing connection between items",
             "items": [
                 {
-                    "description": "비아 [/STATUS_LED] on F.Cu - B.Cu",
-                    "pos": {
-                        "x": 102.35,
-                        "y": 98.2
-                    },
-                    "uuid": "acc42b35-9185-4657-bcae-0fc711bb6a55"
-                },
-                {
                     "description": "패드 1 [/STATUS_LED]의 R20 위F.Cu",
                     "pos": {
                         "x": 101.842008,
                         "y": 94.780281
                     },
                     "uuid": "f400a6df-2899-4f60-be95-22a1f627a22c"
+                },
+                {
+                    "description": "패드 1 [/STATUS_LED]의 TP13 위B.Cu",
+                    "pos": {
+                        "x": 101.95,
+                        "y": 98.95
+                    },
+                    "uuid": "42a5ddd9-e18f-40f3-949a-3300b61f3ed2"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "패드 1 [/STATUS_LED]의 TP13 위B.Cu",
+                    "pos": {
+                        "x": 101.95,
+                        "y": 98.95
+                    },
+                    "uuid": "42a5ddd9-e18f-40f3-949a-3300b61f3ed2"
+                },
+                {
+                    "description": "패드 24 [/STATUS_LED]의 J1 위F.Cu",
+                    "pos": {
+                        "x": 109.8,
+                        "y": 98.25
+                    },
+                    "uuid": "4263c515-db3a-4e8d-9609-f20af39d8ea5"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "패드 3 [/12V_IN]의 U1 위F.Cu",
+                    "pos": {
+                        "x": 104.8625,
+                        "y": 115.95
+                    },
+                    "uuid": "87933749-7fda-4da8-9776-ed1ea939706a"
+                },
+                {
+                    "description": "배선 [/12V_IN] on GND_PWR, 길이 3.2500 mm",
+                    "pos": {
+                        "x": 94.8,
+                        "y": 123.35
+                    },
+                    "uuid": "36854769-6037-475c-bbea-708b54187fef"
                 }
             ],
             "severity": "error",
@@ -550,12 +803,35 @@
             "description": "Missing connection between items",
             "items": [
                 {
-                    "description": "배선 [/I2C1_SDA] on B.Cu, 길이 0.2500 mm",
+                    "description": "패드 1 [/RESERVE2]의 TP19 위B.Cu",
                     "pos": {
-                        "x": 102.55,
-                        "y": 100.4
+                        "x": 111.95,
+                        "y": 83.45
                     },
-                    "uuid": "a42612ed-70de-4502-9f24-ad11cb090ada"
+                    "uuid": "4c9a3f49-2da1-44f0-8c82-b506ed314663"
+                },
+                {
+                    "description": "패드 9 [/RESERVE2]의 J1 위F.Cu",
+                    "pos": {
+                        "x": 113.8,
+                        "y": 94.75
+                    },
+                    "uuid": "3b353446-fe5f-400d-a9ff-5fffc4d3cd8c"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "배선 [/I2C1_SDA] on F.Cu, 길이 0.0707 mm",
+                    "pos": {
+                        "x": 108.45,
+                        "y": 96.25
+                    },
+                    "uuid": "7a3f5ee6-392b-454a-8f0c-8e6fdd507839"
                 },
                 {
                     "description": "패드 1 [/I2C1_SDA]의 TP16 위B.Cu",
@@ -573,20 +849,20 @@
             "description": "Missing connection between items",
             "items": [
                 {
-                    "description": "배선 [/I2C1_SDA] on GND_PWR, 길이 0.7000 mm",
+                    "description": "패드 1 [/I2C1_SCL]의 TP17 위B.Cu",
                     "pos": {
-                        "x": 103.65,
-                        "y": 100.45
+                        "x": 101.95,
+                        "y": 102.95
                     },
-                    "uuid": "0c7c84c3-eccc-43be-86fb-065cc7b79c15"
+                    "uuid": "779ace4a-549d-4aa1-8014-fd7324021a3e"
                 },
                 {
-                    "description": "배선 [/I2C1_SDA] on GND_PWR, 길이 0.4950 mm",
+                    "description": "배선 [/I2C1_SCL] on B.Cu, 길이 0.1000 mm",
                     "pos": {
-                        "x": 105.15,
-                        "y": 98.4
+                        "x": 108.4,
+                        "y": 97.6
                     },
-                    "uuid": "5d389132-cee9-4a25-b880-d9f68cc38039"
+                    "uuid": "9d36b577-4fce-46c4-9b6d-00d3ae12e93d"
                 }
             ],
             "severity": "error",
@@ -596,74 +872,13 @@
             "description": "Missing connection between items",
             "items": [
                 {
-                    "description": "배선 [/I2C1_SDA] on GND_PWR, 길이 0.0707 mm",
-                    "pos": {
-                        "x": 107.7,
-                        "y": 96.0
-                    },
-                    "uuid": "fbd8c240-10ed-4459-be88-8f0e829a792f"
-                },
-                {
-                    "description": "패드 16 [/I2C1_SDA]의 J1 위F.Cu",
+                    "description": "패드 20 [/SPARE1]의 J1 위F.Cu",
                     "pos": {
                         "x": 109.8,
-                        "y": 96.25
+                        "y": 97.25
                     },
-                    "uuid": "95873821-cfc3-47f6-9131-b7e3e2845a06"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "배선 [/I2C1_SCL] on B.Cu, 길이 0.6364 mm",
-                    "pos": {
-                        "x": 101.0,
-                        "y": 102.3
-                    },
-                    "uuid": "5a46229c-4315-466e-b9b1-c78e93c8b5d9"
+                    "uuid": "93010643-ae29-45ca-8187-eacd48a0ea3a"
                 },
-                {
-                    "description": "배선 [/I2C1_SCL] on B.Cu, 길이 0.0707 mm",
-                    "pos": {
-                        "x": 103.6,
-                        "y": 99.05
-                    },
-                    "uuid": "19956a08-1cd9-4c1d-8b3b-ce2b8bb24b42"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "배선 [/I2C1_SCL] on B.Cu, 길이 0.1414 mm",
-                    "pos": {
-                        "x": 106.3,
-                        "y": 96.9
-                    },
-                    "uuid": "2bdc9e34-acef-4fc5-9902-bc50646ffc6b"
-                },
-                {
-                    "description": "패드 18 [/I2C1_SCL]의 J1 위F.Cu",
-                    "pos": {
-                        "x": 109.8,
-                        "y": 96.75
-                    },
-                    "uuid": "9d2f1cae-9050-4dd7-857c-ad0b95d8df78"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
                 {
                     "description": "패드 1 [/SPARE1]의 TP15 위B.Cu",
                     "pos": {
@@ -671,14 +886,6 @@
                         "y": 108.935386
                     },
                     "uuid": "e21d0e89-66a8-4e43-ac33-7c562ac46f30"
-                },
-                {
-                    "description": "배선 [/SPARE1] on F.Cu, 길이 0.3905 mm",
-                    "pos": {
-                        "x": 108.7,
-                        "y": 97.3
-                    },
-                    "uuid": "8b9614fd-84ba-4961-b2c4-24c8230ac985"
                 }
             ],
             "severity": "error",
@@ -687,6 +894,37 @@
         {
             "description": "Missing connection between items",
             "items": [
+                {
+                    "description": "패드 7 [/IR_LED_EN]의 U2 위F.Cu",
+                    "pos": {
+                        "x": 100.136377,
+                        "y": 124.548156
+                    },
+                    "uuid": "09d4c2dc-4e48-45c5-838e-8582bc4b6d1e"
+                },
+                {
+                    "description": "패드 1 [/IR_LED_EN]의 TP14 위B.Cu",
+                    "pos": {
+                        "x": 108.45,
+                        "y": 113.95
+                    },
+                    "uuid": "dbd556c9-429d-4b7a-b9e5-c8d990085182"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "배선 [/IR_LED_EN] on B.Cu, 길이 0.0500 mm",
+                    "pos": {
+                        "x": 107.5,
+                        "y": 111.8
+                    },
+                    "uuid": "e5ecb161-5a24-42b5-840f-b37ff00d1b36"
+                },
                 {
                     "description": "패드 22 [/IR_LED_EN]의 J1 위F.Cu",
                     "pos": {
@@ -694,14 +932,6 @@
                         "y": 97.75
                     },
                     "uuid": "cecb566e-fbe0-4c33-b426-9969e7cfabcf"
-                },
-                {
-                    "description": "배선 [/IR_LED_EN] on B.Cu, 길이 1.3435 mm",
-                    "pos": {
-                        "x": 115.65,
-                        "y": 95.3
-                    },
-                    "uuid": "ac2c62c8-6344-4a05-86c4-6f50544c6034"
                 }
             ],
             "severity": "error",
@@ -711,20 +941,20 @@
             "description": "Missing connection between items",
             "items": [
                 {
-                    "description": "배선 [/IR_LED_EN] on B.Cu, 길이 3.0761 mm",
+                    "description": "패드 1 [/IR_LED_EN]의 TP14 위B.Cu",
                     "pos": {
-                        "x": 110.5,
-                        "y": 109.75
+                        "x": 108.45,
+                        "y": 113.95
                     },
-                    "uuid": "2ab26eb3-b60b-4f71-9f07-c7f3d1a05508"
+                    "uuid": "dbd556c9-429d-4b7a-b9e5-c8d990085182"
                 },
                 {
-                    "description": "배선 [/IR_LED_EN] on GND_PWR, 길이 2.4749 mm",
+                    "description": "배선 [/IR_LED_EN] on F.Cu, 길이 0.2121 mm",
                     "pos": {
-                        "x": 115.7,
-                        "y": 102.55
+                        "x": 107.35,
+                        "y": 111.95
                     },
-                    "uuid": "529cf937-ef88-4c94-8290-c0e97fa1d6ea"
+                    "uuid": "9a848da1-ce03-4e34-aba4-0268b1a27010"
                 }
             ],
             "severity": "error",
@@ -734,20 +964,20 @@
             "description": "Missing connection between items",
             "items": [
                 {
-                    "description": "배선 [/CORE_3V3] on B.Cu, 길이 0.0707 mm",
+                    "description": "패드 1 [/nRESET]의 SW1 위B.Cu",
                     "pos": {
-                        "x": 113.85,
-                        "y": 107.9
+                        "x": 112.425,
+                        "y": 107.075
                     },
-                    "uuid": "adb2837a-750b-436e-b882-2015f83e36d8"
+                    "uuid": "c16b54ad-9d54-494f-b1fc-db23fa1ab423"
                 },
                 {
-                    "description": "배선 [/CORE_3V3] on B.Cu, 길이 0.1414 mm",
+                    "description": "패드 34 [/nRESET]의 J1 위F.Cu",
                     "pos": {
-                        "x": 115.1,
-                        "y": 99.35
+                        "x": 109.8,
+                        "y": 100.75
                     },
-                    "uuid": "faaea755-333e-4a74-8e02-2e92aac01c86"
+                    "uuid": "cf27788b-abe0-403e-98de-23a70c959bd6"
                 }
             ],
             "severity": "error",
@@ -757,12 +987,12 @@
             "description": "Missing connection between items",
             "items": [
                 {
-                    "description": "배선 [/nRESET] on B.Cu, 길이 0.3536 mm",
+                    "description": "배선 [/nRESET] on B.Cu, 길이 2.2500 mm",
                     "pos": {
-                        "x": 111.55,
-                        "y": 106.8
+                        "x": 112.45,
+                        "y": 109.6
                     },
-                    "uuid": "c8857a8d-c9c8-4858-9424-a2aed3bfd5af"
+                    "uuid": "3980998a-28b2-4928-9bff-f2b493a6101d"
                 },
                 {
                     "description": "패드 1 [/nRESET]의 TP11 위B.Cu",
@@ -788,12 +1018,12 @@
                     "uuid": "ca589d09-a074-4f37-8e5f-406ed9b69e98"
                 },
                 {
-                    "description": "배선 [/UPGRAD_KEY] on B.Cu, 길이 0.4123 mm",
+                    "description": "배선 [/UPGRAD_KEY] on B.Cu, 길이 0.1000 mm",
                     "pos": {
-                        "x": 107.45,
-                        "y": 100.25
+                        "x": 115.2,
+                        "y": 101.35
                     },
-                    "uuid": "a5e749f4-ae0c-41c9-ad5f-7a6cbd3a65cc"
+                    "uuid": "d6bba705-a994-4abf-866a-4d754d00ac7c"
                 }
             ],
             "severity": "error",
@@ -803,12 +1033,12 @@
             "description": "Missing connection between items",
             "items": [
                 {
-                    "description": "배선 [/UPGRAD_KEY] on GND_PWR, 길이 1.4500 mm",
+                    "description": "배선 [/UPGRAD_KEY] on F.Cu, 길이 0.2828 mm",
                     "pos": {
-                        "x": 109.3,
-                        "y": 105.95
+                        "x": 115.45,
+                        "y": 101.15
                     },
-                    "uuid": "afbe476d-ffa8-4ce7-b4d0-dedaebc1c995"
+                    "uuid": "132ad9d0-49d0-4a95-bb85-db4ff1987203"
                 },
                 {
                     "description": "패드 1 [/UPGRAD_KEY]의 TP12 위B.Cu",
@@ -849,12 +1079,35 @@
             "description": "Missing connection between items",
             "items": [
                 {
-                    "description": "배선 [/SDIO_D3] on B.Cu, 길이 0.9000 mm",
+                    "description": "패드 2 [/SDIO_D3]의 J4 위B.Cu",
                     "pos": {
-                        "x": 103.4,
-                        "y": 100.65
+                        "x": 101.645,
+                        "y": 96.46
                     },
-                    "uuid": "47a55a03-aac0-4427-8cce-30e21aa69851"
+                    "uuid": "f626f307-e15e-4d1c-b012-0393371902ff"
+                },
+                {
+                    "description": "패드 2 [/SDIO_D3]의 U5 위F.Cu",
+                    "pos": {
+                        "x": 101.560765,
+                        "y": 91.81925
+                    },
+                    "uuid": "189bc322-47f4-45b5-a0c2-2734cc249d4f"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "패드 40 [/SDIO_D3]의 J1 위F.Cu",
+                    "pos": {
+                        "x": 109.8,
+                        "y": 102.25
+                    },
+                    "uuid": "1b2b60fe-edd4-4f74-b841-fa18306cd188"
                 },
                 {
                     "description": "패드 2 [/SDIO_D3]의 J4 위B.Cu",
@@ -872,12 +1125,104 @@
             "description": "Missing connection between items",
             "items": [
                 {
-                    "description": "배선 [/UART1_TX] on F.Cu, 길이 0.0500 mm",
+                    "description": "패드 1 [/SDIO_D2]의 U5 위F.Cu",
                     "pos": {
-                        "x": 112.25,
-                        "y": 109.25
+                        "x": 101.060765,
+                        "y": 91.81925
                     },
-                    "uuid": "c926c05a-c21e-481b-b9b9-53d214849167"
+                    "uuid": "0f121b45-0717-417e-bfb0-6083c24a118f"
+                },
+                {
+                    "description": "패드 2 [/SDIO_D2]의 R16 위F.Cu",
+                    "pos": {
+                        "x": 98.34156,
+                        "y": 93.238131
+                    },
+                    "uuid": "78002885-f65f-455e-91f2-f0c74e6a78cf"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "패드 1 [/SDIO_D2]의 J4 위B.Cu",
+                    "pos": {
+                        "x": 102.745,
+                        "y": 96.46
+                    },
+                    "uuid": "78eee0d5-07fb-4780-816d-c7142fe41a5c"
+                },
+                {
+                    "description": "패드 1 [/SDIO_D2]의 U5 위F.Cu",
+                    "pos": {
+                        "x": 101.060765,
+                        "y": 91.81925
+                    },
+                    "uuid": "0f121b45-0717-417e-bfb0-6083c24a118f"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "패드 42 [/SDIO_D2]의 J1 위F.Cu",
+                    "pos": {
+                        "x": 109.8,
+                        "y": 102.75
+                    },
+                    "uuid": "8f3e7620-5c28-4fbe-8d91-dea890b7f755"
+                },
+                {
+                    "description": "패드 1 [/SDIO_D2]의 J4 위B.Cu",
+                    "pos": {
+                        "x": 102.745,
+                        "y": 96.46
+                    },
+                    "uuid": "78eee0d5-07fb-4780-816d-c7142fe41a5c"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "배선 [/UART1_RX] on F.Cu, 길이 2.1920 mm",
+                    "pos": {
+                        "x": 112.55,
+                        "y": 108.15
+                    },
+                    "uuid": "3f48b82c-3bce-4cfd-bb2b-3cbd8ebba6c2"
+                },
+                {
+                    "description": "패드 1 [/UART1_RX]의 TP20 위B.Cu",
+                    "pos": {
+                        "x": 109.95,
+                        "y": 116.45
+                    },
+                    "uuid": "49c8a303-af56-49ab-acfe-752766b1f01c"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "패드 1 [/UART1_TX]의 TP21 위B.Cu",
+                    "pos": {
+                        "x": 112.45,
+                        "y": 116.45
+                    },
+                    "uuid": "4376a21e-51fe-45fc-bfb2-4e5df3d24710"
                 },
                 {
                     "description": "패드 55 [/UART1_TX]의 J1 위F.Cu",
@@ -895,20 +1240,20 @@
             "description": "Missing connection between items",
             "items": [
                 {
-                    "description": "패드 4 [/SDIO_CD]의 U5 위F.Cu",
+                    "description": "패드 56 [/SDIO_CD]의 J1 위F.Cu",
                     "pos": {
-                        "x": 102.560765,
-                        "y": 91.81925
+                        "x": 109.8,
+                        "y": 106.25
                     },
-                    "uuid": "635b7b34-50c3-48fd-8133-afa5ff58cb3f"
+                    "uuid": "01130d5a-8820-4d4f-98b3-82054e6a9dc1"
                 },
                 {
-                    "description": "패드 9 [/SDIO_CD]의 J4 위B.Cu",
+                    "description": "배선 [/SDIO_CD] on F.Cu, 길이 0.2828 mm",
                     "pos": {
-                        "x": 94.095,
-                        "y": 96.46
+                        "x": 102.35,
+                        "y": 92.4
                     },
-                    "uuid": "0f24cc2d-33c5-49a5-a96e-6b790db49bfd"
+                    "uuid": "482d1541-964c-461c-9c55-502e6d724b80"
                 }
             ],
             "severity": "error",
@@ -918,12 +1263,12 @@
             "description": "Missing connection between items",
             "items": [
                 {
-                    "description": "패드 57 [/UART1_CTS]의 J1 위F.Cu",
+                    "description": "배선 [/UART1_CTS] on F.Cu, 길이 1.3500 mm",
                     "pos": {
-                        "x": 113.8,
-                        "y": 106.75
+                        "x": 114.65,
+                        "y": 106.7
                     },
-                    "uuid": "ae253ea6-48eb-4669-b6f9-f2db2a201925"
+                    "uuid": "2f9ed455-c91f-4bde-b2aa-5ba994cf0318"
                 },
                 {
                     "description": "패드 1 [/UART1_CTS]의 TP22 위B.Cu",
@@ -932,6 +1277,29 @@
                         "y": 116.45
                     },
                     "uuid": "aaf3fb2e-e812-4f80-933c-8b34e7731040"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "패드 58 [/DEBUG_UART0_TX]의 J1 위F.Cu",
+                    "pos": {
+                        "x": 109.8,
+                        "y": 106.75
+                    },
+                    "uuid": "f5e09fe9-3e21-4a4f-bf4d-be38cdad57c6"
+                },
+                {
+                    "description": "패드 1 [/DEBUG_UART0_TX]의 TP24 위B.Cu",
+                    "pos": {
+                        "x": 96.1984,
+                        "y": 108.497032
+                    },
+                    "uuid": "f029cb7e-0a53-49d0-bb17-8c35928ca96a"
                 }
             ],
             "severity": "error",
@@ -964,29 +1332,6 @@
             "description": "Missing connection between items",
             "items": [
                 {
-                    "description": "패드 1 [/DEBUG_UART0_RX]의 TP25 위B.Cu",
-                    "pos": {
-                        "x": 98.626238,
-                        "y": 106.59782
-                    },
-                    "uuid": "3135f011-5e07-47db-a7d9-93ee1e62d8b7"
-                },
-                {
-                    "description": "패드 3 [/DEBUG_UART0_RX]의 J6 위B.Cu",
-                    "pos": {
-                        "x": 85.5,
-                        "y": 110.0
-                    },
-                    "uuid": "5c6ea23d-9151-4841-b6fa-687814ef6496"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
                     "description": "패드 60 [/DEBUG_UART0_RX]의 J1 위F.Cu",
                     "pos": {
                         "x": 109.8,
@@ -995,12 +1340,12 @@
                     "uuid": "e4454113-e49c-45db-a433-bab09dccff70"
                 },
                 {
-                    "description": "배선 [/DEBUG_UART0_RX] on F.Cu, 길이 0.0500 mm",
+                    "description": "패드 1 [/DEBUG_UART0_RX]의 TP25 위B.Cu",
                     "pos": {
-                        "x": 103.8,
-                        "y": 107.6
+                        "x": 98.626238,
+                        "y": 106.59782
                     },
-                    "uuid": "a816b3ed-4bb4-4114-b26a-fc897b128fd9"
+                    "uuid": "3135f011-5e07-47db-a7d9-93ee1e62d8b7"
                 }
             ],
             "severity": "error",
@@ -1010,20 +1355,20 @@
             "description": "Missing connection between items",
             "items": [
                 {
-                    "description": "패드 3 [/STAT_LED_K]의 Q4 위F.Cu",
+                    "description": "패드 12 [/EFUSE_DVDT]의 U2 위F.Cu",
                     "pos": {
-                        "x": 104.645,
-                        "y": 94.0
+                        "x": 98.836377,
+                        "y": 118.823156
                     },
-                    "uuid": "f91bce57-071d-4e0e-a2be-843453812743"
+                    "uuid": "8727bd3c-f96b-4068-953a-02c85f377f9a"
                 },
                 {
-                    "description": "패드 1 [/STAT_LED_K]의 D6 위B.Cu",
+                    "description": "패드 1 [/EFUSE_DVDT]의 C9 위F.Cu",
                     "pos": {
-                        "x": 116.7125,
-                        "y": 91.0
+                        "x": 102.086377,
+                        "y": 119.303156
                     },
-                    "uuid": "387718ea-f25c-45a3-af4a-5daeb01107e4"
+                    "uuid": "73d02427-7654-49fe-a23e-1af843aba23f"
                 }
             ],
             "severity": "error",
@@ -1035,20 +1380,20 @@
             "description": "Track endpoint not centered on via",
             "items": [
                 {
-                    "description": "배선 [/SD_PWR_3V3] on GND_PWR, 길이 0.6500 mm",
+                    "description": "배선 [/SD_PWR_3V3] on GND_PWR, 길이 1.1314 mm",
                     "pos": {
-                        "x": 97.15,
+                        "x": 97.8,
                         "y": 94.2
                     },
-                    "uuid": "a4f36621-24f3-4edc-8746-3ed70fe5768a"
+                    "uuid": "637974f0-5b63-46f2-8679-20e80b18e5cb"
                 },
                 {
                     "description": "비아 [/SD_PWR_3V3] on F.Cu - B.Cu",
                     "pos": {
-                        "x": 97.5,
-                        "y": 94.2
+                        "x": 98.9,
+                        "y": 95.1
                     },
-                    "uuid": "14a95860-d0e3-44b8-8404-768bb5f0870d"
+                    "uuid": "a0a2fc25-a39e-45a9-9fd9-24148d6c5fb2"
                 }
             ],
             "severity": "error",
@@ -1058,461 +1403,70 @@
             "description": "Track endpoint not centered on via",
             "items": [
                 {
-                    "description": "배선 [/SD_PWR_3V3] on GND_PWR, 길이 0.1118 mm",
+                    "description": "배선 [/GND] on F.Cu, 길이 0.9000 mm",
                     "pos": {
-                        "x": 97.55,
-                        "y": 94.4
+                        "x": 98.7,
+                        "y": 123.8
                     },
-                    "uuid": "eb0f0578-f123-48dd-a390-b7724531ea3b"
+                    "uuid": "4f4d8412-5d41-4a0d-9bc4-09049bce214a"
                 },
-                {
-                    "description": "비아 [/SD_PWR_3V3] on F.Cu - B.Cu",
-                    "pos": {
-                        "x": 97.5,
-                        "y": 94.2
-                    },
-                    "uuid": "14a95860-d0e3-44b8-8404-768bb5f0870d"
-                }
-            ],
-            "severity": "error",
-            "type": "track_not_centered_on_via"
-        },
-        {
-            "description": "Track endpoint not centered on via",
-            "items": [
-                {
-                    "description": "배선 [/5V_SYS] on F.Cu, 길이 0.6500 mm",
-                    "pos": {
-                        "x": 108.75,
-                        "y": 118.1
-                    },
-                    "uuid": "23c7f8d8-ae57-4a67-b1da-77ff98039889"
-                },
-                {
-                    "description": "비아 [/5V_SYS] on F.Cu - B.Cu",
-                    "pos": {
-                        "x": 109.0,
-                        "y": 117.75
-                    },
-                    "uuid": "294d8d72-c75e-469a-8bac-9180a77b90d4"
-                }
-            ],
-            "severity": "error",
-            "type": "track_not_centered_on_via"
-        },
-        {
-            "description": "Track endpoint not centered on via",
-            "items": [
-                {
-                    "description": "배선 [/5V_SYS] on F.Cu, 길이 0.3536 mm",
-                    "pos": {
-                        "x": 115.65,
-                        "y": 110.85
-                    },
-                    "uuid": "7d097698-a893-4783-8b75-e1441caec25e"
-                },
-                {
-                    "description": "비아 [/5V_SYS] on F.Cu - B.Cu",
-                    "pos": {
-                        "x": 115.55,
-                        "y": 110.6
-                    },
-                    "uuid": "c2a3bb87-64a2-4d84-9c02-a110ce306442"
-                }
-            ],
-            "severity": "error",
-            "type": "track_not_centered_on_via"
-        },
-        {
-            "description": "Track endpoint not centered on via",
-            "items": [
-                {
-                    "description": "배선 [/5V_SYS] on F.Cu, 길이 0.1000 mm",
-                    "pos": {
-                        "x": 115.65,
-                        "y": 110.95
-                    },
-                    "uuid": "8c22a3cc-4834-4f65-9a39-c357d685ff01"
-                },
-                {
-                    "description": "비아 [/5V_SYS] on F.Cu - B.Cu",
-                    "pos": {
-                        "x": 115.55,
-                        "y": 110.6
-                    },
-                    "uuid": "c2a3bb87-64a2-4d84-9c02-a110ce306442"
-                }
-            ],
-            "severity": "error",
-            "type": "track_not_centered_on_via"
-        },
-        {
-            "description": "Track endpoint not centered on via",
-            "items": [
-                {
-                    "description": "배선 [/5V_SYS] on F.Cu, 길이 0.9000 mm",
-                    "pos": {
-                        "x": 115.65,
-                        "y": 110.95
-                    },
-                    "uuid": "f96c99a6-7e59-4801-a9e1-b381c0212934"
-                },
-                {
-                    "description": "비아 [/5V_SYS] on F.Cu - B.Cu",
-                    "pos": {
-                        "x": 115.55,
-                        "y": 110.6
-                    },
-                    "uuid": "c2a3bb87-64a2-4d84-9c02-a110ce306442"
-                }
-            ],
-            "severity": "error",
-            "type": "track_not_centered_on_via"
-        },
-        {
-            "description": "Track endpoint not centered on via",
-            "items": [
-                {
-                    "description": "배선 [/STATUS_LED] on B.Cu, 길이 0.2828 mm",
-                    "pos": {
-                        "x": 102.15,
-                        "y": 98.5
-                    },
-                    "uuid": "07552b8a-b2b9-497a-adf9-ce37ec273a99"
-                },
-                {
-                    "description": "비아 [/STATUS_LED] on F.Cu - B.Cu",
-                    "pos": {
-                        "x": 102.35,
-                        "y": 98.2
-                    },
-                    "uuid": "acc42b35-9185-4657-bcae-0fc711bb6a55"
-                }
-            ],
-            "severity": "error",
-            "type": "track_not_centered_on_via"
-        },
-        {
-            "description": "Track endpoint not centered on via",
-            "items": [
-                {
-                    "description": "배선 [/RESERVE2] on F.Cu, 길이 1.1511 mm",
-                    "pos": {
-                        "x": 115.3,
-                        "y": 94.8
-                    },
-                    "uuid": "e3997ce8-92cc-4db5-857d-cd067a8fd7b8"
-                },
-                {
-                    "description": "비아 [/RESERVE2] on F.Cu - B.Cu",
-                    "pos": {
-                        "x": 115.85,
-                        "y": 93.85
-                    },
-                    "uuid": "7d5f24bb-ba0f-4b6a-bb95-9348491cf2d0"
-                }
-            ],
-            "severity": "error",
-            "type": "track_not_centered_on_via"
-        },
-        {
-            "description": "Track endpoint not centered on via",
-            "items": [
-                {
-                    "description": "배선 [/RESERVE2] on GND_PWR, 길이 2.6000 mm",
-                    "pos": {
-                        "x": 115.95,
-                        "y": 93.85
-                    },
-                    "uuid": "7961ede3-e30a-480d-8d03-9860ac36da22"
-                },
-                {
-                    "description": "비아 [/RESERVE2] on F.Cu - B.Cu",
-                    "pos": {
-                        "x": 115.85,
-                        "y": 93.85
-                    },
-                    "uuid": "7d5f24bb-ba0f-4b6a-bb95-9348491cf2d0"
-                }
-            ],
-            "severity": "error",
-            "type": "track_not_centered_on_via"
-        },
-        {
-            "description": "Track endpoint not centered on via",
-            "items": [
-                {
-                    "description": "배선 [/SDIO_D2] on F.Cu, 길이 0.6364 mm",
-                    "pos": {
-                        "x": 104.45,
-                        "y": 92.75
-                    },
-                    "uuid": "175b86cf-62ec-45fa-b208-a09f8380022c"
-                },
-                {
-                    "description": "비아 [/SDIO_D2] on F.Cu - B.Cu",
-                    "pos": {
-                        "x": 104.5,
-                        "y": 92.7
-                    },
-                    "uuid": "672a4bd0-b872-4cd5-9ae2-ae4c8389084c"
-                }
-            ],
-            "severity": "error",
-            "type": "track_not_centered_on_via"
-        },
-        {
-            "description": "Track endpoint not centered on via",
-            "items": [
-                {
-                    "description": "배선 [/SDIO_D2] on F.Cu, 길이 0.2121 mm",
-                    "pos": {
-                        "x": 101.1,
-                        "y": 92.2
-                    },
-                    "uuid": "47c2af87-ee36-4d86-b212-4eda8758e477"
-                },
-                {
-                    "description": "비아 [/SDIO_D2] on F.Cu - B.Cu",
-                    "pos": {
-                        "x": 100.85,
-                        "y": 92.4
-                    },
-                    "uuid": "b4425691-baad-4bfc-84df-99ef2e984a16"
-                }
-            ],
-            "severity": "error",
-            "type": "track_not_centered_on_via"
-        },
-        {
-            "description": "Track endpoint not centered on via",
-            "items": [
-                {
-                    "description": "배선 [/SDIO_D2] on F.Cu, 길이 0.9192 mm",
-                    "pos": {
-                        "x": 99.0,
-                        "y": 94.65
-                    },
-                    "uuid": "4c4805e4-6fc7-498c-9815-8ca9276528a6"
-                },
-                {
-                    "description": "비아 [/SDIO_D2] on F.Cu - B.Cu",
-                    "pos": {
-                        "x": 98.4,
-                        "y": 95.35
-                    },
-                    "uuid": "36a77563-6eec-4475-ae75-a4913b2b8cee"
-                }
-            ],
-            "severity": "error",
-            "type": "track_not_centered_on_via"
-        },
-        {
-            "description": "Track endpoint not centered on via",
-            "items": [
-                {
-                    "description": "배선 [/SDIO_D2] on F.Cu, 길이 0.2500 mm",
-                    "pos": {
-                        "x": 101.0,
-                        "y": 92.2
-                    },
-                    "uuid": "b12b05ec-50a2-4909-8be9-aebbffb6a02e"
-                },
-                {
-                    "description": "비아 [/SDIO_D2] on F.Cu - B.Cu",
-                    "pos": {
-                        "x": 100.85,
-                        "y": 92.4
-                    },
-                    "uuid": "b4425691-baad-4bfc-84df-99ef2e984a16"
-                }
-            ],
-            "severity": "error",
-            "type": "track_not_centered_on_via"
-        },
-        {
-            "description": "Track endpoint not centered on via",
-            "items": [
-                {
-                    "description": "배선 [/SDIO_D2] on F.Cu, 길이 0.1500 mm",
-                    "pos": {
-                        "x": 101.1,
-                        "y": 92.05
-                    },
-                    "uuid": "ce9d7bd5-a241-4385-8e7c-cb861e89d752"
-                },
-                {
-                    "description": "비아 [/SDIO_D2] on F.Cu - B.Cu",
-                    "pos": {
-                        "x": 100.85,
-                        "y": 92.4
-                    },
-                    "uuid": "b4425691-baad-4bfc-84df-99ef2e984a16"
-                }
-            ],
-            "severity": "error",
-            "type": "track_not_centered_on_via"
-        },
-        {
-            "description": "Track endpoint not centered on via",
-            "items": [
-                {
-                    "description": "배선 [/SDIO_D2] on B.Cu, 길이 0.6000 mm",
-                    "pos": {
-                        "x": 106.95,
-                        "y": 93.0
-                    },
-                    "uuid": "72bed638-fc00-47b5-919a-3238b9c4583f"
-                },
-                {
-                    "description": "비아 [/SDIO_D2] on F.Cu - B.Cu",
-                    "pos": {
-                        "x": 106.3,
-                        "y": 93.05
-                    },
-                    "uuid": "b6913d4f-8802-41f2-af92-8077a543cc67"
-                }
-            ],
-            "severity": "error",
-            "type": "track_not_centered_on_via"
-        },
-        {
-            "description": "Track endpoint not centered on via",
-            "items": [
-                {
-                    "description": "배선 [/SDIO_D2] on GND_PWR, 길이 1.0607 mm",
-                    "pos": {
-                        "x": 105.2,
-                        "y": 93.5
-                    },
-                    "uuid": "328b6891-8d2c-41d7-81f3-dd563afd8ae3"
-                },
-                {
-                    "description": "비아 [/SDIO_D2] on F.Cu - B.Cu",
-                    "pos": {
-                        "x": 104.5,
-                        "y": 92.7
-                    },
-                    "uuid": "672a4bd0-b872-4cd5-9ae2-ae4c8389084c"
-                }
-            ],
-            "severity": "error",
-            "type": "track_not_centered_on_via"
-        },
-        {
-            "description": "Track endpoint not centered on via",
-            "items": [
-                {
-                    "description": "배선 [/SDIO_D2] on GND_PWR, 길이 1.1314 mm",
-                    "pos": {
-                        "x": 104.45,
-                        "y": 92.75
-                    },
-                    "uuid": "82daed34-798e-4a3c-b95f-68dd095f84a6"
-                },
-                {
-                    "description": "비아 [/SDIO_D2] on F.Cu - B.Cu",
-                    "pos": {
-                        "x": 104.5,
-                        "y": 92.7
-                    },
-                    "uuid": "672a4bd0-b872-4cd5-9ae2-ae4c8389084c"
-                }
-            ],
-            "severity": "error",
-            "type": "track_not_centered_on_via"
-        },
-        {
-            "description": "Track endpoint not centered on via",
-            "items": [
-                {
-                    "description": "배선 [/DEBUG_UART0_TX] on GND_PWR, 길이 2.1213 mm",
-                    "pos": {
-                        "x": 107.6,
-                        "y": 107.25
-                    },
-                    "uuid": "bb41204d-486e-41ad-9ebc-44eb4848ade1"
-                },
-                {
-                    "description": "비아 [/DEBUG_UART0_TX] on F.Cu - B.Cu",
-                    "pos": {
-                        "x": 107.45,
-                        "y": 107.4
-                    },
-                    "uuid": "121d7d60-8b27-4cff-8316-c9eadcb1d937"
-                }
-            ],
-            "severity": "error",
-            "type": "track_not_centered_on_via"
-        },
-        {
-            "description": "Tracks crossing",
-            "items": [
-                {
-                    "description": "배선 [/GND] on B.Cu, 길이 0.0000 mm",
-                    "pos": {
-                        "x": 97.15,
-                        "y": 110.0
-                    },
-                    "uuid": "d328f6ff-9bb7-4020-ae20-4e8e2928b569"
-                },
-                {
-                    "description": "배선 [/SPARE1] on B.Cu, 길이 2.7719 mm",
-                    "pos": {
-                        "x": 95.19,
-                        "y": 111.059999
-                    },
-                    "uuid": "f2d664bd-66af-48d9-9ea3-505ee81130c1"
-                }
-            ],
-            "severity": "error",
-            "type": "tracks_crossing"
-        },
-        {
-            "description": "공간거리 위반 (규칙 'fab_copper_clearance' 공간거리 0.1600 mm; 실제값 0.1587 mm)",
-            "items": [
-                {
-                    "description": "패드 1 [/UART1_RTS]의 TP23 위B.Cu",
-                    "pos": {
-                        "x": 101.95,
-                        "y": 106.95
-                    },
-                    "uuid": "1ddc6c16-ce68-4fc2-9ce6-0301cb1d6b5b"
-                },
-                {
-                    "description": "배선 [/5V_SYS] on B.Cu, 길이 0.8944 mm",
-                    "pos": {
-                        "x": 102.95,
-                        "y": 105.8
-                    },
-                    "uuid": "1ecc19a2-97bb-4e0b-b670-054b45bf1537"
-                }
-            ],
-            "severity": "error",
-            "type": "clearance"
-        },
-        {
-            "description": "공간거리 위반 (규칙 'fab_copper_clearance' 공간거리 0.1600 mm; 실제값 0.1342 mm)",
-            "items": [
                 {
                     "description": "비아 [/GND] on F.Cu - B.Cu",
                     "pos": {
-                        "x": 102.55,
-                        "y": 117.85
+                        "x": 98.5114,
+                        "y": 122.6857
                     },
-                    "uuid": "27e6d39b-aaef-480b-8870-b2b8eaae1c9c"
-                },
-                {
-                    "description": "배선 [/12V_IN] on B.Cu, 길이 5.3509 mm",
-                    "pos": {
-                        "x": 103.05,
-                        "y": 118.8
-                    },
-                    "uuid": "d9f599e1-5406-414c-ad86-b8dd9740fa2a"
+                    "uuid": "cc43a567-c447-43d5-a87e-551e781845a5"
                 }
             ],
             "severity": "error",
-            "type": "clearance"
+            "type": "track_not_centered_on_via"
+        },
+        {
+            "description": "Track endpoint not centered on via",
+            "items": [
+                {
+                    "description": "배선 [/GND] on F.Cu, 길이 0.2828 mm",
+                    "pos": {
+                        "x": 98.7,
+                        "y": 122.9
+                    },
+                    "uuid": "d800047c-4989-4b06-8e42-e870c9d91abe"
+                },
+                {
+                    "description": "비아 [/GND] on F.Cu - B.Cu",
+                    "pos": {
+                        "x": 98.5114,
+                        "y": 122.6857
+                    },
+                    "uuid": "cc43a567-c447-43d5-a87e-551e781845a5"
+                }
+            ],
+            "severity": "error",
+            "type": "track_not_centered_on_via"
+        },
+        {
+            "description": "Track endpoint not centered on via",
+            "items": [
+                {
+                    "description": "배선 [/5V_SYS] on GND_PWR, 길이 3.0000 mm",
+                    "pos": {
+                        "x": 115.05,
+                        "y": 108.5
+                    },
+                    "uuid": "29f63348-f1b4-48b3-b6bd-ee164f32b03f"
+                },
+                {
+                    "description": "비아 [/5V_SYS] on F.Cu - B.Cu",
+                    "pos": {
+                        "x": 115.3,
+                        "y": 105.2
+                    },
+                    "uuid": "b5a35f55-28e0-48cc-8c15-9c31a244a1b9"
+                }
+            ],
+            "severity": "error",
+            "type": "track_not_centered_on_via"
         },
         {
             "description": "차동 비결합 길이 너무 긺 (usb_90_pair 최대 비결합 길이 12.0000 mm, 실제 13.2839 mm)",
@@ -1526,12 +1480,12 @@
                     "uuid": "f6d8a99f-f470-4397-8fe6-395d108deae6"
                 },
                 {
-                    "description": "비아 [/USB_DN] on F.Cu - B.Cu",
+                    "description": "배선 [/USB_DN] on F.Cu, 길이 0.2710 mm",
                     "pos": {
-                        "x": 86.1,
-                        "y": 100.85
+                        "x": 115.4734,
+                        "y": 92.815
                     },
-                    "uuid": "b5d7ae24-044c-4073-8c80-85a8e7111a88"
+                    "uuid": "66af7bc0-253d-40a5-b82e-e8175fa7d4d0"
                 }
             ],
             "severity": "error",
@@ -1541,429 +1495,24 @@
             "description": "차동 비결합 길이 너무 긺 (mdi_100_pair 최대 비결합 길이 6.0000 mm, 실제 6.8798 mm)",
             "items": [
                 {
-                    "description": "배선 [/EPHY_TXP] on F.Cu, 길이 0.2829 mm",
+                    "description": "배선 [/EPHY_TXP] on F.Cu, 길이 0.3999 mm",
                     "pos": {
-                        "x": 104.3401,
-                        "y": 109.0522
+                        "x": 105.1179,
+                        "y": 109.1229
                     },
-                    "uuid": "1b6a48e3-c624-470f-b46d-2402f53a3de8"
+                    "uuid": "04649902-cb82-4248-9bcb-7dd6142a1c54"
                 },
                 {
-                    "description": "배선 [/EPHY_TXN] on F.Cu, 길이 0.6982 mm",
+                    "description": "배선 [/EPHY_TXN] on F.Cu, 길이 0.1485 mm",
                     "pos": {
-                        "x": 111.0163,
-                        "y": 90.84
+                        "x": 107.59,
+                        "y": 92.3337
                     },
-                    "uuid": "7fe21a5e-f8d7-43d7-9234-090341148407"
+                    "uuid": "72fd4c5f-60e2-4626-8940-5e7262cf93f7"
                 }
             ],
             "severity": "error",
             "type": "diff_pair_uncoupled_length_too_long"
-        },
-        {
-            "description": "Track has unconnected end",
-            "items": [
-                {
-                    "description": "배선 [/5V_SYS] on GND_PWR, 길이 0.0500 mm",
-                    "pos": {
-                        "x": 116.5,
-                        "y": 109.7
-                    },
-                    "uuid": "07c900cd-500f-4526-b2fc-28903e6d1e09"
-                }
-            ],
-            "severity": "warning",
-            "type": "track_dangling"
-        },
-        {
-            "description": "Track has unconnected end",
-            "items": [
-                {
-                    "description": "배선 [/SDIO_CLK] on F.Cu, 길이 0.1000 mm",
-                    "pos": {
-                        "x": 95.35,
-                        "y": 92.45
-                    },
-                    "uuid": "bb8a6a51-672f-49d0-a79f-d494cfed917c"
-                }
-            ],
-            "severity": "warning",
-            "type": "track_dangling"
-        },
-        {
-            "description": "Via is not connected or connected on only one layer",
-            "items": [
-                {
-                    "description": "비아 [/SDIO_CLK] on F.Cu - B.Cu",
-                    "pos": {
-                        "x": 100.65,
-                        "y": 100.35
-                    },
-                    "uuid": "8482c4f4-33a1-43a3-94fe-0e62193ed905"
-                }
-            ],
-            "severity": "warning",
-            "type": "via_dangling"
-        },
-        {
-            "description": "Track has unconnected end",
-            "items": [
-                {
-                    "description": "배선 [/SDIO_CLK] on B.Cu, 길이 1.3435 mm",
-                    "pos": {
-                        "x": 97.05,
-                        "y": 94.9
-                    },
-                    "uuid": "a52a6b2c-5289-4b25-a908-6a07fdbf7f13"
-                }
-            ],
-            "severity": "warning",
-            "type": "track_dangling"
-        },
-        {
-            "description": "Track has unconnected end",
-            "items": [
-                {
-                    "description": "배선 [/SDIO_CMD] on F.Cu, 길이 0.0707 mm",
-                    "pos": {
-                        "x": 115.5,
-                        "y": 109.55
-                    },
-                    "uuid": "49aeec3f-f2d1-4f44-9700-d7d3fda0113a"
-                }
-            ],
-            "severity": "warning",
-            "type": "track_dangling"
-        },
-        {
-            "description": "Via is not connected or connected on only one layer",
-            "items": [
-                {
-                    "description": "비아 [/SDIO_CMD] on F.Cu - B.Cu",
-                    "pos": {
-                        "x": 95.65,
-                        "y": 88.85
-                    },
-                    "uuid": "9cf6bd8a-b222-49ae-a5f8-7af985ceac31"
-                }
-            ],
-            "severity": "warning",
-            "type": "via_dangling"
-        },
-        {
-            "description": "Via is not connected or connected on only one layer",
-            "items": [
-                {
-                    "description": "비아 [/SDIO_D1] on F.Cu - B.Cu",
-                    "pos": {
-                        "x": 96.75,
-                        "y": 93.45
-                    },
-                    "uuid": "693536ea-c10c-40c3-83df-a7c51e4562d6"
-                }
-            ],
-            "severity": "warning",
-            "type": "via_dangling"
-        },
-        {
-            "description": "Via is not connected or connected on only one layer",
-            "items": [
-                {
-                    "description": "비아 [/BUCK_SW] on F.Cu - B.Cu",
-                    "pos": {
-                        "x": 106.4,
-                        "y": 113.25
-                    },
-                    "uuid": "bd9c5c4a-8044-48f6-888d-2b5025c9a9e5"
-                }
-            ],
-            "severity": "warning",
-            "type": "via_dangling"
-        },
-        {
-            "description": "Track has unconnected end",
-            "items": [
-                {
-                    "description": "배선 [/USB_DET] on F.Cu, 길이 0.3808 mm",
-                    "pos": {
-                        "x": 104.3,
-                        "y": 95.7
-                    },
-                    "uuid": "9fdd7e34-fd71-4701-a4eb-26fdacba89a4"
-                }
-            ],
-            "severity": "warning",
-            "type": "track_dangling"
-        },
-        {
-            "description": "Track has unconnected end",
-            "items": [
-                {
-                    "description": "배선 [/USB_DET] on B.Cu, 길이 0.0500 mm",
-                    "pos": {
-                        "x": 107.55,
-                        "y": 95.85
-                    },
-                    "uuid": "7a489325-8540-48b2-8dbf-09e89be4e4b2"
-                }
-            ],
-            "severity": "warning",
-            "type": "track_dangling"
-        },
-        {
-            "description": "Track has unconnected end",
-            "items": [
-                {
-                    "description": "배선 [/USB_DET] on GND_PWR, 길이 0.4031 mm",
-                    "pos": {
-                        "x": 104.15,
-                        "y": 95.35
-                    },
-                    "uuid": "c35764e5-92f5-4e1c-a183-c62d76ec7927"
-                }
-            ],
-            "severity": "warning",
-            "type": "track_dangling"
-        },
-        {
-            "description": "Track has unconnected end",
-            "items": [
-                {
-                    "description": "배선 [/USB_DET] on GND_PWR, 길이 0.2121 mm",
-                    "pos": {
-                        "x": 104.5,
-                        "y": 95.15
-                    },
-                    "uuid": "d14aba26-5c2d-4a04-9fd4-8c79a16e9732"
-                }
-            ],
-            "severity": "warning",
-            "type": "track_dangling"
-        },
-        {
-            "description": "Via is not connected or connected on only one layer",
-            "items": [
-                {
-                    "description": "비아 [/SD0_PWR_EN] on F.Cu - B.Cu",
-                    "pos": {
-                        "x": 115.2,
-                        "y": 102.15
-                    },
-                    "uuid": "f772aa99-4243-4f39-9b2e-7a6a806d77d1"
-                }
-            ],
-            "severity": "warning",
-            "type": "via_dangling"
-        },
-        {
-            "description": "Track has unconnected end",
-            "items": [
-                {
-                    "description": "배선 [/I2C1_SCL] on B.Cu, 길이 0.4500 mm",
-                    "pos": {
-                        "x": 104.4,
-                        "y": 99.2
-                    },
-                    "uuid": "27fbb6d3-849d-4633-a97f-522aab2c0095"
-                }
-            ],
-            "severity": "warning",
-            "type": "track_dangling"
-        },
-        {
-            "description": "Track has unconnected end",
-            "items": [
-                {
-                    "description": "배선 [/I2C1_SCL] on B.Cu, 길이 0.4500 mm",
-                    "pos": {
-                        "x": 104.4,
-                        "y": 99.2
-                    },
-                    "uuid": "6b12ca35-a202-4997-a09e-4b496d826c95"
-                }
-            ],
-            "severity": "warning",
-            "type": "track_dangling"
-        },
-        {
-            "description": "Track has unconnected end",
-            "items": [
-                {
-                    "description": "배선 [/I2C1_SCL] on B.Cu, 길이 0.4500 mm",
-                    "pos": {
-                        "x": 104.4,
-                        "y": 99.2
-                    },
-                    "uuid": "bd3c833f-2610-475d-95ae-ba444842fef0"
-                }
-            ],
-            "severity": "warning",
-            "type": "track_dangling"
-        },
-        {
-            "description": "Track has unconnected end",
-            "items": [
-                {
-                    "description": "배선 [/I2C1_SCL] on GND_PWR, 길이 0.2000 mm",
-                    "pos": {
-                        "x": 96.2,
-                        "y": 99.3
-                    },
-                    "uuid": "bdc49f73-b961-4b8a-80da-755b08f829ba"
-                }
-            ],
-            "severity": "warning",
-            "type": "track_dangling"
-        },
-        {
-            "description": "Track has unconnected end",
-            "items": [
-                {
-                    "description": "배선 [/I2C1_SCL] on GND_PWR, 길이 0.2000 mm",
-                    "pos": {
-                        "x": 96.2,
-                        "y": 99.3
-                    },
-                    "uuid": "f8364111-799c-47ac-a171-5597dbd0561b"
-                }
-            ],
-            "severity": "warning",
-            "type": "track_dangling"
-        },
-        {
-            "description": "Track has unconnected end",
-            "items": [
-                {
-                    "description": "배선 [/SPARE1] on GND_PWR, 길이 12.3744 mm",
-                    "pos": {
-                        "x": 112.1,
-                        "y": 95.75
-                    },
-                    "uuid": "77fd16a1-c7d2-4899-80b5-575ac3bad005"
-                }
-            ],
-            "severity": "warning",
-            "type": "track_dangling"
-        },
-        {
-            "description": "Track has unconnected end",
-            "items": [
-                {
-                    "description": "배선 [/IR_LED_EN] on B.Cu, 길이 0.4243 mm",
-                    "pos": {
-                        "x": 115.35,
-                        "y": 94.6
-                    },
-                    "uuid": "613a4d00-c7de-48c7-9e77-98f88476952f"
-                }
-            ],
-            "severity": "warning",
-            "type": "track_dangling"
-        },
-        {
-            "description": "Track has unconnected end",
-            "items": [
-                {
-                    "description": "배선 [/IR_LED_EN] on B.Cu, 길이 0.4243 mm",
-                    "pos": {
-                        "x": 115.35,
-                        "y": 94.6
-                    },
-                    "uuid": "653dd14c-c6ed-4e95-a4a8-548b74527938"
-                }
-            ],
-            "severity": "warning",
-            "type": "track_dangling"
-        },
-        {
-            "description": "Track has unconnected end",
-            "items": [
-                {
-                    "description": "배선 [/CORE_3V3] on B.Cu, 길이 0.0707 mm",
-                    "pos": {
-                        "x": 113.85,
-                        "y": 107.9
-                    },
-                    "uuid": "adb2837a-750b-436e-b882-2015f83e36d8"
-                }
-            ],
-            "severity": "warning",
-            "type": "track_dangling"
-        },
-        {
-            "description": "Track has unconnected end",
-            "items": [
-                {
-                    "description": "배선 [/nRESET] on B.Cu, 길이 1.4637 mm",
-                    "pos": {
-                        "x": 109.7,
-                        "y": 114.1
-                    },
-                    "uuid": "5e46c6f9-5f52-4989-a32b-dbbff7d824ca"
-                }
-            ],
-            "severity": "warning",
-            "type": "track_dangling"
-        },
-        {
-            "description": "Track has unconnected end",
-            "items": [
-                {
-                    "description": "배선 [/SDIO_D3] on B.Cu, 길이 1.4142 mm",
-                    "pos": {
-                        "x": 104.85,
-                        "y": 102.1
-                    },
-                    "uuid": "81103936-79fa-4929-8e26-fc2095fb157e"
-                }
-            ],
-            "severity": "warning",
-            "type": "track_dangling"
-        },
-        {
-            "description": "Track has unconnected end",
-            "items": [
-                {
-                    "description": "배선 [/UART1_TX] on F.Cu, 길이 0.0500 mm",
-                    "pos": {
-                        "x": 112.25,
-                        "y": 109.25
-                    },
-                    "uuid": "c926c05a-c21e-481b-b9b9-53d214849167"
-                }
-            ],
-            "severity": "warning",
-            "type": "track_dangling"
-        },
-        {
-            "description": "Track has unconnected end",
-            "items": [
-                {
-                    "description": "배선 [/DEBUG_UART0_RX] on F.Cu, 길이 0.0500 mm",
-                    "pos": {
-                        "x": 103.8,
-                        "y": 107.6
-                    },
-                    "uuid": "a816b3ed-4bb4-4114-b26a-fc897b128fd9"
-                }
-            ],
-            "severity": "warning",
-            "type": "track_dangling"
-        },
-        {
-            "description": "Track has unconnected end",
-            "items": [
-                {
-                    "description": "배선 [/STAT_LED_K] on F.Cu, 길이 0.7778 mm",
-                    "pos": {
-                        "x": 104.05,
-                        "y": 93.35
-                    },
-                    "uuid": "6805a1cb-b605-43f1-9b4e-79c7ebcb8a9f"
-                }
-            ],
-            "severity": "warning",
-            "type": "track_dangling"
         },
         {
             "description": "보드 가장자리로 클리핑 된 실크 스크린 (규칙 'fab_silk_to_pad' 공간거리 0.1500 mm; 실제값 0.0000 mm)",
@@ -1987,282 +1536,6 @@
             ],
             "severity": "warning",
             "type": "silk_edge_clearance"
-        },
-        {
-            "description": "Drilled holes co-located",
-            "items": [
-                {
-                    "description": "비아 [/USB_VBUS] on F.Cu - B.Cu",
-                    "pos": {
-                        "x": 92.3,
-                        "y": 96.2
-                    },
-                    "uuid": "0ef8e45c-bc1a-41eb-98ec-ba7f0db8f239"
-                },
-                {
-                    "description": "비아 [/USB_VBUS] on F.Cu - B.Cu",
-                    "pos": {
-                        "x": 92.3,
-                        "y": 96.2
-                    },
-                    "uuid": "c73afd92-a863-47a3-a20e-b6dd0eb583d0"
-                }
-            ],
-            "severity": "warning",
-            "type": "holes_co_located"
-        },
-        {
-            "description": "Drilled holes co-located",
-            "items": [
-                {
-                    "description": "비아 [/USB_VBUS] on F.Cu - B.Cu",
-                    "pos": {
-                        "x": 92.3,
-                        "y": 96.2
-                    },
-                    "uuid": "0ef8e45c-bc1a-41eb-98ec-ba7f0db8f239"
-                },
-                {
-                    "description": "비아 [/USB_VBUS] on F.Cu - B.Cu",
-                    "pos": {
-                        "x": 92.3,
-                        "y": 96.2
-                    },
-                    "uuid": "e650a8b5-9ca7-401c-b275-947536c8a61e"
-                }
-            ],
-            "severity": "warning",
-            "type": "holes_co_located"
-        },
-        {
-            "description": "Drilled holes co-located",
-            "items": [
-                {
-                    "description": "비아 [/USB_VBUS] on F.Cu - B.Cu",
-                    "pos": {
-                        "x": 92.3,
-                        "y": 96.2
-                    },
-                    "uuid": "0ef8e45c-bc1a-41eb-98ec-ba7f0db8f239"
-                },
-                {
-                    "description": "비아 [/USB_VBUS] on F.Cu - B.Cu",
-                    "pos": {
-                        "x": 92.3,
-                        "y": 96.2
-                    },
-                    "uuid": "ebc30b10-88e5-445d-a5b1-8c1051c9deaf"
-                }
-            ],
-            "severity": "warning",
-            "type": "holes_co_located"
-        },
-        {
-            "description": "Drilled holes co-located",
-            "items": [
-                {
-                    "description": "비아 [/USB_VBUS] on F.Cu - B.Cu",
-                    "pos": {
-                        "x": 90.95,
-                        "y": 97.7
-                    },
-                    "uuid": "12f179fa-ebaf-4a9e-a2da-16ecb92b7e69"
-                },
-                {
-                    "description": "비아 [/USB_VBUS] on F.Cu - B.Cu",
-                    "pos": {
-                        "x": 90.95,
-                        "y": 97.7
-                    },
-                    "uuid": "33e61429-7cd2-4cf9-9b07-531680edc5e0"
-                }
-            ],
-            "severity": "warning",
-            "type": "holes_co_located"
-        },
-        {
-            "description": "Drilled holes co-located",
-            "items": [
-                {
-                    "description": "비아 [/USB_VBUS] on F.Cu - B.Cu",
-                    "pos": {
-                        "x": 90.95,
-                        "y": 97.7
-                    },
-                    "uuid": "12f179fa-ebaf-4a9e-a2da-16ecb92b7e69"
-                },
-                {
-                    "description": "비아 [/USB_VBUS] on F.Cu - B.Cu",
-                    "pos": {
-                        "x": 90.95,
-                        "y": 97.7
-                    },
-                    "uuid": "45a5639c-85f5-4857-a905-cd5d25f6b0e9"
-                }
-            ],
-            "severity": "warning",
-            "type": "holes_co_located"
-        },
-        {
-            "description": "Drilled holes co-located",
-            "items": [
-                {
-                    "description": "비아 [/USB_VBUS] on F.Cu - B.Cu",
-                    "pos": {
-                        "x": 90.95,
-                        "y": 97.7
-                    },
-                    "uuid": "12f179fa-ebaf-4a9e-a2da-16ecb92b7e69"
-                },
-                {
-                    "description": "비아 [/USB_VBUS] on F.Cu - B.Cu",
-                    "pos": {
-                        "x": 90.95,
-                        "y": 97.7
-                    },
-                    "uuid": "67e76b83-ddd9-4d89-b63c-c4c4d6d5338c"
-                }
-            ],
-            "severity": "warning",
-            "type": "holes_co_located"
-        },
-        {
-            "description": "Drilled holes co-located",
-            "items": [
-                {
-                    "description": "비아 [/USB_VBUS] on F.Cu - B.Cu",
-                    "pos": {
-                        "x": 90.95,
-                        "y": 97.7
-                    },
-                    "uuid": "33e61429-7cd2-4cf9-9b07-531680edc5e0"
-                },
-                {
-                    "description": "비아 [/USB_VBUS] on F.Cu - B.Cu",
-                    "pos": {
-                        "x": 90.95,
-                        "y": 97.7
-                    },
-                    "uuid": "45a5639c-85f5-4857-a905-cd5d25f6b0e9"
-                }
-            ],
-            "severity": "warning",
-            "type": "holes_co_located"
-        },
-        {
-            "description": "Drilled holes co-located",
-            "items": [
-                {
-                    "description": "비아 [/USB_VBUS] on F.Cu - B.Cu",
-                    "pos": {
-                        "x": 90.95,
-                        "y": 97.7
-                    },
-                    "uuid": "33e61429-7cd2-4cf9-9b07-531680edc5e0"
-                },
-                {
-                    "description": "비아 [/USB_VBUS] on F.Cu - B.Cu",
-                    "pos": {
-                        "x": 90.95,
-                        "y": 97.7
-                    },
-                    "uuid": "67e76b83-ddd9-4d89-b63c-c4c4d6d5338c"
-                }
-            ],
-            "severity": "warning",
-            "type": "holes_co_located"
-        },
-        {
-            "description": "Drilled holes co-located",
-            "items": [
-                {
-                    "description": "비아 [/USB_VBUS] on F.Cu - B.Cu",
-                    "pos": {
-                        "x": 90.95,
-                        "y": 97.7
-                    },
-                    "uuid": "45a5639c-85f5-4857-a905-cd5d25f6b0e9"
-                },
-                {
-                    "description": "비아 [/USB_VBUS] on F.Cu - B.Cu",
-                    "pos": {
-                        "x": 90.95,
-                        "y": 97.7
-                    },
-                    "uuid": "67e76b83-ddd9-4d89-b63c-c4c4d6d5338c"
-                }
-            ],
-            "severity": "warning",
-            "type": "holes_co_located"
-        },
-        {
-            "description": "Drilled holes co-located",
-            "items": [
-                {
-                    "description": "비아 [/USB_VBUS] on F.Cu - B.Cu",
-                    "pos": {
-                        "x": 92.3,
-                        "y": 96.2
-                    },
-                    "uuid": "c73afd92-a863-47a3-a20e-b6dd0eb583d0"
-                },
-                {
-                    "description": "비아 [/USB_VBUS] on F.Cu - B.Cu",
-                    "pos": {
-                        "x": 92.3,
-                        "y": 96.2
-                    },
-                    "uuid": "e650a8b5-9ca7-401c-b275-947536c8a61e"
-                }
-            ],
-            "severity": "warning",
-            "type": "holes_co_located"
-        },
-        {
-            "description": "Drilled holes co-located",
-            "items": [
-                {
-                    "description": "비아 [/USB_VBUS] on F.Cu - B.Cu",
-                    "pos": {
-                        "x": 92.3,
-                        "y": 96.2
-                    },
-                    "uuid": "c73afd92-a863-47a3-a20e-b6dd0eb583d0"
-                },
-                {
-                    "description": "비아 [/USB_VBUS] on F.Cu - B.Cu",
-                    "pos": {
-                        "x": 92.3,
-                        "y": 96.2
-                    },
-                    "uuid": "ebc30b10-88e5-445d-a5b1-8c1051c9deaf"
-                }
-            ],
-            "severity": "warning",
-            "type": "holes_co_located"
-        },
-        {
-            "description": "Drilled holes co-located",
-            "items": [
-                {
-                    "description": "비아 [/USB_VBUS] on F.Cu - B.Cu",
-                    "pos": {
-                        "x": 92.3,
-                        "y": 96.2
-                    },
-                    "uuid": "e650a8b5-9ca7-401c-b275-947536c8a61e"
-                },
-                {
-                    "description": "비아 [/USB_VBUS] on F.Cu - B.Cu",
-                    "pos": {
-                        "x": 92.3,
-                        "y": 96.2
-                    },
-                    "uuid": "ebc30b10-88e5-445d-a5b1-8c1051c9deaf"
-                }
-            ],
-            "severity": "warning",
-            "type": "holes_co_located"
         },
         {
             "description": "Silkscreen clipped by solder mask",
