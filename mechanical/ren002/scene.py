@@ -1,10 +1,10 @@
 """REN-002 제품 렌더 장면 (Blender 5.2, bpy) — REN-001 scene.py 를 이어 고친 것. 입력: validation/runtime/vd001/render/mesh/*.stl (03_export_meshes.py)
 · board_*.glb (렌더용 사본 = pcb 보드 + 대체 3D 모델 연결, 빠짐 0).
 실행: blender -b --factory-startup --python mechanical/ren002/scene.py -- --mode stills|blend [--views a,b] [--samples 256] [--res 2560x1440]
-  stills : Cycles OptiX → render/stills/ren002_<view>.png  (dims 는 _raw.png + dims.json, 04_dims_overlay.py 가 치수선을 그림)
-  blend  : 턴테이블(8 s, 200프레임 @25) .blend → render/turntable.blend
+  stills : Cycles OptiX → render/blender/stills/ren002_<view>.png  (dims 는 _raw.png + dims.json, 04_dims_overlay.py 가 치수선을 그림)
+  blend  : 턴테이블(8 s, 200프레임 @25) .blend → render/blender/turntable.blend
 좌표: 제품 +Y 위 · +Z 앞(광축). 서 있는 자세 = PRODUCT X 90° (제품 +Y → 월드 +Z), 누운 자세 = X 0° (뒷면이 바닥, 렌즈가 위, 커넥터 면 −Y 가 카메라 쪽)."""
-import bpy, math, os, sys, json
+import bpy, math, os, re, sys, json
 from mathutils import Vector
 from bpy_extras.object_utils import world_to_camera_view
 
@@ -45,33 +45,12 @@ def mat(name, base, metal=0.0, rough=0.5, trans=0.0, ior=1.45, spec=0.5, bump=No
         nt.links.new(bn.outputs['Normal'], p.inputs['Normal'])
     return m
 
-M = {
-    'petg': mat('PETG_black_matte', (0.013, 0.013, 0.014), rough=0.62, spec=0.4, bump=(0.2, 0.12)),          # 약간 거친 무광 + 층 결
-    'anod': mat('Al_black_anodize_satin', (0.045, 0.046, 0.05), metal=1.0, rough=0.27),                       # 반광 금속 — PETG 와 반사 결이 다름
-    'al': mat('Al_raw', (0.78, 0.79, 0.8), metal=1.0, rough=0.28),
-    'pmma': mat('PMMA_clear', (0.97, 0.98, 1.0), rough=0.02, trans=1.0, ior=1.49),
-    'foam': mat('Foam_black', (0.01, 0.01, 0.01), rough=0.95, spec=0.1),
-    'pad': mat('Tflex_P340_purple', (0.32, 0.09, 0.42), rough=0.65),
-    'brass': mat('Brass', (0.78, 0.6, 0.25), metal=1.0, rough=0.3),
-    'steel': mat('Steel', (0.62, 0.63, 0.65), metal=1.0, rough=0.35),
-    'lens': mat('Lens_black_metal', (0.03, 0.03, 0.03), metal=0.9, rough=0.35),
-    'glass': mat('Lens_glass', (0.9, 0.95, 1.0), rough=0.0, trans=1.0, ior=1.6),
-    'plastic': mat('Plastic_black', (0.025, 0.025, 0.028), rough=0.5),
-    'sensor': mat('Sensor_block', (0.08, 0.08, 0.09), metal=0.6, rough=0.4),
-    'fpc': mat('FPC_polyimide', (0.75, 0.42, 0.08), rough=0.4),
-    'core': mat('Core_module_pcb', (0.02, 0.14, 0.06), rough=0.45),
-    'wire_r': mat('Wire_red', (0.6, 0.03, 0.02), rough=0.45), 'wire_k': mat('Wire_black', (0.02, 0.02, 0.02), rough=0.45),
-    'wire_y': mat('Wire_yellow', (0.75, 0.6, 0.03), rough=0.45),
-    'mask': mat('PCB_mask_green', (0.02, 0.18, 0.05), rough=0.25), 'enig': mat('ENIG_gold', (0.95, 0.72, 0.35), metal=1.0, rough=0.25),
-    'silk': mat('Silk_white', (0.92, 0.92, 0.92), rough=0.6),
-    'cable_grey': mat('Cable_PVC_grey', (0.42, 0.44, 0.47), rough=0.55), 'cable_k': mat('Cable_PVC_black', (0.02, 0.02, 0.022), rough=0.5),
-    'plug_clear': mat('RJ45_plug_PC', (0.9, 0.92, 0.95), rough=0.1, trans=0.85, ior=1.58),
-    'mount': mat('Mount_Al_dark', (0.12, 0.12, 0.13), metal=1.0, rough=0.4),
-}
-RULES = [('HOUSING', 'petg'), ('FRONT_COVER', 'petg'), ('HS_EXTRUSION', 'anod'), ('HS_PEDESTAL', 'al'), ('SPREADER_M003', 'al'),
-         ('PMMA', 'pmma'), ('FOAM', 'foam'), ('INS_PADS', 'pad'), ('GAP_PAD', 'pad'), ('HW_STANDOFFS', 'brass'),
-         ('HW_M16', 'steel'), ('HW_M25', 'steel'), ('LENS_CIL093', 'lens'), ('SENSOR', 'sensor'), ('PEDESTAL', 'al'), ('FPC', 'fpc'),
-         ('CORE_MODULE', 'core')]
+# 재질 값·이름 규칙 = mechanical/ren003/materials.py (Fusion 렌더와 같은 표, REN-003)
+T = {}
+exec(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'ren003', 'materials.py'), encoding='utf-8').read(), T)
+M = {k: mat('m_' + k, v['rgb'], metal=v.get('metal', 0.0), rough=v.get('rough', 0.5), trans=v.get('trans', 0.0), ior=v.get('ior', 1.45),
+            spec=v.get('spec', 0.5), bump=v.get('bump'), coat=v.get('coat', 0.0)) for k, v in T['MATS'].items()}
+RULES = T['NAME_RULES']
 
 prod = bpy.data.objects.new('PRODUCT', None); scn.collection.objects.link(prod)
 prod.rotation_euler = (math.radians(90), 0, 0)
@@ -93,21 +72,22 @@ lens = [o for n, o in objs.items() if n.startswith('LENS_CIL093')]
 max(lens, key=lambda o: max(v.co.z for v in o.data.vertices)).data.materials[0] = M['glass']
 for b, z in (('carrier', Z_CARRIER), ('front', Z_FRONT)):
     before = set(bpy.data.objects)
+    GM = T['glb_materials'](os.path.join(MESH, 'board_%s.glb' % b))
     bpy.ops.import_scene.gltf(filepath=os.path.join(MESH, 'board_%s.glb' % b))
     new = [o for o in bpy.data.objects if o not in before]
     root = bpy.data.objects.new('BOARD_' + b.upper(), None); scn.collection.objects.link(root)
     for o in new:
         if o.parent is None:
             o.parent = root
-        if o.type == 'MESH':
+        if o.type == 'MESH':   # REN-003: 층 이름 → 모델+색 덮어쓰기 → 색 분류 → 부품 규칙 (materials.body_key, 건식 점검 dryrun_glb.py 와 같은 경로)
+            model = re.sub(r'\.\d+$', '', o.data.name)
+            ref = re.sub(r'\.\d+$', '', o.parent.name) if o.parent else ''
             for s in o.material_slots:
-                nl = s.material.name.lower() if s.material else ''
-                if 'mask' in nl:
-                    s.material = M['mask']
-                elif 'silk' in nl:
-                    s.material = M['silk']
-                elif any(w in nl for w in ('copper', 'pad', 'track', 'via', 'zone')):
-                    s.material = M['enig']
+                src = GM.get(re.sub(r'\.\d+$', '', s.material.name)) if s.material else None
+                if src:
+                    k = T['body_key'](src[0], src[1], src[2], model=model, ref=ref, board=b)
+                    if k in M:
+                        s.material = M[k]
     root.location = (0, 0, z); root.parent = prod
     objs['BOARD_' + b.upper()] = root
 
@@ -221,7 +201,7 @@ def accessories(on):
     for o in ACC:
         o.hide_render = not on
 
-OUTS = os.path.join(R, 'stills'); os.makedirs(OUTS, exist_ok=True)
+OUTS = os.path.join(R, 'blender', 'stills'); os.makedirs(OUTS, exist_ok=True)
 D = 0.52
 def shot(v):
     explode(False); accessories(False); inside.hide_render = True
@@ -295,6 +275,6 @@ elif MODE == 'blend':
     for fc in cb.fcurves:
         for kp in fc.keyframe_points:
             kp.interpolation = 'LINEAR'
-    p = os.path.join(R, 'turntable.blend')
+    p = os.path.join(R, 'blender', 'turntable.blend')
     bpy.ops.wm.save_as_mainfile(filepath=p, copy=True)
     print('BLEND', p)
