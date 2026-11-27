@@ -1,7 +1,7 @@
 # R-026 · Freerouting 규칙 누락 — 원인과 DSN 후처리
 
-입력: pcb 브랜치 커밋 `b6842e9`의 `git archive` 사본(scratchpad). main(`fbc8388`)에는 `.kicad_pcb`가 없다. pcb 레인 파일은 읽기만 했다.
-도구: KiCad 10.0.8 pcbnew(번들 python), Freerouting 2.5.0 + Temurin 25.0.5(전체 경로 `C:/Users/gh/tools/freerouting/download/jre25/jdk-25.0.5+8-jre/bin/java.exe`).
+입력: pcb 브랜치 커밋 `b6842e9`의 `git archive` 임시 사본. main(`fbc8388`)에는 `.kicad_pcb`가 없다. 작업 중인 pcb 브랜치 파일은 읽기만 했다.
+도구: KiCad 10.0.8 pcbnew(번들 python), Freerouting 2.5.0 + Temurin 25.0.5 포터블 JRE(사용자 홈 아래 격리 설치, PATH 변경 없이 전체 경로로 실행 — 설치 기록 `hardware/pcb/freerouting.md`).
 - Docker는 쓰지 않았다(O-106).
 - Freerouting analytics는 명령줄 `--usage_and_diagnostic_data.disable_analytics=true`로 껐다. 전역 설정 파일은 건드리지 않았다.
 
@@ -85,14 +85,14 @@ KiCad DRC 판정: `kicad-cli pcb drc --format json --severity-all --schematic-pa
 
 ## 전달 — SES와 가져오기 명령
 
-파일(이 레인 `docs/research/r026/`):
+파일(`docs/research/r026/`):
 
 | 파일 | sha256 |
 |---|---|
 | `ses/carrier.ses` | `0e8489617614a47c8ce802fb15f384811fe2fce831f173e9a656eba8eafd5eaa` |
 | `ses/front.ses` | `1ad91c22b61d6c5c3fecfa52e0520298db52ddcb6487ec5e607ae9d7d1a5f131` |
-| `ses/carrier.dsn` (후처리된 입력) | `86305cb4011cd873ee04f5c3ca86605cc989329782cb3ba17f38ac913d858327` |
-| `ses/front.dsn` | `9263eaacf4e29460a7e8509aad099bd7344fc27976117519379abce1aacc0b8a` |
+| `ses/carrier.dsn` (후처리된 입력) | `593e407d67d2e5a4863b71da8aa61374fd8c0c7e480a6b9b090b1d024ad82e8a` |
+| `ses/front.dsn` | `008a2df329bf81403c2665c2948034a1506056d510c7bc0049cd2e6c6429f770` |
 | `drc/base-*-drc.json` · `drc/after-*-drc.json` | 기준 DRC와 판정 DRC |
 
 **적용 조건:** SES는 b6842e9의 `hardware/schematic/<보드>/<보드>.kicad_pcb`에서 만들었다. `ImportSpecctraSES`는 보드의 트랙·비아를 SES 내용으로 **모두 바꾼다.** 그래서 이후 보드 배선이 바뀌었다면 그 변경이 사라진다. 적용 전에 보드의 트랙·비아가 b6842e9와 같은지 확인해야 한다.
@@ -110,7 +110,7 @@ KiCad DRC 판정: `kicad-cli pcb drc --format json --severity-all --schematic-pa
   - DRC가 track_dangling으로 잡지 않아 위반 수에는 들어가지 않는다.
   - 적용할 때 단일 작성자가 눈으로 볼 것: **verifiable 아니오**.
 
-가져오기는 각 보드의 단일 작성자 레인에서만 한다. 캐리어는 pcb, 전면은 schematic이다. KiCad GUI에 그 보드가 열려 있으면 먼저 닫는다.
+가져오기는 각 보드의 단일 작성자 작업 브랜치에서만 한다. 캐리어는 pcb, 전면은 schematic이다. KiCad GUI에 그 보드가 열려 있으면 먼저 닫는다.
 
 ```
 <KiCad>/bin/python.exe docs/research/r026/fr_rules.py import hardware/schematic/carrier/carrier.kicad_pcb docs/research/r026/ses/carrier.ses docs/research/r026/drc/base-carrier-drc.json
@@ -134,4 +134,4 @@ python docs/research/r026/drc_compare.py docs/research/r026/drc/base-carrier-drc
 | analytics | 명령줄로 끔 | 외부 전송을 막으려고. 전역 설정 파일은 건드리지 않았다 | — |
 | 패스 수 | 3 | 3패스와 15패스의 SES가 바이트 단위로 같다 | 15 |
 
-Docker는 쓰지 않았다(O-106). Freerouting은 Temurin 25 전체 경로로 직접 실행했다. 원본 보드와 pcb 레인 파일은 바꾸지 않았다.
+Docker는 쓰지 않았다(O-106). Freerouting은 Temurin 25 전체 경로로 직접 실행했다. 원본 보드와 작업 중인 pcb 브랜치 파일은 바꾸지 않았다.

@@ -1,4 +1,4 @@
-(pcb "C:/Users/gh/AppData/Local/Temp/claude/152719db0d1b2c74/a48f459b-767b-4b45-8dbd-61ad2eac22af/scratchpad/r026/v_all/carrier.dsn"
+(pcb "carrier.dsn"
   (parser
     (string_quote ")
     (space_in_quoted_tokens on)
