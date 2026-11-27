@@ -3,7 +3,7 @@
 	(generator "pcbnew")
 	(generator_version "10.0")
 	(layer "F.Cu")
-	(descr "Commonlands CLA216-ICR M12 holder: 2x NPTH 1.8 at 20.0 spacing (R-007: spacing 20.0, hole ref 1.7; screw M1.6, ISO 273 medium clearance 1.8). Derived from Antmicro ov9281-camera-board antmicro-footprints:Camera_Lens_20mm (ea69666, Apache-2.0); artwork removed; Arducam properties replaced (V-003 8). C-008: courtyard x +-12.45 (ears +-12.2 + 0.25, R-007); sensor pedestal 13.2 sq (M-001d K11, h 0.75, bonded, no copper - O-39) as F.Fab + footprint keepout SENSOR_PEDESTAL.")
+	(descr "Commonlands CLA216-ICR M12 holder: 2x NPTH 1.8 at 20.0 spacing (R-007: spacing 20.0, hole ref 1.7; screw M1.6, ISO 273 medium clearance 1.8). Derived from Antmicro ov9281-camera-board antmicro-footprints:Camera_Lens_20mm (ea69666, Apache-2.0); artwork removed; Arducam properties replaced (V-003 8). C-008: courtyard x +-12.45 (ears +-12.2 + 0.25, R-007); C-022: F.CrtYd 16-point outline with notches 0.100 around back BTB J1 boss NPTH (mechanical M-009 f5f6-drc.md, O-101); sensor pedestal 13.2 sq (M-001d K11, h 0.75, bonded, no copper - O-39) as F.Fab + footprint keepout SENSOR_PEDESTAL.")
 	(tags "M12 S-mount lens holder ICR CLA216 20mm")
 	(property "Reference" "REF**"
 		(at -1.2475 8.836 0)
@@ -266,18 +266,7 @@
 	)
 	(fp_poly
 		(pts
-			(xy -8.2 -11.9)
-			(xy 8.2 -11.9)
-			(xy 8.2 -2.75)
-			(xy 12.45 -2.75)
-			(xy 12.45 2.75)
-			(xy 8.2 2.75)
-			(xy 8.2 8.9)
-			(xy -8.2 8.9)
-			(xy -8.2 2.75)
-			(xy -12.45 2.75)
-			(xy -12.45 -2.75)
-			(xy -8.2 -2.75)
+			(xy -7.8 -11.9) (xy 7.8 -11.9) (xy 7.8 -10.1) (xy 8.2 -10.1) (xy 8.2 -2.75) (xy 12.45 -2.75) (xy 12.45 2.75) (xy 8.2 2.75) (xy 8.2 8.9) (xy -8.2 8.9) (xy -8.2 2.75) (xy -12.45 2.75) (xy -12.45 -2.75) (xy -8.2 -2.75) (xy -8.2 -10.1) (xy -7.8 -10.1)
 		)
 		(stroke
 			(width 0.05)
