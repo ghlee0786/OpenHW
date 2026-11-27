@@ -50,6 +50,11 @@ def load(geom):
             r1, c1 = B.cell(x1 + 0.1, y1 + 0.1)
             B.hard[L, max(r0, 0):r1 + 1, max(c0, 0):c1 + 1] = True
             B.hardvia[max(r0, 0):r1 + 1, max(c0, 0):c1 + 1] = True
+    if os.environ.get("P5_ZONES"):  # GND 아닌 구리 영역(IR 열 구리)은 그 넷의 구리 — 다른 넷이 지나가면 채움이 잘려 끊긴다(p005_zones.py)
+        for z in json.load(open(os.environ["P5_ZONES"], encoding="utf-8")):
+            if z["net"] in B.netid:
+                for ln in z["layers"]:
+                    B.raster_poly(LMAP[ln], z["outline"], B.netid[z["net"]])
     for t in geom["tracks"]:
         if t["net"] in B.netid:
             B.add_track(t["net"], LMAP[t["layer"]], tuple(t["a"]), tuple(t["b"]), t["w"])
