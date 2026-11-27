@@ -85,9 +85,9 @@ for b, z in (('carrier', Z_CARRIER), ('front', Z_FRONT)):
             for s in o.material_slots:
                 src = GM.get(re.sub(r'\.\d+$', '', s.material.name)) if s.material else None
                 if src:
-                    k = T['body_key'](src[0], src[1], src[2], model=model, ref=ref, board=b)
-                    if k in M:
-                        s.material = M[k]
+                    mk = T['body_key'](src[0], src[1], src[2], model=model, ref=ref, board=b)   # k 는 전역 축척(mm→m)이라 다른 이름
+                    if mk in M:
+                        s.material = M[mk]
     root.location = (0, 0, z); root.parent = prod
     objs['BOARD_' + b.upper()] = root
 

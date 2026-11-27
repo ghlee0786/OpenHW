@@ -1,50 +1,50 @@
 # REN-002 렌더 판정·해시 (judge.py 출력 — 불합격 0, 산출 29)
 
-- 3D 모델 감사 (렌더용 사본 pcbsrc/<보드>, pcb carrier 6df2865 · front be3125d + mechanical/models 연결): 빠짐 0
+- 3D 모델 감사 (렌더용 사본 pcbsrc/<보드>, pcb 995b872 + mechanical/models 연결): 빠짐 0
 - 산출물: validation/runtime/vd001/render/ (gitignore) · manifest.json (vd001-format §4, 모두 사람 확인 verifiable 아니오 + check 열)
 
 ## 입력
 
 | 파일 (validation/runtime/vd001/) | sha256 |
 |---|---|
-| pcb | carrier 6df2865 · front be3125d |
-| m007_assembly.step | 18c1fb0c6f4650b17e9ff59381e621504d7219da4305d5919af14163c86a494d |
-| pcbsrc/carrier/hardware/schematic/carrier/carrier.kicad_pcb | ec9f1079998e6e22f824589c0f761d5aeb4ef8ee240fbc772144a4ab71c8fcde |
-| pcbsrc/front/hardware/schematic/front/front.kicad_pcb | 4be04083137487d667fa62688509f2a01a05ae5a41a025f2d9b0dca1f1e08df7 |
+| pcb | 995b872 |
+| m007_assembly.step | 93537dc84a4c3ab074995881690d9a276e419744751de305318f60604f0b315f |
+| pcbsrc/carrier/hardware/schematic/carrier/carrier.kicad_pcb | 3a80e59686070d8360680fa20f786dc13366ac33652f47360f5469b05df1401a |
+| pcbsrc/front/hardware/schematic/front/front.kicad_pcb | b4559925cff00ae1554daeee4e473409f6878b629548d45331ae552cfb6000d9 |
 | render/mesh/index.json | 61076f3fa69bca3cfe0a092dc61998d93e420ffde8c3d01eb9e9520ac3a2a3d6 |
-| render/mesh/board_carrier.glb | 4df33390522f96711c62aeee3b565179c190292d9349e87e073ce35ad52bcd56 |
-| render/mesh/board_front.glb | a659648eb08ad7712bcc6fd907fa731328545c5d1488090b9e310efe7530a578 |
+| render/mesh/board_carrier.glb | 8858cafd569da95c56ca6c49be293286c48981aa50d4e0e31b332c7ff8a59752 |
+| render/mesh/board_front.glb | d82ebae103bf6801f8c835072dee42a171ed0e73fa32a1e2e8ddeb7a9814e13b |
 
 ## 산출
 
 | 파일 | 크기 | sha256 | 판정 |
 |---|---|---|---|
-| validation/runtime/vd001/render/pcb/carrier_top.png | 2560x1440 | 6925cbc2f8b586b63964134fddd15040b5515aa6a07957d8da9dacdb21fefbd5 | 통과 |
-| validation/runtime/vd001/render/pcb/carrier_bottom.png | 2560x1440 | 46d00fba55544c604e0dd8672748b2b6cdab106941cda4905ceb127bd50776fc | 통과 |
-| validation/runtime/vd001/render/pcb/carrier_tilt.png | 2560x1440 | e0f02ff8dc176726df4b2982479103fcdbd67a6248d00b7f99b484301e544874 | 통과 |
-| validation/runtime/vd001/render/pcb/carrier_top_zoom1.png | 2560x1440 | 5eeaebc714d1e1184564a16567c6f313995d5b30c1c4ff10b2f221dcff459a60 | 통과 |
-| validation/runtime/vd001/render/pcb/carrier_top_zoom2.png | 2560x1440 | 16aff89fdfafcf7a67da2b5bb68e4335ef5780ce723968e5457408765097af80 | 통과 |
-| validation/runtime/vd001/render/pcb/carrier_bottom_zoom1.png | 2560x1440 | d2f41a19ccda533cfd3b39cf7b05acb27f3e3221e7f0fcaf60d76e166b4206c5 | 통과 |
-| validation/runtime/vd001/render/pcb/carrier_bottom_zoom2.png | 2560x1440 | a2b1b1348c1173a320aae92f754dce36b25a869fc0948392ffc2e26248c6afc0 | 통과 |
-| validation/runtime/vd001/render/pcb/front_top.png | 2560x1440 | 3d786c68277451a56dd10f6eb976784fc1f85ec287eec796e73c65dce7785452 | 통과 |
-| validation/runtime/vd001/render/pcb/front_bottom.png | 2560x1440 | a78990392aa8a143a41aa5c4a5e8171f8518badb8a575be549886c8ab13a96f4 | 통과 |
-| validation/runtime/vd001/render/pcb/front_tilt.png | 2560x1440 | beeeb65b8792d33252f600694d155cef288cbfff0a00bb187765105645bf297e | 통과 |
-| validation/runtime/vd001/render/pcb/front_top_zoom1.png | 2560x1440 | f289becb3965c137dec56f90068f1520cf56a71ffcd461a4ff14e1b7144ad09b | 통과 |
-| validation/runtime/vd001/render/pcb/front_top_zoom2.png | 2560x1440 | 0a10fa7e45cb86101f21e3d3d1ca0468204135ef7b6d6edbd7d5faff810b3f0c | 통과 |
-| validation/runtime/vd001/render/pcb/front_top_zoom3.png | 2560x1440 | a21a777d394aa8375a7f5d247dec7000ef347880ed354f9a640ce42780a4073e | 통과 |
-| validation/runtime/vd001/render/pcb/front_top_zoom4.png | 2560x1440 | bae0e6cf9a43dbda09493bc401b84f09b4165d3356e3971ce58e68b3b9514f2d | 통과 |
-| validation/runtime/vd001/render/pcb/front_bottom_zoom1.png | 2560x1440 | cd371bde5da6760b4abeb0a728ee8908af60db58515873ac45dbcda7635b9b37 | 통과 |
-| validation/runtime/vd001/render/pcb/front_bottom_zoom2.png | 2560x1440 | 6ce73f4e13dcbbd8bbe9b522b05271d847c9fc3b24a6e76143975c43fa858d00 | 통과 |
-| validation/runtime/vd001/render/pcb/front_bottom_zoom3.png | 2560x1440 | 15ff787f99f8621914d96a50c0ed4da2d3cbe2b743773145ab1a911236e3ba14 | 통과 |
-| validation/runtime/vd001/render/pcb/front_bottom_zoom4.png | 2560x1440 | 5ca138fc8cabe3a69b94e0cf9efd5b353a14386665a52ea59135ea0d7e702fcd | 통과 |
-| validation/runtime/vd001/render/stills/ren002_front.png | 2560x1440 | cff631629671d90937d22c359d4b1be4a6f04f2306af8f8ce5a69a17bf1feaa3 | 통과 |
-| validation/runtime/vd001/render/stills/ren002_back.png | 2560x1440 | 12c5600b6776a2be52e64fc8ef070adfd2ca626ae15c72d31222057c534a02e3 | 통과 |
-| validation/runtime/vd001/render/stills/ren002_threequarter.png | 2560x1440 | 3f5c80e7f0ef606b148df3c05a56ab0e9213fb07af48f1d11d061e1ad8566821 | 통과 |
-| validation/runtime/vd001/render/stills/ren002_exploded.png | 2560x1440 | a740165119d376472706c8d792692be0166a9637bcd71b8858f0a7483ab96b42 | 통과 |
-| validation/runtime/vd001/render/stills/ren002_section.png | 2560x1440 | b7213ca2a547cb0d00e9dbe25406d10b6adc2114afc49719c453fa26f6cd216b | 통과 |
-| validation/runtime/vd001/render/stills/ren002_window.png | 2560x1440 | 3c24ab05898f4c10608384bd22cc1eaf166837c362efa81993a2aba5bc6a39ea | 통과 |
-| validation/runtime/vd001/render/stills/ren002_connectors.png | 2560x1440 | 22de6f0c83e39b93c50d8c7ce25e51533b35ebc4108969a8fc90a29b5867d6ff | 통과 |
-| validation/runtime/vd001/render/stills/ren002_microsd.png | 2560x1440 | 7ab1c58bb67b04479c340a121e5f0d7724826c53ee05daa28344eb0a609d1fc1 | 통과 |
-| validation/runtime/vd001/render/stills/ren002_inuse.png | 2560x1440 | 854f61acfa58dd242c2ceba74bdd117f76c58a24250735337be7c34e6cd97605 | 통과 |
-| validation/runtime/vd001/render/stills/ren002_dims.png | 2560x1440 | e9b4bd50218b77e5f6af218dee16506a0c685237ba3155613263a0f37dd9a8f6 | 통과 |
-| validation/runtime/vd001/render/ren002_turntable.mp4 | 1920x1080 h264 프레임 200 · 8.00 s | 75e44a089d9760abbca16d97cb085db08376e06930a1e60fac52445f23708b5f | 통과 |
+| validation/runtime/vd001/render/pcb/carrier_top.png | 2560x1440 | 7186280a5ba1f2ba4125a8905bb11d6c42eac98cd74b3de19ee42e47f5ad6ca4 | 통과 |
+| validation/runtime/vd001/render/pcb/carrier_bottom.png | 2560x1440 | 0d0b49d8d403e1f919005efdafb4363190c2ed30a448c5d0ea04c4a6ab23a4fd | 통과 |
+| validation/runtime/vd001/render/pcb/carrier_tilt.png | 2560x1440 | 483f1b62c9a495893e8492d1ff88bbf298101b7dd49e1506a84206a053bd2806 | 통과 |
+| validation/runtime/vd001/render/pcb/carrier_top_zoom1.png | 2560x1440 | fbe940f983d6baf384534227ae671ec02993ca09728bc0df957edecdd0b461d3 | 통과 |
+| validation/runtime/vd001/render/pcb/carrier_top_zoom2.png | 2560x1440 | 105cca1f3ec4dbbcc40bce8159bee73a4d75b7c3421f98e4c3dc325b0dbfe55a | 통과 |
+| validation/runtime/vd001/render/pcb/carrier_bottom_zoom1.png | 2560x1440 | 7926f2c7b6ff976a2793757066448de3fb5ddb320efdbf8cfce0b986196dfc46 | 통과 |
+| validation/runtime/vd001/render/pcb/carrier_bottom_zoom2.png | 2560x1440 | cdcbf76830bc3a5861e98d859035105df25565796c276bdc714611657176d181 | 통과 |
+| validation/runtime/vd001/render/pcb/front_top.png | 2560x1440 | 5366939c51f882ec5ed492689a7a2af07fe4a1ee6e82e7f12c2061c4ea8e9cf3 | 통과 |
+| validation/runtime/vd001/render/pcb/front_bottom.png | 2560x1440 | 12c0c3e55797236db0b0df38c7b6f3dbc802f90c2ca850cef6a4fee6eb7e608a | 통과 |
+| validation/runtime/vd001/render/pcb/front_tilt.png | 2560x1440 | b6f6d511e689f07ca7e1967ae453b37367b7d975cf1bc1abb2f2a0a1e5e613bc | 통과 |
+| validation/runtime/vd001/render/pcb/front_top_zoom1.png | 2560x1440 | 7d7aef9ae79515b15caa6380cdd7c43276e6e025f7dddb23d5eea160f430803c | 통과 |
+| validation/runtime/vd001/render/pcb/front_top_zoom2.png | 2560x1440 | d8deead1ad4a3d9f082c109438a69b6cde73203a385c13f8361e4aab46a21e7e | 통과 |
+| validation/runtime/vd001/render/pcb/front_top_zoom3.png | 2560x1440 | 6ede48fec17cadc460ce9a56f3a28b185d64f8a57f7b0f4f8d24609c2c1ac471 | 통과 |
+| validation/runtime/vd001/render/pcb/front_top_zoom4.png | 2560x1440 | 2dc0a55ecd52e10e3e930f96fb25fc12caa3bc251e4f51395de371f921f5c3ab | 통과 |
+| validation/runtime/vd001/render/pcb/front_bottom_zoom1.png | 2560x1440 | 73cb316a2b649712239c6ad1dc603c2397a3ea032888401fd491a1c04cc5c001 | 통과 |
+| validation/runtime/vd001/render/pcb/front_bottom_zoom2.png | 2560x1440 | f39f9d428f6693d06b28f559ebd7eeb91363709ad5d2c5c304ed0170dc5a8e02 | 통과 |
+| validation/runtime/vd001/render/pcb/front_bottom_zoom3.png | 2560x1440 | d9da80850ab1502572236744528359ee3b200585d34638d8c61e29f02f476688 | 통과 |
+| validation/runtime/vd001/render/pcb/front_bottom_zoom4.png | 2560x1440 | 0d39f1b6eecf815c8aad533bbe009ff6e2f01168b20df0b8d20eef58c59d8354 | 통과 |
+| validation/runtime/vd001/render/blender/stills/ren002_front.png | 2560x1440 | 0b6c9d23098f1f756d0fb3956142c8a258fc184a0ba8100e2b413c9a70d87fbe | 통과 |
+| validation/runtime/vd001/render/blender/stills/ren002_back.png | 2560x1440 | af624eeb83bf8e69e54069966077813369de773fabfccb92740500edba98652e | 통과 |
+| validation/runtime/vd001/render/blender/stills/ren002_threequarter.png | 2560x1440 | 834f79a04abca99347ff4fd2533f8c0d960ee431f69aabae91e315f4c2e24ae5 | 통과 |
+| validation/runtime/vd001/render/blender/stills/ren002_exploded.png | 2560x1440 | 0f42501605e9f9558c285716e1e61eb5f17720866b8b939f2ba81f6bd3aa6c84 | 통과 |
+| validation/runtime/vd001/render/blender/stills/ren002_section.png | 2560x1440 | d0cb33d44f311a8928d8d80afa1cfa0cb30c701063d7edb3075d23c359d6b806 | 통과 |
+| validation/runtime/vd001/render/blender/stills/ren002_window.png | 2560x1440 | 3c15e2efb61594672d0c6a160e310d9b40acea9c7a68cb845afdda54ae921c84 | 통과 |
+| validation/runtime/vd001/render/blender/stills/ren002_connectors.png | 2560x1440 | 138eb365acb0673231652aaee1f2916a11b6add7d310339bd47b15e55094423a | 통과 |
+| validation/runtime/vd001/render/blender/stills/ren002_microsd.png | 2560x1440 | 4ea64158c4d459b557ab36a18466dfd19ad62a34d662c13e32b148248fc3a26a | 통과 |
+| validation/runtime/vd001/render/blender/stills/ren002_inuse.png | 2560x1440 | 32653401c4e5f8b2f3585d9736bb92c9008ea46c8b3f0665de9be08fd239d57c | 통과 |
+| validation/runtime/vd001/render/blender/stills/ren002_dims.png | 2560x1440 | abbfd4ce385bdbaeebb2fce73a0ef790c4a5c8d204dc0c391383d696f8e275ee | 통과 |
+| validation/runtime/vd001/render/blender/ren002_turntable.mp4 | 1920x1080 h264 프레임 200 · 8.00 s | 798c50a8608d97d520073bd3c56790f758580af6eda5c29fb831a68926c63f19 | 통과 |
