@@ -8,7 +8,7 @@
 자동 배선 결과를 최적이라 주장하지 않는다. 판정은 kicad-cli DRC(--schematic-parity) 종료 코드.
 
 사용:
-  <KiCad>/bin/python.exe freeroute.py export <board.kicad_pcb> <out.dsn> <fixed-list.txt>
+  <KiCad>/bin/python.exe freeroute.py export <board.kicad_pcb> <out.dsn> <fixed-list.txt> [all]   (all = 기존 배선 전부 고정)
   <KiCad>/bin/python.exe freeroute.py import <board.kicad_pcb> <in.ses>
 """
 import fnmatch
@@ -35,14 +35,15 @@ def netclass(net):
     return (best or NC["classes"][0])["name"]
 
 
-def export(board_path, dsn, listing):
+def export(board_path, dsn, listing, lock_all=False):
     b = pcbnew.LoadBoard(board_path)
     fixed = {}
     n_lock = n_free = 0
     for t in b.GetTracks():
         net = t.GetNetname()
         is_via = t.Type() == pcbnew.PCB_VIA_T
-        lock = netclass(net) in FIXED_CLASSES or net in FIXED_NETS or (net == "/GND" and is_via)
+        # lock_all (orch: 남은 미연결만 Freerouting 재투입): 스크립트 배선 전부 고정, 미연결만 Freerouting 이 잇는다
+        lock = lock_all or netclass(net) in FIXED_CLASSES or net in FIXED_NETS or (net == "/GND" and is_via)
         t.SetLocked(lock)
         if lock:
             fixed[net] = fixed.get(net, 0) + 1
@@ -67,6 +68,6 @@ def import_(board_path, ses):
 
 if __name__ == "__main__":
     if sys.argv[1] == "export":
-        export(sys.argv[2], sys.argv[3], sys.argv[4])
+        export(sys.argv[2], sys.argv[3], sys.argv[4], len(sys.argv) > 5 and sys.argv[5] == "all")
     else:
         import_(sys.argv[2], sys.argv[3])

@@ -1,7 +1,7 @@
-# P-003 Freerouting finish for low-speed nets (O-51/O-54). Run in an hc terminal (O-48), not a Claude background shell.
+﻿# P-003 Freerouting finish for low-speed nets (O-51/O-54). Run in an hc terminal (O-48), not a Claude background shell.
 # Usage: powershell -NoProfile -ExecutionPolicy Bypass -File hardware/pcb/tools/fr_board.ps1 <carrier|front> [maxPasses]
 # Steps: lock fixed sets + export DSN -> Freerouting (headless) -> import SES + refill zones -> sync project -> DRC
-param([string]$Board, [int]$Passes = 30)
+param([string]$Board, [int]$Passes = 30, [string]$Lock = "")
 $root = (Resolve-Path "$PSScriptRoot\..\..\..").Path
 Set-Location $root
 $kpy = "C:\Users\gh\AppData\Local\Programs\KiCad\10.0\bin\python.exe"
@@ -13,7 +13,7 @@ $pcb = "hardware\schematic\$Board\$Board.kicad_pcb"
 $dsn = "$work\$Board.dsn"
 $ses = "$work\$Board.ses"
 "== $Board export $(Get-Date -Format 'HH:mm:ss')"
-& $kpy hardware/pcb/tools/freeroute.py export $pcb $dsn "$work\$Board-fixed.txt" 2>&1 | Where-Object { $_ -match '^DSN' }
+& $kpy hardware/pcb/tools/freeroute.py export $pcb $dsn "$work\$Board-fixed.txt" $Lock 2>&1 | Where-Object { $_ -match '^DSN' }
 "== $Board freerouting $(Get-Date -Format 'HH:mm:ss')"
 if (Test-Path $ses) { Remove-Item $ses -Force -Confirm:$false }
 & $java -jar $jar -de $dsn -do $ses -mp $Passes -mt 8 --gui.enabled=false *> "$work\$Board-freerouting.log"
