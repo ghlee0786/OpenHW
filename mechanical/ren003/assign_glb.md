@@ -1,6 +1,6 @@
 # REN-003 재질 배정 건식 점검 (보드 GLB, `dryrun_glb.py` 출력 — 종료 코드 = 못 가른 색 0)
 
-- 입력: `C:/workspace_python/OpenHW/validation/runtime/vd001/render/mesh` (board_carrier.glb · board_front.glb)
+- 입력: `validation/runtime/vd001/render/mesh` (main 체크아웃) (board_carrier.glb · board_front.glb)
 - 규칙: `mechanical/ren003/materials.py` `classify()` → `body` 이면 `PART_RULES`(모델 이름 → 참조 번호)
 
 | 보드 | 모델 (GLB 메시 이름) | 파일 색 (선형) | 재질 | 바디 수 |

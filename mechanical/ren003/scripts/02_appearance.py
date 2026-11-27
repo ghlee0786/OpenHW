@@ -8,8 +8,8 @@
 실행: python -I -B mechanical/fusion_run.py mechanical/ren003/scripts/02_appearance.py"""
 import adsk.core, adsk.fusion, json, os, re
 
-LANE = r"C:\workspace_python\OpenHW"   # 소스 체크아웃 — mechanical/fusion_run.py 가 바꿈
-MAIN = r"C:\workspace_python\OpenHW"   # 산출물 (O-100)
+LANE = None   # 소스 체크아웃 — mechanical/fusion_run.py 가 이 스크립트의 체크아웃 경로로 채움
+MAIN = None   # main 체크아웃 — mechanical/fusion_run.py 가 채움 (산출물 validation/runtime, O-100)
 OUT = MAIN + r"\validation\runtime\vd001\render\fusion"
 APP_LIB = 'BA5EE55E-9982-449B-9D66-9F036540E140'   # Fusion 외관 라이브러리 (이름은 한국어라 ID 로)
 

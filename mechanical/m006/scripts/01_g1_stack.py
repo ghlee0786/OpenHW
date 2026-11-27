@@ -1,10 +1,12 @@
 """M-006 01: G1 STEP 결합 — 새 로컬 문서에 Seeed 코어 STEP(읽기·측정만, CC BY-SA 4.0 — 저장소에 넣지 않음)과
 우리 보드 STEP(pcb 69ed962 kicad-cli)을 적층 높이에 놓는다. 좌표: M-001 원점 O (코어 중심·아랫면, +Z 광축)."""
 import adsk.core, adsk.fusion
-SCR = r"C:\Users\gh\AppData\Local\Temp\claude\152719db0d1b2c74\decb4398-40a5-4677-aeb1-556f1d7e2c56\scratchpad"
+LANE = None   # mechanical/fusion_run.py 규약 (이 스크립트는 쓰지 않음)
+SCR = None   # 원본 STEP 이 든 작업 폴더(저장소 밖, Seeed STEP 은 재배포 안 함) — python -I -B mechanical/fusion_run.py <이 파일> --set SCR=<폴더>
 BTB_H = 8.0
 
 def run(_c):
+    assert SCR, '--set SCR=<작업 폴더> 로 실행'
     app = adsk.core.Application.get()
     app.documents.add(adsk.core.DocumentTypes.FusionDesignDocumentType)
     design = adsk.fusion.Design.cast(app.activeProduct)

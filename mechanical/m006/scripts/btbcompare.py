@@ -1,6 +1,6 @@
 """BTB 짝 대조: 우리 보드 vs Seeed 보드 (같은 코어 커넥터에 결합). 코어 좌표(코어 중심, y 위)로 옮겨 패드별 위치·넷을 나란히 둔다.
 코어 중심 = Seeed 보드는 장착 구멍 4개(±13) 중심, 우리 보드는 (100,100). 출력: btb_pads.csv + 요약."""
-import csv, math, re, sys
+import csv, math, os, re, sys
 
 sys.stdout.reconfigure(encoding='utf-8')
 
@@ -36,7 +36,8 @@ def pads(path, ref, centre):
     return out
 
 
-SE = r"C:\Users\gh\AppData\Local\Temp\claude\152719db0d1b2c74\decb4398-40a5-4677-aeb1-556f1d7e2c56\scratchpad\m006"
+SE = sys.argv[1] if len(sys.argv) > 1 else os.environ.get('M006_WORK', '')   # 작업 폴더(저장소 밖: ours/·seeed/ 보드 사본) — 인자 또는 M006_WORK
+assert SE, 'usage: python -I -B mechanical/m006/scripts/btbcompare.py <작업 폴더>'
 pairs = [
     ('core J1 (윗면) ↔ 전면 J1', (SE + r"\ours\front.kicad_pcb", 'J1', (100.0, 100.0)), (SE + r"\seeed\s401.kicad_pcb", 'J1', (114.989, 115.0)), 'S401'),
     ('core J2 (아랫면) ↔ 캐리어 J1', (SE + r"\ours\carrier.kicad_pcb", 'J1', (100.0, 100.0)), (SE + r"\seeed\b301.kicad_pcb", 'J1', (115.0, 115.001)), 'B301'),

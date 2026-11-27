@@ -6,7 +6,7 @@ import glob, hashlib, json, os, struct, subprocess, sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 LANE = os.path.abspath(os.path.join(HERE, '..', '..'))
-MAIN = r'C:\workspace_python\OpenHW'   # 산출물 validation/runtime 은 main 체크아웃 (O-100 — 레인 worktree 안은 accept 때 지워짐)
+MAIN = os.path.abspath(os.environ.get('OPENHW_MAIN') or os.path.dirname(subprocess.run(['git', '-C', os.path.dirname(os.path.abspath(__file__)), 'rev-parse', '--path-format=absolute', '--git-common-dir'], capture_output=True, text=True).stdout.strip()))   # main 체크아웃 — 산출물 validation/runtime (O-100)
 V = os.path.join(MAIN, 'validation', 'runtime', 'vd001')
 R = os.path.join(V, 'render')
 FFPROBE = glob.glob(os.path.expandvars(r'%LOCALAPPDATA%\Microsoft\WinGet\Packages\Gyan.FFmpeg*\ffmpeg-*\bin\ffprobe.exe'))
