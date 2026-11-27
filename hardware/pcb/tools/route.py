@@ -571,7 +571,7 @@ def main():
             starts = {(L, c0[0] - r0, c0[1] - cc0) for L in sL}
             targets = {(L, c1[0] - r0, c1[1] - cc0) for L in eL}
             nov = [(c0[0] - r0, c0[1] - cc0), (c1[0] - r0, c1[1] - cc0)]  # 탈출점 1.2mm 안에는 쌍 비아 금지
-            path = B.astar(win, starts, targets, passable, viaok, layers, via_cost=160.0, pair_off=(VIA["dia"] + 0.25) / 2 / G,
+            path = B.astar(win, starts, targets, passable, viaok, layers, via_cost=(60.0 if netclass(pn)["name"] == "CSI_100" else 160.0), pair_off=(VIA["dia"] + 0.25) / 2 / G,
                            start_dir=sd, end_dir=ed, cap=4_000_000, no_via_near=(nov, 1.2 / G), min_run=6)
             if not path:
                 diag = {f"start L{L}": bool(passable[L][r, c]) for L, r, c in starts} | \
