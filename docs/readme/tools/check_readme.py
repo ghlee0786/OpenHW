@@ -5,7 +5,8 @@ python -I docs/readme/tools/check_readme.py [--media-root <다른 체크아웃 �
   2. docs/readme/media : *.gif ≤ 5 MB · *.png ≤ 600 KB
   3. README.md 의 상대 링크·이미지 경로가 실제 파일·폴더로 해결되는지 (http(s)·#앵커·mailto 제외)
      --media-root : docs/readme/media/ 가 아직 이 체크아웃에 없을 때(다른 작업에서 만드는 중) 그 루트에서 찾는다
-  4. README.md · SVG 금지어 (내부 운영 도구·제조사·비용·로컬 경로·이메일)
+  4. README.md · SVG 금지어 — 기본: 로컬 경로·이메일·견적/비용/가격
+     --banned-file <파일> : 저장소 밖에 둔 추가 금지어 정규식(한 줄에 하나, # 주석) — 공개 저장소에 이름 목록을 싣지 않으려고
 """
 import re
 import sys
@@ -16,9 +17,7 @@ ROOT = Path(__file__).resolve().parents[3]
 README = ROOT / "README.md"
 SVGDIR = ROOT / "docs/readme"
 MEDIA = "docs/readme/media/"
-BANNED = [r"\bherdr\b", r"\bhc\b", r"\borch\b", r"칸", r"\bpilot\b", r"pcbway", r"\bjlc", r"\blcsc\b", r"견적", r"비용", r"가격",
-          r"[A-Za-z]:[\\/](Users|workspace)", r"[\w.+-]+@[\w-]+\.[\w.]+", r"\bgop\b", r"opennvr", r"ironwall", r"sensorway",
-          r"seeed", r"sophgo", r"ghlee"]
+BANNED = [r"견적", r"비용", r"가격", r"[A-Za-z]:[\\/](Users|workspace)", r"[\w.+-]+@[\w-]+\.[\w.]+"]
 # 라이선스 고지 표의 폴더 경로(제3자 저작물 위치)는 금지어 검사에서 뺀다
 ALLOW_PATHS = ["hardware/datasheets/sophgo/", "hardware/datasheets/seeed/", "hardware/datasheets/antmicro/"]
 
@@ -76,6 +75,10 @@ def main():
     sys.stdout.reconfigure(encoding="utf-8")
     args = sys.argv[1:]
     media_root = Path(args[args.index("--media-root") + 1]) if "--media-root" in args else None
+    if "--banned-file" in args:
+        for line in Path(args[args.index("--banned-file") + 1]).read_text(encoding="utf-8").splitlines():
+            if line.strip() and not line.lstrip().startswith("#"):
+                BANNED.append(line.strip())
     svgs = sorted(SVGDIR.glob("*.svg"))
     if len(svgs) < 4:
         fail(f"SVG {len(svgs)}개 (4개 필요)")
