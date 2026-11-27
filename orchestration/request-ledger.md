@@ -302,3 +302,4 @@
 - [x] 병합 main b311d8d (a13d REN-004 README 그림)
 - [ ] (lead/사용자 결정) 공개 저장소의 내부 정보 정리 범위 — O-117
 - [x] 병합 main c63d048 (079c R-027 README), 9b18a14 (OPERATIONS.md·AGENTS.md)
+- [x] 병합 main a0b319c (2291 R-026·b46f review 경로 정리), c0f0eb5 (079c f85cb6a). 남은 공개분(r008·r014·r020·r025 문서 경로, pcb-kicad2.mcp.json)은 정리하지 않음 — 비밀 아님, lead O-117
