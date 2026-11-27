@@ -257,6 +257,7 @@
 | O-119 | 캐리어 MDI TX: J1을 돌아 나오는 구조라 비결합 ≤6과 쌍 안 차 0(#28) 동시 불가 — (가) 비결합 ≤6·쌍 안 1.677mm(약 11ps) (나) 쌍 안 0·비결합 약 9mm | lead 결정 요청, 근거는 research R-029(공개 PHY 레이아웃 지침). 결정 전 MDI TX는 지금 판(가) 유지 | 둘 다 #28 MDI 한정 예외 필요 — 근거 수치로 고름 | — — lead 결정 (가)(D-003 #62): MDI TX 한정 쌍 안 ≤1.7mm 예외, 비결합 ≤6 그대로(11ps = UI 0.14%, 비결합 9mm가 임피던스·EMI에 더 나쁨). R-029가 1.7mm 미만 고정 한도를 강하게 제시하면 (나)로 되돌림. pcb·review·research 전달 — R-029 뒤 lead 재결정 (다): MDI TX 한정 쌍 안 ≤1.27mm(TI 50mil·Microchip 120mil 충족)·비결합 MDI TX 한정 ≤7mm, 못 맞추면 (나). D-003 #62 갱신 |
 | O-120 | review 17회차(cab1073): MDI 비결합 셈법에 따라 판정이 갈림 — ① 독립(간격 ≤0.18만 결합) TX 7.398·RX 7.562 불합격 ② #46 탈출·보정 영역을 결합으로 TX 5.129·RX 5.611 통과 ③ KiCad DRC 통과 ④ R-020 ev_check TX 7.411·RX 7.413 | lead 결정 요청, orch 권고 ②(#46 승인 영역은 규칙상 결합 구간 — 규칙·KiCad DRC와 일관). 정하면 D-003 기록 → review 조건 2·research 조건 4(ev_check #62·+비아 처리 포함) 맞춤 | 같은 보드에 판정 기준이 둘이면 안 됨 | ① 유지 + MDI 탈출 구간 재배선 — lead 결정 ②(D-003 #63): #46 탈출·보정 영역 안 구간은 결합(DP_TWIST 제외 그대로), #62 (다) 한도는 ② 기준, review는 영역별 길이·쌍 간격 최대값 표. pcb: (다) 반영(0cc4fb2 굴곡, TX 한정 DRU 비결합 7), review 조건 2·research ev_check(R-030) 같은 셈법·+비아 처리 합의 |
 | O-121 | 캐리어 GND 섬 U4·U5(SD ESD USON-10 0.5 피치): 북쪽 USB 쌍·J4 B.Cu 금지 띠, 남쪽 0.65 비아 피치 0.81 > 0.5 피치·둘째 줄 R14/R16/R20 차지 — 지금 규칙으로 불가, 처음부터 미연결 | lead 결정 요청(pcb·orch 권고 A): SD_ESC 영역(약 x 96.3~104.0·y 91.5~93.6 F.Cu, enclosedByArea)에만 J1_ESC와 같은 0.50/0.20 비아 / B 부품 남쪽 이동·SD 재배선 / C 6층 | 이미 승인된 제조 수치(#60)를 좁은 영역에 재사용, 작업 최소 | B → C — lead 결정 (A)(D-003 #64): SD_ESC(enclosedByArea F.Cu, 최소 크기)만 0.50/0.20, ESD GND 짧고 굵게(핀당 비아 가능하면 2·패드→비아 ≤1mm·폭 ≥0.25), review가 누출 0·조건 판정. pcb·review 전달 |
+| O-122 | firmware 문법 검사 때 PowerShell 맨 bash가 WSL 기본 배포판(gop-ha-b, 금지 대상)으로 잡혀 bash -n·echo 실행(읽기만) | lead: 조치 없음, 재발 방지 — PowerShell에서 맨 bash 금지, Git Bash는 전체 경로로만(전 칸 전달). 취소 레인 ab73 태그는 로컬에만(harness push는 main만, 원격 태그 0 확인) | 금지 대상 배포판 접근 방지 | — |
 
 ## 발주 패키지 직전 정리 목록
 - [ ] 회로도 표시 겹침: 캐리어 J2 옆 12V_IN_RAW 라벨, D3 PWR_LED 라벨, J1 품번 문자 (O-32)
@@ -311,3 +312,4 @@
 - [x] 병합 main a0b319c (2291 R-026·b46f review 경로 정리), c0f0eb5 (079c f85cb6a). 남은 공개분(r008·r014·r020·r025 문서 경로, pcb-kicad2.mcp.json)은 정리하지 않음 — 비밀 아님, lead O-117
 - [x] 병합 main e1016bc (7022 review 17회차 — 커밋분만, 미커밋 4파일은 review 확인 중)
 - [x] 병합 main be3b206 (b8a4 schematic 경로 정리)
+- [x] 병합 main 4d2d447 (firmware 0114 경로 정리)
