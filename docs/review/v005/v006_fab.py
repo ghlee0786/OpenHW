@@ -183,8 +183,9 @@ if PCB:
 add(3, '드릴 Excellon·mm·decimal·PTH/NPTH 2파일·드릴 맵', not dprob, note3, '문제 0', [rel(x) for x in pth + npth + maps], '; '.join(dprob))
 
 # ---------- 5 좌표 ----------
-top = pick(r'(top|front).*pos.*\.csv$|pos.*(top|front).*\.csv$')
-bot = pick(r'(bottom|back).*pos.*\.csv$|pos.*(bottom|back).*\.csv$')
+# 면 이름은 pos 바로 옆에 붙은 것만 본다 — 보드 이름이 front 면 「front-bottom-pos.csv」가 top 으로도 잡히던 것을 막는다 (V-006f)
+top = pick(r'(top|front)[-_ ]?pos[^/]*\.csv$|pos[-_ ]?(top|front)[^/]*\.csv$')
+bot = pick(r'(bottom|back)[-_ ]?pos[^/]*\.csv$|pos[-_ ]?(bottom|back)[^/]*\.csv$')
 pos_rows, pprob = {}, []
 KH = ['Ref', 'Val', 'Package', 'PosX', 'PosY', 'Rot', 'Side']
 PH = ['Designator', 'Footprint', 'Mid X', 'Mid Y', 'Ref X', 'Ref Y', 'Pad X', 'Pad Y', 'TB', 'Rotation', 'Comment']
@@ -241,6 +242,7 @@ add(4, '원점 = 보드 왼쪽 아래(Gerber·드릴·좌표 같은 원점)', no
 boms = pick(r'pcbway.*\.csv$|bom.*\.csv$', exclude=r'pos')
 BH = ['Item #', '*Designator', '*Qty', 'Manufacturer', '*Mfg Part #', 'Description / Value', '*Package/Footprint ', 'Type', 'Your Instructions / Notes']
 bprob, bom_ref, bom_dns, bom_smd, bom_tht, notes_bad = [], set(), set(), set(), set(), []
+bom_manual = set()   # Type Manual (프로젝트 값) — 보드·좌표 대조에서 뺀다
 if len(boms) != 1:
     bprob.append('BOM 파일 %d개' % len(boms))
 else:
@@ -262,9 +264,14 @@ else:
             bprob.append('참조 중복 %s' % sorted(dup))
         bom_ref.update(refs)
         typ = r[7].strip().upper()
-        {'DNS': bom_dns, 'SMD': bom_smd, 'THT': bom_tht}.get(typ, set()).update(refs)
-        if typ not in ('DNS', 'SMD', 'THT'):
-            bprob.append('Type %s (%s)' % (r[7], r[1][:20]))
+        # Type 값: PCBWay 양식(R-010) 「Surface mount, Thru-hole or Hybrid」+ DNS. Hybrid = SMD 몸체에 THT 다리, 좌표 파일에 들어가는 실장 부품 → SMD 와 같이 센다
+        # Manual = 프로젝트가 더한 값(manufacturing/bom/README.md B5: 납땜하지 않는 기구 부품, PCBWay 가 받는지는 미확인).
+        #   Notes 에 「Not soldered」가 있을 때만 받고, 보드 실장 부품·좌표와의 대조에서 뺀다(좌표에 있으면 불합격)
+        {'DNS': bom_dns, 'SMD': bom_smd, 'HYBRID': bom_smd, 'THT': bom_tht, 'MANUAL': bom_manual}.get(typ, set()).update(refs)
+        if typ == 'MANUAL' and not re.search(r'not soldered', r[8], re.I):
+            bprob.append('Type Manual 인데 Notes 에 「Not soldered」 없음 (%s)' % r[1][:20])
+        if typ not in ('DNS', 'SMD', 'THT', 'HYBRID', 'MANUAL'):
+            bprob.append('Type %s — PCBWay 양식 값(SMD·THT·Hybrid·DNS)도 프로젝트 값(Manual)도 아님 (%s)' % (r[7], r[1][:20]))
         if typ != 'DNS' and not re.search(r'Turnkey|Consigned|Combo', r[8], re.I):
             notes_bad.append(r[1][:20])
 placed = bom_ref - bom_dns
@@ -272,11 +279,14 @@ if PCB:
     # 부품 = BOM 제외가 아니고 종류가 SMD 또는 THT (종류 없음 = 시험점 같은 맨 패드는 부품이 아님)
     pcb_bom = {f['ref'] for f in PCB['fps'] if not f['no_bom'] and (f['smd'] or f['tht'])}
     pcb_dnp = {f['ref'] for f in PCB['fps'] if f['dnp'] and not f['no_bom'] and (f['smd'] or f['tht'])}
-    if bom_ref and bom_ref != pcb_bom:
-        bprob.append('BOM 참조 ≠ 보드(BOM에만 %s, 보드에만 %s)' % (sorted(bom_ref - pcb_bom)[:6], sorted(pcb_bom - bom_ref)[:6]))
+    if bom_ref and (bom_ref - bom_manual) != pcb_bom:
+        bprob.append('BOM 참조 ≠ 보드(BOM에만 %s, 보드에만 %s)' % (sorted((bom_ref - bom_manual) - pcb_bom)[:6], sorted(pcb_bom - bom_ref)[:6]))
+if pos_all & bom_manual:
+    bprob.append('Type Manual 인데 좌표 파일에 있음 %s' % sorted(pos_all & bom_manual))
 add(6, 'BOM PCBWay 9열·수량=참조 수·Type·참조 집합=좌표+THT', not bprob and pos_all == (bom_smd - bom_dns) | (pos_all & bom_tht),
-    '%d행 참조 %d (SMD %d·THT %d·DNS %d), 좌표 %d' % (len(bom_ref), len(bom_ref), len(bom_smd), len(bom_tht), len(bom_dns), len(pos_all)), '문제 0',
-    [rel(b) for b in boms], '; '.join(bprob[:6] + (['좌표에만 %s' % sorted(pos_all - (bom_smd | bom_tht))[:6]] if pos_all - (bom_smd | bom_tht) else [])
+    '%d행 참조 %d (SMD·Hybrid %d·THT %d·DNS %d·Manual %d), 좌표 %d' % (len(bom_ref), len(bom_ref), len(bom_smd), len(bom_tht), len(bom_dns), len(bom_manual), len(pos_all)), '문제 0',
+    [rel(b) for b in boms], '; '.join(bprob[:6] + (['참고: Type Manual %s 은 PCBWay 양식 밖 프로젝트 값(BOM README B5) — 제조사 확인 전' % sorted(bom_manual)] if bom_manual and not bprob else [])
+                                    + (['좌표에만 %s' % sorted(pos_all - (bom_smd | bom_tht))[:6]] if pos_all - (bom_smd | bom_tht) else [])
                                     + (['BOM SMD인데 좌표에 없음 %s' % sorted((bom_smd - bom_dns) - pos_all)[:6]] if (bom_smd - bom_dns) - pos_all else [])))
 dprob7 = []
 if pos_all & bom_dns:
@@ -323,6 +333,11 @@ add(14, '위탁 목록·BOM Notes(Turnkey/Consigned/Combo)', bool(boms) and not 
 add(15, '게이트 G1·G2 기록(발주 금지 조건)', bool(re.search(r'\bG1\b', rt)) and bool(re.search(r'\bG2\b', rt)), '', 'README 에 G1·G2', [rel(r) for r in readmes])
 sums = pick(r'^sha256sums')
 st = rt + '\n'.join(open(s, encoding='utf-8', errors='replace').read() for s in sums)
+if A.src.lower().endswith('.zip'):
+    # zip 은 자기 해시를 담을 수 없다 → 기록은 zip 옆에 있다: 같은 폴더 또는 <보드>/ 의 SHA256SUMS* (V-006f)
+    _zd = os.path.dirname(os.path.abspath(A.src))
+    for _f in glob.glob(os.path.join(_zd, 'SHA256SUMS*')) + glob.glob(os.path.join(_zd, A.board, 'SHA256SUMS*')):
+        st += '\n' + open(_f, encoding='utf-8', errors='replace').read()
 zok, znote = False, '제출 zip 없음'
 if zips:
     zs = {os.path.basename(z): hashlib.sha256(open(z, 'rb').read()).hexdigest() for z in zips}

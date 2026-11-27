@@ -151,6 +151,27 @@ def zip_tamper(d):
     pass
 
 
+def bom_type_one(typ):
+    def f(rows):
+        for r in rows[1:]:
+            if r[7] == 'SMD':
+                r[7] = typ
+                return rows
+    return f
+
+
+def bom_add_manual(note):
+    def f(rows):
+        return rows + [[str(len(rows)), 'MH9', '1', 'Maker', 'HOLDER-1', 'lens holder', 'Holder_20mm', 'Manual', note]]
+    return f
+
+
+def pos_as_front(d):
+    """좌표 파일 이름을 보드 이름이 front 인 것처럼 바꾼다 (front-top-pos.csv · front-bottom-pos.csv)"""
+    for side in ('top', 'bottom'):
+        os.rename(pos(d, side), os.path.join(d, 'front-%s-pos.csv' % side))
+
+
 MUT = [
     ('m01_no_In2', '3.01', lambda d: os.remove(inner2(d))),
     ('m02_fmt35', '3.02', lambda d: edit(gp(d, 'F_Cu.gbr'), lambda s: s.replace('%FSLAX46Y46*%', '%FSLAX35Y35*%'))),
@@ -193,6 +214,36 @@ with zipfile.ZipFile(d + '.zip', 'a') as zf:
     zf.writestr('extra.txt', 'tamper')
 rc, failed, so = check(d)
 CASES.append(('m15_zip_tamper → 3.16 불합격', '3.16' in failed and rc == len(failed), failed, so))
+# V-006f: 통과해야 하는 변형 2건 + 불합격이어야 하는 Type 1건
+rc, failed, so = check(mutate('m16_hybrid', lambda d: csv_edit(bom(d), bom_type_one('Hybrid'))))
+CASES.append(('m16 BOM Type Hybrid(PCBWay 공식 값, 좌표에 있는 실장 부품) → 불합격 0', rc == 0 and not failed, failed, so))
+rc, failed, so = check(mutate('m17_front_names', pos_as_front))
+CASES.append(('m17 좌표 파일 이름 front-top-pos · front-bottom-pos (보드 이름 front) → 불합격 0', rc == 0 and not failed, failed, so))
+rc, failed, so = check(mutate('m18_manual_placed', lambda d: csv_edit(bom(d), bom_type_one('Manual'))))
+CASES.append(('m18 좌표에 있는 실장 부품을 Type Manual 로 → 3.06 불합격', '3.06' in failed, failed, so))
+rc, failed, so = check(mutate('m19_manual_ok', lambda d: csv_edit(bom(d), bom_add_manual('Consigned; Not soldered: mechanical part, customer mounts'))))
+CASES.append(('m19 보드·좌표에 없는 기구 부품 행 Type Manual + Notes 「Not soldered」 → 불합격 0', rc == 0 and not failed, failed, so))
+rc, failed, so = check(mutate('m20_manual_nonote', lambda d: csv_edit(bom(d), bom_add_manual('Consigned'))))
+CASES.append(('m20 Type Manual 인데 Notes 에 「Not soldered」 없음 → 3.06 불합격', '3.06' in failed, failed, so))
+rc, failed, so = check(mutate('m21_badtype', lambda d: csv_edit(bom(d), bom_type_one('Other'))))
+CASES.append(('m21 알 수 없는 Type 값 → 3.06 불합격', '3.06' in failed, failed, so))
+# V-006f: zip 하나만 입력 — 해시 기록은 zip 옆 <보드>/SHA256SUMS 에서 찾는다. 기록이 없으면 불합격
+
+
+def check_zip(z):
+    out = z + '.json'
+    r = subprocess.run([sys.executable, '-I', os.path.join(HERE, 'v006_fab.py'), z, out, '--board', B, '--pcb', pcb], capture_output=True, text=True, encoding='utf-8')
+    R = json.load(open(out, encoding='utf-8'))
+    return r.returncode, [i['id'] for i in R['items'] if i['verifiable'] and not i['pass']], r.stdout
+
+
+d = mutate('m22_zip_input', lambda d: None)
+rc, failed, so = check_zip(d + '.zip')
+CASES.append(('m22 zip 하나만 입력, 옆 폴더에 SHA256SUMS → 불합격 0', rc == 0 and not failed, failed, so))
+d = mutate('m23_zip_norecord', lambda d: None)
+os.remove(os.path.join(d, 'SHA256SUMS'))
+rc, failed, so = check_zip(d + '.zip')
+CASES.append(('m23 zip 하나만 입력, 해시 기록 없음 → 3.16 불합격', '3.16' in failed, failed, so))
 fail = 0
 for n, ok, f, so in CASES:
     print('%s  %s  (불합격 %s)' % ('통과' if ok else '실패', n, f))

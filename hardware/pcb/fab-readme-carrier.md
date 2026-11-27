@@ -20,7 +20,9 @@ L1: F.Cu (top) / L2: In1.Cu (GND) / L3: In2.Cu (GND_PWR) / L4: B.Cu (bottom)
 
 ## Order form options (reference, R-010 #12 / P-001)
 
-4 layers, FR-4 TG150-160, 1.6 mm, min track/space 6/6 mil (0.15/0.16 mm), min hole 0.3 mm, ENIG 1u", outer/inner copper 1 oz, vias tented, impedance control: 100 ohm diff (CSI/MDI) and 90 ohm diff (USB) on L1/L4 over L2/L3 (to be reviewed at quote time).
+4 layers, FR-4 TG150-160, 1.6 mm, min track/space 6/6 mil (0.15/0.16 mm), min hole 0.2 mm, ENIG 1u", outer/inner copper 1oz (1/1oz), via process: Tenting vias, impedance control: 100 ohm diff (CSI/MDI) and 90 ohm diff (USB) on L1/L4 over L2/L3 (stack-up to be confirmed with the manufacturer before fabrication).
+
+Vias: 0.65/0.30 mm standard (plus 0.60/0.30 and 0.80/0.40). 37 escape vias are 0.50/0.20 mm (annular ring 0.15 mm), only inside the 0.5 mm pitch fan-out areas of J1 (board-to-board connector) and U4/U5 (USON-10 ESD arrays); all other holes are 0.30 mm or larger.
 
 ## Panel (R-010 #11, P-002 B6)
 
@@ -33,4 +35,4 @@ Bottom-terminated / exposed-pad parts: U2 (HTSSOP-16 exposed pad), U4/U5 (USON-1
 ## Consigned parts and gates (R-010 #14, #15)
 
 - Consigned parts are the BOM rows with "Consigned" in Notes.
-- Do not order before gates: G1 (BTB mating with the real core module) and G2 (S401 holder fit). Files only; no upload, quote or order was made.
+- Do not order before gates: G1 (BTB mating with the real core module) and G2 (S401 holder fit). Files only; nothing was submitted to any manufacturer.
