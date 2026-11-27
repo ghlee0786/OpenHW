@@ -4,7 +4,8 @@ import json, math, os, sys
 from PIL import Image, ImageDraw, ImageFont
 
 LANE = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', '..'))
-S = os.path.join(LANE, 'validation', 'runtime', 'vd001', 'render', 'stills')
+MAIN = r'C:\workspace_python\OpenHW'   # 산출물 validation/runtime 은 main 체크아웃 (O-100 — 레인 worktree 안은 accept 때 지워짐)
+S = os.path.join(MAIN, 'validation', 'runtime', 'vd001', 'render', 'stills')
 F = ImageFont.truetype(r'C:\Windows\Fonts\malgunbd.ttf', 46)
 FS = ImageFont.truetype(r'C:\Windows\Fonts\malgun.ttf', 34)
 INK, EXT = (20, 120, 230), (20, 120, 230, 150)

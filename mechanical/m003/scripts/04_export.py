@@ -1,7 +1,9 @@
 """M-003 04: 내보내기 — 전체 F3D·STEP, 부품별 STL(출력 부품)·STEP(가공 부품). 출력 폴더 mechanical/m003/out."""
 import adsk.core, adsk.fusion, os
 
-OUT = r"C:\workspace_python\OpenHW\.harness-worktrees\t-20261127-040816-30c6\mechanical\m003\out"
+LANE = r"C:\workspace_python\OpenHW"   # 소스 체크아웃 — mechanical/fusion_run.py 가 실행하는 스크립트의 체크아웃으로 바꿈
+MAIN = r"C:\workspace_python\OpenHW"   # 산출물(validation/runtime) — main 체크아웃 (O-100)
+OUT = LANE + r"\mechanical\m003\out"   # M-010 run_case.py 는 --set OUT=<main>\validation\runtime\vd001\case
 STL = ['HOUSING', 'FRONT_COVER', 'PRINT_COUPON']                                     # FDM 출력
 STEP = ['HOUSING', 'FRONT_COVER', 'HS_EXTRUSION', 'HS_PEDESTAL', 'SPREADER_M003', 'LENS_WIN_PMMA', 'WIN_A_PMMA', 'WIN_B_PMMA',
         'ALS_WIN_PMMA', 'FOAM_LENS_RING', 'FOAM_ALS_GASKET', 'INS_PADS_P340', 'GAP_PAD_PX']

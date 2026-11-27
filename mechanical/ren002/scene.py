@@ -13,7 +13,8 @@ def arg(k, d=None):
     return argv[argv.index(k) + 1] if k in argv else d
 MODE = arg('--mode', 'stills')
 LANE = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
-R = os.path.join(LANE, 'validation', 'runtime', 'vd001', 'render')
+MAIN = r'C:\workspace_python\OpenHW'   # 산출물 validation/runtime 은 main 체크아웃 (O-100 — 레인 worktree 안은 accept 때 지워짐)
+R = os.path.join(MAIN, 'validation', 'runtime', 'vd001', 'render')
 MESH = os.path.join(R, 'mesh')
 RES = [int(v) for v in arg('--res', '2560x1440').split('x')]
 SAMPLES = int(arg('--samples', '256'))

@@ -1,15 +1,18 @@
 """M-007 한 명령: pcb 커밋 → 보드 STEP(kicad-cli) → Fusion 조립(02) → 판정(03) → judge.md. 종료 코드 = 실패 수.
-사용: python -I -B mechanical/m007/run_all.py [--pcb <커밋>] [--skip-build]
-  --pcb: pcb 레인 커밋 (기본 HEAD). 보드 STEP 은 validation/runtime/vd001/boards/ 에 둔다(gitignore)."""
+사용: python -I -B mechanical/m007/run_all.py [--pcb <커밋>] [--pcb-carrier <커밋>] [--pcb-front <커밋>] [--skip-build]
+  --pcb: pcb 레인 커밋 (기본 HEAD), --pcb-carrier/--pcb-front 로 보드마다 따로 (M-010).
+  보드 사본(git archive) 에 REN-002 apply_models 로 3D 모델을 연결한 뒤 kicad-cli STEP (--subst-models, --user-origin 100x100mm = 코어 중심).
+  산출물은 main 체크아웃 validation/runtime/vd001/ (O-100). Fusion 스크립트는 mechanical/fusion_run.py 로 (LANE = 이 체크아웃)."""
 import argparse, hashlib, json, os, subprocess, sys, tarfile, io, shutil
 
 sys.stdout.reconfigure(encoding='utf-8')
 HERE = os.path.dirname(os.path.abspath(__file__))
 LANE = os.path.abspath(os.path.join(HERE, '..', '..'))
-OUT = os.path.join(LANE, 'validation', 'runtime', 'vd001')
-PCB_LANE = os.path.abspath(os.path.join(LANE, '..', 't-20261126-171922-251f'))
+MAIN = r'C:\workspace_python\OpenHW'   # 산출물 validation/runtime 은 main 체크아웃 (O-100 — 레인 worktree 안은 accept 때 지워짐)
+OUT = os.path.join(MAIN, 'validation', 'runtime', 'vd001')
+PCB_LANE = MAIN   # pcb 커밋은 같은 저장소(pcb 레인 브랜치) — 레인 worktree 가 없어져도 커밋으로 읽힘
 KICAD = os.path.join(os.environ['LOCALAPPDATA'], 'Programs', 'KiCad', '10.0', 'bin', 'kicad-cli.exe')
-FCLI = os.path.join(os.path.expanduser('~'), '.claude', 'skills', 'fusion360', 'scripts', 'fusion_cli.py')
+FRUN = os.path.join(HERE, '..', 'fusion_run.py')
 
 
 def sh(cmd, **kw):
@@ -50,7 +53,7 @@ def write_cond5(res, mm, hs):
     n = sum(1 for x in it if x['pass'] is False)   # VD-001 생성기와 같은 셈 (pass false 항목 수, 5.J3 은 5.J1 플러그 간섭을 다시 셈)
     out = {'cond': '5', 'owner': 'mechanical', 'title': '3D 모델 빠짐 0 · 조립 간섭 0 · 최소 틈 · 플러그 삽입 · 광축 · LED 가림 · BTB 높이',
            'commit': mm['pcb'], 'generated': datetime.datetime.now().isoformat(timespec='seconds'),
-           'command': 'python -I -B mechanical/m007/run_all.py --pcb %s' % mm['pcb'], 'exit_code': n, 'items': it, 'inputs_sha256': hs}
+           'command': mm.get('command', 'python -I -B mechanical/m007/run_all.py --pcb %s' % mm['pcb']), 'exit_code': n, 'items': it, 'inputs_sha256': hs}
     os.makedirs(os.path.join(OUT, 'results'), exist_ok=True)
     json.dump(out, open(os.path.join(OUT, 'results', 'cond5-mechanical.json'), 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
     return n
@@ -59,6 +62,8 @@ def write_cond5(res, mm, hs):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--pcb', default='HEAD')   # 결과 파일·judge.md 에 실제 커밋 해시를 적는다
+    ap.add_argument('--pcb-carrier'); ap.add_argument('--pcb-front')
+    ap.add_argument('--pcb-lane', default=PCB_LANE)
     ap.add_argument('--skip-build', action='store_true')
     a = ap.parse_args()
     os.makedirs(os.path.join(OUT, 'boards'), exist_ok=True)
@@ -66,28 +71,43 @@ def main():
     missing = {}
     import re
     if not a.skip_build:
-        rc, commit = sh(['git', '-C', PCB_LANE, 'rev-parse', '--short', a.pcb])
-        commit = commit.strip()
-        src = os.path.join(OUT, 'pcbsrc')
-        shutil.rmtree(src, ignore_errors=True)
-        data = subprocess.run(['git', '-C', PCB_LANE, 'archive', a.pcb, 'hardware'], capture_output=True).stdout
-        tarfile.open(fileobj=io.BytesIO(data)).extractall(src)
+        commits = {}
+        aud = {}
         for b in ('carrier', 'front'):
-            rc, o = sh([KICAD, 'pcb', 'export', 'step', '--subst-models', '--drill-origin', '-f', '-o',
-                        os.path.join(OUT, 'boards', b + '.step'), os.path.join(src, 'hardware', 'schematic', b, b + '.kicad_pcb')])
+            want = getattr(a, 'pcb_' + b) or a.pcb
+            rc, c = sh(['git', '-C', a.pcb_lane, 'rev-parse', '--short', want])
+            commits[b] = c.strip()
+            if rc:
+                print(c); return 99
+            # 보드마다 그 커밋의 hardware/ 사본 + 모델 폴더 (${KIPRJMOD}/../../../mechanical/models 가 사본 안에서 풀리게)
+            bs = os.path.join(OUT, 'pcbsrc', b)
+            shutil.rmtree(bs, ignore_errors=True)
+            data = subprocess.run(['git', '-C', a.pcb_lane, 'archive', want, 'hardware'], capture_output=True).stdout
+            tarfile.open(fileobj=io.BytesIO(data)).extractall(bs)
+            shutil.copytree(os.path.join(LANE, 'mechanical', 'models'), os.path.join(bs, 'mechanical', 'models'))
+            # 3D 모델 빠짐(조건 5)은 pcb 원본으로 센다 — kicad-cli 는 모델 속성이 아예 없는 풋프린트를 경고하지 않으므로 REN-002 전수 감사
+            aj = os.path.join(OUT, 'boards', 'model_audit_%s.json' % b)
+            sh([sys.executable, '-I', '-B', os.path.join(HERE, '..', 'ren002', 'audit_models.py'), '--src', bs, '--out-json', aj, '--no-md'])
+            missing[b] = sorted(r['ref'] for r in json.load(open(aj, encoding='utf-8'))['rows'] if r['board'] == b and r['missing'])
+            pcbf = os.path.join(bs, 'hardware', 'schematic', b, b + '.kicad_pcb')
+            rc, o = sh([sys.executable, '-I', '-B', os.path.join(HERE, '..', 'ren002', 'apply_models.py'), pcbf])
+            log.append('%s pcb %s: 원본 3D 모델 빠짐 %d · apply_models 사본 %s' % (b, commits[b], len(missing[b]), ' '.join(o.split())))
+            aj2 = os.path.join(OUT, 'boards', 'model_audit_%s_applied.json' % b)
+            sh([sys.executable, '-I', '-B', os.path.join(HERE, '..', 'ren002', 'audit_models.py'), '--src', bs, '--out-json', aj2, '--no-md'])
+            aud[b] = sorted(r['ref'] for r in json.load(open(aj2, encoding='utf-8'))['rows'] if r['board'] == b and r['missing'])
+            rc, o = sh([KICAD, 'pcb', 'export', 'step', '--subst-models', '--user-origin', '100x100mm', '-f', '-o',
+                        os.path.join(OUT, 'boards', b + '.step'), pcbf])
             miss = sorted(set(re.findall(r'Could not add 3D model for (\S+?)\.', o)))
-            log.append('kicad-cli %s rc %d, 3D 모델 빠짐 %d %s' % (b, rc, len(miss), ' '.join(miss)))
+            log.append('kicad-cli %s rc %d (사본 감사 빠짐 %d %s, kicad-cli 경고 %d %s)' % (b, rc, len(aud[b]), ' '.join(aud[b]), len(miss), ' '.join(miss)))
             if rc:
                 print(o); return 99
+        commit = commits['carrier'] if commits['carrier'] == commits['front'] else 'carrier %s · front %s' % (commits['carrier'], commits['front'])
+        cmd = 'python -I -B mechanical/m007/run_all.py ' + ('--pcb %s' % commits['carrier'] if commits['carrier'] == commits['front']
+                                                            else '--pcb-carrier %s --pcb-front %s' % (commits['carrier'], commits['front']))
         log.append('pcb commit ' + commit)
-        # 3D 모델 빠짐은 REN-002 전수 감사로 센다 — kicad-cli 는 모델 속성이 아예 없는 풋프린트(openhw)를 경고하지 않음
-        aj = os.path.join(OUT, 'boards', 'model_audit.json')
-        rc, o = sh([sys.executable, '-I', '-B', os.path.join(HERE, '..', 'ren002', 'audit_models.py'), '--src', src, '--out-json', aj, '--no-md'])
-        aud = json.load(open(aj, encoding='utf-8'))
-        for b in ('carrier', 'front'):
-            missing[b] = sorted(r['ref'] for r in aud['rows'] if r['board'] == b and r['missing'])
-        log.append('3D 모델 전수 감사 (mechanical/ren002/audit_models.py) 빠짐 캐리어 %d · 전면 %d' % (len(missing['carrier']), len(missing['front'])))
-        json.dump({'pcb': commit, 'missing': missing}, open(os.path.join(OUT, 'boards', 'models_missing.json'), 'w', encoding='utf-8'), indent=1)
+        json.dump({'pcb': commit, 'command': cmd, 'missing': missing, 'missing_after_apply': aud},
+                  open(os.path.join(OUT, 'boards', 'models_missing.json'), 'w', encoding='utf-8'), indent=1)
+        src = os.path.join(OUT, 'pcbsrc', 'carrier')
         # 캐리어 커넥터 fab 외곽 → 외함 개구·대체 블록 위치 (M-003 params 값을 덮어씀)
         import math, re
         t = open(os.path.join(src, 'hardware', 'schematic', 'carrier', 'carrier.kicad_pcb'), encoding='utf-8').read()
@@ -108,15 +128,16 @@ def main():
         conn['sd_front'] = [19.6]
         json.dump(conn, open(os.path.join(OUT, 'boards', 'connectors.json'), 'w', encoding='utf-8'), indent=1)
         log.append('커넥터 (pcb fab): ' + json.dumps(conn))
-        rc, o = sh([sys.executable, FCLI, 'run', os.path.join(HERE, 'scripts', '02_assembly.py')]); log.append('02_assembly rc %d %s' % (rc, o.strip()[-300:]))
+        rc, o = sh([sys.executable, '-I', '-B', FRUN, os.path.join(HERE, 'scripts', '02_assembly.py')]); log.append('02_assembly rc %d %s' % (rc, o.strip()[-300:]))
         if rc:
             print('\n'.join(log)); return 98
-    rc, o = sh([sys.executable, FCLI, 'run', os.path.join(HERE, 'scripts', '03_judge.py')]); log.append('03_judge rc %d %s' % (rc, o.strip()[-200:]))
+    rc, o = sh([sys.executable, '-I', '-B', FRUN, os.path.join(HERE, 'scripts', '03_judge.py')]); log.append('03_judge rc %d %s' % (rc, o.strip()[-200:]))
     if rc:
         print('\n'.join(log)); return 97
     res = json.load(open(os.path.join(OUT, 'm007_judge.json'), encoding='utf-8'))
     L = ['# M-007 기계 판정 (run_all.py 출력 — 종료 코드 = 실패 수 %d)' % res['fail'], '']
     L += ['- ' + x for x in log] + ['']
+    L += ['- 판정에서 뺀 대체 블록 (그 보드 3D 모델 연결 사본 감사 빠짐 0 — asm_spec.SUBST_BLOCKS): %s' % (' '.join(res.get('dropped_blocks', [])) or '없음'), '']
     L += ['## J1 바디 쌍 간섭 (바디 %d개)' % res['J1']['bodies'], '', '| 쌍 | 부피 mm³ | 위치 x/y/z | 판정 |', '|---|---|---|---|']
     for x in res['J1']['fail']:
         L.append('| %s ↔ %s | %.3f | %s | **실패** |' % (x['a'], x['b'], x['mm3'], x['at']))

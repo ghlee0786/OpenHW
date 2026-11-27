@@ -5,12 +5,13 @@
                                   부품 번호는 pcb 23fd8da 에서 실크에 없고 F/B.Fab 에만 있어, Fab 위치를 노란 글자로 겹쳐 적는다(주석 — 실크 아님).
 보드 외곽 → 화면 좌표: 모델을 뺀 사본(<보드>_bare.kicad_pcb)을 같은 카메라·투명 배경으로 그려 알파로 외곽을 잡는다.
 kicad-cli 10.0.8 은 요청보다 8~32 px 작게 저장한다 → 크게 요청한 뒤 가운데를 잘라 맞춘다.
-사용: python -B mechanical/ren002/scripts/02_pcb_render.py [--src validation/runtime/vd001/ren002/rendersrc]"""
+사용: python -B mechanical/ren002/scripts/02_pcb_render.py [--src validation/runtime/vd001/pcbsrc]  (보드마다 <src>/<보드>/hardware — mechanical/m007/run_all.py 가 만든 3D 모델 연결 사본)"""
 import argparse, math, os, re, subprocess, sys
 from PIL import Image, ImageDraw, ImageFont
 
 LANE = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', '..'))
-V = os.path.join(LANE, 'validation', 'runtime', 'vd001')
+MAIN = r'C:\workspace_python\OpenHW'   # 산출물 validation/runtime 은 main 체크아웃 (O-100 — 레인 worktree 안은 accept 때 지워짐)
+V = os.path.join(MAIN, 'validation', 'runtime', 'vd001')
 OUT = os.path.join(V, 'render', 'pcb')
 KICAD = os.path.expandvars(r'%LOCALAPPDATA%\Programs\KiCad\10.0\bin\kicad-cli.exe')
 W, H, PAD = 2560, 1440, 40
@@ -58,7 +59,7 @@ def refs(t, side):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument('--src', default=os.path.join(V, 'ren002', 'rendersrc'))
+    ap.add_argument('--src', default=os.path.join(V, 'pcbsrc'))
     a = ap.parse_args()
     os.makedirs(OUT, exist_ok=True)
     for f in os.listdir(OUT):
@@ -67,7 +68,7 @@ def main():
     tmp = os.path.join(OUT, '_t.png')
     n = 0
     for b in ('carrier', 'front'):
-        bd = os.path.join(a.src, 'hardware', 'schematic', b)
+        bd = os.path.join(a.src, b, 'hardware', 'schematic', b)
         src = os.path.join(bd, b + '.kicad_pcb')
         t = open(src, encoding='utf-8').read()
         bare = os.path.join(bd, b + '_bare.kicad_pcb')

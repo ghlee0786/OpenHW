@@ -6,7 +6,8 @@ import glob, hashlib, json, os, struct, subprocess, sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 LANE = os.path.abspath(os.path.join(HERE, '..', '..'))
-V = os.path.join(LANE, 'validation', 'runtime', 'vd001')
+MAIN = r'C:\workspace_python\OpenHW'   # 산출물 validation/runtime 은 main 체크아웃 (O-100 — 레인 worktree 안은 accept 때 지워짐)
+V = os.path.join(MAIN, 'validation', 'runtime', 'vd001')
 R = os.path.join(V, 'render')
 FFPROBE = glob.glob(os.path.expandvars(r'%LOCALAPPDATA%\Microsoft\WinGet\Packages\Gyan.FFmpeg*\ffmpeg-*\bin\ffprobe.exe'))
 W, H = 2560, 1440
@@ -38,21 +39,23 @@ def png_size(p):
 
 
 def rel(p):
-    return os.path.relpath(p, LANE).replace('\\', '/')
+    return os.path.relpath(p, MAIN).replace('\\', '/')
 
 
 def main():
     fails, man, rows = [], [], []
     # 1) 3D 모델 빠짐 0 (렌더용 사본)
-    aj = os.path.join(V, 'ren002', 'model_audit_render.json')
-    au = subprocess.run([sys.executable, '-I', '-B', os.path.join(HERE, 'audit_models.py'), '--src', os.path.join(V, 'ren002', 'rendersrc'), '--out-json', aj, '--no-md'],
-                        capture_output=True, encoding='utf-8', errors='replace')
-    if au.returncode:
-        fails.append('렌더용 사본 3D 모델 빠짐 %d' % au.returncode)
-    aud = json.load(open(aj, encoding='utf-8'))
-    pcb = json.load(open(os.path.join(V, 'ren002', 'model_audit.json'), encoding='utf-8'))['pcb']   # 렌더용 사본을 만든 pcb 커밋
+    # M-010: 렌더용 사본 = mechanical/m007/run_all.py 가 보드마다 만든 pcbsrc/<보드> (그 커밋 + apply_models)
+    for b in ('carrier', 'front'):
+        aj = os.path.join(V, 'ren002', 'model_audit_render_%s.json' % b)
+        subprocess.run([sys.executable, '-I', '-B', os.path.join(HERE, 'audit_models.py'), '--src', os.path.join(V, 'pcbsrc', b), '--out-json', aj, '--no-md'],
+                       capture_output=True, encoding='utf-8', errors='replace')
+        n = sum(1 for r in json.load(open(aj, encoding='utf-8'))['rows'] if r['board'] == b and r['missing'])
+        if n:
+            fails.append('렌더용 사본 %s 3D 모델 빠짐 %d' % (b, n))
+    pcb = json.load(open(os.path.join(V, 'boards', 'models_missing.json'), encoding='utf-8'))['pcb']   # 렌더용 사본을 만든 pcb 커밋
     inp = {'pcb': pcb}
-    for f in ('m007_assembly.step', 'ren002/rendersrc/hardware/schematic/carrier/carrier.kicad_pcb', 'ren002/rendersrc/hardware/schematic/front/front.kicad_pcb',
+    for f in ('m007_assembly.step', 'pcbsrc/carrier/hardware/schematic/carrier/carrier.kicad_pcb', 'pcbsrc/front/hardware/schematic/front/front.kicad_pcb',
               'render/mesh/index.json', 'render/mesh/board_carrier.glb', 'render/mesh/board_front.glb'):
         p = os.path.join(V, f)
         inp[f] = sha(p) if os.path.exists(p) else None
@@ -70,7 +73,7 @@ def main():
         rows.append((rel(p), '%dx%d' % tuple(wh), sha(p) if ok else '-', '통과' if good else '**불합격**'))
 
     for b in ('carrier', 'front'):
-        ik = 'ren002/rendersrc/hardware/schematic/%s/%s.kicad_pcb' % (b, b)
+        ik = 'pcbsrc/%s/hardware/schematic/%s/%s.kicad_pcb' % (b, b, b)
         png(os.path.join(R, 'pcb', '%s_top.png' % b), 'pcb-front', b, '%s 윗면 (정사영)' % BKO[b], PCB_SRC, ik, '부품 3D 모델 빠짐 없음 · 실크')
         png(os.path.join(R, 'pcb', '%s_bottom.png' % b), 'pcb-back', b, '%s 아랫면 (정사영)' % BKO[b], PCB_SRC, ik, '부품 3D 모델 빠짐 없음 · 실크')
         png(os.path.join(R, 'pcb', '%s_tilt.png' % b), 'pcb-front', b, '%s 기울임' % BKO[b], PCB_SRC, ik, '입체감 · 높은 부품')
@@ -99,7 +102,7 @@ def main():
         fails.append('MP4 없음 또는 ffprobe 없음')
     json.dump(man, open(os.path.join(R, 'manifest.json'), 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
     L = ['# REN-002 렌더 판정·해시 (judge.py 출력 — 불합격 %d, 산출 %d)' % (len(fails), len(rows)), '',
-         '- 3D 모델 감사 (렌더용 사본, pcb %s + mechanical/models 연결): 빠짐 %d' % (pcb, au.returncode),
+         '- 3D 모델 감사 (렌더용 사본 pcbsrc/<보드>, pcb %s + mechanical/models 연결): 빠짐 %d' % (pcb, sum(1 for f in fails if f.startswith('렌더용 사본'))),
          '- 산출물: validation/runtime/vd001/render/ (gitignore) · manifest.json (vd001-format §4, 모두 사람 확인 verifiable 아니오 + check 열)', '',
          '## 입력', '', '| 파일 (validation/runtime/vd001/) | sha256 |', '|---|---|'] + ['| %s | %s |' % (k, v) for k, v in inp.items()]
     L += ['', '## 산출', '', '| 파일 | 크기 | sha256 | 판정 |', '|---|---|---|---|'] + ['| %s | %s | %s | %s |' % r for r in rows]
