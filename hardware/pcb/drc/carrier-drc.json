@@ -1,7 +1,7 @@
 {
     "$schema": "https://schemas.kicad.org/drc.v1.json",
     "coordinate_units": "mm",
-    "date": "2026-11-27T13:02:16",
+    "date": "2026-11-27T13:15:16",
     "ignored_checks": [
         {
             "description": "Footprint doesn't match symbol's footprint filters",
@@ -52,12 +52,12 @@
                     "uuid": "be9ff6d3-4934-4ace-920d-16c83cdb68c8"
                 },
                 {
-                    "description": "구역 'AUTO_GND_In2.Cu' [/GND] on GND_PWR, 우선순위 0",
+                    "description": "구역 'AUTO_GND_F.Cu' [/GND] on F.Cu, 우선순위 0",
                     "pos": {
                         "x": 79.95,
                         "y": 79.95
                     },
-                    "uuid": "b2251e87-1302-4a67-aa25-a2325b20e4b4"
+                    "uuid": "be9ff6d3-4934-4ace-920d-16c83cdb68c8"
                 }
             ],
             "severity": "error",
@@ -75,12 +75,12 @@
                     "uuid": "be9ff6d3-4934-4ace-920d-16c83cdb68c8"
                 },
                 {
-                    "description": "구역 'AUTO_GND_In2.Cu' [/GND] on GND_PWR, 우선순위 0",
+                    "description": "구역 'AUTO_GND_B.Cu' [/GND] on B.Cu, 우선순위 0",
                     "pos": {
                         "x": 79.95,
                         "y": 79.95
                     },
-                    "uuid": "b2251e87-1302-4a67-aa25-a2325b20e4b4"
+                    "uuid": "6f79b13d-fcae-4c8f-84e5-3e083b49d59b"
                 }
             ],
             "severity": "error",
@@ -228,29 +228,6 @@
             "description": "Missing connection between items",
             "items": [
                 {
-                    "description": "패드 1 [/SD0_PWR_EN]의 R12 위F.Cu",
-                    "pos": {
-                        "x": 95.985034,
-                        "y": 103.640751
-                    },
-                    "uuid": "d57676f8-8f44-4e03-b9de-04ba25468d66"
-                },
-                {
-                    "description": "패드 38 [/SD0_PWR_EN]의 J1 위F.Cu",
-                    "pos": {
-                        "x": 109.8,
-                        "y": 101.75
-                    },
-                    "uuid": "b054a17c-6d88-4817-ab84-056c71802d23"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
                     "description": "패드 1 [/STATUS_LED]의 TP13 위B.Cu",
                     "pos": {
                         "x": 101.95,
@@ -282,12 +259,12 @@
                     "uuid": "87933749-7fda-4da8-9776-ed1ea939706a"
                 },
                 {
-                    "description": "배선 [/12V_IN] on GND_PWR, 길이 5.4447 mm",
+                    "description": "배선 [/12V_IN] on GND_PWR, 길이 3.2500 mm",
                     "pos": {
                         "x": 94.8,
-                        "y": 120.1
+                        "y": 123.35
                     },
-                    "uuid": "8c95e72f-045a-4b09-870f-afbf19c73da2"
+                    "uuid": "36854769-6037-475c-bbea-708b54187fef"
                 }
             ],
             "severity": "error",
@@ -328,12 +305,12 @@
                     "uuid": "0f121b45-0717-417e-bfb0-6083c24a118f"
                 },
                 {
-                    "description": "배선 [/SDIO_D2] on GND_PWR, 길이 1.9000 mm",
+                    "description": "배선 [/SDIO_D2] on GND_PWR, 길이 1.9092 mm",
                     "pos": {
-                        "x": 98.8,
+                        "x": 100.7,
                         "y": 91.3
                     },
-                    "uuid": "22bac55c-7d51-4318-a8c8-370cd9eeab06"
+                    "uuid": "4d457693-f0e0-4d71-88f1-61ff2ddce106"
                 }
             ],
             "severity": "error",
@@ -399,12 +376,12 @@
                     "uuid": "f6d8a99f-f470-4397-8fe6-395d108deae6"
                 },
                 {
-                    "description": "배선 [/USB_DN] on F.Cu, 길이 0.1616 mm",
+                    "description": "배선 [/USB_DN] on F.Cu, 길이 0.8125 mm",
                     "pos": {
-                        "x": 94.5993,
-                        "y": 94.0713
+                        "x": 92.75,
+                        "y": 98.95
                     },
-                    "uuid": "15bbfb9c-3126-4507-a56b-456a8879ae46"
+                    "uuid": "00e518c3-c9c1-4917-bb43-f3158bd17558"
                 }
             ],
             "severity": "error",
@@ -414,20 +391,20 @@
             "description": "차동 비결합 길이 너무 긺 (mdi_100_pair 최대 비결합 길이 6.0000 mm, 실제 6.8798 mm)",
             "items": [
                 {
-                    "description": "배선 [/EPHY_TXP] on F.Cu, 길이 0.2828 mm",
+                    "description": "배선 [/EPHY_TXP] on F.Cu, 길이 0.3999 mm",
                     "pos": {
-                        "x": 107.2337,
-                        "y": 108.64
+                        "x": 105.1179,
+                        "y": 109.1229
                     },
-                    "uuid": "84b85da2-95a3-469f-b9bc-035b7fe7f3b2"
+                    "uuid": "04649902-cb82-4248-9bcb-7dd6142a1c54"
                 },
                 {
-                    "description": "배선 [/EPHY_TXN] on F.Cu, 길이 17.3163 mm",
+                    "description": "배선 [/EPHY_TXN] on F.Cu, 길이 0.0163 mm",
                     "pos": {
                         "x": 111.51,
-                        "y": 91.35
+                        "y": 91.3337
                     },
-                    "uuid": "11bfc6a5-2027-44b9-9049-93e56a541b9d"
+                    "uuid": "31a7e8e0-75a2-40bc-b6d9-4e93dd9e0246"
                 }
             ],
             "severity": "error",

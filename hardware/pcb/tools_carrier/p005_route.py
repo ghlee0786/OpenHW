@@ -185,6 +185,12 @@ def route_net(B, net, margin, cap, layers, log):
             win = B.window([(sr0, sc0), (sr1, sc1), (int(tr[k]), int(tc[k]))], margin)
             r0, r1, c0, c1 = win
             passable, viaok = B.free_maps(win, own, w / 2, vtype["dia"] / 2, layers)
+            if 1 in layers:
+                # O-105 C (D-003 #54): In1(GND 기준면) 짧은 저속 점프 — 윗면 고속 쌍(MDI · USB) 트랙 투영 0.6mm 안은 금지(기준면 갈라짐 0 유지)
+                sl_ = (slice(r0, r1 + 1), slice(c0, c1 + 1))
+                hs0 = B.trk[0][sl_] & np.isin(B.occ[0][sl_], list(B.hs_ids))
+                if hs0.any():
+                    passable[1] &= ndimage.distance_transform_edt(~hs0) * G >= 0.6 + w / 2
             if ESC and vtype is route.VIA:
                 _, vsmall = B.free_maps(win, own, w / 2, VIA_ESC["dia"] / 2, layers)
                 ys = B.y0 + np.arange(r0, r1 + 1) * G
