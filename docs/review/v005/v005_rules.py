@@ -597,18 +597,28 @@ for m in bmask:
 R['bmask_openings'] = [m['bbox'] for m in bmask]
 R['bmask_other_net_exposed'] = expo
 
-# ---------- 7. 작은 비아 (D-003 #21 0.65/0.30, #60 J1 탈출 비아 0.50/0.20 영역 한정 — O-114) ----------
-# 영역 = 이름이 ESC_PREFIX 로 시작하는 규칙 영역. 「영역 안」 = 비아 구리 원 둘레 16점과 중심이 모두 영역 안(KiCad enclosedByArea 와 같은 뜻).
-ESC_PREFIX = 'J1_'
+# ---------- 7. 작은 비아 (D-003 #21 0.65/0.30, 0.50/0.20 은 규칙 영역 안에서만 — #60 J1 탈출 O-114, #64 SD ESD 어레이 O-121) ----------
+# 영역 = 이름이 아래 접두로 시작하는 규칙 영역, 접두마다 그 영역의 부품(영역 안 작은 비아는 그 부품 핀 넷이어야 한다).
+# 「영역 안」 = 비아 구리 원 둘레 16점과 중심이 모두 영역 안(KiCad enclosedByArea 와 같은 뜻).
+ESC_GROUPS = (('J1_', ('J1',)), ('SD_', ('U4', 'U5')))
 VIA_STD, ESC_MIN = (0.65, 0.30), (0.50, 0.20)   # 지름/드릴
 VIA_PWR = (0.60, 0.30)   # D-003 #21(2026-11-27): 열 비아·GND 이음 비아는 0.60/0.30 허용 (신호 비아는 0.65/0.30)
 GND_NETS = ('/GND', 'GND')
 th_z = [z for z in b.Zones() if not z.GetIsRuleArea() and z.GetZoneName().startswith('THERMAL')]
 ESC_RING, ESC_HOLE_GAP, ESC_REACH = 0.15, 0.28, 3.0   # 링, 구멍 가장자리 사이, 영역이 J1 외곽 상자 밖으로 나가도 되는 거리 [가정]
-esc_z = [z for z in b.Zones() if z.GetIsRuleArea() and z.GetZoneName().startswith(ESC_PREFIX)]
-j1 = next((fp for fp in b.Footprints() if fp.GetReference() == 'J1'), None)
-j1_nets = set(p.GetNetname() for p in j1.Pads()) if j1 else set()
-j1_bb = j1.GetBoundingBox(False) if j1 else None
+esc_z = [z for z in b.Zones() if z.GetIsRuleArea() and any(z.GetZoneName().startswith(pf) for pf, _ in ESC_GROUPS)]
+grp = {}   # 접두 → 부품 넷 · 외곽 상자(부품들을 합친 것)
+for pf, refs in ESC_GROUPS:
+    fps_ = [fp for fp in b.Footprints() if fp.GetReference() in refs]
+    bbs_ = [fp.GetBoundingBox(False) for fp in fps_]
+    grp[pf] = dict(refs=refs, nets=set(p.GetNetname() for fp in fps_ for p in fp.Pads()),
+                   box=(min(bb.GetX() for bb in bbs_), min(bb.GetY() for bb in bbs_), max(bb.GetRight() for bb in bbs_), max(bb.GetBottom() for bb in bbs_)) if bbs_ else None)
+
+
+def grp_of(zname):
+    return next(pf for pf, _ in ESC_GROUPS if zname.startswith(pf))
+
+
 holes_all = [(mm(v.GetPosition().x), mm(v.GetPosition().y), mm(v.GetDrill()) / 2, 'via') for v in vias]
 for fp in b.Footprints():
     for p in fp.Pads():
@@ -631,14 +641,16 @@ def via_area_state(v):
     return best
 
 
-esc = dict(prefix=ESC_PREFIX, std=VIA_STD, pwr=VIA_PWR, esc_min=ESC_MIN, ring_min=ESC_RING, hole_gap_min=ESC_HOLE_GAP, areas=[], small_total=0, allowed_060=[],
+esc = dict(prefixes=[pf for pf, _ in ESC_GROUPS], std=VIA_STD, pwr=VIA_PWR, esc_min=ESC_MIN, ring_min=ESC_RING, hole_gap_min=ESC_HOLE_GAP, areas=[], small_total=0, allowed_060=[],
            inside=[], inside_fail=[], outside_small=[], straddle_small=[], non_j1_net=[])
 for z in esc_z:
     bb = z.GetBoundingBox()
     beyond = None
-    if j1_bb is not None:
-        beyond = round(max(mm(j1_bb.GetX() - bb.GetX()), mm(bb.GetRight() - j1_bb.GetRight()), mm(j1_bb.GetY() - bb.GetY()), mm(bb.GetBottom() - j1_bb.GetBottom()), 0.0), 3)
-    esc['areas'].append(dict(name=z.GetZoneName(), layers=[b.GetLayerName(l) for l in z.GetLayerSet().Seq()],
+    g_ = grp[grp_of(z.GetZoneName())]
+    if g_['box'] is not None:
+        beyond = round(max(mm(g_['box'][0] - bb.GetX()), mm(bb.GetRight() - g_['box'][2]), mm(g_['box'][1] - bb.GetY()), mm(bb.GetBottom() - g_['box'][3]), 0.0), 3)
+    esc['areas'].append(dict(name=z.GetZoneName(), group=grp_of(z.GetZoneName()), refs=list(g_['refs']), area_mm2=round(z.Outline().Area() / 1e12, 3),
+                             w=round(mm(bb.GetWidth()), 3), h=round(mm(bb.GetHeight()), 3), layers=[b.GetLayerName(l) for l in z.GetLayerSet().Seq()],
                              bbox=[round(mm(bb.GetX()), 3), round(mm(bb.GetY()), 3), round(mm(bb.GetRight()), 3), round(mm(bb.GetBottom()), 3)],
                              beyond_j1=beyond, beyond_ok=(beyond is not None and beyond <= ESC_REACH + 1e-6)))
 for v in vias:
@@ -673,9 +685,56 @@ for v in vias:
     esc['inside'].append(rec)
     if why:
         esc['inside_fail'].append(dict(rec, why=why))
-    if v.GetNetname() not in j1_nets:
+    if v.GetNetname() not in grp[grp_of(zname)]['nets']:   # 그 영역 부품(J1 / U4·U5)의 핀 넷이 아님
         esc['non_j1_net'].append(rec)
 R['esc_vias'] = esc
+
+# ---------- 8. ESD 어레이 GND (D-003 #64, O-121) — SD_ 영역이 있는 보드만 ----------
+# U4·U5 의 GND 패드마다: 그 패드에 닿은 GND 비아(패드 안 비아, 또는 같은 층 GND 트랙으로 이어진 비아)와 패드→비아 트랙 길이·가장 좁은 폭.
+# 조건 맞는 비아 = 길이 ≤ ESD_LEN, 폭 ≥ ESD_W. 핀마다 1개 이상이어야 하고, 2개 미만인 핀은 따로 적는다(「가능하면 2개」).
+ESD_LEN, ESD_W = 1.0, 0.25
+esd = []
+if any(a['group'] == 'SD_' for a in esc['areas']):
+    for fp in b.Footprints():
+        if fp.GetReference() not in grp['SD_']['refs']:
+            continue
+        for p in fp.Pads():
+            if p.GetNetname() not in GND_NETS:
+                continue
+            lay = pcbnew.F_Cu if p.IsOnLayer(pcbnew.F_Cu) else pcbnew.B_Cu
+            # 다익스트라: 노드 = 트랙 끝점(0.01 격자), 패드 안 끝점에서 시작, 3 mm 까지
+            adj = collections.defaultdict(list)
+            for t in tracks:
+                if t.GetClass() != 'PCB_TRACK' or t.GetNetname() != p.GetNetname() or t.GetLayer() != lay:
+                    continue
+                a_ = (round(mm(t.GetStart().x), 2), round(mm(t.GetStart().y), 2)); c_ = (round(mm(t.GetEnd().x), 2), round(mm(t.GetEnd().y), 2))
+                L_ = mm(t.GetLength()); w_ = mm(t.GetWidth())
+                adj[a_].append((c_, L_, w_)); adj[c_].append((a_, L_, w_))
+            best = {n_: (0.0, 9.9) for n_ in adj if p.HitTest(V(*n_), FM(0.02))}
+            todo = sorted(best)
+            while todo:
+                n_ = min(todo, key=lambda q: best[q][0]); todo.remove(n_)
+                for m_, L_, w_ in adj[n_]:
+                    cand = (best[n_][0] + L_, min(best[n_][1], w_))
+                    if cand[0] <= 3.0 and (m_ not in best or cand[0] < best[m_][0] - 1e-9):
+                        best[m_] = cand; todo.append(m_)
+            vl = []
+            for v in vias:
+                if v.GetNetname() != p.GetNetname():
+                    continue
+                vx, vy, vr = mm(v.GetPosition().x), mm(v.GetPosition().y), mm(v.GetWidth(pcbnew.F_Cu)) / 2
+                if p.HitTest(v.GetPosition(), FM(0.02)):
+                    ln_, mw_ = 0.0, None
+                else:
+                    near_ = [best[n_] for n_ in best if math.hypot(n_[0] - vx, n_[1] - vy) <= vr + 1e-6]
+                    if not near_:
+                        continue
+                    ln_, mw_ = min(near_)
+                ok_ = ln_ <= ESD_LEN + 1e-6 and (mw_ is None or mw_ >= ESD_W - 1e-6)
+                vl.append(dict(at=[round(vx, 3), round(vy, 3)], dia=round(vr * 2, 3), drill=round(mm(v.GetDrill()), 3), len=round(ln_, 3), min_w=mw_, ok=ok_))
+            esd.append(dict(ref=fp.GetReference(), pad=p.GetNumber(), at=[round(mm(p.GetPosition().x), 3), round(mm(p.GetPosition().y), 3)],
+                            vias=vl, n_ok=sum(1 for x_ in vl if x_['ok'])))
+R['esd_gnd'] = dict(len_max=ESD_LEN, width_min=ESD_W, pads=esd)
 
 json.dump(R, open(out, 'w', encoding='utf-8'), ensure_ascii=False, indent=1, default=str)
 print('ok', out)

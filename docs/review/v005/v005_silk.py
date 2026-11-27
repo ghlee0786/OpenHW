@@ -385,8 +385,12 @@ def own_ink(fp, side):
 
 
 def own_items(fp, side):
-    return [it for it in items if it['owner'] == fp.GetReference() and it['side'] == side
-            and not (it['kind'] == 'text' and it['text'] in (fp.GetReference(), fp.GetValue()))]
+    """그 부품의 실크 항목 + 그 부품 외곽 상자 1.0 mm 안에 중심이 있는 보드 그림 실크 도형.
+    1번 핀 표시를 풋프린트가 아니라 보드 그림으로 넣어도 인쇄 결과는 같으므로 표시 후보로 본다 (V-006e). 글자와 잉크 치우침 계산(own_ink)에는 넣지 않는다."""
+    bb = fp.GetBoundingBox(False); bb.Inflate(pcbnew.FromMM(1.0))
+    return [it for it in items if it['side'] == side and (
+        (it['owner'] == fp.GetReference() and not (it['kind'] == 'text' and it['text'] in (fp.GetReference(), fp.GetValue())))
+        or (it['owner'] == '(보드)' and it['kind'] == 'shape' and bb.Contains(it['ink'].BBox().Centre())))]
 
 
 def unpaired_markers(its, reflections, ok_region, near_pin):
