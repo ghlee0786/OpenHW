@@ -221,6 +221,69 @@ def numbers():
     return svg("numbers.svg", 900, 400, "핵심 수치", "ERC, 시뮬레이션, DRC, 3D 모델, 적층 수치 카드", css, body, src)
 
 
+def icon():
+    """96 px 아이콘: 칩(핀 달린 사각형) 안에 카메라 렌즈 — 파랑 한 계열 두 톤."""
+    css = """.c1{fill:var(--core)}.c2{fill:var(--cores)}.pin{fill:var(--cores)}
+.iris{fill:none;stroke:var(--bg);stroke-width:2.5;transform-box:fill-box;transform-origin:center;animation:ir 3.2s ease-in-out infinite}
+@keyframes ir{0%,100%{transform:scale(1)}50%{transform:scale(.72)}}
+.gl{fill:var(--bg);opacity:.85;animation:gl 3.2s ease-in-out infinite}@keyframes gl{0%,100%{opacity:.85}50%{opacity:.35}}"""
+    pins = "".join(f'<rect class="pin" x="{x}" y="{y}" width="{w}" height="{h}" rx="1.5"/>'
+                   for k in (30, 44, 58) for x, y, w, h in [(k, 10, 8, 10), (k, 76, 8, 10), (10, k, 10, 8), (76, k, 10, 8)])
+    body = (f'{pins}<rect class="c2" x="18" y="18" width="60" height="60" rx="10"/>'
+            '<rect class="c1" x="22" y="22" width="52" height="52" rx="8"/>'
+            '<circle class="c2" cx="48" cy="48" r="17"/><circle cx="48" cy="48" r="11" fill="var(--fg)" opacity=".85"/>'
+            '<circle class="iris" cx="48" cy="48" r="7"/><circle class="gl" cx="43" cy="43" r="3"/>')
+    return svg("icon.svg", 96, 96, "OpenHW 아이콘", "칩 안에 카메라 렌즈가 있는 아이콘", css, body, [])
+
+
+def hero():
+    """880 폭 히어로: 피사체 → 렌즈·센서(전면) → SG2002 AI → 캐리어 → 결과, 빛·신호 흐름."""
+    css = """.ray{stroke:var(--wip);stroke-width:2;stroke-dasharray:4 8;animation:f 1.2s linear infinite}
+.sig{fill:none;stroke:var(--dat);stroke-width:3;stroke-dasharray:10 10;animation:f 1s linear infinite}
+@keyframes f{to{stroke-dashoffset:-24}}
+.card{fill:var(--card);stroke:var(--ln)}.pcb{fill:var(--pcb2)}.chip{fill:var(--core)}
+.glow{fill:none;stroke:var(--core);stroke-width:3;transform-box:fill-box;transform-origin:center;animation:gw 2s ease-out infinite}
+@keyframes gw{0%{transform:scale(1);opacity:.8}100%{transform:scale(1.35);opacity:0}}
+.box{fill:none;stroke:var(--ok);stroke-width:2.5;stroke-dasharray:180;animation:bx 3s ease-in-out infinite}
+@keyframes bx{0%{stroke-dashoffset:180}35%,85%{stroke-dashoffset:0}100%{stroke-dashoffset:180}}
+.tag{fill:var(--ok)}.tagt{fill:#fff;font-size:11px;font-weight:700}
+.st{font-size:15px;font-weight:700}.sm{font-size:12px;fill:var(--mut)}"""
+    person = '<circle cx="{0}" cy="{1}" r="11" fill="var(--mut)"/><path d="M{2},{3} q{4},-30 {5},0 z" fill="var(--mut)"/>'
+    p1 = person.format(70, 118, 46, 172, 24, 48)
+    rays = "".join(f'<line class="ray" x1="98" y1="{y}" x2="196" y2="{136 + (y - 136) // 4}"/>' for y in (104, 126, 148, 170))
+    front = ('<rect class="card" x="196" y="78" width="130" height="118" rx="12"/>'
+             '<rect class="pcb" x="214" y="96" width="94" height="66" rx="6"/>'
+             '<circle cx="261" cy="129" r="22" fill="var(--metal)"/><circle cx="261" cy="129" r="13" fill="var(--fg)" opacity=".85"/>'
+             '<circle cx="256" cy="124" r="3" fill="var(--bg)" opacity=".8"/>'
+             + "".join(f'<rect x="{x}" y="{y}" width="9" height="6" rx="1.5" fill="var(--ir)"/>' for x, y in [(220, 102), (293, 102), (220, 150), (293, 150)]))
+    core = ('<rect class="card" x="380" y="78" width="130" height="118" rx="12"/>'
+            '<rect class="glow" x="414" y="96" width="62" height="62" rx="8"/>'
+            '<rect class="chip" x="414" y="96" width="62" height="62" rx="8"/>'
+            '<text x="445" y="124" text-anchor="middle" style="fill:#fff;font-size:12px;font-weight:700">SG2002</text>'
+            '<text x="445" y="142" text-anchor="middle" style="fill:#fff;font-size:11px">NPU</text>')
+    car = ('<rect class="card" x="564" y="78" width="130" height="118" rx="12"/>'
+           '<rect class="pcb" x="582" y="96" width="94" height="66" rx="6"/>'
+           + "".join(f'<rect x="{x}" y="{y}" width="{w}" height="{h}" rx="2" fill="var(--metal)"/>'
+                     for x, y, w, h in [(590, 104, 24, 18), (622, 104, 16, 10), (646, 104, 22, 12), (590, 136, 14, 18)]))
+    res = ('<rect class="card" x="742" y="78" width="118" height="118" rx="12"/>'
+           '<rect x="756" y="92" width="90" height="70" rx="6" fill="var(--bg)" stroke="var(--ln)"/>'
+           + person.format(801, 116, 789, 156, 12, 24).replace('r="11"', 'r="7"')
+           + '<rect class="box" x="784" y="104" width="34" height="54" rx="3"/>'
+           '<rect class="tag" x="784" y="94" width="40" height="13" rx="3"/><text class="tagt" x="788" y="104">사람</text>')
+    sigs = ('<path class="sig" d="M326,137 H380"/><path class="sig" d="M510,137 H564"/><path class="sig" d="M694,137 H742"/>')
+    labels = "".join(f'<text class="st" x="{x}" y="224" text-anchor="middle">{a}</text><text class="sm" x="{x}" y="244" text-anchor="middle">{b}</text>'
+                     for x, a, b in [(70, "피사체", "가시광 · 850 nm IR"), (261, "렌즈 · 센서", "전면 보드 · GC2053"),
+                                     (445, "AI 추론", "SG2002 코어 · NPU"), (629, "캐리어", "이더넷 · USB · microSD"),
+                                     (801, "결과", "감지 이벤트 전송")])
+    body = (f'<text class="t" x="28" y="44">보고 → 판단하고 → 알린다</text>'
+            f'<text class="s" x="28" y="64">카메라 영상을 보드 안의 NPU가 바로 분석해 사람 감지 이벤트를 보낸다</text>'
+            f'{p1}{rays}{front}{core}{car}{res}{sigs}{labels}'
+            '<text class="sm" x="852" y="284" text-anchor="end">가상 설계 단계 · 2026-11-27</text>')
+    src = [("흐름", "docs/planning/product-brief.md (카메라 입력 → NPU 감지 → 네트워크 이벤트)"), ("센서·IR", "docs/decisions/D-003-working-defaults.md #5 #6"),
+           ("감지", "D-003 #3 #19"), ("캐리어", "D-003 #8 #11")]
+    return svg("hero.svg", 880, 300, "OpenHW 엣지 AI 카메라 흐름", "피사체에서 렌즈와 센서, SG2002 NPU, 캐리어 보드를 거쳐 사람 감지 결과가 나가는 흐름 애니메이션", css, body, src)
+
+
 if __name__ == "__main__":
-    for f in (stack, block, pipeline, numbers):
+    for f in (stack, block, pipeline, numbers, icon, hero):
         print(f.__name__, f())
