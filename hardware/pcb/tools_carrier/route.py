@@ -26,7 +26,7 @@ from scipy import ndimage
 G = 0.05
 CLR = 0.16
 HS_CLR = 0.30  # DRU hs_track_spacing
-EPS = 0.05
+EPS = float(os.environ.get("C5_EPS", "0.05"))  # 캐리어 J1 두 줄 탈출: 비아 사이 0.175 틈(규칙 0.16)을 쓰려면 C5_EPS=0.01, 판정은 뒤의 DRC
 VIA = {"dia": 0.65, "drill": 0.30}
 VIA_PWR = {"dia": 0.80, "drill": 0.40}
 LAYERS = ["F.Cu", "In1.Cu", "In2.Cu", "B.Cu"]

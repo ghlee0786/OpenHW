@@ -9,6 +9,7 @@ import sys
 import pcbnew
 
 MM, TO = pcbnew.FromMM, pcbnew.ToMM
+LAY = {"F.Cu": pcbnew.F_Cu, "In1.Cu": pcbnew.In1_Cu, "GND": pcbnew.In1_Cu, "In2.Cu": pcbnew.In2_Cu, "GND_PWR": pcbnew.In2_Cu, "B.Cu": pcbnew.B_Cu}
 TOL = 0.002
 
 
@@ -24,7 +25,7 @@ def main():
         op = e["op"]
         if op == "del":
             hit = [t for t in b.GetTracks() if t.GetClass() == "PCB_TRACK" and t.GetNetname() == e["net"]
-                   and b.GetLayerName(t.GetLayer()) == e["layer"]
+                   and t.GetLayer() == LAY[e["layer"]]
                    and ((near(t.GetStart(), e["a"]) and near(t.GetEnd(), e["b"])) or (near(t.GetStart(), e["b"]) and near(t.GetEnd(), e["a"])))]
             if not hit:
                 print("못 찾음:", e)
@@ -43,7 +44,7 @@ def main():
             s.SetStart(pcbnew.VECTOR2I(MM(e["a"][0]), MM(e["a"][1])))
             s.SetEnd(pcbnew.VECTOR2I(MM(e["b"][0]), MM(e["b"][1])))
             s.SetWidth(MM(e["w"]))
-            s.SetLayer(b.GetLayerID(e["layer"]))
+            s.SetLayer(LAY[e["layer"]])
             s.SetNet(b.FindNet(e["net"]))
             b.Add(s)
         elif op == "via":
