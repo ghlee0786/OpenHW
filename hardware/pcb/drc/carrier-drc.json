@@ -1,7 +1,7 @@
 {
     "$schema": "https://schemas.kicad.org/drc.v1.json",
     "coordinate_units": "mm",
-    "date": "2026-11-27T09:55:51",
+    "date": "2026-11-27T09:59:13",
     "ignored_checks": [
         {
             "description": "Footprint doesn't match symbol's footprint filters",
@@ -90,12 +90,12 @@
             "description": "Missing connection between items",
             "items": [
                 {
-                    "description": "구역 'AUTO_GND_B.Cu' [/GND] on B.Cu, 우선순위 0",
+                    "description": "구역 'AUTO_GND_In1.Cu' [/GND] on GND, 우선순위 0",
                     "pos": {
                         "x": 79.95,
                         "y": 79.95
                     },
-                    "uuid": "6f79b13d-fcae-4c8f-84e5-3e083b49d59b"
+                    "uuid": "2a110134-049f-423b-9724-f7700e04277c"
                 },
                 {
                     "description": "구역 'AUTO_GND_F.Cu' [/GND] on F.Cu, 우선순위 0",
@@ -113,12 +113,12 @@
             "description": "Missing connection between items",
             "items": [
                 {
-                    "description": "구역 'AUTO_GND_B.Cu' [/GND] on B.Cu, 우선순위 0",
+                    "description": "구역 'AUTO_GND_In1.Cu' [/GND] on GND, 우선순위 0",
                     "pos": {
                         "x": 79.95,
                         "y": 79.95
                     },
-                    "uuid": "6f79b13d-fcae-4c8f-84e5-3e083b49d59b"
+                    "uuid": "2a110134-049f-423b-9724-f7700e04277c"
                 },
                 {
                     "description": "구역 'AUTO_GND_F.Cu' [/GND] on F.Cu, 우선순위 0",
@@ -297,12 +297,12 @@
             "description": "Missing connection between items",
             "items": [
                 {
-                    "description": "배선 [/SDIO_CMD] on B.Cu, 길이 1.3500 mm",
+                    "description": "배선 [/SDIO_CMD] on B.Cu, 길이 0.2121 mm",
                     "pos": {
-                        "x": 100.85,
-                        "y": 94.55
+                        "x": 101.0,
+                        "y": 94.4
                     },
-                    "uuid": "4d1ab5ec-2444-4c5b-b77b-8de17d55b1cb"
+                    "uuid": "ad54d5c8-b996-4f2a-8eb4-7533a3c9d0f2"
                 },
                 {
                     "description": "패드 2 [/SDIO_CMD]의 U4 위F.Cu",
@@ -412,29 +412,6 @@
             "description": "Missing connection between items",
             "items": [
                 {
-                    "description": "패드 4 [/BUCK_FB]의 U1 위F.Cu",
-                    "pos": {
-                        "x": 107.1375,
-                        "y": 115.95
-                    },
-                    "uuid": "07985d29-05fa-4260-8e0a-8939c28c3759"
-                },
-                {
-                    "description": "패드 1 [/BUCK_FB]의 R3 위F.Cu",
-                    "pos": {
-                        "x": 108.375929,
-                        "y": 111.984772
-                    },
-                    "uuid": "beb2a5c0-c92d-4612-8c09-ebd4ce9b495b"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
                     "description": "패드 1 [/SD0_PWR_EN]의 R12 위F.Cu",
                     "pos": {
                         "x": 95.985034,
@@ -449,29 +426,6 @@
                         "y": 101.75
                     },
                     "uuid": "b054a17c-6d88-4817-ab84-056c71802d23"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "패드 1 [/12V_IN]의 U2 위F.Cu",
-                    "pos": {
-                        "x": 96.236377,
-                        "y": 124.548156
-                    },
-                    "uuid": "2661c659-7a14-405b-ae5a-f45e1bdef6aa"
-                },
-                {
-                    "description": "패드 1 [/12V_IN]의 C1 위F.Cu",
-                    "pos": {
-                        "x": 83.727598,
-                        "y": 111.257705
-                    },
-                    "uuid": "f252179d-d124-4d72-8c52-f7c8d5edcfaa"
                 }
             ],
             "severity": "error",
@@ -859,12 +813,12 @@
                     "uuid": "f6d8a99f-f470-4397-8fe6-395d108deae6"
                 },
                 {
-                    "description": "비아 [/USB_DN] on F.Cu - B.Cu",
+                    "description": "배선 [/USB_DN] on F.Cu, 길이 2.2084 mm",
                     "pos": {
-                        "x": 86.1,
-                        "y": 100.85
+                        "x": 96.2366,
+                        "y": 90.524999
                     },
-                    "uuid": "b5d7ae24-044c-4073-8c80-85a8e7111a88"
+                    "uuid": "8c4351ac-e0aa-43f4-b8e1-fe44be01cf4f"
                 }
             ],
             "severity": "error",
@@ -874,20 +828,20 @@
             "description": "차동 비결합 길이 너무 긺 (mdi_100_pair 최대 비결합 길이 6.0000 mm, 실제 6.8798 mm)",
             "items": [
                 {
-                    "description": "배선 [/EPHY_TXP] on F.Cu, 길이 0.4001 mm",
+                    "description": "배선 [/EPHY_TXP] on F.Cu, 길이 1.4524 mm",
                     "pos": {
-                        "x": 104.6229,
-                        "y": 109.9008
+                        "x": 109.4313,
+                        "y": 91.16
                     },
-                    "uuid": "5c44c354-8d07-4fc2-a5af-82916412fa0f"
+                    "uuid": "09fd12a6-896d-4384-bf84-9f9fd3c006bd"
                 },
                 {
-                    "description": "배선 [/EPHY_TXN] on F.Cu, 길이 0.5445 mm",
+                    "description": "배선 [/EPHY_TXN] on F.Cu, 길이 0.0824 mm",
                     "pos": {
-                        "x": 108.1887,
-                        "y": 91.734999
+                        "x": 105.8987,
+                        "y": 109.16
                     },
-                    "uuid": "c200c307-7315-407e-b7d9-054c4690cbf5"
+                    "uuid": "08135a19-ee3e-4007-bbab-50c60a4dc0ef"
                 }
             ],
             "severity": "error",
