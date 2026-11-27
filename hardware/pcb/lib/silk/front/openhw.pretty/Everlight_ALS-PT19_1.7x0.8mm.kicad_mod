@@ -70,7 +70,7 @@
 		)
 		(fill yes)
 		(layer "F.SilkS")
-		(uuid "bf90775a-5ca9-45e9-afa0-63b00df7ec9d")
+		(uuid "c5df7437-e968-439e-b7af-001b06cfbe2d")
 	)
 	(pad "1" smd rect
 		(at -0.75 0)

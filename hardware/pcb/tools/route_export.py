@@ -42,8 +42,9 @@ def main():
                 "drill": mm(min(d.x, d.y)) if p.GetAttribute() in (pcbnew.PAD_ATTRIB_PTH, pcbnew.PAD_ATTRIB_NPTH) else 0.0,
                 "npth": p.GetAttribute() == pcbnew.PAD_ATTRIB_NPTH,
             })
+    every = len(sys.argv) > 3 and sys.argv[3] == "all"  # G-002 손 배선 보조: 지금 배선 전부(잠금 여부와 무관)
     for t in b.GetTracks():
-        if not t.IsLocked():
+        if not t.IsLocked() and not every:
             continue
         if t.Type() == pcbnew.PCB_VIA_T:
             v = pcbnew.Cast_to_PCB_VIA(t)
