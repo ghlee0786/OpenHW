@@ -1,0 +1,454 @@
+{
+ "routes": [
+  {
+   "net": "/SD_PWR_3V3",
+   "from": "패드 1 [/SD_PWR_3V3]의 R14 위F.Cu",
+   "to": "배선 [/SD_PWR_3V3] on F.Cu, 길이 0.1000 mm",
+   "ok": false
+  },
+  {
+   "net": "/SDIO_D0",
+   "from": "패드 46 [/SDIO_D0]의 J1 위F.Cu",
+   "to": "패드 2 [/SDIO_D0]의 R14 위F.Cu",
+   "ok": false
+  },
+  {
+   "net": "/USB_VBUS",
+   "from": "패드 5 [/USB_VBUS]의 U3 위F.Cu",
+   "to": "패드 1 [/USB_VBUS]의 C12 위B.Cu",
+   "ok": true,
+   "tracks": [],
+   "vias": []
+  },
+  {
+   "net": "/5V_SYS",
+   "from": "패드 1 [/5V_SYS]의 C19 위F.Cu",
+   "to": "패드 1 [/5V_SYS]의 R2 위F.Cu",
+   "ok": false
+  },
+  {
+   "net": "/5V_SYS",
+   "from": "패드 2 [/5V_SYS]의 L1 위F.Cu",
+   "to": "패드 1 [/5V_SYS]의 C19 위F.Cu",
+   "ok": false
+  },
+  {
+   "net": "/5V_SYS",
+   "from": "패드 1 [/5V_SYS]의 D7 위F.Cu",
+   "to": "배선 [/5V_SYS] on F.Cu, 길이 2.5000 mm",
+   "ok": false
+  },
+  {
+   "net": "/SDIO_CMD",
+   "from": "패드 2 [/SDIO_CMD]의 U4 위F.Cu",
+   "to": "배선 [/SDIO_CMD] on B.Cu, 길이 1.3500 mm",
+   "ok": false
+  },
+  {
+   "net": "/SDIO_D1",
+   "from": "패드 2 [/SDIO_D1]의 R15 위F.Cu",
+   "to": "패드 44 [/SDIO_D1]의 J1 위F.Cu",
+   "ok": false
+  },
+  {
+   "net": "/SDIO_D1",
+   "from": "패드 5 [/SDIO_D1]의 U4 위F.Cu",
+   "to": "패드 2 [/SDIO_D1]의 R15 위F.Cu",
+   "ok": false
+  },
+  {
+   "net": "/BUCK_FB",
+   "from": "패드 2 [/BUCK_FB]의 C19 위F.Cu",
+   "to": "패드 2 [/BUCK_FB]의 R2 위F.Cu",
+   "ok": false
+  },
+  {
+   "net": "/BUCK_FB",
+   "from": "패드 2 [/BUCK_FB]의 R2 위F.Cu",
+   "to": "패드 4 [/BUCK_FB]의 U1 위F.Cu",
+   "ok": false
+  },
+  {
+   "net": "/BUCK_FB",
+   "from": "패드 4 [/BUCK_FB]의 U1 위F.Cu",
+   "to": "패드 1 [/BUCK_FB]의 R3 위F.Cu",
+   "ok": true,
+   "tracks": [
+    {
+     "layer": "F.Cu",
+     "a": [
+      107.75,
+      115.7
+     ],
+     "b": [
+      107.8,
+      115.7
+     ],
+     "w": 0.2
+    },
+    {
+     "layer": "F.Cu",
+     "a": [
+      107.8,
+      115.7
+     ],
+     "b": [
+      108.3,
+      115.2
+     ],
+     "w": 0.2
+    },
+    {
+     "layer": "F.Cu",
+     "a": [
+      108.3,
+      115.2
+     ],
+     "b": [
+      108.3,
+      114.95
+     ],
+     "w": 0.2
+    },
+    {
+     "layer": "B.Cu",
+     "a": [
+      108.3,
+      114.95
+     ],
+     "b": [
+      108.3,
+      112.8
+     ],
+     "w": 0.2
+    },
+    {
+     "layer": "B.Cu",
+     "a": [
+      108.3,
+      112.8
+     ],
+     "b": [
+      108.2,
+      112.7
+     ],
+     "w": 0.2
+    },
+    {
+     "layer": "F.Cu",
+     "a": [
+      108.2,
+      112.7
+     ],
+     "b": [
+      108.2,
+      112.25
+     ],
+     "w": 0.2
+    }
+   ],
+   "vias": [
+    {
+     "pos": [
+      108.3,
+      114.95
+     ],
+     "dia": 0.65,
+     "drill": 0.3
+    },
+    {
+     "pos": [
+      108.2,
+      112.7
+     ],
+     "dia": 0.65,
+     "drill": 0.3
+    }
+   ]
+  },
+  {
+   "net": "/SD0_PWR_EN",
+   "from": "패드 1 [/SD0_PWR_EN]의 R12 위F.Cu",
+   "to": "패드 38 [/SD0_PWR_EN]의 J1 위F.Cu",
+   "ok": false
+  },
+  {
+   "net": "/12V_IN",
+   "from": "패드 1 [/12V_IN]의 U2 위F.Cu",
+   "to": "패드 1 [/12V_IN]의 C1 위F.Cu",
+   "ok": true,
+   "tracks": [
+    {
+     "layer": "F.Cu",
+     "a": [
+      96.05,
+      124.1
+     ],
+     "b": [
+      95.55,
+      124.1
+     ],
+     "w": 1.0
+    },
+    {
+     "layer": "F.Cu",
+     "a": [
+      95.55,
+      124.1
+     ],
+     "b": [
+      95.0,
+      123.55
+     ],
+     "w": 1.0
+    },
+    {
+     "layer": "In2.Cu",
+     "a": [
+      95.0,
+      123.55
+     ],
+     "b": [
+      94.8,
+      123.35
+     ],
+     "w": 1.0
+    },
+    {
+     "layer": "In2.Cu",
+     "a": [
+      94.8,
+      123.35
+     ],
+     "b": [
+      94.8,
+      120.1
+     ],
+     "w": 1.0
+    },
+    {
+     "layer": "In2.Cu",
+     "a": [
+      94.8,
+      120.1
+     ],
+     "b": [
+      90.95,
+      116.25
+     ],
+     "w": 1.0
+    },
+    {
+     "layer": "F.Cu",
+     "a": [
+      90.95,
+      116.25
+     ],
+     "b": [
+      90.6,
+      115.9
+     ],
+     "w": 1.0
+    },
+    {
+     "layer": "F.Cu",
+     "a": [
+      90.6,
+      115.9
+     ],
+     "b": [
+      90.6,
+      115.25
+     ],
+     "w": 1.0
+    },
+    {
+     "layer": "F.Cu",
+     "a": [
+      90.6,
+      115.25
+     ],
+     "b": [
+      90.1,
+      114.75
+     ],
+     "w": 1.0
+    },
+    {
+     "layer": "F.Cu",
+     "a": [
+      90.1,
+      114.75
+     ],
+     "b": [
+      86.2,
+      114.75
+     ],
+     "w": 1.0
+    },
+    {
+     "layer": "F.Cu",
+     "a": [
+      86.2,
+      114.75
+     ],
+     "b": [
+      84.0,
+      112.55
+     ],
+     "w": 1.0
+    },
+    {
+     "layer": "F.Cu",
+     "a": [
+      84.0,
+      112.55
+     ],
+     "b": [
+      84.0,
+      111.5
+     ],
+     "w": 1.0
+    }
+   ],
+   "vias": [
+    {
+     "pos": [
+      95.0,
+      123.55
+     ],
+     "dia": 0.8,
+     "drill": 0.4
+    },
+    {
+     "pos": [
+      90.95,
+      116.25
+     ],
+     "dia": 0.8,
+     "drill": 0.4
+    }
+   ]
+  },
+  {
+   "net": "/SPARE1",
+   "from": "패드 20 [/SPARE1]의 J1 위F.Cu",
+   "to": "패드 1 [/SPARE1]의 TP15 위B.Cu",
+   "ok": false
+  },
+  {
+   "net": "/IR_LED_EN",
+   "from": "패드 1 [/IR_LED_EN]의 TP14 위B.Cu",
+   "to": "패드 22 [/IR_LED_EN]의 J1 위F.Cu",
+   "ok": false
+  },
+  {
+   "net": "/IR_LED_EN",
+   "from": "패드 1 [/IR_LED_EN]의 R5 위F.Cu",
+   "to": "패드 7 [/IR_LED_EN]의 U2 위F.Cu",
+   "ok": false
+  },
+  {
+   "net": "/nRESET",
+   "from": "패드 34 [/nRESET]의 J1 위F.Cu",
+   "to": "패드 1 [/nRESET]의 TP11 위B.Cu",
+   "ok": false
+  },
+  {
+   "net": "/SDIO_D3",
+   "from": "패드 2 [/SDIO_D3]의 J4 위B.Cu",
+   "to": "패드 2 [/SDIO_D3]의 U5 위F.Cu",
+   "ok": false
+  },
+  {
+   "net": "/SDIO_D2",
+   "from": "패드 1 [/SDIO_D2]의 U5 위F.Cu",
+   "to": "패드 2 [/SDIO_D2]의 R16 위F.Cu",
+   "ok": false
+  },
+  {
+   "net": "/SDIO_D2",
+   "from": "패드 1 [/SDIO_D2]의 J4 위B.Cu",
+   "to": "패드 1 [/SDIO_D2]의 U5 위F.Cu",
+   "ok": false
+  },
+  {
+   "net": "/SDIO_D2",
+   "from": "패드 42 [/SDIO_D2]의 J1 위F.Cu",
+   "to": "패드 1 [/SDIO_D2]의 J4 위B.Cu",
+   "ok": false
+  },
+  {
+   "net": "/UART1_TX",
+   "from": "패드 1 [/UART1_TX]의 TP21 위B.Cu",
+   "to": "패드 55 [/UART1_TX]의 J1 위F.Cu",
+   "ok": false
+  },
+  {
+   "net": "/UART1_RTS",
+   "from": "패드 1 [/UART1_RTS]의 TP23 위B.Cu",
+   "to": "패드 59 [/UART1_RTS]의 J1 위F.Cu",
+   "ok": false
+  },
+  {
+   "net": "/EFUSE_DVDT",
+   "from": "패드 12 [/EFUSE_DVDT]의 U2 위F.Cu",
+   "to": "패드 1 [/EFUSE_DVDT]의 C9 위F.Cu",
+   "ok": false
+  }
+ ],
+ "skipped": [
+  [
+   "구역 'AUTO_GND_F.Cu' [/GND] on F.Cu, 우선순위 0",
+   "구역 'AUTO_GND_B.Cu' [/GND] on B.Cu, 우선순위 0"
+  ],
+  [
+   "구역 'AUTO_GND_F.Cu' [/GND] on F.Cu, 우선순위 0",
+   "SH의 PTH 패드[/GND]J3"
+  ],
+  [
+   "구역 'AUTO_GND_F.Cu' [/GND] on F.Cu, 우선순위 0",
+   "구역 'AUTO_GND_B.Cu' [/GND] on B.Cu, 우선순위 0"
+  ],
+  [
+   "구역 'AUTO_GND_F.Cu' [/GND] on F.Cu, 우선순위 0",
+   "구역 'AUTO_GND_In2.Cu' [/GND] on GND_PWR, 우선순위 0"
+  ],
+  [
+   "구역 'AUTO_GND_In2.Cu' [/GND] on GND_PWR, 우선순위 0",
+   "구역 'AUTO_GND_F.Cu' [/GND] on F.Cu, 우선순위 0"
+  ],
+  [
+   "구역 'AUTO_GND_F.Cu' [/GND] on F.Cu, 우선순위 0",
+   "구역 'AUTO_GND_F.Cu' [/GND] on F.Cu, 우선순위 0"
+  ],
+  [
+   "구역 'AUTO_GND_F.Cu' [/GND] on F.Cu, 우선순위 0",
+   "구역 'AUTO_GND_F.Cu' [/GND] on F.Cu, 우선순위 0"
+  ],
+  [
+   "구역 'AUTO_GND_F.Cu' [/GND] on F.Cu, 우선순위 0",
+   "구역 'AUTO_GND_F.Cu' [/GND] on F.Cu, 우선순위 0"
+  ],
+  [
+   "구역 'AUTO_GND_B.Cu' [/GND] on B.Cu, 우선순위 0",
+   "구역 'AUTO_GND_F.Cu' [/GND] on F.Cu, 우선순위 0"
+  ],
+  [
+   "구역 'AUTO_GND_F.Cu' [/GND] on F.Cu, 우선순위 0",
+   "구역 'AUTO_GND_B.Cu' [/GND] on B.Cu, 우선순위 0"
+  ],
+  [
+   "구역 'AUTO_GND_In2.Cu' [/GND] on GND_PWR, 우선순위 0",
+   "구역 'AUTO_GND_F.Cu' [/GND] on F.Cu, 우선순위 0"
+  ],
+  [
+   "구역 'AUTO_GND_F.Cu' [/GND] on F.Cu, 우선순위 0",
+   "구역 'AUTO_GND_B.Cu' [/GND] on B.Cu, 우선순위 0"
+  ],
+  [
+   "구역 'AUTO_GND_B.Cu' [/GND] on B.Cu, 우선순위 0",
+   "구역 'AUTO_GND_F.Cu' [/GND] on F.Cu, 우선순위 0"
+  ]
+ ]
+}

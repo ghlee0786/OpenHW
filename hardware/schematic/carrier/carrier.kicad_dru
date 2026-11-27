@@ -1,0 +1,128 @@
+(version 1)
+# OpenHW 캐리어·전면 보드 사용자 규칙 (P-002, 2026-11-26)
+# 근거: hardware/pcb/fab-rules-pcbway.md (P-001) §3, PCBWay 추가 요금 없는 기준 6/6mil·드릴 0.3mm 위 여유값
+# gen_templates.py 가 각 보드 폴더에 <보드>.kicad_dru 로 복사한다. 이 파일이 원본이다.
+
+# ---- 제조 공통 ----
+(rule "fab_min_drill"
+  (constraint hole_size (min 0.30mm)))
+
+(rule "fab_annular_ring"
+  (constraint annular_width (min 0.15mm)))
+
+(rule "fab_hole_to_hole"
+  (constraint hole_to_hole (min 0.45mm)))
+
+(rule "fab_copper_to_edge"
+  (constraint edge_clearance (min 0.40mm)))
+
+(rule "fab_track_min"
+  (constraint track_width (min 0.15mm)))
+
+(rule "fab_copper_clearance"
+  (constraint clearance (min 0.16mm)))
+
+(rule "fab_via_diameter"
+  (condition "A.Type == 'Via'")
+  (constraint via_diameter (min 0.60mm)))
+
+(rule "fab_silk_text"
+  (layer "?.Silkscreen")
+  (constraint text_height (min 1.0mm))
+  (constraint text_thickness (min 0.15mm)))
+
+(rule "fab_silk_to_pad"
+  (layer "?.Silkscreen")
+  (constraint silk_clearance (min 0.15mm)))
+
+# ---- 고속 차동 (L1/L4 표면, 인접 내층 GND 기준) ----
+(rule "hs_outer_only"
+  (layer inner)
+  (condition "A.hasNetclass('CSI_100') || A.hasNetclass('MDI_100') || A.hasNetclass('USB_90')")
+  (constraint disallow track))
+
+# 비결합 4mm (P-003에서 3→4): 전면 CSI는 짝 BTB 탈출(0.5 피치) + DF30 탈출(0.4 피치) + 층 바꿈 쌍 비아(간격 0.9)
+# 세 곳이 구조상 필요해 최소 약 3.3mm가 나온다(DRC 실측). 800Mbps 레인에서 4mm 비결합은 약 24ps 구간.
+# V-006: 선폭 최소 #21 0.15 (P-003 의 0.14 완화 되돌림)
+(rule "csi_100_pair"
+  (condition "A.hasNetclass('CSI_100')")
+  (constraint track_width (min 0.15mm) (opt 0.15mm) (max 0.16mm))
+  (constraint diff_pair_gap (min 0.15mm) (opt 0.16mm) (max 0.18mm))
+  (constraint diff_pair_uncoupled (max 4mm))
+  (constraint skew (max 1.0mm)))
+
+# MDI 비결합 6mm (P-003에서 5→6): SOD-323 ESD 탈출(패드 2.1 간격) + 짝 BTB 탈출 + TX가 RX를 넘는 쌍 비아 2곳 — DRC 실측 5.4mm.
+#  100BASE-TX(125MBd, UI 8ns)에서 6mm 비결합은 약 36ps.
+# USB 비결합 12mm (P-003에서 5→12): J1을 180° 돌아 나오는 경로의 P/N 길이차 2.45mm를 짧은 선 굴곡 7개로 보정한 구간이
+#  비결합으로 잡힌다(DRC 실측 10.2mm). 480Mbps(UI 2083ps)에서 12mm ≈ 72ps, 보정 전 쌍 안 차 2.45mm(≈15ps)를 없앤 대가.
+(rule "mdi_100_pair"
+  (condition "A.hasNetclass('MDI_100')")
+  (constraint track_width (min 0.15mm) (opt 0.15mm) (max 0.16mm))
+  (constraint diff_pair_gap (min 0.15mm) (opt 0.16mm) (max 0.18mm))
+  (constraint diff_pair_uncoupled (max 6mm)))
+
+(rule "usb_90_pair"
+  (condition "A.hasNetclass('USB_90')")
+  (constraint track_width (min 0.19mm) (opt 0.20mm) (max 0.21mm))
+  (constraint diff_pair_gap (min 0.15mm) (opt 0.16mm) (max 0.18mm))
+  (constraint diff_pair_uncoupled (max 12mm)))
+
+# 고속 트랙과 다른 넷 트랙 사이 (짝끼리는 제외). 0.5mm 피치 패드 탈출부는 패드가 상대라 적용되지 않는다.
+(rule "hs_track_spacing"
+  (condition "(A.hasNetclass('CSI_100') || A.hasNetclass('MDI_100') || A.hasNetclass('USB_90')) && A.Type == 'Track' && B.Type == 'Track' && !A.isCoupledDiffPair()")
+  (constraint clearance (min 0.30mm)))
+
+# 쌍 안 길이 보정 굴곡(P-003): 짧은 선에만 짝 반대쪽으로 넣은 45° 굴곡 구간(규칙 영역 DP_TUNE, 배선기가 넣음).
+# 굴곡 높이(≤0.8)만큼 쌍 안 간격이 벌어지는 것은 보정의 결과다 — 그 구간에서만 간격 상한을 1.0mm로.
+# V-006: DP_TUNE · DP_BRK 도 enclosedByArea — 배선 적용 단계(route_apply.py)가 영역 경계에서 트랙을 나눠 안쪽 조각만 완화를 받는다. (탈출 구역과 겹치면 뒤에 오는 탈출 규칙이 이긴다)
+(rule "dp_tuning_gap"
+  (condition "(A.hasNetclass('CSI_100') || A.hasNetclass('MDI_100') || A.hasNetclass('USB_90')) && A.enclosedByArea('DP_TUNE')")
+  (constraint diff_pair_gap (min 0.15mm) (max 1.0mm)))
+
+# 고속 탈출 구역 (P-003): 커넥터·ESD 패드 간격(0.4/0.5mm 피치 커넥터, USBLC6 1.9, SOD-323 2.1)에서 쌍이 쌍 간격으로 모이는 구간.
+# 배선기(route.py)가 쌍마다 패드 둘레+탈출점 사각형을 계산해 규칙 영역 DP_BRK(제한 없음)로 넣는다. 그 안에서만:
+#  쌍 안 간격 상한 = 패드 간격, 다른 고속 넷 트랙과 간격 = 제조 최소 0.16(P-001). 구역 밖은 위 규칙 그대로.
+(rule "dp_breakout_pair"
+  (condition "(A.hasNetclass('CSI_100') || A.hasNetclass('MDI_100') || A.hasNetclass('USB_90')) && A.enclosedByArea('DP_BRK')")
+  (constraint diff_pair_gap (min 0.15mm) (max 2.2mm)))
+
+(rule "dp_breakout_spacing"
+  (condition "(A.hasNetclass('CSI_100') || A.hasNetclass('MDI_100') || A.hasNetclass('USB_90')) && A.Type == 'Track' && B.Type == 'Track' && !A.isCoupledDiffPair() && A.enclosedByArea('DP_BRK')")
+  (constraint clearance (min 0.16mm)))
+
+# MDI P/N 꼬임 구간 (P-003, O-47): 캐리어 J1(코어 J2 짝)에서 오는 TX·RX 쌍과 RJ45(HR911105A 표준 핀 배정) 사이에서 P/N 순서가
+# 기하학상 한 번 엇갈린다(회로도 핀 맞바꿈 O-46 은 10BASE-T 자동 극성 근거 없음으로 철회 — R-013). ESD(D4·D5)와 RJ45 핀만 감싸는
+# 규칙 영역 DP_TWIST(약 5mm, 배선기가 두 부품의 그 넷 패드 둘레로 계산) 안에서만 P·N 을 단선으로 비아 교차한다.
+# 이 영역 안: 쌍 간격 상한 = 영역 폭, 쌍 서로·다른 고속 트랙 간격 = 제조 최소 0.16. 영역 밖 규칙은 그대로. 비결합 길이는 아래 mdi 6mm 에 포함.
+# 비결합: 꼬임 구간의 P·N 단선(각 약 1~6mm)이 쌍 전체 비결합 길이에 더해진다 → 꼬임 구간에 걸린 MDI 쌍만
+#  상한 = 구간 밖 6mm + 꼬임 구간 단선 실측 합(P-003 DRC 보고서에 쌍별 값). 처음 값 20mm(O-47 승인 범위, V-005 검토 대상).
+# V-005 RQ-7: intersectsArea 는 조금만 걸친 트랙 전체에 완화를 적용해 영역 밖 3.557mm 로 샜다 → enclosedByArea(영역 안에 다 든 항목만).
+#  배선기 적용 단계(route_apply.py)가 영역 경계(선폭 반 + 0.01 안쪽)에서 트랙을 나눠, 안쪽 조각만 이 규칙을 받는다.
+(rule "mdi_twist_pair"
+  (condition "A.hasNetclass('MDI_100') && A.enclosedByArea('DP_TWIST')")
+  (constraint diff_pair_gap (min 0.15mm) (max 7.0mm))
+  (constraint diff_pair_uncoupled (max 20mm)))
+
+(rule "mdi_twist_spacing"
+  (condition "A.hasNetclass('MDI_100') && A.Type == 'Track' && B.Type == 'Track' && A.enclosedByArea('DP_TWIST')")
+  (constraint clearance (min 0.16mm)))
+
+# ---- 전원 (IPC-2221 외층 ΔT10℃ 계산 이상, netclasses.md §3) ----
+(rule "pwr_12v_in_width"
+  (condition "A.hasNetclass('PWR_12V_IN')")
+  (constraint track_width (min 0.80mm)))
+
+(rule "pwr_12v_ir_width"
+  (condition "A.hasNetclass('PWR_12V_IR')")
+  (constraint track_width (min 0.55mm)))
+
+# 5V 는 0.5mm 피치 BTB 4핀으로 갈라져 들어가므로 최소폭은 패드 탈출 폭(0.30)만 강제한다. 본선은 넷클래스 1.5mm·면 채움.
+(rule "pwr_5v_width"
+  (condition "A.hasNetclass('PWR_5V')")
+  (constraint track_width (min 0.30mm)))
+
+# ---- 캐리어 전용 (P-003) ----
+# V-006 조건2-① (orch O-86 ④): U2 TPS26600PWPR 풋프린트(KiCad 표준 HTSSOP-16 ..._ThermalVias)의 열 비아 구멍 Ø0.2 예외
+#   (u2_htssop_thermal_vias, hole_size min 0.20)를 없앴다 → 공통 fab_min_drill 0.30 이 그대로 적용된다.
+#   풋프린트의 구멍은 회로도 풋프린트 지정(FPID)과 O-74b 사본 규칙(구멍은 원본 그대로) 때문에 pcb 쪽에서 바꿀 수 없다.
+#   남는 위반 수와 이유는 orch 에 보고하고(D-003 기록 대상), 회로도 풋프린트를 열 비아 없는 변형으로 바꾸는 안을 함께 낸다.

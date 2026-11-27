@@ -14,7 +14,6 @@
     {"netclass": "CSI_100",    "pattern": "*CAM_RX0_*"},
     {"netclass": "MDI_100",    "pattern": "*EPHY_RX*"},
     {"netclass": "MDI_100",    "pattern": "*EPHY_TX*"},
-    {"netclass": "MDI_100",    "pattern": "*MDI_*"},
     {"netclass": "USB_90",     "pattern": "*USB_DP"},
     {"netclass": "USB_90",     "pattern": "*USB_DN"},
     {"netclass": "PWR_12V_IN", "pattern": "*12V_IN*"},

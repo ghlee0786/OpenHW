@@ -1,0 +1,15 @@
+
+# ---- 전면 전용 (P-003) ----
+# (CSI 탈출 구역 규칙은 공통 파일의 dp_breakout_* 로 옮김 — 배선기가 DP_BRK 영역을 쌍마다 계산)
+
+# M-008 §3 (mechanical 969d169) 전면 윗면 높이 제한 — 규칙 영역 K_* 는 build_boards.py RULE_AREAS 가 넣는다.
+# K-A 스페이서 · 홀더 몸체(안쪽 창 K-C · FPC 홈 K-D 포함) · K-B 귀: 높이 0 → 홀더(MH1) 외 윗면 부품 금지
+(rule "m008_ka_kb_no_parts"
+  (condition "A.Type == 'Footprint' && A.Layer == 'F.Cu' && A.Reference != 'MH1' && (A.intersectsArea('K_A') || A.intersectsArea('K_B1') || A.intersectsArea('K_B2'))")
+  (constraint disallow footprint))
+
+# K-E 리드 길: 높이 ≤ 1.5 → 리드 끝 패드(J2) 와 칩 저항 · 콘덴서만 허용
+(rule "m008_ke_low_only"
+  (condition "A.Type == 'Footprint' && A.Layer == 'F.Cu' && A.Reference != 'J2' && A.Reference != 'MH1' && !(A.Reference == 'R*' || A.Reference == 'C*') && A.intersectsArea('K_E')")
+  (constraint disallow footprint))
+
