@@ -1,0 +1,22 @@
+{
+ "saved": [
+  {
+   "refs": [
+    "J3"
+   ],
+   "fpid": "Connector_USB:USB_C_Receptacle_HRO_TYPE-C-31-M-12",
+   "cut": 3,
+   "silk_left": 4
+  },
+  {
+   "refs": [
+    "J2"
+   ],
+   "fpid": "openhw:BarrelJack_XKB_DC-005-5A-2.0_Horizontal",
+   "cut": 2,
+   "silk_left": 4
+  }
+ ],
+ "multi_left": [],
+ "union": []
+}

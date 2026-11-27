@@ -1,0 +1,12 @@
+﻿# 배선기 중간 산출물(다시 만들 수 있음): 그림 · 로그 · 형상 내보내기 · 단계 저장 · Freerouting DSN/SES
+*.png
+*.out
+*.log
+*.dsn
+*.ses
+*-dbg.json
+*-fixed.txt
+*-geom.json
+*-geom-all.json
+*.pairs.json
+*.signals.json
