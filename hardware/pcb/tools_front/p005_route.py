@@ -41,6 +41,8 @@ def mask_windows(pcb):
 def load(geom):
     if os.environ.get("P5_NO_SILKTXT"):  # 참조 글자 둘레 비아 금지는 배선 중엔 뺀다 — 글자는 배선 뒤 다시 놓는다(silk.py refs, pcb O-105 발견)
         geom = dict(geom, keepouts=[k for k in geom["keepouts"] if not k["name"].startswith("SILKTXT_")])
+    if os.environ.get("P5_NO_SILK"):  # 풋프린트 실크 선 둘레 비아 금지도 뺀다 — 덮인(tented) 비아 위 실크는 허용(O-110 ①), 선은 배선 뒤 silk.py 가 다시 다듬는다
+        geom = dict(geom, keepouts=[k for k in geom["keepouts"] if not k["name"].startswith("SILK_")])
     B = route.Board(geom)
     if os.environ.get("P5_PCB"):  # 마스크 창: 그 층 트랙 금지 + 비아 금지(여유 0.1)
         for L, x0, y0, x1, y1 in mask_windows(os.environ["P5_PCB"]):
