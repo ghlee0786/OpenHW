@@ -55,7 +55,7 @@ def main():
             starts_xy = [tuple(sp["pos"])] if sp else [(src["pos"]["x"], src["pos"]["y"])]
             r0c = B.cell(*starts_xy[0])
             r1c = B.cell(*dpos)
-            win = B.window([r0c, r1c], 6.0)
+            win = B.window([r0c, r1c], float(__import__("os").environ.get("ASSIST_WIN", "6.0")))
             passable, viaok = B.free_maps(win, own, w / 2, vtype["dia"] / 2, [0, 3, 2])
             wr0, wr1, wc0, wc1 = win
             if sp:
@@ -79,7 +79,7 @@ def main():
             targets = {t_ for t_ in targets if 0 <= t_[1] <= wr1 - wr0 and 0 <= t_[2] <= wc1 - wc0}
             if not starts or not targets:
                 continue
-            path = B.astar(win, starts, targets, passable, viaok, [0, 3, 2], cap=3_000_000)
+            path = B.astar(win, starts, targets, passable, viaok, [0, 3, 2], cap=int(__import__("os").environ.get("ASSIST_CAP", "3000000")))
             if path:
                 got = (w, path, win)
                 break

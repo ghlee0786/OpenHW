@@ -1,0 +1,17 @@
+{
+ "saved": [],
+ "multi_left": [],
+ "union": [
+  {
+   "refs": [
+    "D_IR_B1",
+    "D_IR_A1",
+    "D_IR_B2",
+    "D_IR_A2"
+   ],
+   "fpid": "openhw:Vishay_VSMA1085600_3.4x3.4mm",
+   "cut": 1,
+   "silk_left": 4
+  }
+ ]
+}
