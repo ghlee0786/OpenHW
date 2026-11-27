@@ -1,0 +1,158 @@
+{
+ "routes": [
+  {
+   "net": "/5V_SYS",
+   "from": "패드 1 [/5V_SYS]의 C19 위F.Cu",
+   "to": "패드 1 [/5V_SYS]의 R2 위F.Cu",
+   "ok": false
+  },
+  {
+   "net": "/5V_SYS",
+   "from": "패드 2 [/5V_SYS]의 L1 위F.Cu",
+   "to": "패드 1 [/5V_SYS]의 C19 위F.Cu",
+   "ok": false
+  },
+  {
+   "net": "/5V_SYS",
+   "from": "패드 1 [/5V_SYS]의 D7 위F.Cu",
+   "to": "배선 [/5V_SYS] on F.Cu, 길이 2.5000 mm",
+   "ok": false
+  },
+  {
+   "net": "/BUCK_FB",
+   "from": "패드 2 [/BUCK_FB]의 C19 위F.Cu",
+   "to": "패드 2 [/BUCK_FB]의 R2 위F.Cu",
+   "ok": false
+  },
+  {
+   "net": "/BUCK_FB",
+   "from": "패드 2 [/BUCK_FB]의 R2 위F.Cu",
+   "to": "패드 4 [/BUCK_FB]의 U1 위F.Cu",
+   "ok": false
+  },
+  {
+   "net": "/EFUSE_DVDT",
+   "from": "패드 12 [/EFUSE_DVDT]의 U2 위F.Cu",
+   "to": "패드 1 [/EFUSE_DVDT]의 C9 위F.Cu",
+   "ok": false
+  }
+ ],
+ "skipped": [
+  [
+   "패드 1 [/SD_PWR_3V3]의 R14 위F.Cu",
+   "배선 [/SD_PWR_3V3] on F.Cu, 길이 0.1000 mm"
+  ],
+  [
+   "패드 46 [/SDIO_D0]의 J1 위F.Cu",
+   "패드 2 [/SDIO_D0]의 R14 위F.Cu"
+  ],
+  [
+   "구역 'AUTO_GND_B.Cu' [/GND] on B.Cu, 우선순위 0",
+   "구역 'AUTO_GND_F.Cu' [/GND] on F.Cu, 우선순위 0"
+  ],
+  [
+   "구역 'AUTO_GND_F.Cu' [/GND] on F.Cu, 우선순위 0",
+   "SH의 PTH 패드[/GND]J3"
+  ],
+  [
+   "구역 'AUTO_GND_F.Cu' [/GND] on F.Cu, 우선순위 0",
+   "구역 'AUTO_GND_F.Cu' [/GND] on F.Cu, 우선순위 0"
+  ],
+  [
+   "구역 'AUTO_GND_F.Cu' [/GND] on F.Cu, 우선순위 0",
+   "구역 'AUTO_GND_B.Cu' [/GND] on B.Cu, 우선순위 0"
+  ],
+  [
+   "구역 'AUTO_GND_In2.Cu' [/GND] on GND_PWR, 우선순위 0",
+   "구역 'AUTO_GND_F.Cu' [/GND] on F.Cu, 우선순위 0"
+  ],
+  [
+   "구역 'AUTO_GND_F.Cu' [/GND] on F.Cu, 우선순위 0",
+   "구역 'AUTO_GND_F.Cu' [/GND] on F.Cu, 우선순위 0"
+  ],
+  [
+   "구역 'AUTO_GND_F.Cu' [/GND] on F.Cu, 우선순위 0",
+   "구역 'AUTO_GND_F.Cu' [/GND] on F.Cu, 우선순위 0"
+  ],
+  [
+   "구역 'AUTO_GND_F.Cu' [/GND] on F.Cu, 우선순위 0",
+   "구역 'AUTO_GND_F.Cu' [/GND] on F.Cu, 우선순위 0"
+  ],
+  [
+   "구역 'AUTO_GND_F.Cu' [/GND] on F.Cu, 우선순위 0",
+   "구역 'AUTO_GND_B.Cu' [/GND] on B.Cu, 우선순위 0"
+  ],
+  [
+   "구역 'AUTO_GND_F.Cu' [/GND] on F.Cu, 우선순위 0",
+   "구역 'AUTO_GND_In2.Cu' [/GND] on GND_PWR, 우선순위 0"
+  ],
+  [
+   "구역 'AUTO_GND_B.Cu' [/GND] on B.Cu, 우선순위 0",
+   "구역 'AUTO_GND_F.Cu' [/GND] on F.Cu, 우선순위 0"
+  ],
+  [
+   "구역 'AUTO_GND_B.Cu' [/GND] on B.Cu, 우선순위 0",
+   "구역 'AUTO_GND_F.Cu' [/GND] on F.Cu, 우선순위 0"
+  ],
+  [
+   "패드 5 [/USB_VBUS]의 U3 위F.Cu",
+   "패드 1 [/USB_VBUS]의 C12 위B.Cu"
+  ],
+  [
+   "배선 [/SDIO_CMD] on B.Cu, 길이 1.3500 mm",
+   "패드 2 [/SDIO_CMD]의 U4 위F.Cu"
+  ],
+  [
+   "패드 2 [/SDIO_D1]의 R15 위F.Cu",
+   "패드 44 [/SDIO_D1]의 J1 위F.Cu"
+  ],
+  [
+   "패드 5 [/SDIO_D1]의 U4 위F.Cu",
+   "패드 2 [/SDIO_D1]의 R15 위F.Cu"
+  ],
+  [
+   "패드 1 [/SD0_PWR_EN]의 R12 위F.Cu",
+   "패드 38 [/SD0_PWR_EN]의 J1 위F.Cu"
+  ],
+  [
+   "패드 20 [/SPARE1]의 J1 위F.Cu",
+   "패드 1 [/SPARE1]의 TP15 위B.Cu"
+  ],
+  [
+   "패드 1 [/IR_LED_EN]의 TP14 위B.Cu",
+   "패드 22 [/IR_LED_EN]의 J1 위F.Cu"
+  ],
+  [
+   "패드 1 [/IR_LED_EN]의 R5 위F.Cu",
+   "패드 7 [/IR_LED_EN]의 U2 위F.Cu"
+  ],
+  [
+   "패드 34 [/nRESET]의 J1 위F.Cu",
+   "패드 1 [/nRESET]의 TP11 위B.Cu"
+  ],
+  [
+   "패드 2 [/SDIO_D3]의 J4 위B.Cu",
+   "패드 2 [/SDIO_D3]의 U5 위F.Cu"
+  ],
+  [
+   "패드 1 [/SDIO_D2]의 U5 위F.Cu",
+   "패드 2 [/SDIO_D2]의 R16 위F.Cu"
+  ],
+  [
+   "패드 1 [/SDIO_D2]의 J4 위B.Cu",
+   "패드 1 [/SDIO_D2]의 U5 위F.Cu"
+  ],
+  [
+   "패드 42 [/SDIO_D2]의 J1 위F.Cu",
+   "패드 1 [/SDIO_D2]의 J4 위B.Cu"
+  ],
+  [
+   "패드 1 [/UART1_TX]의 TP21 위B.Cu",
+   "패드 55 [/UART1_TX]의 J1 위F.Cu"
+  ],
+  [
+   "패드 1 [/UART1_RTS]의 TP23 위B.Cu",
+   "패드 59 [/UART1_RTS]의 J1 위F.Cu"
+  ]
+ ]
+}

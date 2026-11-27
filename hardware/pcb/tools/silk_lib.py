@@ -24,7 +24,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import silk  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[3]
-STD = Path(r"C:\Users\gh\AppData\Local\Programs\KiCad\10.0\share\kicad\footprints")
+STD = Path(__import__("os").environ["KICAD10_FOOTPRINT_DIR"])  # KiCad 10 표준 풋프린트 폴더(share/kicad/footprints)
 SRC = {"openhw": ROOT / "hardware/libraries/openhw.pretty", "OpenHW_Mech": ROOT / "hardware/pcb/lib/OpenHW_Mech.pretty"}
 DOTS = ("Oscillator_SMD_SiT_PQFN-4Pin", "Molex_PicoBlade_53261-0271", "Hirose_DF30FC-24DS")  # RQ-15 · B9 1번 점
 FAR = (-1e6, -1e6, 1e6, 1e6)
@@ -150,6 +150,8 @@ def fix_types(board):
     od = out_dir(board)
     rows, log = [], {"marks": [], "widened": 0, "clipped": {}, "to_fab": {}, "dots_fail": [], "other_shapes": [], "marks_moved": [],
                      "refs_silk": [], "refs_fab_only": []}
+    for old in od.glob("*.pretty/*.kicad_mod"):  # 지금 넷리스트에 없는 낡은 사본이 남지 않게(V-006a ③: SOURCES.tsv 행 없는 사본)
+        old.unlink()
     for fpid in used_fpids(board):
         lib, name = fpid.split(":", 1)
         sp = src_path(lib) / f"{name}.kicad_mod"
@@ -188,8 +190,7 @@ def fix_types(board):
 def fix_places(board, pcb_path):
     od = out_dir(board)
     b = pcbnew.LoadBoard(pcb_path)
-    eb = b.GetBoardEdgesBoundingBox()
-    edge = (silk.TO(eb.GetLeft()), silk.TO(eb.GetTop()), silk.TO(eb.GetRight()), silk.TO(eb.GetBottom()))
+    edge = silk.board_edge(b)
     count = {}
     for fp in b.GetFootprints():
         k = fp.GetFPIDAsString()

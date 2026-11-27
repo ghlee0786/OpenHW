@@ -28,6 +28,7 @@ MASK = {"F": pcbnew.F_Mask, "B": pcbnew.B_Mask}
 CRT = {"F": pcbnew.F_CrtYd, "B": pcbnew.B_CrtYd}
 FAB = {"F": pcbnew.F_Fab, "B": pcbnew.B_Fab}
 ERR = MM(0.005)
+VIA_OK = __import__("os").environ.get("SILK_VIA_OK") == "1"
 
 
 def V(x, y):
@@ -49,8 +50,11 @@ def mask_openings(b, s, skip=frozenset()):
         if d.GetLayer() == L:
             d.TransformShapeToPolygon(ps, L, 0, ERR, pcbnew.ERROR_OUTSIDE)
     # V-005b RQ-14: 비아는 텐팅이어도 장애물(구멍 위 인쇄 불량 — PCBWay 'avoid overlapping with vias') → 비아 구리 링 전체
+    # D-003 #58: 텐팅 비아 위 실크 허용 — 환경 SILK_VIA_OK=1 이면 비아를 장애물로 안 보고 비아도 지우지 않는다
     cu = pcbnew.F_Cu if s == "F" else pcbnew.B_Cu
     for t in b.GetTracks():
+        if VIA_OK:
+            break
         if t.GetClass() == "PCB_VIA" and (t.GetPosition().x, t.GetPosition().y) not in skip:
             t.TransformShapeToPolygon(ps, cu, 0, ERR, pcbnew.ERROR_OUTSIDE)
     ps.Simplify()
@@ -291,7 +295,7 @@ def place_refs(b, edge, log):
     obst = {}
     crt = {}
     # 글자 자리가 이음 비아뿐이면 그 비아를 비킨다(지우고 면을 다시 채움) — 섬 미연결은 DRC 가 판정
-    free = free_gnd_vias(b)
+    free = {} if VIA_OK else free_gnd_vias(b)
     log["vias_removed"] = []
     for s in ("F", "B"):
         o = pcbnew.SHAPE_POLY_SET(mask_openings(b, s, frozenset(free)))
@@ -327,14 +331,14 @@ def place_refs(b, edge, log):
         bx0, by0, bx1, by1 = TO(bb.GetLeft()), TO(bb.GetTop()), TO(bb.GetRight()), TO(bb.GetBottom())
         bcx, bcy = (bx0 + bx1) / 2, (by0 + by1) / 2
         done = False
-        for gap in (0.15, 0.4, 0.8, 1.2, 1.8, 2.5):
+        for gap in (0.15, 0.4, 0.8, 1.2, 1.8, 2.5, 3.5, 5.0):
             for ang in (0.0, 90.0):
                 t.SetTextAngleDegrees(ang)
                 t.SetPosition(V(bcx, bcy))
                 tb = t.GetBoundingBox()
                 tw, th = TO(tb.GetWidth()), TO(tb.GetHeight())
                 cands = []
-                for sl in (0.0, -0.5, 0.5, -1.0, 1.0, -1.5, 1.5, -2.0, 2.0, -2.5, 2.5):
+                for sl in (0.0, -0.5, 0.5, -1.0, 1.0, -1.5, 1.5, -2.0, 2.0, -2.5, 2.5, -3.5, 3.5, -4.5, 4.5):
                     cands += [(bcx + sl, by0 - gap - th / 2), (bcx + sl, by1 + gap + th / 2),
                               (bx0 - gap - tw / 2, bcy + sl), (bx1 + gap + tw / 2, bcy + sl)]
                 for x, y in cands:
@@ -390,6 +394,14 @@ def check_texts(b, edge, log):
                 log.setdefault("conflicts", []).append({"ref": fp.GetReference(), "side": s, "text": True})
 
 
+def board_edge(b):
+    """보드 외곽(Edge.Cuts 선의 중심선) 사각형 mm. GetBoardEdgesBoundingBox 는 선폭 반만큼 바깥이라 그만큼 줄인다
+    (검토 17 · 18회차: 외곽 0.30 을 선 바깥에서 재서 실제 외곽까지 0.25~0.29 인 실크가 남았다)."""
+    eb = b.GetBoardEdgesBoundingBox()
+    h = TO(max([d.GetWidth() for d in b.GetDrawings() if d.GetLayer() == pcbnew.Edge_Cuts] or [0])) / 2
+    return (TO(eb.GetLeft()) + h, TO(eb.GetTop()) + h, TO(eb.GetRight()) - h, TO(eb.GetBottom()) - h)
+
+
 def main():
     """mode refs: 배선 전에 참조 지정자를 실크에 놓고 저장(route_export 가 글자 둘레를 비아 금지로 내보낸다).
     mode check: 배선 뒤 실크 선 · 글자의 남은 충돌(비아 · 외곽 · 이웃 패드)만 판정 — 보드는 바꾸지 않는다.
@@ -397,8 +409,7 @@ def main():
     path, rep = sys.argv[1], sys.argv[2]
     mode = sys.argv[3] if len(sys.argv) > 3 else "refs"
     b = pcbnew.LoadBoard(path)
-    eb = b.GetBoardEdgesBoundingBox()
-    edge = (TO(eb.GetLeft()), TO(eb.GetTop()), TO(eb.GetRight()), TO(eb.GetBottom()))
+    edge = board_edge(b)
     log = {"marks": [], "widened": 0, "clipped": {}, "dots_fail": [], "other_shapes": [], "marks_moved": [], "refs_silk": [], "refs_fab_only": []}
     if mode == "refs":
         place_refs(b, edge, log)

@@ -14,6 +14,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import route  # noqa: E402
 
+IN1 = __import__("os").environ.get("ASSIST_IN1") == "1"
 LMAP = {"F.Cu": 0, "In1.Cu": 1, "GND": 1, "In2.Cu": 2, "GND_PWR": 2, "B.Cu": 3}
 
 
@@ -56,7 +57,14 @@ def main():
             r0c = B.cell(*starts_xy[0])
             r1c = B.cell(*dpos)
             win = B.window([r0c, r1c], float(__import__("os").environ.get("ASSIST_WIN", "6.0")))
-            passable, viaok = B.free_maps(win, own, w / 2, vtype["dia"] / 2, [0, 3, 2])
+            LAYS = [0, 3, 2, 1] if IN1 else [0, 3, 2]
+            passable, viaok = B.free_maps(win, own, w / 2, vtype["dia"] / 2, LAYS)
+            if IN1:
+                # O-105 C (D-003 #54): In1(GND) 짧은 점프 — 윗면 고속 쌍(CSI/MDI/USB) 투영(트랙 가장자리 0.6mm 안)은 금지, 길이는 층 비용 99 로 최소
+                sl_ = (slice(win[0], win[1] + 1), slice(win[2], win[3] + 1))
+                hs0 = B.trk[0][sl_] & route.np.isin(B.occ[0][sl_], list(B.hs_ids))
+                if hs0.any():
+                    passable[1] &= route.ndimage.distance_transform_edt(~hs0) * route.G >= 0.6 + w / 2
             wr0, wr1, wc0, wc1 = win
             if sp:
                 cells = set()
@@ -79,7 +87,7 @@ def main():
             targets = {t_ for t_ in targets if 0 <= t_[1] <= wr1 - wr0 and 0 <= t_[2] <= wc1 - wc0}
             if not starts or not targets:
                 continue
-            path = B.astar(win, starts, targets, passable, viaok, [0, 3, 2], cap=int(__import__("os").environ.get("ASSIST_CAP", "3000000")))
+            path = B.astar(win, starts, targets, passable, viaok, LAYS, cap=int(__import__("os").environ.get("ASSIST_CAP", "3000000")))
             if path:
                 got = (w, path, win)
                 break
