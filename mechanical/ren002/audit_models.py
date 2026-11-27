@@ -8,8 +8,9 @@ import argparse, io, json, os, re, subprocess, sys, tarfile
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 LANE = os.path.abspath(os.path.join(HERE, '..', '..'))
-PCB_LANE = os.path.abspath(os.path.join(LANE, '..', 't-20261126-171922-251f'))
-OUT = os.path.join(LANE, 'validation', 'runtime', 'vd001', 'ren002')
+MAIN = r'C:\workspace_python\OpenHW'   # 산출물 validation/runtime 은 main 체크아웃 (O-100 — 레인 worktree 안은 accept 때 지워짐)
+PCB_LANE = MAIN   # pcb 커밋은 같은 저장소(pcb 레인 브랜치) — 레인 worktree 가 없어져도 커밋으로 읽힘
+OUT = os.path.join(MAIN, 'validation', 'runtime', 'vd001', 'ren002')
 KDIR = os.path.expandvars(r'%LOCALAPPDATA%\Programs\KiCad\10.0\share\kicad\3dmodels')
 NO_MODEL_LIBS = ('MountingHole', 'TestPoint', 'Fiducial', 'NetTie', 'Symbol')
 

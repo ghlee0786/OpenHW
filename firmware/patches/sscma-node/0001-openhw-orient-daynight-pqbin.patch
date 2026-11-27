@@ -1,0 +1,116 @@
+diff -ruN a/components/sophgo/video/src/isp.c b/components/sophgo/video/src/isp.c
+--- a/components/sophgo/video/src/isp.c
++++ b/components/sophgo/video/src/isp.c
+@@ -1,4 +1,6 @@
+ #include <stdlib.h>
++#include <string.h>
++#include <pthread.h>
+ #include <sys/prctl.h>
+ #include <unistd.h>
+ 
+@@ -503,6 +505,41 @@
+     return CVI_NULL;
+ }
+ 
++/* OpenHW F-003: openhw-daynight writes /run/daynight/mode ("day" | "night").
++ * ISP parameters live in this process, so the PQ bin is switched here (night -> *_sdr_ir.bin). */
++#define OPENHW_DN_MODE_FILE "/run/daynight/mode"
++#define OPENHW_GC2053_IR_BIN "/mnt/cfg/param/gcore_gc2053_sdr_ir.bin"
++static pthread_t g_openhw_dn_tid;
++static volatile int g_openhw_dn_run;
++
++static void *openhw_daynight_thread(void *arg)
++{
++    int cur = -1;
++    (void)arg;
++    prctl(PR_SET_NAME, "OPENHW_DN", 0, 0, 0);
++    while (g_openhw_dn_run) {
++        char buf[16] = {0};
++        FILE *f = fopen(OPENHW_DN_MODE_FILE, "r");
++        if (f != NULL) {
++            int night;
++            if (fgets(buf, sizeof(buf), f) != NULL) {
++                night = strncmp(buf, "night", 5) == 0;
++                if (night != cur) {
++                    const char *bin = night ? OPENHW_GC2053_IR_BIN : PQ_BIN_SDR;
++                    CVI_S32 ret = app_ipcam_PQBin_Load(bin);
++                    APP_PROF_LOG_PRINT(LEVEL_INFO, "openhw daynight: %.5s -> %s (%#x)\n", buf, bin, ret);
++                    if (ret == CVI_SUCCESS) {
++                        cur = night;
++                    }
++                }
++            }
++            fclose(f);
++        }
++        usleep(500 * 1000);
++    }
++    return CVI_NULL;
++}
++
+ int app_ipcam_Vi_Isp_Start(void)
+ {
+     CVI_S32 s32Ret;
+@@ -569,6 +607,13 @@
+     #endif
+     #endif
+ 
++    if (g_pstViCtx->astSensorCfg[0].enSnsType == SENSOR_GCORE_GC2053 && !g_openhw_dn_run) {
++        g_openhw_dn_run = 1;
++        if (pthread_create(&g_openhw_dn_tid, NULL, openhw_daynight_thread, NULL) != 0) {
++            g_openhw_dn_run = 0;
++        }
++    }
++
+     return CVI_SUCCESS;
+ }
+ 
+@@ -579,6 +624,11 @@
+     VI_PIPE ViPipe;
+     APP_PARAM_VI_CTX_S *g_pstViCtx = app_ipcam_Vi_Param_Get();
+ 
++    if (g_openhw_dn_run) {
++        g_openhw_dn_run = 0;
++        pthread_join(g_openhw_dn_tid, NULL);
++    }
++
+     for (CVI_U32 i = 0; i < g_pstViCtx->u32WorkSnsCnt; i++) {
+         APP_PARAM_CHN_CFG_T *pstChnCfg = &g_pstViCtx->astChnInfo[i];
+         ViPipe = pstChnCfg->s32ChnId;
+diff -ruN a/components/sophgo/video/src/video_paramparse.c b/components/sophgo/video/src/video_paramparse.c
+--- a/components/sophgo/video/src/video_paramparse.c
++++ b/components/sophgo/video/src/video_paramparse.c
+@@ -314,6 +314,24 @@
+     return CVI_SUCCESS;
+ }
+ 
++/* OpenHW P-003: the front DF30 is placed at 180 deg, so the image is rotated vs S401.
++ * GC2053 gets mirror+flip by default; "isp_mirror_flip = 0" in /etc/openhw/daynight.conf disables it. */
++static int openhw_mirror_flip(void) {
++    int v = 1;
++    char line[128];
++    FILE* f = fopen("/etc/openhw/daynight.conf", "r");
++    if (f == NULL) {
++        return v;
++    }
++    while (fgets(line, sizeof(line), f)) {
++        if (sscanf(line, " isp_mirror_flip = %d", &v) == 1) {
++            break;
++        }
++    }
++    fclose(f);
++    return v != 0;
++}
++
+ static const APP_PARAM_SNS_CFG_T* supported_sensors[] = {&sns_cfg_ov5647, &sns_cfg_sc530ai, &sns_cfg_gc2053};
+ static const APP_PARAM_SNS_CFG_T* vi_sensor_identify(void) {
+     VI_PIPE ViPipe = 0;
+@@ -421,6 +439,9 @@
+     APP_PARAM_VI_CTX_S* vi       = app_ipcam_Vi_Param_Get();
+     vi->u32WorkSnsCnt            = 1;
+     vi->astSensorCfg[0]          = *pstSnsCfg;
++    if (pstSnsCfg->enSnsType == SENSOR_GCORE_GC2053) {
++        vi->astSensorCfg[0].u8Orien = openhw_mirror_flip() ? ISP_SNS_MIRROR_FLIP : ISP_SNS_NORMAL;
++    }
+     vi->astSensorCfg[0].s32SnsId = 0;
+     vi->astDevInfo[0]            = dev_cfg;
+     vi->astDevInfo[0].ViDev      = 0;

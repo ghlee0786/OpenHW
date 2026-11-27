@@ -1,0 +1,128 @@
+{
+ "id": "SIM-A4",
+ "title": "어댑터 GST40A12-P1J + 12V 최악 부하·과부하 (GST25A12·GST60A12 참고)",
+ "owner": "schematic",
+ "circuit": {
+  "board": "carrier",
+  "refs": [
+   "U2",
+   "R6",
+   "U1",
+   "J2(어댑터)"
+  ],
+  "schematic_commit": "a2d878c"
+ },
+ "model": {
+  "source": "데이터시트 동작 모델 (어댑터·TPS26600·TPS54302 평균) + IR 부하 25 % 듀티 전류원",
+  "url": "Mean Well GST40A12-P1J 값 — research R-021 `19a69d0` docs/research/r021-bom-c017-psu.md §2.3 · MEAN WELL GST25A-SPEC.PDF https://www.meanwell.com/Upload/PDF/GST25A/GST25A-SPEC.PDF sha256 95f99967…9345 · TI SLVSDG2G (Dec 2019) https://www.ti.com/lit/ds/symlink/tps2660.pdf sha256 b781cbce…e1de",
+  "license": "이 저장소 작성",
+  "behavioral": true,
+  "basis": "GST40A12-P1J OLP 3.51~5.01 A hiccup, Vout 11.64 V 최소, Rout 0.11 Ω + 케이블 26 mΩ (R-021) · GST25A OVERLOAD 110~150 % · 계약 3.2 부하"
+ },
+ "criteria_commit": "64bde61",
+ "checks": [
+  {
+   "name": "정상 최악 12V 입력 피크 (IR 25 % 켬 + 벅) ≤ GST40A12 정격",
+   "op": "<=",
+   "limit": 3.34,
+   "unit": "A",
+   "value": 1.837219,
+   "corner": "GST40A12 Vout 11.64 V",
+   "pass": true
+  },
+  {
+   "name": "정상 최악 12V 입력 평균",
+   "op": "<=",
+   "limit": 1.9,
+   "unit": "A",
+   "value": 0.915214,
+   "corner": "8 ms 창",
+   "pass": true
+  },
+  {
+   "name": "12V_IR 과부하 중 12V 입력 피크 ≤ OLP 최소 3.51 A (eFuse 먼저)",
+   "op": "<=",
+   "limit": 3.51,
+   "unit": "A",
+   "value": 2.740152,
+   "corner": "I(OL) 최대 (R6 −1 %, +5 %)",
+   "pass": true
+  },
+  {
+   "name": "12V_IR 과부하 중 5V_SYS 최소 (a 정전류 3.51 A)",
+   "op": ">=",
+   "limit": 4.75,
+   "unit": "V",
+   "value": 4.979261,
+   "corner": "",
+   "pass": true
+  },
+  {
+   "name": "12V_IR 과부하 중 5V_SYS 최소 (b hiccup 3.51 A)",
+   "op": ">=",
+   "limit": 4.75,
+   "unit": "V",
+   "value": 4.979261,
+   "corner": "1 ms 감지 가정",
+   "pass": true
+  },
+  {
+   "name": "[참고 GST60A12] 과부하 중 5V_SYS 최소 (정전류 5.25 A)",
+   "op": ">=",
+   "limit": 4.75,
+   "unit": "V",
+   "value": 4.979261,
+   "corner": "판정 제외",
+   "pass": true
+  },
+  {
+   "name": "[참고 GST25A12] 정상 최악 피크 ≤ 2.08 A",
+   "op": "<=",
+   "limit": 2.08,
+   "unit": "A",
+   "value": 1.837219,
+   "corner": "판정 제외",
+   "pass": true
+  },
+  {
+   "name": "[참고 GST25A12] 과부하 중 피크 ≤ OCP 2.29 A",
+   "op": "<=",
+   "limit": 2.29,
+   "unit": "A",
+   "value": 2.982991,
+   "corner": "판정 제외",
+   "pass": false
+  },
+  {
+   "name": "[참고 GST25A12] 과부하 중 5V_SYS 최소 (정전류 2.29 A)",
+   "op": ">=",
+   "limit": 4.75,
+   "unit": "V",
+   "value": 3.923233,
+   "corner": "판정 제외",
+   "pass": false
+  },
+  {
+   "name": "[참고 GST25A12] 과부하 중 5V_SYS 최소 (hiccup 2.29 A)",
+   "op": ">=",
+   "limit": 4.75,
+   "unit": "V",
+   "value": 0.0,
+   "corner": "판정 제외",
+   "pass": false
+  }
+ ],
+ "verdict": "pass",
+ "waveforms": [
+  "hardware/sim/png/SIM-A4-GST40_cc.png",
+  "hardware/sim/png/SIM-A4-GST_hiccup.png"
+ ],
+ "netlist": "hardware/sim/SIM-A4-GST40_cc.cir",
+ "tool": {
+  "name": "ngspice",
+  "version": "ngspice-47 (공식 SourceForge ng-spice-rework/47/ngspice-47_64.7z)",
+  "sha256": "59225971… (7z, firmware 설치·검증 — orch O-81)",
+  "path": "C:/Users/gh/tools/ngspice/47/Spice64/bin/ngspice_con.exe"
+ },
+ "notes": "GST40A12 정전류: 정상 피크 1.837 A·평균 0.915 A, 과부하 피크 2.740 A, 5V 최소 4.979 V / hiccup 5V 최소 4.979 V. GST60A12 정전류 5V 최소 4.979 V. GST25A12(2.29 A): 과부하 피크 2.983 A, 5V 최소 정전류 3.923 V · hiccup 0.000 V, 12V_IN 최소 4.06 V. IR 두 스트링을 같은 위상(최악)으로 둠. 어댑터 출력 C 100 µF·감지 1 ms 는 가정."
+}

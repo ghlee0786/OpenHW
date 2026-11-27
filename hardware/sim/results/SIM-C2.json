@@ -1,0 +1,65 @@
+{
+ "id": "SIM-C2",
+ "title": "부하 스위치 강하 (SD_PWR_3V3 · CAM_IOVDD/AVDD · CAM_1V8)",
+ "owner": "schematic",
+ "circuit": {
+  "board": "carrier+front",
+  "refs": [
+   "carrier Q2",
+   "front Q1",
+   "front Q2",
+   "front Q6",
+   "R17",
+   "R18",
+   "R19"
+  ],
+  "schematic_commit": "a2d878c"
+ },
+ "model": {
+  "source": "레벨 1 MOSFET (데이터시트 VGS(th) 최악·RDS(on) 최대 점 맞춤)",
+  "url": "AOS AO3401A Rev 3.1 (2023-12) aosmd.com/res/datasheets/AO3401A.pdf sha256 0d8e3261…a785c · Diodes DMG2305UX DS36196 Rev 8-2 (2021-07) sha256 7421a751…eb2d",
+  "license": "이 저장소 작성",
+  "behavioral": true,
+  "basis": "AO3401A RDS(on) 최대 85 mΩ @ −2.5 V, VGS(th) −1.3 V 최악 / DMG2305UX 200 mΩ @ −1.8 V, VGS(th) −0.9 V 최악"
+ },
+ "criteria_commit": "64bde61",
+ "checks": [
+  {
+   "name": "SD_PWR_3V3 강하 (0.2 A)",
+   "op": "<=",
+   "limit": 0.099,
+   "unit": "V",
+   "value": 0.010226,
+   "corner": "VGS −3.3 V",
+   "pass": true
+  },
+  {
+   "name": "CAM_IOVDD·AVDD 강하 (0.1 A)",
+   "op": "<=",
+   "limit": 0.099,
+   "unit": "V",
+   "value": 0.005106,
+   "corner": "VGS −3.3 V",
+   "pass": true
+  },
+  {
+   "name": "CAM_1V8 (CORE_1V8 1.764 V, 20 mA)",
+   "op": ">=",
+   "limit": 1.71,
+   "unit": "V",
+   "value": 1.75741,
+   "corner": "VGS -1.454 V (R17 4.7k/R18 1k 분압, C-018)",
+   "pass": true
+  }
+ ],
+ "verdict": "pass",
+ "waveforms": [],
+ "netlist": "hardware/sim/SIM-C2.cir",
+ "tool": {
+  "name": "ngspice",
+  "version": "ngspice-47 (공식 SourceForge ng-spice-rework/47/ngspice-47_64.7z)",
+  "sha256": "59225971… (7z, firmware 설치·검증 — orch O-81)",
+  "path": "C:/Users/gh/tools/ngspice/47/Spice64/bin/ngspice_con.exe"
+ },
+ "notes": "CORE_1V8 최소 1.764 V(−2 %)는 가정(코어 SGM2036 정확도 미조사)."
+}

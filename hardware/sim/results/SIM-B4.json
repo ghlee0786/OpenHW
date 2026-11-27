@@ -1,0 +1,70 @@
+{
+ "id": "SIM-B4",
+ "title": "TPS54302 기동 (소프트 스타트 5 ms)",
+ "owner": "schematic",
+ "circuit": {
+  "board": "carrier",
+  "refs": [
+   "U1"
+  ],
+  "schematic_commit": "a2d878c"
+ },
+ "model": {
+  "source": "데이터시트 동작 모델 (평균 전류 모드)",
+  "url": "TI SLVSDG6C (Mar 2026) https://www.ti.com/lit/ds/symlink/tps54302.pdf sha256 d81679ba…51b8",
+  "license": "이 저장소 작성",
+  "behavioral": true,
+  "basis": "SLVSDG6C 5.6 tSS 5 ms, 5.5 VIN UVLO 4.1 V"
+ },
+ "criteria_commit": "64bde61",
+ "checks": [
+  {
+   "name": "기동 오버슈트 (noload)",
+   "op": "<=",
+   "limit": 4.0,
+   "unit": "%",
+   "value": 0.102987,
+   "corner": "",
+   "pass": true
+  },
+  {
+   "name": "95% 도달 시간 (noload)",
+   "op": "<=",
+   "limit": 10.0,
+   "unit": "ms",
+   "value": 4.791,
+   "corner": "",
+   "pass": true
+  },
+  {
+   "name": "기동 오버슈트 (1A3)",
+   "op": "<=",
+   "limit": 4.0,
+   "unit": "%",
+   "value": 0.110269,
+   "corner": "",
+   "pass": true
+  },
+  {
+   "name": "95% 도달 시간 (1A3)",
+   "op": "<=",
+   "limit": 10.0,
+   "unit": "ms",
+   "value": 4.791,
+   "corner": "",
+   "pass": true
+  }
+ ],
+ "verdict": "pass",
+ "waveforms": [
+  "hardware/sim/png/SIM-B4-startup.png"
+ ],
+ "netlist": "hardware/sim/SIM-B4-noload.cir",
+ "tool": {
+  "name": "ngspice",
+  "version": "ngspice-47 (공식 SourceForge ng-spice-rework/47/ngspice-47_64.7z)",
+  "sha256": "59225971… (7z, firmware 설치·검증 — orch O-81)",
+  "path": "C:/Users/gh/tools/ngspice/47/Spice64/bin/ngspice_con.exe"
+ },
+ "notes": "무부하 기동은 실제로 펄스 스킵이지만 모델은 연속 모드."
+}

@@ -1,0 +1,55 @@
+{
+ "id": "SIM-A1",
+ "title": "TPS26600 기동 돌입전류 (dVdT 22nF)",
+ "owner": "schematic",
+ "circuit": {
+  "board": "carrier",
+  "refs": [
+   "U2",
+   "C9",
+   "C11",
+   "front C14..C17"
+  ],
+  "schematic_commit": "a2d878c"
+ },
+ "model": {
+  "source": "데이터시트 동작 모델 (TPS26600 평균)",
+  "url": "TI SLVSDG2G (Dec 2019) https://www.ti.com/lit/ds/symlink/tps2660.pdf sha256 b781cbce…e1de",
+  "license": "모델은 이 저장소 작성 (데이터시트 수치만 인용)",
+  "behavioral": true,
+  "basis": "SLVSDG2G 7.5: I(dVdT) 4.0/4.7/5.5 µA, GAIN(dVdT) 23.75/24.6/25.5 V/V, R(dVdT) 14 Ω, I(OL) 표 (R 8k 1.425~1.575 A)"
+ },
+ "criteria_commit": "64bde61",
+ "checks": [
+  {
+   "name": "돌입 피크 전류 ≤ I(OL) 최소",
+   "op": "<=",
+   "limit": 1.861,
+   "unit": "A",
+   "value": 0.235292,
+   "corner": "빠른: I(dVdT) 5.5µA·GAIN 25.5·C9 −10%·Cout +10%·VIN 12.6V",
+   "pass": true
+  },
+  {
+   "name": "출력 램프 10→90% 시간",
+   "op": "<=",
+   "limit": 10.0,
+   "unit": "ms",
+   "value": 2.324,
+   "corner": "느린: I(dVdT) 4.0µA·GAIN 23.75·C9 +10%·VIN 11.4V",
+   "pass": true
+  }
+ ],
+ "verdict": "pass",
+ "waveforms": [
+  "hardware/sim/png/SIM-A1-inrush.png"
+ ],
+ "netlist": "hardware/sim/SIM-A1-fast.cir",
+ "tool": {
+  "name": "ngspice",
+  "version": "ngspice-47 (공식 SourceForge ng-spice-rework/47/ngspice-47_64.7z)",
+  "sha256": "59225971… (7z, firmware 설치·검증 — orch O-81)",
+  "path": "C:/Users/gh/tools/ngspice/47/Spice64/bin/ngspice_con.exe"
+ },
+ "notes": "LED 부하는 기동 중 꺼진 것으로 둔다(FW 규칙: IR_LED_EN 전에 IR_PWM High). 출력 C DC 바이어스 감액은 무시(돌입 쪽 보수적)."
+}

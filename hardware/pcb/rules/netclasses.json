@@ -1,5 +1,5 @@
 {
-  "_comment": "P-002 ?룻겢?섏뒪 ?먮낯. gen_templates.py 媛 ???뚯씪濡?carrier/front .kicad_pro 瑜?留뚮뱺?? 洹쇨굅: netclasses.md",
+  "_comment": "P-002 넷클래스 원본. gen_templates.py 가 이 파일로 carrier/front .kicad_pro 를 만든다. 근거: netclasses.md",
   "classes": [
     {"name": "Default",    "track_width": 0.20, "clearance": 0.20, "via_diameter": 0.65, "via_drill": 0.30, "diff_pair_width": 0.20, "diff_pair_gap": 0.20, "diff_pair_via_gap": 0.25},
     {"name": "CSI_100",    "track_width": 0.15, "clearance": 0.20, "via_diameter": 0.65, "via_drill": 0.30, "diff_pair_width": 0.15, "diff_pair_gap": 0.16, "diff_pair_via_gap": 0.25, "priority": 0},

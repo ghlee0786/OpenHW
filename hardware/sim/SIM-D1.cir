@@ -1,0 +1,99 @@
+* SIM-D1 전원 순서: 어댑터 GST40A12 (Vout 11.64 V, 50 ms 상승, R-021) → 12V_IN → TPS54302 5V_SYS → 코어 3V3/1V8(가정 모델) → 전면 RT9013 2V8; IR_LED_EN = 0 (R5 풀다운)
+
+.subckt ADAPTER out on
+Vfl flt 0 0
+Bsrc 0 out I = v(flt) < 0.5 ? max(0, min(3.34, (11.64 * min(1, v(on)) - v(out)) / 0.136)) : 0
+Cad out 0 100u
+Rbl out 0 10k
+.ends
+
+
+.subckt TPS26600 in out shdn dvdt
+* 켜짐 조건 (POR 상승 4.1 V 최악, OVP 상승 31.0 V 최악 — 히스테리시스는 A2 에서 따로)
+Ben en0 0 V = (v(shdn) > 0.76) && (v(in) > 4.1) && (v(in) < 31.0) && (v(flt) < 0.5) ? 1 : 0
+Ren en0 en 1k
+Cen en 0 1n
+* dVdT: 켜지면 I(dVdT) 충전, 꺼지면 14 Ω 방전
+Bdv 0 dvdt I = v(en) > 0.5 ? (4.7e-06 * (v(dvdt) * 24.6 < v(in) + 1 ? 1 : 0)) : -v(dvdt) / 14.0
+* 통과 FET: 목표 = min(GAIN·VdVdT, VIN), 전류 = (목표 − OUT)/RON, 0 ~ I(OL) 로 제한
+Bfet in out I = v(en) > 0.5 ? max(0, min(2.11519, (min(24.6 * v(dvdt), v(in)) - v(out)) / 0.15)) : 0
+* 회로차단기 타이머: 제한 중이면 1 V / 4 ms 로 오르고, 아니면 빨리 내림. 1 V 넘으면 flt 래치
+Blim lim 0 V = ((min(24.6 * v(dvdt), v(in)) - v(out)) / 0.15 > 2.10462) && (v(en) > 0.5) ? 1 : 0
+Btm 0 tmr I = v(lim) > 0.5 ? (v(tmr) < 1.2 ? 0.00025 : 0) : (v(tmr) > 0 ? -1e-4 : 0)
+Ctm tmr 0 1u
+Bfl 0 flt I = v(tmr) > 1 ? max(0, 1 - v(flt)) : (v(flt) > 0 ? -9.25926e-07 : 0)
+Cfl flt 0 1u
+.ends
+
+Von on 0 PWL(0 0 50m 1)
+Xad ad on ADAPTER
+Vad ad adm 0
+Rq1 adm in12 0.02
+Cin1 in12 0 47u
+Cin2 in12 0 31.1u
+Vsh shdn 0 0
+Xef in12 ir shdn dvdt TPS26600
+Cdv dvdt 0 22n
+Cir ir 0 30.2u
+
+
+.subckt TPS54302 vin sw fb params: L=10u FSW=400k
+Buv uv0 0 V = v(vin) > 4.1 ? 1 : 0
+Ruv uv0 uv 1k
+Cuv uv 0 1n
+* 소프트 스타트 기준: 켜진 뒤 0 → VFB 를 5 ms 에
+Bss 0 ss I = v(uv) > 0.5 ? (v(ss) < 0.596 ? 0.0001192 : 0) : -v(ss) * 1e-3
+Css ss 0 1u
+Gea 0 comp VALUE = { 0.00024 * (min(v(ss), 0.596) - v(fb)) }
+* EA 출력 클램프 (6.3.1): 0 ~ I(LIM_HS)/Gcs 밖으로 나가면 1 mS 로 되돌림 (연속 함수 — 수렴용)
+Bclp comp 0 I = 1e-3 * (max(v(comp) - 0.35711, 0) + min(v(comp), 0))
+Rc comp cz 20000.0
+Cc cz 0 2.04e-09
+Cp comp 0 2e-12
+Rcl comp 0 10Meg
+* 전류 명령 → fsw/2 2차 지연 (평균 전류 모드 샘플링 근사)
+Bcmd cmd 0 V = (v(fb) > 0.64368 ? 0 : 1) * max(0, min(11.2011 * v(comp), 4.0 - (v(vin) - v(sw)) * v(sw) / (v(vin) + 1e-3) / ({L} * {FSW}) / 2))
+Rf1 cmd f1 1
+Lf1 f1 f2 {0.64 / (3.14159 * FSW)}
+Cf1 f2 0 {1 / (0.64 * 3.14159 * FSW)}
+* 인덕터 전류 (전압 노드 il = 암페어), 기울기 제한
+Bil 0 il I = v(uv) > 0.5 ? 1e-6 * max(-max(v(sw), 0) / {L}, min((v(vin) - v(sw)) / {L}, (v(f2) - v(il)) * 3.14159 * {FSW})) : -v(il) * 1e-3
+Cil il 0 1u
+Gout 0 sw VALUE = { max(v(il), 0) }
+Bin vin 0 I = max(v(il), 0) * v(sw) / max(v(vin), 1) / 0.92
+.ends
+
+Xbk in12 v5 fb TPS54302 params: L=1e-05 FSW=400000.0
+Cv5 v5 0 6.993e-05
+Rtop v5 fb 78700
+Rbot fb 0 10700
+Cff v5 fb 75p
+* 코어: 5V 부하 0.3 A (3V3 뜬 뒤), 3V3 = VIN > 4 V 뒤 1 ms 램프 (SY80004 소프트 스타트 가정), 1V8 = 3V3 따라 (SGM2036)
+Bon33 e33 0 V = v(v5) > 4.0 ? 1 : 0
+Re33 e33 e33f 1k
+Ce33 e33f 0 1n
+Bss 0 r33 I = v(e33f) > 0.5 ? (v(r33) < 3.32 ? 3.32e-3 : 0) : -v(r33) * 1e-3
+Cs33 r33 0 1u
+E33 s33 0 r33 0 1
+R33 s33 c33 0.1
+C33 c33 0 12u
+Rl33 c33 0 11
+Bc18 s18 0 V = min(1.8, max(v(c33) - 0.2, 0))
+R18p s18 c18 0.1
+C18p c18 0 8.5u
+Rl18 c18 0 18
+Bcore v5 0 I = (v(c33) > 3.0 ? 0.3 : 0.02) * min(1, max(v(v5), 0) / 4)
+* 전면 RT9013-28: VIN = 5V_SYS(BTB 통과), EN = VIN, 출력 = min(2.8, VIN − 0.8 Ω·I) 를 40 µs 로 따라감
+Bldo l0 0 V = v(v5) > 2.2 ? min(2.8, v(v5) - 0.8 * 0.03) : 0
+Rldo l0 f28 1.2
+Cf28 f28 0 2.2u
+Rf28 f28 0 93
+.options method=gear
+.control
+set wr_singlescale
+set wr_vecnames
+tran 2u 80m
+wrdata d1.dat v(in12) v(v5) v(c33) v(c18) v(f28) v(ir)
+quit
+.endc
+.end

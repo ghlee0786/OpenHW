@@ -1,0 +1,37 @@
+* SIM-A3 TPS26600 과부하 (I(OL) 최대 코너, R6 6.98k −1%) — 12V_IR 를 2 Ω 로 단락에 가깝게, 5V 벅 입력 0.62 A 동시
+
+.subckt TPS26600 in out shdn dvdt
+* 켜짐 조건 (POR 상승 4.1 V 최악, OVP 상승 31.0 V 최악 — 히스테리시스는 A2 에서 따로)
+Ben en0 0 V = (v(shdn) > 0.76) && (v(in) > 4.1) && (v(in) < 31.0) && (v(flt) < 0.5) ? 1 : 0
+Ren en0 en 1k
+Cen en 0 1n
+* dVdT: 켜지면 I(dVdT) 충전, 꺼지면 14 Ω 방전
+Bdv 0 dvdt I = v(en) > 0.5 ? (4.7e-06 * (v(dvdt) * 24.6 < v(in) + 1 ? 1 : 0)) : -v(dvdt) / 14.0
+* 통과 FET: 목표 = min(GAIN·VdVdT, VIN), 전류 = (목표 − OUT)/RON, 0 ~ I(OL) 로 제한
+Bfet in out I = v(en) > 0.5 ? max(0, min(2.11519, (min(24.6 * v(dvdt), v(in)) - v(out)) / 0.15)) : 0
+* 회로차단기 타이머: 제한 중이면 1 V / 4 ms 로 오르고, 아니면 빨리 내림. 1 V 넘으면 flt 래치
+Blim lim 0 V = ((min(24.6 * v(dvdt), v(in)) - v(out)) / 0.15 > 2.10462) && (v(en) > 0.5) ? 1 : 0
+Btm 0 tmr I = v(lim) > 0.5 ? (v(tmr) < 1.2 ? 0.00025 : 0) : (v(tmr) > 0 ? -1e-4 : 0)
+Ctm tmr 0 1u
+Bfl 0 flt I = v(tmr) > 1 ? max(0, 1 - v(flt)) : (v(flt) > 0 ? -9.25926e-07 : 0)
+Cfl flt 0 1u
+.ends
+
+Vin in 0 12.0
+Vsh shdn 0 PULSE(0 1.8 1m 10u 10u 2 3)
+X1 in out shdn dvdt TPS26600
+Cdv dvdt 0 22n
+Cout out 0 30.2u
+Sov out 0 sw 0 SWM
+Vsw sw 0 PULSE(0 1 20m 1u 1u 2 3)
+.model SWM SW(Ron=2 Roff=1e6 Vt=0.5)
+.options method=gear
+Ibk in 0 0.62
+.control
+set wr_singlescale
+set wr_vecnames
+tran 20u 1.2 uic
+wrdata a3.dat v(out) i(Vin) v(x1.flt) v(x1.tmr)
+quit
+.endc
+.end

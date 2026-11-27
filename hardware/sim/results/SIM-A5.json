@@ -1,0 +1,51 @@
+{
+ "id": "SIM-A5",
+ "title": "12V 전류 순서 표 (12V_IR · eFuse 제한 · 어댑터 OLP)",
+ "owner": "schematic",
+ "circuit": {
+  "board": "carrier",
+  "refs": [
+   "U2",
+   "R6"
+  ],
+  "schematic_commit": "a2d878c"
+ },
+ "model": {
+  "source": "계산 (데이터시트 식)",
+  "url": "TI SLVSDG2G (Dec 2019) https://www.ti.com/lit/ds/symlink/tps2660.pdf sha256 b781cbce…e1de · Mean Well GST40A12-P1J 값 — research R-021 `19a69d0` docs/research/r021-bom-c017-psu.md §2.3",
+  "license": "—",
+  "behavioral": false,
+  "basis": "I(OL) = 12/R(kΩ) Equation 3 (22쪽) · 7.5 표 허용 오차 · 12V_IR 피크 SIM-001b′ · 벅 입력 계약 3.2"
+ },
+ "criteria_commit": "64bde61",
+ "checks": [
+  {
+   "name": "12V_IR 피크 × 1.15 ≤ eFuse I(OL) 최소",
+   "op": "<=",
+   "limit": 1.8609,
+   "unit": "A",
+   "value": 1.8227,
+   "corner": "R6 6.04k +1 %, −5.4 %",
+   "pass": true
+  },
+  {
+   "name": "eFuse I(OL) 최대 + 벅 입력 최악 < 어댑터 OLP 최소",
+   "op": "<=",
+   "limit": 3.51,
+   "unit": "A",
+   "value": 2.7631,
+   "corner": "R6 −1 %, +5.4 %",
+   "pass": true
+  }
+ ],
+ "verdict": "pass",
+ "waveforms": [],
+ "netlist": null,
+ "tool": {
+  "name": "ngspice",
+  "version": "ngspice-47 (공식 SourceForge ng-spice-rework/47/ngspice-47_64.7z)",
+  "sha256": "59225971… (7z, firmware 설치·검증 — orch O-81)",
+  "path": "C:/Users/gh/tools/ngspice/47/Spice64/bin/ngspice_con.exe"
+ },
+ "notes": "표: hardware/sim/SIM-A5-current-order.md. 두 조건을 만족하는 E96 중 I(OL) 최저 = 6.04k (I(OL) 1.861~2.115 A)"
+}

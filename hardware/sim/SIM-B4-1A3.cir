@@ -1,0 +1,45 @@
+* SIM-B4 TPS54302 기동 (1A3) — VIN 0→12 V 100 µs
+
+.subckt TPS54302 vin sw fb params: L=10u FSW=400k
+Buv uv0 0 V = v(vin) > 4.1 ? 1 : 0
+Ruv uv0 uv 1k
+Cuv uv 0 1n
+* 소프트 스타트 기준: 켜진 뒤 0 → VFB 를 5 ms 에
+Bss 0 ss I = v(uv) > 0.5 ? (v(ss) < 0.596 ? 0.0001192 : 0) : -v(ss) * 1e-3
+Css ss 0 1u
+Gea 0 comp VALUE = { 0.00024 * (min(v(ss), 0.596) - v(fb)) }
+* EA 출력 클램프 (6.3.1): 0 ~ I(LIM_HS)/Gcs 밖으로 나가면 1 mS 로 되돌림 (연속 함수 — 수렴용)
+Bclp comp 0 I = 1e-3 * (max(v(comp) - 0.35711, 0) + min(v(comp), 0))
+Rc comp cz 20000.0
+Cc cz 0 2.04e-09
+Cp comp 0 2e-12
+Rcl comp 0 10Meg
+* 전류 명령 → fsw/2 2차 지연 (평균 전류 모드 샘플링 근사)
+Bcmd cmd 0 V = (v(fb) > 0.64368 ? 0 : 1) * max(0, min(11.2011 * v(comp), 4.0 - (v(vin) - v(sw)) * v(sw) / (v(vin) + 1e-3) / ({L} * {FSW}) / 2))
+Rf1 cmd f1 1
+Lf1 f1 f2 {0.64 / (3.14159 * FSW)}
+Cf1 f2 0 {1 / (0.64 * 3.14159 * FSW)}
+* 인덕터 전류 (전압 노드 il = 암페어), 기울기 제한
+Bil 0 il I = v(uv) > 0.5 ? 1e-6 * max(-max(v(sw), 0) / {L}, min((v(vin) - v(sw)) / {L}, (v(f2) - v(il)) * 3.14159 * {FSW})) : -v(il) * 1e-3
+Cil il 0 1u
+Gout 0 sw VALUE = { max(v(il), 0) }
+Bin vin 0 I = max(v(il), 0) * v(sw) / max(v(vin), 1) / 0.92
+.ends
+
+Vin vin 0 PWL(0 0 100u 12)
+X1 vin sw fb TPS54302 params: L=1e-05 FSW=400000.0
+Cout sw ce 6.993e-05
+Resr ce 0 2m
+Rtop vs fb 78700
+Rbot fb 0 10700
+Cff vs fb 75p
+Vinj sw vs 0
+Rld sw 0 3.846
+.control
+set wr_singlescale
+set wr_vecnames
+tran 2u 12m
+wrdata b4.dat v(sw) v(x1.il)
+quit
+.endc
+.end

@@ -1,0 +1,73 @@
+{
+  "id": "SIM-L7",
+  "title": "I2C2 풀업 상승 시간 (100/400 kHz)",
+  "owner": "firmware",
+  "circuit": {
+    "board": "front",
+    "refs": [
+      "R9",
+      "R10",
+      "U3",
+      "J3",
+      "SoC IIC2"
+    ],
+    "schematic_commit": "613cf14"
+  },
+  "model": {
+    "source": "RC (버스 용량 추정 + 풀업)",
+    "url": "https://www.nxp.com/docs/en/user-guide/UM10204.pdf",
+    "license": "—",
+    "behavioral": true,
+    "basis": "UM10204 Rev.7 Table 10·11, §7.1; hardware/pcb/calc/microstrip_fd.py; fab-rules-pcbway.md §2.1"
+  },
+  "criteria_commit": "7cab389",
+  "checks": [
+    {
+      "name": "tr 30→70 % — Fast-mode 400 kHz",
+      "op": "<=",
+      "limit": 3e-07,
+      "unit": "s",
+      "value": 2.73865e-07,
+      "corner": "Cb 최악 65.5 pF, Rp 4.935k",
+      "pass": true
+    },
+    {
+      "name": "tr — Standard-mode 100 kHz",
+      "op": "<=",
+      "limit": 1e-06,
+      "unit": "s",
+      "value": 2.73865e-07,
+      "corner": "같음",
+      "pass": true
+    },
+    {
+      "name": "Cb 최악",
+      "op": "<=",
+      "limit": 4e-10,
+      "unit": "F",
+      "value": 6.54956e-11,
+      "corner": "추정 × 1.5",
+      "pass": true
+    },
+    {
+      "name": "Rp ≥ Rp(min)",
+      "op": ">=",
+      "limit": 437,
+      "unit": "Ω",
+      "value": 4465.0,
+      "corner": "4.7k −5 %",
+      "pass": true
+    }
+  ],
+  "verdict": "pass",
+  "waveforms": [
+    "hardware/sim/png/SIM-L7-i2c-rise.png"
+  ],
+  "netlist": "hardware/sim/SIM-L7.cir",
+  "tool": {
+    "name": "ngspice",
+    "version": "47",
+    "sha256": "22d5cae2bd32b2e39157a8d27bf457122f68285b72a9ebefdf41551b628233ab"
+  },
+  "notes": "Cb 추정: 핀 3×10 pF(UM10204 Ci 최대, SG2002·LTR-329·GC2053 미확인) + 트랙 110 mm × 96.9 fF/mm = 10.7 pF (microstrip_fd: w 0.152, h 0.1855, Er 4.74, 마스크 0.015) + 커넥터 3 pF = 43.7 pF; 최악 ×1.5 = 65.5 pF | 해석식 0.8473·Rp·Cb = 274 ns"
+}

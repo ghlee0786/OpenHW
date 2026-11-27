@@ -1,0 +1,4 @@
+﻿# KiCad 사용자 로컬 설정(창·보기 상태). kicad-cli 실행 때도 생긴다.
+*.kicad_prl
+*-backups/
+_autosave-*

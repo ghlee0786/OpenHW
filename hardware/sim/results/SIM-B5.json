@@ -1,0 +1,62 @@
+{
+ "id": "SIM-B5",
+ "title": "인덕터 포화·실효 전류 여유 (L1 SRP7028A-100M)",
+ "owner": "schematic",
+ "circuit": {
+  "board": "carrier",
+  "refs": [
+   "L1",
+   "U1"
+  ],
+  "schematic_commit": "a2d878c"
+ },
+ "model": {
+  "source": "데이터시트 값 대조 + SIM-B2 피크",
+  "url": "Bourns SRP7028A 데이터시트 https://www.bourns.com/docs/Product-Datasheets/SRP7028A.pdf sha256 64bc2dfa…226f · TI SLVSDG6C (Mar 2026) https://www.ti.com/lit/ds/symlink/tps54302.pdf sha256 d81679ba…51b8",
+  "license": "—",
+  "behavioral": false,
+  "basis": "SRP7028A-100M: 10 µH ±20%, DCR 75/85 mΩ, Irms 3.5 A, Isat 6.0 A (L 20% 감소점); SLVSDG6C I(LIM_HS) 4/5/6 A"
+ },
+ "criteria_commit": "64bde61",
+ "checks": [
+  {
+   "name": "Isat ≥ HS 전류 제한 최대",
+   "op": ">=",
+   "limit": 6.0,
+   "unit": "A",
+   "value": 6.0,
+   "corner": "과부하에서 피크가 제한 최대까지",
+   "pass": true
+  },
+  {
+   "name": "Irms ≥ 5V_SYS 피크 부하",
+   "op": ">=",
+   "limit": 1.3,
+   "unit": "A",
+   "value": 3.5,
+   "corner": "",
+   "pass": true
+  },
+  {
+   "name": "정상 피크 (SIM-B2) ≤ Isat",
+   "op": "<=",
+   "limit": 6.0,
+   "unit": "A",
+   "value": 1.95657,
+   "corner": "1.3 A, VIN 12.6 V, L −20%",
+   "pass": true
+  }
+ ],
+ "verdict": "pass",
+ "waveforms": [
+  "hardware/sim/png/SIM-B2-ripple.png"
+ ],
+ "netlist": null,
+ "tool": {
+  "name": "ngspice",
+  "version": "ngspice-47 (공식 SourceForge ng-spice-rework/47/ngspice-47_64.7z)",
+  "sha256": "59225971… (7z, firmware 설치·검증 — orch O-81)",
+  "path": "C:/Users/gh/tools/ngspice/47/Spice64/bin/ngspice_con.exe"
+ },
+ "notes": "Isat 6.0 A = I(LIM_HS) 최대 6 A 로 여유 0 (같음). Isat 정의가 L −20% 라 그 점에서도 급격한 포화는 아니다. L1 MPN 은 회로도 값 「10uH Isat>=6A」·풋프린트 SRP7028A 로 추정."
+}

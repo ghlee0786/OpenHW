@@ -1,0 +1,128 @@
+{
+  "id": "SIM-L1",
+  "title": "AL8860 한 스트링 LED 전류·리플·주파수",
+  "owner": "firmware",
+  "circuit": {
+    "board": "front",
+    "refs": [
+      "U4",
+      "R13",
+      "R22",
+      "L1",
+      "D1",
+      "D_IR_A1",
+      "D_IR_A2",
+      "C14",
+      "C15"
+    ],
+    "schematic_commit": "613cf14"
+  },
+  "model": {
+    "source": "데이터시트 동작 모델 (AL8860 히스테리시스·소프트스타트·CTRL, VSMA·SS24 다이오드 맞춤)",
+    "url": "https://www.diodes.com/assets/Datasheets/AL8860.pdf",
+    "license": "—",
+    "behavioral": true,
+    "basis": "AL8860 DS39014 Rev.8-2 p.2·4·11–13; VSMA1085400 80294 p.3; SS24S 89008 p.2; SRN6045TA REV.06/24 p.1"
+  },
+  "criteria_commit": "7cab389",
+  "checks": [
+    {
+      "name": "LED 평균 전류 (최소 모서리)",
+      "op": ">=",
+      "limit": 0.9,
+      "unit": "A",
+      "value": 0.984647,
+      "corner": "imin: VSENSE 96mV, Rs 0.101, VF 최대, 11.4V",
+      "pass": true
+    },
+    {
+      "name": "LED 평균 전류 (최대 모서리)",
+      "op": "<=",
+      "limit": 1.1,
+      "unit": "A",
+      "value": 1.08591,
+      "corner": "imax: VSENSE 104mV, Rs 0.099, L −20%, VF 최소, 12.6V",
+      "pass": true
+    },
+    {
+      "name": "LED 피크 전류",
+      "op": "<=",
+      "limit": 1.5,
+      "unit": "A",
+      "value": 1.30503,
+      "corner": "imax",
+      "pass": true
+    },
+    {
+      "name": "인덕터 피크 전류",
+      "op": "<=",
+      "limit": 1.6,
+      "unit": "A",
+      "value": 1.30503,
+      "corner": "전 모서리 최대",
+      "pass": true
+    },
+    {
+      "name": "스위칭 주파수",
+      "op": "<=",
+      "limit": 1000000.0,
+      "unit": "Hz",
+      "value": 213951.0,
+      "corner": "전 모서리 최대",
+      "pass": true
+    },
+    {
+      "name": "스위치 켜짐 시간 tON",
+      "op": ">=",
+      "limit": 5e-07,
+      "unit": "s",
+      "value": 2.33245e-06,
+      "corner": "전 모서리 최소",
+      "pass": true
+    },
+    {
+      "name": "듀티 최소",
+      "op": "between",
+      "limit": [
+        0.25,
+        0.75
+      ],
+      "unit": "-",
+      "value": 0.499928,
+      "corner": "전 모서리",
+      "pass": true
+    },
+    {
+      "name": "듀티 최대",
+      "op": "between",
+      "limit": [
+        0.25,
+        0.75
+      ],
+      "unit": "-",
+      "value": 0.642939,
+      "corner": "전 모서리",
+      "pass": true
+    },
+    {
+      "name": "LED 전류 리플 p-p ÷ 평균",
+      "op": "<=",
+      "limit": 0.5,
+      "unit": "-",
+      "value": 0.404287,
+      "corner": "typ",
+      "pass": true
+    }
+  ],
+  "verdict": "pass",
+  "waveforms": [
+    "hardware/sim/png/SIM-L1-al8860.png"
+  ],
+  "netlist": "hardware/sim/SIM-L1.cir",
+  "tool": {
+    "name": "ngspice",
+    "version": "47",
+    "sha256": "22d5cae2bd32b2e39157a8d27bf457122f68285b72a9ebefdf41551b628233ab"
+  },
+  "notes": "모서리별: typ 평균 1.033A 피크 1.242A IL피크 1.242A f 152kHz tON 3.78µs D 0.57; imin 평균 0.985A 피크 1.180A IL피크 1.180A f 143kHz tON 4.45µs D 0.64; imax 평균 1.086A 피크 1.305A IL피크 1.305A f 193kHz tON 2.62µs D 0.51; fmax 평균 0.982A 피크 1.181A IL피크 1.181A f 214kHz tON 2.33µs D 0.50; dmax 평균 1.034A 피크 1.242A IL피크 1.242A f 135kHz tON 4.74µs D 0.64; dmin 평균 1.035A 피크 1.242A IL피크 1.242A f 163kHz tON 3.09µs D 0.50"
+}

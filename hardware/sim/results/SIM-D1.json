@@ -1,0 +1,101 @@
+{
+ "id": "SIM-D1",
+ "title": "전원 순서 전체 기동 (12V → 5V_SYS → 코어 레일 → 전면 2V8)",
+ "owner": "schematic",
+ "circuit": {
+  "board": "carrier+front",
+  "refs": [
+   "J2",
+   "Q1",
+   "U2",
+   "U1(carrier)",
+   "U1(front)"
+  ],
+  "schematic_commit": "a2d878c"
+ },
+ "model": {
+  "source": "데이터시트 동작 모델 조합 (어댑터·TPS26600·TPS54302·RT9013) + 코어 레일 가정 모델",
+  "url": "TI SLVSDG6C (Mar 2026) https://www.ti.com/lit/ds/symlink/tps54302.pdf sha256 d81679ba…51b8 · TI SLVSDG2G (Dec 2019) https://www.ti.com/lit/ds/symlink/tps2660.pdf sha256 b781cbce…e1de · Richtek DS9013-09 (2010-10, LCSC 사본 C58464) sha256 15023cfb…1ac8",
+  "license": "이 저장소 작성",
+  "behavioral": true,
+  "basis": "코어 SY80004·SGM2036 기동 순서는 코어 SCH 03 PWR_SEQ 기준 미조사 → 1 ms 램프·3V3 추종 가정"
+ },
+ "criteria_commit": "64bde61",
+ "checks": [
+  {
+   "name": "12V_IN > 4.4 V(UVLO 최대) 뒤 5V_SYS 4.75 V 도달",
+   "op": "<=",
+   "limit": 15.0,
+   "unit": "ms",
+   "value": 3.470084,
+   "corner": "어댑터 50 ms 상승",
+   "pass": true
+  },
+  {
+   "name": "12V_IN 오버슈트",
+   "op": "<=",
+   "limit": 5.0,
+   "unit": "%",
+   "value": 0.0,
+   "corner": "",
+   "pass": true
+  },
+  {
+   "name": "5V_SYS 오버슈트",
+   "op": "<=",
+   "limit": 5.0,
+   "unit": "%",
+   "value": 0.066601,
+   "corner": "",
+   "pass": true
+  },
+  {
+   "name": "FRONT_2V8 오버슈트",
+   "op": "<=",
+   "limit": 5.0,
+   "unit": "%",
+   "value": -1.273634,
+   "corner": "",
+   "pass": true
+  },
+  {
+   "name": "IR_LED_EN = 0 동안 12V_IR 최대",
+   "op": "<=",
+   "limit": 0.5,
+   "unit": "V",
+   "value": 0.0,
+   "corner": "SHDN 0 V",
+   "pass": true
+  },
+  {
+   "name": "FRONT_2V8 단조 증가",
+   "op": "==",
+   "limit": true,
+   "unit": "",
+   "value": 1.0,
+   "corner": "",
+   "pass": true
+  },
+  {
+   "name": "FRONT_2V8 최종값 오차",
+   "op": "<=",
+   "limit": 2.0,
+   "unit": "%",
+   "value": 1.273885,
+   "corner": "",
+   "pass": true
+  }
+ ],
+ "verdict": "pass",
+ "waveforms": [
+  "hardware/sim/png/SIM-D1-sequence.png"
+ ],
+ "netlist": "hardware/sim/SIM-D1.cir",
+ "tool": {
+  "name": "ngspice",
+  "version": "ngspice-47 (공식 SourceForge ng-spice-rework/47/ngspice-47_64.7z)",
+  "sha256": "59225971… (7z, firmware 설치·검증 — orch O-81)",
+  "path": "C:/Users/gh/tools/ngspice/47/Spice64/bin/ngspice_con.exe"
+ },
+ "notes": "코어 내부 순서(VDDC·VDDQ·PWR_SEQ)는 모델에 없음. CAM_EN·SD0_PWR_EN·IR_LED_EN 은 FW 가 나중에 켠다(SIM-C3)."
+}

@@ -1,0 +1,25 @@
+{
+ "_doc": "V-006 규칙 완화 ↔ D-003 대조표 (review 작성). baseline = P-001 제조 기준(hardware/pcb/fab-rules-pcbway.md §3), original_limits = 완화 전 값(D-003 #28 '3→4' 등의 앞 값, 쌍 간격 상한 0.18). records 의 must_contain 은 D-003 그 행에 그대로 있어야 하는 문구, {value} 는 지금 보드 값.",
+ "baseline": {
+  "pro_rules": {"min_track_width": 0.15, "min_clearance": 0.16, "min_via_diameter": 0.60, "min_through_hole_diameter": 0.30,
+                "min_via_annular_width": 0.15, "min_hole_to_hole": 0.45, "min_copper_edge_clearance": 0.40,
+                "min_silk_clearance": 0.15, "min_text_height": 1.0, "min_text_thickness": 0.15},
+  "dru_min": {"clearance": 0.16, "track_width": 0.15, "hole_size": 0.30, "annular_width": 0.15, "via_diameter": 0.60,
+              "edge_clearance": 0.40, "hole_to_hole": 0.45, "silk_clearance": 0.15, "text_height": 1.0, "text_thickness": 0.15}
+ },
+ "original_limits": {
+  "diff_pair_uncoupled": {"CSI_100": 3.0, "MDI_100": 5.0, "USB_90": 5.0},
+  "diff_pair_gap": {"*": 0.18},
+  "skew": {"CSI_100": 1.0}
+ },
+ "records": [
+  {"match": {"rule": "csi_100_pair", "constraint": "diff_pair_uncoupled"}, "d003": 28, "must_contain": ["CSI 3→{value}mm"]},
+  {"match": {"rule": "mdi_100_pair", "constraint": "diff_pair_uncoupled"}, "d003": 28, "must_contain": ["MDI 5→{value}mm"]},
+  {"match": {"rule": "usb_90_pair", "constraint": "diff_pair_uncoupled"}, "d003": 28, "must_contain": ["USB 5→{value}mm"]},
+  {"match": {"area": "DP_TWIST"}, "d003": 31, "must_contain": ["ESD→RJ45 구간", "규칙 예외"]},
+  {"match": {"key": "ignore:footprint_filters_mismatch"}, "d003": 46, "must_contain": ["회로도 필터 경고 ignore"]},
+  {"match": {"rule": "dp_breakout_pair", "constraint": "diff_pair_gap", "area": "DP_BRK"}, "d003": 46, "must_contain": ["DP_BRK 쌍 간격 {value}"]},
+  {"match": {"rule": "dp_breakout_spacing", "constraint": "clearance", "area": "DP_BRK"}, "d003": 46, "must_contain": ["DP_BRK 간격 {value}"]},
+  {"match": {"rule": "dp_tuning_gap", "constraint": "diff_pair_gap", "area": "DP_TUNE"}, "d003": 46, "must_contain": ["DP_TUNE 쌍 간격 {value}"]}
+ ]
+}
