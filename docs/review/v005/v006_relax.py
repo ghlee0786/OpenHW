@@ -165,6 +165,8 @@ def match(rec, rx):
         return False
     if 'area' in m and ("(%s)" % m['area']) not in rx['detail'] and ("'%s'" % m['area']) not in rx['detail']:
         return False
+    if 'area_re' in m and not re.search(m['area_re'], rx['detail']):   # 영역 이름이 정해지지 않은 완화 (O-114 J1 탈출)
+        return False
     return True
 
 
@@ -179,6 +181,8 @@ for rx in relax:
     row = rows.get(rec['d003'])
     need = [s.replace('{value}', fmt(rx['value']) if rx['value'] is not None else '') for s in rec.get('must_contain', [])]
     miss = [s for s in need if row is None or s not in row]
+    if 'value' in rec and (rx['value'] is None or abs(rx['value'] - rec['value']) > 1e-9):   # 기록된 값과 보드 값이 다르면 불합격
+        miss.append('보드 값 %s ≠ 기록 값 %s' % (fmt(rx['value']) if rx['value'] is not None else '-', fmt(rec['value'])))
     rx.update(d003=rec['d003'], need=need, missing_text=miss, ok=(row is not None and not miss),
               status=('기록 일치' if row is not None and not miss else ('D-003 행 없음' if row is None else '기록 문구 불일치')))
     if not rx['ok']:

@@ -79,10 +79,54 @@ CASES = [
     ('주석 처리된 규칙 무시(음성)', not any('commented' in k for k in by)),
     ('종료 코드 = 불합격 수(5: P1·MDI 문구·NEW_ZONE·선폭 0.10·severity)', rc.returncode == R['fail'] == 5),
 ]
+# ---- O-114 / D-003 #60: J1 탈출 비아 0.50/0.20 (enclosedByArea J1_*) ----
+DRU2 = '''(version 1)
+(rule "fab_via_diameter" (constraint via_diameter (min 0.60mm)))
+(rule "fab_min_drill" (constraint hole_size (min 0.30mm)))
+(rule "j1_esc_via"
+  (condition "A.Type == 'Via' && A.enclosedByArea('J1_ESC')")
+  (constraint via_diameter (min 0.50mm))
+  (constraint hole_size (min 0.20mm))
+  (constraint annular_width (min 0.15mm)))
+(rule "j1_bad_inter"
+  (condition "A.Type == 'Via' && A.intersectsArea('J1_ESC')")
+  (constraint via_diameter (min 0.50mm)))
+(rule "j1_small"
+  (condition "A.Type == 'Via' && A.enclosedByArea('J1_ESC2')")
+  (constraint via_diameter (min 0.45mm)))
+(rule "j1_h2h"
+  (condition "A.enclosedByArea('J1_ESC')")
+  (constraint hole_to_hole (min 0.28mm)))
+'''
+D3b = D3 + '| 60 | J1 탈출 비아 | J1 탈출 비아만 0.50/0.20(링 0.15)을 J1 둘레 규칙 영역(enclosedByArea) 안에서 허용 | 근거 | 차선 |\n'
+W2 = os.path.join(W, 'esc'); os.makedirs(W2)
+open(os.path.join(W2, 't.kicad_dru'), 'w', encoding='utf-8').write(DRU2)
+open(os.path.join(W2, 'd003.md'), 'w', encoding='utf-8').write(D3b)
+json.dump({'board': {'design_settings': {}}}, open(os.path.join(W2, 't.kicad_pro'), 'w', encoding='utf-8'))
+out2 = os.path.join(W2, 'relax.json')
+rc2 = subprocess.run([sys.executable, '-I', os.path.join(HERE, 'v006_relax.py'), os.path.join(W2, 't.kicad_pcb'), out2,
+                      '--d003', os.path.join(W2, 'd003.md')], capture_output=True, text=True, encoding='utf-8')
+R2 = json.load(open(out2, encoding='utf-8'))
+by2 = {r['key']: r for r in R2['relaxations']}
+
+
+def st2(k):
+    return by2.get(k, {}).get('status')
+
+
+CASES += [
+    ('#60 J1 탈출 비아 지름 0.50 · 드릴 0.20 (enclosedByArea) 기록 일치(음성)', st2('rule:j1_esc_via:via_diameter') == '기록 일치' and st2('rule:j1_esc_via:hole_size') == '기록 일치'),
+    ('#60 링 0.15 는 기준과 같아 완화 아님(음성)', 'rule:j1_esc_via:annular_width' not in by2),
+    ('#60 intersectsArea 로 쓴 같은 완화 → 기록 없음(양성)', st2('rule:j1_bad_inter:via_diameter') == '기록 없음'),
+    ('#60 지름 0.45 는 기록 값 0.50 과 다름 → 문구 불일치(양성)', st2('rule:j1_small:via_diameter') == '기록 문구 불일치'
+     and any('보드 값 0.45' in x for x in by2['rule:j1_small:via_diameter']['missing_text'])),
+    ('#60 구멍 간격 0.28 은 D-003 에 값 없음 → 문구 불일치(양성)', st2('rule:j1_h2h:hole_to_hole') == '기록 문구 불일치'),
+    ('#60 종료 코드 = 불합격 3', rc2.returncode == R2['fail'] == 3),
+]
 fail = 0
 for n, ok in CASES:
     print('%s  %s' % ('통과' if ok else '실패', n)); fail += 0 if ok else 1
 if fail:
-    print(rc.stdout[-3000:])
+    print(rc.stdout[-3000:]); print(rc2.stdout[-3000:], rc2.stderr[-1500:])
 print('사례 %d · 실패 %d' % (len(CASES), fail))
 sys.exit(1 if fail else 0)

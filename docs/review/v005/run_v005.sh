@@ -28,6 +28,7 @@ step test_silk "$KPY" -I "$HERE/test_v005_silk.py" "$OUT/test" || bad=1
 step test_excl "$KPY" -I "$HERE/test_v005_excl.py" "$OUT/test_excl" || bad=1
 step test_relax python -I "$HERE/test_v006_relax.py" "$OUT/test_relax" || bad=1
 step test_fab python -I "$HERE/test_v006_fab.py" "$WORK/hardware/schematic/carrier/carrier.kicad_pcb" "$OUT/test_fab" || bad=1
+step test_esc "$KPY" -I "$HERE/test_v006_esc.py" "$WORK/hardware/schematic/carrier/carrier.kicad_pcb" "$OUT/test_esc" || bad=1
 step test_vd001 python -I "$HERE/test_v006_vd001_html.py" "$OUT/test_vd001" || bad=1
 for b in carrier front; do
   P="$WORK/hardware/schematic/$b/$b.kicad_pcb"
@@ -38,7 +39,7 @@ for b in carrier front; do
   step "netlist_$b" "$KCLI" sch export netlist --format kicadsexpr -o "$OUT/$b.net" "$SCH" || bad=1
   step "silk_$b" "$KPY" -I "$HERE/v005_silk.py" "$P" "$OUT/silk_$b.json" --netlist "$OUT/$b.net" || bad=1
   # V-006: 규칙 완화·ignore ↔ D-003 (종료 코드 = 기록 없는 완화 수 — 실행 실패로 치지 않고 판정은 cond2)
-  step "relax_$b" python -I "$HERE/v006_relax.py" "$P" "$OUT/relax_$b.json" --d003 "$ROOT/docs/decisions/D-003-working-defaults.md"
+  step "relax_$b" python -I "$HERE/v006_relax.py" "$P" "$OUT/relax_$b.json" --d003 "$MAIN/docs/decisions/D-003-working-defaults.md"
   # O-74: 제외·ignore 나열, 허용 종류, pcb 문서 목록 대조, openhw 사본 패드·구멍
   step "excl_$b" "$KPY" -I "$HERE/v005_excl.py" "$P" "$OUT/excl_$b.json" --board-name $b --repo-root "$WORK" --doc $(ls "$WORK"/hardware/pcb/*.md "$WORK"/hardware/pcb/*/*.md 2>/dev/null) || bad=1
   for s in top bottom; do step "render_${b}_$s" "$KCLI" pcb render --side $s --width 1400 --height 1400 --quality high --background opaque -o "$OUT/${b}_$s.png" "$P" || bad=1; done

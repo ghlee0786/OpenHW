@@ -98,6 +98,9 @@ Q10 = fp_add('Package_TO_SOT_SMD', 'SOT-23', 'Q10', 134, 104)                # S
 Q11 = fp_add('Package_TO_SOT_SMD', 'SOT-23', 'Q11', 142, 104); strip_silk(Q11, only_filled=True)  # 삼각 표시 제거 → missing
 Q12 = fp_add('Package_TO_SOT_SMD', 'SOT-23', 'Q12', 150, 104, rot=90)        # 회전해도 ok
 J10 = fp_add('Connector_USB', 'USB_C_Receptacle_HRO_TYPE-C-31-M-12', 'J10', 150, 128, rot=90)  # 면제
+# V-006b: 원점이 1번 패드인 풋프린트(핀 헤더) — 사분면 중심은 원점이 아니라 패드 전체의 가운데여야 한다
+J20 = fp_add('Connector_PinHeader_2.54mm', 'PinHeader_1x02_P2.54mm_Vertical', 'J20', 158, 110, rot=180, ref_at=(158, 116))   # 라이브러리 1번 핀 표시 그대로 → ok
+J21 = fp_add('Connector_PinHeader_2.54mm', 'PinHeader_1x02_P2.54mm_Vertical', 'J21', 166, 110, ref_at=(166, 116)); strip_silk(J21)  # 실크 없음 → missing
 
 # ---- 실크 위반 ----
 line(109.0, 110.0, 109.6, 110.0)                 # S1: R1 패드 1(x 109.49) 위로 지남
@@ -181,7 +184,9 @@ CASES = [
     ('S9 SOT-23 90° 회전 ok(음성)', P1.get('Q12', {}).get('verdict') in ('ok', 'ok_marker')),
     ('S9 USB-C 면제', P1.get('J10', {}).get('verdict') == 'exempt'),
     # V-006a: 참조 필드는 Reference()·GetFields() 두 길로 나옴 — 한 번만 센다 (부품 14개 모두 앞면 실크 참조)
-    ('참조 한 번만 셈 (앞면 실크 참조 14)', R['counts']['F']['ref'] == 14),
+    ('참조 한 번만 셈 (앞면 실크 참조 16)', R['counts']['F']['ref'] == 16),
+    ('S9 원점이 1번 패드인 헤더, 1번 핀 표시 있음 ok(음성)', P1.get('J20', {}).get('verdict') in ('ok', 'ok_marker', 'ok_half')),
+    ('S9 같은 헤더 실크 없음 missing(양성)', P1.get('J21', {}).get('verdict') == 'missing'),
     ('S7 자기 참조끼리 겹침 없음(음성)', not has('S7_text_text', lambda x: x['text'].get('owner') == x['other'].get('owner') and x['text'].get('at') == x['other'].get('at'))),
 ]
 fail = 0

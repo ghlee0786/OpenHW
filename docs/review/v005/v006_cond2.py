@@ -92,6 +92,23 @@ for b in BOARDS:
             leak = ru['area_rule_leak'].get('DP_TWIST', {}).get('outside_len', 0)
             add('2.A11', b, '꼬임 예외가 DP_TWIST 영역 안에만 (enclosedByArea 또는 누출 0)', 0 if enclosed else leak, 0, enclosed or leak == 0, [frr],
                 'enclosedByArea 조건' if enclosed else 'intersectsArea 누출 길이(mm)')
+        ev_ = ru.get('esc_vias')
+        if ev_ is not None:   # O-114 / D-003 #60: J1 탈출 비아 0.50/0.20 은 J1 둘레 규칙 영역(enclosedByArea) 안에서만
+            an = [a['name'] for a in ev_['areas']]
+            add('2.V1', b, '비아 0.65/0.30 미만은 J1 탈출 영역 안에만, 열·GND 이음 비아는 0.60/0.30 허용 (D-003 #21·#60) — 그 밖의 작은 비아', len(ev_['outside_small']), 0, not ev_['outside_small'], [frr],
+                '; '.join(sorted(set('%s/%s %s' % (v['dia'], v['drill'], v['net']) for v in ev_['outside_small']))[:8]) + (' · 걸침 %d' % len(ev_['straddle_small']) if ev_['straddle_small'] else '')
+                + ' · 0.60/0.30 허용분: GND %d, 열 %d' % (sum(1 for v in ev_.get('allowed_060', []) if v['kind'] == 'GND'), sum(1 for v in ev_.get('allowed_060', []) if v['kind'] == '열')))
+            if an or ev_['inside']:
+                inter = sorted(set(re.findall(r"intersectsArea\('(%s[^']*)'\)" % re.escape(ev_['prefix']), t)))
+                encl = sorted(set(re.findall(r"enclosedByArea\('(%s[^']*)'\)" % re.escape(ev_['prefix']), t)))
+                add('2.V2', b, 'J1 탈출 규칙이 enclosedByArea 뿐 (영역 %s)' % (', '.join(an) or '없음'), len(inter), 0, bool(encl) and not inter, [frr],
+                    ('intersectsArea 규칙: ' + ', '.join(inter)) if inter else ('enclosedByArea: ' + (', '.join(encl) or '규칙 없음')))
+                add('2.V3', b, '영역 안 작은 비아 %d개: 지름 ≥0.50 · 드릴 ≥0.20 · 링 ≥0.15 · 구멍 간격 ≥0.28' % len(ev_['inside']), len(ev_['inside_fail']), 0,
+                    not ev_['inside_fail'], [frr], '; '.join('%s %s' % (v['at'], ','.join(v['why'])) for v in ev_['inside_fail'][:8]))
+                add('2.V4', b, '영역 안 작은 비아는 J1 핀 넷뿐', len(ev_['non_j1_net']), 0, not ev_['non_j1_net'], [frr],
+                    ', '.join(sorted(set(v['net'] for v in ev_['non_j1_net']))))
+                far = [a for a in ev_['areas'] if not a['beyond_ok']]
+                add('2.V5', b, '탈출 영역이 J1 둘레 안 (J1 외곽 상자 + 3.0 [가정])', max([a['beyond_j1'] or 0 for a in ev_['areas']] or [0]), '≤3.0', bool(an) and not far, [frr])
         for l in ru.get('ir_leds', []):
             add('2.A12', b, 'IR LED 열 비아 %s' % l['ref'], l['thermal_vias'], '≥4 (D-003 #29)', l['thermal_vias'] >= 4, [frr])
         for e in ru.get('exposed_pads', []):
@@ -107,7 +124,7 @@ for b in BOARDS:
         names = {'S1_on_mask_open': '패드·노출 동박 위 실크', 'S1v_over_via': '안 덮인 비아 위 실크 (덮인 비아는 허용, D-003 #58)', 'S1h_over_hole': '열린 구멍 위 실크',
                  'S2_clear_lt_0p15': '실크–마스크 개구 < 0.15', 'S3_line_lt_0p15': '실크 선폭 < 0.15', 'S4_text': '글자 높이·획 미달',
                  'S4r_ratio_lt_1to5': '글자 획/높이 < 1:5', 'S5_edge': '외곽까지 < 0.30', 'S6_ref_hidden': '부품 아래 숨는 참조',
-                 'S6a_ref_far': '자기 부품에서 먼 참조', 'S6a_ref_ambiguous': '다른 부품이 더 가까운 참조', 'S7_text_text': '글자 겹침',
+                 'S7_text_text': '글자 겹침',
                  'S7l_text_line': '글자–선 겹침', 'S7s_text_space': '글자–실크 간격 < 0.127', 'S8_orient_gt2': '읽는 방향 > 2',
                  'S8m_mirror': '거울상 오류', 'S9_missing': '1번 핀·극성 표시 없음', 'S9_wrong_side': '1번 핀·극성 표시 반대'}
         for k, n in names.items():
@@ -118,6 +135,12 @@ for b in BOARDS:
             (c.get('F', {}).get('ref', 0) + c.get('B', {}).get('ref', 0)) > 0, [fs])
         ex_ = [p['ref'] for p in si['pin1_candidates'] if p['verdict'] == 'exempt']
         half = [p['ref'] for p in si['pin1_candidates'] if p['verdict'] == 'ok_half']
+        # O-115(lead 결정 c): 참조 글자 멂·모호(S6a)는 기계 불합격이 아니라 사람 확인 — 자리 없어 떨어뜨린 글자가 어느 부품 것인지 사람이 본다
+        far_ = sorted(set(x['owner'] for x in si['findings'].get('S6a_ref_far', [])))
+        amb_ = sorted(set(x['owner'] for x in si['findings'].get('S6a_ref_ambiguous', [])))
+        if far_ or amb_:
+            add('2.H4', b, '부품에서 떨어진 참조 글자가 어느 부품 것인지 알아보는가 — 멂(>2.0) %d: %s / 다른 부품이 더 가까움 %d: %s'
+                % (len(far_), ', '.join(far_) or '-', len(amb_), ', '.join(amb_) or '-'), '%d / %d' % (len(far_), len(amb_)), '사람 확인', None, [fs, 'index.html#4'], verifiable=False)
         if ex_:
             add('2.H1', b, '기구 키 커넥터는 1번 핀 표시 없어도 되는가: ' + ', '.join(ex_), '-', '사람 확인', None, [fs, 'index.html#4.1'], verifiable=False)
         if half:
