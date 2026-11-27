@@ -237,11 +237,19 @@ for base, pn in sorted(pairs.items()):
                 gc[(w, g)] += l
             res['gap_hist'] = {'w=%.3f gap=%.3f' % k: round(v, 3) for k, v in sorted(gc.items())}
             res['zdiff_ipc2141_nomask'] = {'w=%.3f gap=%.3f' % k: round(zdiff_ipc(k[0], k[1], h_pp, t_cu, er_pp), 1) for k in gc}
-    # 비결합의 꼬임 영역 안/밖 나눔 (strict)
-    def unc_split(A, B):
+    # 비결합의 꼬임 영역 안/밖 나눔. area_gap=False: 쌍 간격 0.18 이하만 결합(strict).
+    # area_gap=True: 규칙 영역에 다 든 세그먼트는 그 영역의 쌍 간격 상한까지 결합으로 본다 (D-003 #46 — DP_BRK 2.2 · DP_TUNE 1.0, KiCad enclosedByArea 규칙과 같은 뜻)
+    AREA_GAP = (('DP_BRK', 2.2), ('DP_TUNE', 1.0))
+
+    def unc_split(A, B, area_gap=False):
         ins = outs = 0.0
         for s in A:
             pts, dl = seg_pts(s['t'], 0.05)
+            gmax = 0.18
+            if area_gap:
+                for an, ag in AREA_GAP:
+                    if in_area(an, s['a'][0], s['a'][1], s['L']) and in_area(an, s['b'][0], s['b'][1], s['L']):
+                        gmax = max(gmax, ag)
             for (x, y) in pts:
                 # 이 점이 결합인지: 같은 층 평행 B 세그먼트까지 거리
                 cpl = False
@@ -260,7 +268,7 @@ for base, pn in sorted(pairs.items()):
                     if tt < 0 or tt > L:
                         continue
                     d = abs((x - ax) * (-uy) + (y - ay) * ux) - (s['w'] + o['w']) / 2
-                    if -1e-4 <= d <= 0.18 + 1e-4:
+                    if -1e-4 <= d <= gmax + 1e-4:
                         cpl = True
                         break
                 if not cpl:
@@ -269,6 +277,8 @@ for base, pn in sorted(pairs.items()):
                     else:
                         outs += dl
         return ins, outs
+    aP, aN = unc_split(P, N, True), unc_split(N, P, True)
+    res['uncoupled_area_rule'] = dict(P=round(aP[1], 3), N=round(aN[1], 3), in_twist_P=round(aP[0], 3), in_twist_N=round(aN[0], 3))   # 꼬임 밖, 영역 간격 반영
     if cls == 'MDI_100':
         iP, oP = unc_split(P, N)
         iN, oN = unc_split(N, P)

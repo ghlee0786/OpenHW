@@ -12,6 +12,7 @@ ap = argparse.ArgumentParser()
 ap.add_argument('res'); ap.add_argument('commit'); ap.add_argument('out')
 ap.add_argument('--snap', default=None)
 ap.add_argument('--root', default='.', help='근거 경로를 이 저장소 루트 기준 상대 경로로 쓴다')
+ap.add_argument('--d003', default=None, help='D-003 문서 — #62(MDI TX 쌍 안 길이 차·비결합 예외) 한도를 이 행에서 읽는다')
 A = ap.parse_args()
 BOARDS = ['carrier', 'front']
 items = []
@@ -31,6 +32,18 @@ def add(id_, board, title, value, limit, ok, ev, note='', verifiable=True):
         return e
     items.append(dict(cond='2', id=id_, board=board, title=title, verifiable=verifiable, value=value, limit=limit,
                       **{'pass': (None if not verifiable else bool(ok))}, evidence=[dict(label=e, path=ep(e)) for e in ev], commit=A.commit, note=note))
+
+
+# O-119 / D-003 #62: 캐리어 MDI TX 쌍만 쌍 안 길이 차·비결합 길이 예외. 한도는 #62 행의 「쌍 안 길이 차 ≤N mm」「비결합 길이 ≤N mm」에서 읽는다
+#   — 행이 없거나 「MDI TX」가 없거나 그 문구가 없으면 그 예외는 없음(#28: 차 「0」, 비결합은 mdi_100_pair 한도)
+TX_DIFF_MAX = TX_UNC_MAX = None
+if A.d003 and os.path.exists(A.d003):
+    for _l in open(A.d003, encoding='utf-8'):
+        if re.match(r'\|\s*62\s*\|', _l) and 'MDI TX' in _l:
+            _m = re.search(r'쌍 안 길이 차\s*≤\s*([\d.]+)\s*mm', _l)
+            TX_DIFF_MAX = float(_m.group(1)) if _m else None
+            _m = re.search(r'비결합 길이\s*≤\s*([\d.]+)\s*mm', _l)
+            TX_UNC_MAX = float(_m.group(1)) if _m else None
 
 
 def dru_text(b):
@@ -75,11 +88,19 @@ for b in BOARDS:
                'USB_90': rule_max(t, 'usb_90_pair', 'diff_pair_uncoupled', 12.0)}
         twist_lim = rule_max(t, 'mdi_twist_pair', 'diff_pair_uncoupled', 20.0)
         for k, p in ru.get('pairs', {}).items():
-            add('2.A8', b, '쌍 안 길이 차 %s' % k, p['diff'], '≤0.025 (D-003 #28 「0」)', p['diff'] <= 0.025, [frr])
+            if b == 'carrier' and k == '/EPHY_TX' and TX_DIFF_MAX is not None:
+                add('2.A8', b, '쌍 안 길이 차 %s (MDI TX 예외)' % k, p['diff'], '≤%g (D-003 #62, #28 예외)' % TX_DIFF_MAX, p['diff'] <= TX_DIFF_MAX + 1e-6, [frr])
+            else:
+                add('2.A8', b, '쌍 안 길이 차 %s' % k, p['diff'], '≤0.025 (D-003 #28 「0」)', p['diff'] <= 0.025, [frr])
             s = p['strict_0.18']
             if p['cls'] == 'MDI_100' and 'uncoupled_outside_twist' in p:
                 o = max(p['uncoupled_outside_twist'].values())
-                add('2.A10', b, '비결합(꼬임 밖) %s' % k, o, '≤%g' % lim['MDI_100'], o <= lim['MDI_100'] + 1e-6, [frr])
+                ar = p.get('uncoupled_area_rule')
+                tx62 = b == 'carrier' and k == '/EPHY_TX' and TX_UNC_MAX is not None
+                ulim = TX_UNC_MAX if tx62 else lim['MDI_100']
+                add('2.A10', b, '비결합(꼬임 밖, 쌍 간격 0.18 이하만 결합) %s%s' % (k, ' (MDI TX 예외)' if tx62 else ''), o,
+                    '≤%g%s' % (ulim, ' (D-003 #62, #28 예외)' if tx62 else ''), o <= ulim + 1e-6, [frr],
+                    ('참고: 탈출·보정 영역 간격(D-003 #46 DP_BRK 2.2 · DP_TUNE 1.0)을 결합으로 보면 %g' % max(ar['P'], ar['N'])) if ar else '')
                 add('2.A10t', b, '비결합(꼬임 포함) %s' % k, s['uncoupled_max'], '≤%g' % twist_lim, s['uncoupled_max'] <= twist_lim + 1e-6, [frr])
             else:
                 add('2.A10', b, '비결합 %s' % k, s['uncoupled_max'], '≤%g' % lim[p['cls']], s['uncoupled_max'] <= lim[p['cls']] + 1e-6, [frr])
