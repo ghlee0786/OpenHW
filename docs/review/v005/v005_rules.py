@@ -301,6 +301,112 @@ for base, pn in sorted(pairs.items()):
     R['pairs'][base] = dict(cls=cls, P=pn['P'], N=pn['N'], lenP=round(lenP, 3), lenN=round(lenN, 3), diff=round(abs(lenP - lenN), 3),
                             viasP=vP, viasN=vN, layers=sorted(set(s['L'] for s in P + N)), off_reference_len=round(off, 3), off_reference_pts=offpts, **res)
 
+# 4b. 탈출·보정 영역 표 (D-003 #63: 영역이 커지지 않는지 감시) — 영역마다 크기, 쌍별 영역 안 트랙 길이,
+#     그 영역 덕에 결합으로 센 길이(쌍 간격이 0.18 초과 ~ 영역 상한 이하인 구간)와 결합으로 센 구간의 쌍 간격 최대
+AG = {'DP_BRK': 2.2, 'DP_TUNE': 1.0}   # D-003 #46
+def _par_gap(s, x, y, B):
+    best = None
+    for o in B:
+        if o['L'] != s['L']:
+            continue
+        ax, ay = o['a']; bx, by = o['b']
+        L = math.hypot(bx - ax, by - ay)
+        su = (s['b'][0] - s['a'][0], s['b'][1] - s['a'][1]); sl = math.hypot(*su)
+        if L < 1e-6 or sl < 1e-6:
+            continue
+        ux, uy = (bx - ax) / L, (by - ay) / L
+        if abs(ux * su[1] / sl - uy * su[0] / sl) > math.sin(math.radians(1.0)):
+            continue
+        tt = (x - ax) * ux + (y - ay) * uy
+        if tt < 0 or tt > L:
+            continue
+        d = abs((x - ax) * (-uy) + (y - ay) * ux) - (s['w'] + o['w']) / 2
+        if d >= -1e-4 and (best is None or d < best):
+            best = d
+    return best
+
+
+tbl = []
+for name in ('DP_BRK', 'DP_TUNE'):
+    for i, a in enumerate(areas.get(name, [])):
+        z = a['z']
+        row = dict(name=name, idx=i, layers=a['layers'], bbox=a['bbox'], w=a['w'], h=a['h'], area_mm2=round(z.Outline().Area() / 1e12, 3), pairs={})
+        for base, pn in sorted(pairs.items()):
+            if 'P' not in pn or 'N' not in pn:
+                continue
+            sg = {'P': segs_of(pn['P']), 'N': segs_of(pn['N'])}
+            ln_, ex_, gmax = {}, {}, None
+            for key, oth in (('P', 'N'), ('N', 'P')):
+                tot = ext = 0.0
+                for s in sg[key]:
+                    if s['L'] not in a['layers'] or not (z.Outline().Contains(V(*s['a'])) and z.Outline().Contains(V(*s['b']))):
+                        continue
+                    tot += math.hypot(s['b'][0] - s['a'][0], s['b'][1] - s['a'][1])
+                    pts, dl = seg_pts(s['t'], 0.05)
+                    for (x, y) in pts:
+                        g = _par_gap(s, x, y, sg[oth])
+                        if g is not None and g <= AG[name] + 1e-4:
+                            if g > 0.18 + 1e-4:
+                                ext += dl
+                            if gmax is None or g > gmax:
+                                gmax = g
+                ln_[key] = round(tot, 3); ex_[key] = round(ext, 3)
+            if ln_['P'] or ln_['N']:
+                row['pairs'][base] = dict(lenP=ln_['P'], lenN=ln_['N'], extraP=ex_['P'], extraN=ex_['N'], gap_max=None if gmax is None else round(gmax, 3))
+        tbl.append(row)
+R['area_table'] = tbl
+
+# 4c. 비아 높이 (research ev_check 와 합의한 식 — D-003 #63): 그 넷 트랙·패드가 그 비아에서 닿는 가장 바깥 두 층 사이 z 거리.
+#     꼬임 영역(DP_TWIST) 안에 중심이 있는 비아는 #31 꼬임 예외로 뺀다. 짝 넷 비아가 PAIRED_VIA 안에 없으면 「짝 없는 비아」 — 그 높이는 비결합에 더한다.
+#     쌍 안 길이 차 판정값 = max(트랙 길이 차, 트랙+비아 높이 차)
+PAIRED_VIA = 1.2
+zc, _z = {}, 0.0
+for e in R['stackup']:
+    if e['type'] == 'copper':
+        zc[e['layer']] = _z + e['thickness'] / 2
+    _z += e['thickness']
+
+
+def via_heights(net, other):
+    tr = [t for t in hs_tr if t.GetNetname() == net]
+    tot = unp = tw = 0.0
+    for v in vias:
+        if v.GetNetname() != net:
+            continue
+        px, py = mm(v.GetPosition().x), mm(v.GetPosition().y)
+        r = mm(v.GetWidth(pcbnew.F_Cu)) / 2
+        used = set()
+        for t in tr:
+            for e in (t.GetStart(), t.GetEnd()):
+                if math.hypot(mm(e.x) - px, mm(e.y) - py) <= r + mm(t.GetWidth()) / 2:
+                    used.add(pcbnew.LayerName(t.GetLayer()))
+        for fp in b.Footprints():
+            for p in fp.Pads():
+                if p.GetNetname() == net and p.HitTest(v.GetPosition(), FM(r)):
+                    for l in (pcbnew.F_Cu, pcbnew.In1_Cu, pcbnew.In2_Cu, pcbnew.B_Cu):
+                        if p.IsOnLayer(l):
+                            used.add(pcbnew.LayerName(l))
+        zs = [zc[l] for l in used if l in zc]
+        h = (max(zs) - min(zs)) if len(zs) >= 2 else 0.0
+        if in_area('DP_TWIST', px, py):
+            tw += h
+            continue
+        tot += h
+        if not any(o.GetNetname() == other and math.hypot(mm(o.GetPosition().x) - px, mm(o.GetPosition().y) - py) <= PAIRED_VIA for o in vias):
+            unp += h
+    return dict(h=round(tot, 3), unpaired=round(unp, 3), twist_excluded=round(tw, 3))
+
+
+for base, pn in sorted(pairs.items()):
+    if base not in R['pairs']:
+        continue
+    hp, hn = via_heights(pn['P'], pn['N']), via_heights(pn['N'], pn['P'])
+    p = R['pairs'][base]
+    dv = abs((p['lenP'] + hp['h']) - (p['lenN'] + hn['h']))
+    ar = p['uncoupled_area_rule']
+    p['via'] = dict(P=hp, N=hn, diff_with_via=round(dv, 3), diff_judged=round(max(p['diff'], dv), 3),
+                    uncoupled_area_rule_with_via=dict(P=round(ar['P'] + hp['unpaired'], 3), N=round(ar['N'] + hn['unpaired'], 3)))
+
 # 5b. 뒷면(B.Cu) 고속선이 기준층 In2 위 신호선과 교차하는 곳 (기준면이 끊기는 곳)
 def _cross(a, c, p, q):
     def cr(o, u, w):

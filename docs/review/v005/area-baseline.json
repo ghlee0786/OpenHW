@@ -1,0 +1,19 @@
+{
+ "_doc": "D-003 #63 감시 기준: 탈출·보정 규칙 영역(DP_BRK·DP_TUNE)의 보드별 수와 면적 합(mm², 겹친 영역은 각각 셈). v006_cond2.py 2.A14 가 이 값보다 커지면 불합격으로 본다. 기준 보드: carrier 5480107 · front main(4ec3a98). 영역을 늘려야 하면 lead 결정(D-003) 뒤 이 파일을 고친다.",
+ "carrier": {
+  "DP_BRK": {
+   "count": 8,
+   "area_mm2": 115.796
+  },
+  "DP_TUNE": {
+   "count": 8,
+   "area_mm2": 117.727
+  }
+ },
+ "front": {
+  "DP_BRK": {
+   "count": 6,
+   "area_mm2": 36.045
+  }
+ }
+}

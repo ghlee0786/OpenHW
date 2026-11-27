@@ -114,18 +114,28 @@ def why(p):
     return ' '.join(v['why']) if v else ''
 
 
-def cond2(dru, d003=None, tx=None, unc=None):
+def cond2(dru, d003=None, tx=None, unc=None, unc_ar=None, base=None, nopairs=False):
+    if nopairs:   # 넷클래스를 못 읽은 것처럼 쌍을 비움 (원본은 뒤에 되돌림)
+        _keep = open(rj, encoding='utf-8').read()
+        _r0 = json.loads(_keep); _r0['pairs'] = {}
+        json.dump(_r0, open(rj, 'w', encoding='utf-8'), ensure_ascii=False)
     if tx is not None:   # O-119: 쌍 안 길이 차를 정해진 값으로 (TX 는 인자, RX 는 0.5)
         _r = json.load(open(rj, encoding='utf-8'))
         _r['pairs']['/EPHY_TX']['diff'] = tx; _r['pairs']['/EPHY_RX']['diff'] = 0.5
-        if unc is not None:   # 꼬임 밖 비결합을 TX·RX 같은 값으로
+        for _k, _d in (('/EPHY_TX', tx), ('/EPHY_RX', 0.5)):   # 판정값(max(트랙, +비아))도 같은 값으로
+            _r['pairs'][_k]['via'] = dict(P={}, N={}, diff_with_via=_d, diff_judged=_d, uncoupled_area_rule_with_via={'P': unc_ar or 0.0, 'N': 0.0})
+            _r['pairs'][_k]['uncoupled_area_rule'] = {'P': unc_ar or 0.0, 'N': 0.0, 'in_twist_P': 0.0, 'in_twist_N': 0.0}
+        if unc is not None:   # 꼬임 밖 비결합(쌍 간격 0.18 셈법)을 TX·RX 같은 값으로
             for _k in ('/EPHY_TX', '/EPHY_RX'):
                 _r['pairs'][_k]['uncoupled_outside_twist'] = {'P': unc, 'N': 0.0}
         json.dump(_r, open(rj, 'w', encoding='utf-8'), ensure_ascii=False)
     extra = []
+    if base is not None:
+        json.dump(base, open(os.path.join(W, 'abase.json'), 'w', encoding='utf-8'))
+        extra += ['--area-baseline', os.path.join(W, 'abase.json')]
     if d003 is not None:
         open(os.path.join(W, 'd003.md'), 'w', encoding='utf-8').write(d003)
-        extra = ['--d003', os.path.join(W, 'd003.md')]
+        extra += ['--d003', os.path.join(W, 'd003.md')]
     open(os.path.join(BD, 'carrier.kicad_dru'), 'w', encoding='utf-8').write(dru)
     json.dump(dict(violations=[], unconnected_items=[], schematic_parity=[]), open(os.path.join(RES, 'drc_carrier.json'), 'w'))
     # O-115: 실크 참조 멂·모호(S6a)는 사람 확인 H4 — 불합격 수에 들지 않아야 한다
@@ -139,6 +149,9 @@ def cond2(dru, d003=None, tx=None, unc=None):
     r = {i['id']: i for i in d['items'] if i['board'] == 'carrier'}
     r['_exit'] = d['exit_code']; r['_fails'] = sum(1 for i in d['items'] if i['verifiable'] and i['pass'] is False)
     r['_a8'] = {i['title'].split()[4]: i for i in d['items'] if i['id'] == '2.A8' and i['board'] == 'carrier'}   # 「쌍 안 길이 차 <넷>」
+    r['_all'] = {i['id']: i for i in d['items'] if i['board'] == 'carrier'}
+    if nopairs:
+        open(rj, 'w', encoding='utf-8').write(_keep)
     r['_a10'] = {('/EPHY_TX' if '/EPHY_TX' in i['title'] else '/EPHY_RX'): i for i in d['items'] if i['id'] == '2.A10' and i['board'] == 'carrier' and '/EPHY_' in i['title']}
     return r
 
@@ -152,6 +165,19 @@ X_ok = cond2(DRU_OK, d003=HD + ROW62, tx=1.2, unc=6.5)
 X_over = cond2(DRU_OK, d003=HD + ROW62, tx=1.3, unc=7.2)
 X_norow = cond2(DRU_OK, d003=HD + '| 28 | 차동쌍 | 쌍 안 길이 차 0 | 근거 | 차선 |\n', tx=1.2, unc=6.5)
 X_noarg = cond2(DRU_OK, tx=1.2, unc=6.5)
+# D-003 #63: 비결합 셈법 ② + 영역 감시
+ROW63 = '| 63 | 고속 쌍 비결합 길이 셈법 | ② #46에서 승인한 탈출·보정 영역(DP_BRK·DP_TUNE, enclosedByArea) 안 구간은 결합으로 셈, 꼬임 영역(DP_TWIST) 제외는 그대로 | 근거 | 차선 |\n'
+_at = json.load(open(rj, encoding='utf-8'))['area_table']
+BASE = {'carrier': {}}
+for _a in _at:
+    _c = BASE['carrier'].setdefault(_a['name'], dict(count=0, area_mm2=0.0)); _c['count'] += 1; _c['area_mm2'] = round(_c['area_mm2'] + _a['area_mm2'], 3)
+SMALL = {'carrier': {n: dict(count=c['count'], area_mm2=round(c['area_mm2'] - 0.5, 3)) for n, c in BASE['carrier'].items()}}
+FEWER = {'carrier': {n: dict(count=c['count'] - 1, area_mm2=c['area_mm2']) for n, c in BASE['carrier'].items()}}
+Y_63 = cond2(DRU_OK, d003=HD + ROW62 + ROW63, tx=1.2, unc=7.5, unc_ar=6.5, base=BASE)
+Y_63over = cond2(DRU_OK, d003=HD + ROW62 + ROW63, tx=1.2, unc=7.5, unc_ar=7.2, base=SMALL)
+Y_no63 = cond2(DRU_OK, d003=HD + ROW62, tx=1.2, unc=7.5, unc_ar=6.5, base=FEWER)
+Y_nobase = cond2(DRU_OK, d003=HD + ROW62 + ROW63, tx=1.2, unc=7.5, unc_ar=6.5, base={})
+Y_nopairs = cond2(DRU_OK, d003=HD + ROW62 + ROW63, nopairs=True)
 CASES = [
     ('영역 2개 인식, J1_ESC 는 J1 둘레 1.0 (통과) · J1_FAR 는 멀다 (불합격)', {a['name']: a['beyond_ok'] for a in E['areas']} == {'J1_ESC': True, 'J1_FAR': False}),
     ('A 정상 0.50/0.20 → 영역 안, 불합격 아님(음성)', at(E['inside'], A_) is not None and at(E['inside_fail'], A_) is None and at(E['non_j1_net'], A_) is None),
@@ -182,6 +208,17 @@ CASES = [
     ('#62 는 TX 한정 — MDI RX 0.5 는 #28 「0」 그대로 불합격(양성)', X_ok['_a8']['/EPHY_RX']['pass'] is False and '#28' in X_ok['_a8']['/EPHY_RX']['limit']),
     ('D-003 에 #62 행이 없으면 예외 없음 — TX 1.2 불합격(양성)', X_norow['_a8']['/EPHY_TX']['pass'] is False),
     ('--d003 을 안 주면 예외 없음 — TX 1.2 불합격(양성)', X_noarg['_a8']['/EPHY_TX']['pass'] is False),
+    ('#63 있음: 비결합을 ② 값(6.5)으로 — TX ≤7 통과, ① 값 7.5 는 참고(음성)', Y_63['_a10']['/EPHY_TX']['pass'] is True and Y_63['_a10']['/EPHY_TX']['value'] == 6.5 and '#63' in Y_63['_a10']['/EPHY_TX']['title']
+     and '7.5' in Y_63['_a10']['/EPHY_TX']['note']),
+    ('#63 있음: RX 는 ② 값 6.5 > 6 불합격(양성)', Y_63['_a10']['/EPHY_RX']['pass'] is False),
+    ('#63 있음: TX ② 값 7.2 > 7 불합격(양성)', Y_63over['_a10']['/EPHY_TX']['pass'] is False),
+    ('#63 행 없음: ① 값 7.5 로 판정 — TX 불합격(양성)', Y_no63['_a10']['/EPHY_TX']['pass'] is False and Y_no63['_a10']['/EPHY_TX']['value'] == 7.5),
+    ('A14 영역 수·면적이 기준과 같으면 통과(음성)', Y_63['_all']['2.A14']['pass'] is True),
+    ('A14 기준보다 면적이 큼 → 불합격(양성)', Y_63over['_all']['2.A14']['pass'] is False),
+    ('A14 기준보다 영역 수가 많음 → 불합격(양성)', Y_no63['_all']['2.A14']['pass'] is False),
+    ('A14 기준 파일에 그 보드가 없음 → 불합격(양성)', Y_nobase['_all']['2.A14']['pass'] is False),
+    ('A0 쌍 인식 3 통과(음성) / 쌍 0 이면 불합격(양성)', Y_63['_all']['2.A0']['pass'] is True and Y_63['_all']['2.A0']['value'] >= 3 and Y_nopairs['_all']['2.A0']['pass'] is False),
+    ('영역 표 areas.md 가 결과 폴더에 생김', os.path.exists(os.path.join(RES, 'areas.md')) and 'DP_BRK' in open(os.path.join(RES, 'areas.md'), encoding='utf-8').read()),
     ('cond2 S6a 는 기계 항목에서 빠짐 (O-115)', '2.S6a' not in C_ok),
     ('cond2 H4 사람 확인: verifiable 아니오 · pass 없음 · 멂 2(R1, R2) / 모호 1(R2)', C_ok.get('2.H4', {}).get('verifiable') is False and C_ok['2.H4']['pass'] is None
      and C_ok['2.H4']['value'] == '2 / 1' and 'R1, R2' in C_ok['2.H4']['title']),
