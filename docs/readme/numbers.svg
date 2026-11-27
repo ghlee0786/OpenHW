@@ -1,9 +1,9 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 400" width="100%" role="img" aria-labelledby="t d">
-<!-- 생성: docs/readme/tools/make_svgs.py · 수치 기준 main 1898e1f -->
+<!-- 생성: docs/readme/tools/make_svgs.py · 수치 기준 main 995b872 -->
 <!-- 출처 erc: hardware/schematic/carrier/carrier-erc.json · hardware/schematic/front/front-erc.json (violations 0, KiCad 10.0.8) -->
 <!-- 출처 sim: hardware/sim/results/SIM-*.json (25개 모두 verdict pass) -->
 <!-- 출처 front_drc: hardware/pcb/drc/front-drc.json (violations 0 · unconnected_items 0 · schematic_parity 0) -->
-<!-- 출처 carrier_drc: hardware/pcb/drc/carrier-drc.json (violations 7 · unconnected_items 35 — 배선 진행 중) -->
+<!-- 출처 carrier_drc: hardware/pcb/drc/carrier-drc.json (violations 0 · unconnected_items 0 · schematic_parity 0, 2026-11-27T15:40) -->
 <!-- 출처 models: mechanical/m007/judge.md (캐리어·전면 원본 3D 모델 빠짐 0, 03_judge 실패 0) -->
 <!-- 출처 stackup: docs/decisions/D-003-working-defaults.md #21 (4층 1.6 mm) · #25 (캐리어 40×54, 전면 40×40) -->
 <!-- 출처 시뮬레이터: hardware/sim/README.md (ngspice-47) -->
@@ -28,7 +28,7 @@ text{font-family:system-ui,-apple-system,"Segoe UI","Noto Sans KR","Apple SD Got
 <g class="cd" style="animation-delay:0.00s"><rect class="c" x="28" y="84" width="270" height="134" rx="12"/><text class="big okc" x="48" y="140">0</text><text class="l" x="48" y="168">회로도 ERC 위반</text><text class="m" x="48" y="188">캐리어 · 전면 (KiCad 10)</text></g>
 <g class="cd" style="animation-delay:0.15s"><rect class="c" x="314" y="84" width="270" height="134" rx="12"/><text class="big okc" x="334" y="140">25/25</text><text class="l" x="334" y="168">회로 시뮬레이션 통과</text><text class="m" x="334" y="188">ngspice-47 · 결과 파일 25개</text></g>
 <g class="cd" style="animation-delay:0.30s"><rect class="c" x="600" y="84" width="270" height="134" rx="12"/><text class="big okc" x="620" y="140">0 · 0</text><text class="l" x="620" y="168">전면 DRC 위반 · 미연결</text><text class="m" x="620" y="188">parity 0</text></g>
-<g class="cd" style="animation-delay:0.45s"><rect class="c" x="28" y="234" width="270" height="134" rx="12"/><text class="big wipc" x="48" y="290">7 · 35</text><text class="l" x="48" y="318">캐리어 DRC 위반 · 미연결</text><text class="m" x="48" y="338">배선 진행 중</text><circle class="pul" cx="272" cy="264" r="6"/><circle class="dot" cx="272" cy="264" r="6"/></g>
+<g class="cd" style="animation-delay:0.45s"><rect class="c" x="28" y="234" width="270" height="134" rx="12"/><text class="big okc" x="48" y="290">0 · 0</text><text class="l" x="48" y="318">캐리어 DRC 위반 · 미연결</text><text class="m" x="48" y="338">parity 0</text></g>
 <g class="cd" style="animation-delay:0.60s"><rect class="c" x="314" y="234" width="270" height="134" rx="12"/><text class="big okc" x="334" y="290">0</text><text class="l" x="334" y="318">3D 모델 빠짐</text><text class="m" x="334" y="338">두 보드 · 조립 판정 실패 0</text></g>
 <g class="cd" style="animation-delay:0.75s"><rect class="c" x="600" y="234" width="270" height="134" rx="12"/><text class="big okc" x="620" y="290">4층</text><text class="l" x="620" y="318">1.6 mm PCB</text><text class="m" x="620" y="338">전면 40×40 · 캐리어 40×54 mm</text></g>
 </svg>
