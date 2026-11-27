@@ -12,7 +12,9 @@ import sys, os, re, csv, json, shutil, zipfile, hashlib, subprocess, argparse
 sys.stdout.reconfigure(encoding='utf-8')
 ap = argparse.ArgumentParser()
 ap.add_argument('pcb'); ap.add_argument('work')
-ap.add_argument('--kicad-cli', default=r'C:/Users/gh/AppData/Local/Programs/KiCad/10.0/bin/kicad-cli.exe')
+# 기본값: 환경 변수 KICAD_BIN 폴더, 없으면 사용자 설치 기본 자리(%LOCALAPPDATA%) 의 kicad-cli
+_kbin = os.environ.get('KICAD_BIN') or os.path.join(os.environ.get('LOCALAPPDATA', ''), 'Programs', 'KiCad', '10.0', 'bin')
+ap.add_argument('--kicad-cli', default=os.path.join(_kbin, 'kicad-cli.exe'))
 A = ap.parse_args()
 HERE = os.path.dirname(os.path.abspath(__file__))
 W = os.path.abspath(A.work)
