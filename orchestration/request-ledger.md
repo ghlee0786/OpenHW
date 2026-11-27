@@ -113,7 +113,7 @@
 | P-005 | lead O-107 → orch | schematic t18z | 전면 보드 배선 마무리(start --from 251f, front.kicad_pcb만, 헤드리스, O-103/105 방식, 11:30 A→C→13:00 D) | hardware/schematic/front/front.kicad_pcb (새 레인) | DRC 0·미연결 0·parity 0, 커밋 | running |
 | R-026 | lead O-107 → orch | research t18s | Freerouting DSN 규칙 누락 원인 수정, main 사본 저속 넷만 Java Freerouting 시험(60분 상한) | 사본·문서 (새 레인) | 위반 증가 0·미연결 감소면 SES 전달 | running |
 | V-006a | lead O-107 → orch | review t191 | WIP 보드로 V-006 사전 감수(배선 무관 항목) | docs/review (새 레인), main validation/runtime/vd001 | 수정 요청 목록 | running |
-| P-004t | lead O-107 → orch | firmware t18w | fab_outputs.ps1·v006_fab WIP 사본 시험(커밋 안 함) | scratch | 오류 목록 → pcb | running |
+| P-004t | lead O-107 → orch | firmware t18w | fab_outputs.ps1·v006_fab WIP 사본 시험(커밋 안 함) | scratch | 오류 목록 → pcb | 중단(O-108) |
 
 ## 운영 변경 (2026-11-26, 사용자 지시 · lead 전달)
 - 의견 묻지 않고 진행: 사람 쪽 미정값은 D-003(lead 레인 t-20261126-144135-5470 docs/decisions/D-003-working-defaults.md, 커밋 8ac5ce5) 값으로 확정 취급. 새 갈림길은 기본값 선택 → 아래 「분기 기록」에 분기점·선택·이유·차선책 → lead 요약 보고. 문제 시 해당 행으로 돌아가 차선책.
@@ -238,6 +238,7 @@
 | O-105 | P-004c 캐리어: 남은 신호 22연결(SD 묶음 SDIO_D0~D3·CMD·SD_PWR, 5V_SYS·BUCK_FB L1 둘레, J1↔시험점·EFUSE_DVDT)·GND 섬 6에 현재 배치·규칙으로 합법 경로 없음 — 같은 원인 3회(스크립트·Freerouting·손 보조), pcb 멈춤 | A: 고속 쌍(CSI/MDI/USB)·전원 굵은 선·IR 열 패드 트랙은 잠근 채 막힌 구역 부품(U4/U5/R13~16 SD 묶음·L1/C19/R2/U1 둘레·시험점)만 다시 펼치고 그 구역 저속만 다시 배선 — 새 접근이라 새 원인 횟수(0부터 3). 부품 이동 뒤 mechanical run_case 재판정(L1 3mm 높이 등). 전면도 막히면 같은 방식. O-103의 '전체 재배선 금지'와 충돌 없음(부분·고속 잠금) | 규칙 완화 없이 배치로 해결, 고속 결과 보존 | C In1 GND에 짧은 저속 점프(고속선 아래 제외, D-003 기록) → B 손 재작업 → D 6층 — lead 승인(D-003 #54): 시작 전 저장·커밋, 이동 목록·이동량 커밋 메시지, In1 GND 고속 기준면 갈라짐 0, C의 점프는 고속 투영 밖·최소 |
 | O-106 | lead 지시(사용자 질문 관련): 남은 VD-001 일은 Docker 불필요 | VD-001 끝까지 Docker·docker CLI·컨테이너 사용 금지(orch 포함 전 칸), KiCad MCP Freerouting Docker 경로 금지. 10:04 Docker Desktop 정지는 OpenNVR 세션 — OpenHW는 손대지 않음 | 다른 프로젝트 영향 방지 | — — 보충: mixelpixx 서버 autoroute·check_freerouting(freerouting.py 988–999)은 Java 실패 시 docker로 넘어감 → pcb에 호출 금지 전달(설정 차단은 칸 재시작 필요해 안 함) — 사용자 결정: 이 PC에서 Docker 불필요, Docker Desktop 10:08 사용자 지시로 종료(NVR 빌드 메모리 부족 원인). firmware에 켜기·docker 명령 금지 직접 재확인 |
 | O-107 | lead 워크플로 점검: 주 경로 PCB 한 칸 9시간째 수렴 안 함, 5칸 유휴, orch는 pcb만 기다림(orch 잘못 — 유휴 칸 배정 소홀), 배선 중 회로도 변경 4회·스크린샷 수리·Freerouting 폐기 | 전면 보드를 schematic 칸에 분리(P-005), research Freerouting 규칙 수정(R-026, 60분), 회로도 동결, 증거 축소, 시간 상한 자동 차선(11:30 C·13:00 D), review·firmware·mechanical 하류 선행, orch 30분마다 칸별 상태 보고 | lead 지시 | — |
+| O-108 | 사용자 지시(10:3x): 목표 축소 — PCB 완성(두 보드 DRC 0·미연결 0·parity 0) + KiCad 3D 미리보기(kicad-cli pcb render 앞·뒤·비스듬, 모델 빠짐 0) | firmware P-004t 즉시 중단·대기, mechanical 대기, Fusion·Blender·P-004·VD-001 HTML은 PCB 완료 후. 유지: pcb 캐리어·schematic P-005·research R-026·review V-006a. 배선 두 칸(pcb·schematic)을 Fable 5.2 high로 같은 sessionId 재시작(저장·커밋 ok 뒤, MCP 설정 그대로) | 사용자 지시 | — |
 
 ## 발주 패키지 직전 정리 목록
 - [ ] 회로도 표시 겹침: 캐리어 J2 옆 12V_IN_RAW 라벨, D3 PWR_LED 라벨, J1 품번 문자 (O-32)
