@@ -184,7 +184,7 @@ def run(_c):
         cuts.append(cyl((0, cy, Z0 - 12), (0, cy, Z0 + 3), 3.5))   # 글랜드 구멍
     cuts.append(box(X0 - 1, CONN['usb_x'] - 0.2, CONN['usb_y'][0] - 2.0, CONN['usb_y'][1] + 2.0, CONN['usb_z'][0] - 1.6, CONN['usb_z'][1] + 0.4))   # USB-C (옆, 서비스용 고무 마개)
     cuts.append(box(CONN['sd'][0] - 1.0, CONN['sd'][1] + 1.0, CONN['sd_y'] + 0.2, Y1 + 1, CONN['sd_z'][0] - 0.8, CONN['sd_z'][1] + 0.6))       # microSD (위, 서비스용 마개)
-    lp = (x1 - 4.0, Y1, z1 - 6.0)
+    lp = (x1 - 4.0, Y1, z1 - 6.0) if DESIGN != 'C' else (0.0, Y1, Z1 - 20.0)   # C: 원통 맨 위, 차양 뒤 (박스 자리 x 17 은 원통 표면 밖에 뜸)
     cuts.append(cyl((lp[0], lp[1] - 4, lp[2]), (lp[0], lp[1] + 1, lp[2]), 1.0))                                              # 상태 LED 광 파이프 구멍
     for cut in cuts:
         for b in (body_main, body_al):

@@ -39,11 +39,11 @@
 | `B/B_FRONT_GLASS_IR.stl` | 4236684 | `bf2a966bfcec0f4c146cfc4a7d6d4cf4d0e49bd8e5785fac1ba8100d3453803d` |
 | `B/B_LIGHT_PIPE.stl` | 863884 | `115611b6690aab0d509946135520efd3ba89881ad3ac20c137a33aec85affdc3` |
 | `B/B_LENS_RING.stl` | 216084 | `57c35ee9015edf51a0a4d69244bd4389ad684324f48c854f3e772a9d4dbfcd77` |
-| `C/C.step` | 305410 | `c7a4ba2c4a8bfdc6df6fa54f342f47b19bdf9de9d55c4d7ec5caf006aa714e82` |
-| `C/C_SHELL_PLASTIC.stl` | 20878784 | `6390de90e448c370d2949cdaec61f54bae9a819beeb9b6cad4a101b896743c1e` |
+| `C/C.step` | 308487 | `eca06e5cda8af660809fc1ddb7a8b3c2f9bd6fbe1861948ebaed10ac7175c543` |
+| `C/C_SHELL_PLASTIC.stl` | 20977884 | `fc0c1632bd5dccbe3107994afe901d51a232f02027292d0b507ecdc97d8feba2` |
 | `C/C_SHELL_ALU.stl` | 1008084 | `85272449a09fbfd68d9510b78deb72e6fac5655bc69c8148acc20dbfcfd369fb` |
 | `C/C_FRONT_GLASS_IR.stl` | 71884 | `a3b6c9c367391df99b4c08d0163c410de84f30cb1ee43653a7673c1da2a889c0` |
-| `C/C_LIGHT_PIPE.stl` | 863884 | `9caad7ce6474479201202230c84d1f454193a9eb20fe237d95fade3d16185cd9` |
+| `C/C_LIGHT_PIPE.stl` | 863884 | `b30ef9362f28a6f02faa28c544bbc7cffa38d4a6ec673d426d3beca86911ea6d` |
 
 - 그 밖에 `<시안>_iso.png`(Fusion 뷰포트 확인용), `result.json`, `gap.json`.
 - 보기 판단(예쁨 · 비례)은 사람 확인 항목이다(verifiable 아니오). 2단계 히어로 렌더(schematic)로 고른다.
@@ -57,4 +57,7 @@
    - B · C는 안쪽 공간이 앞까지 뚫려 평평한 앞면이 없었다. → 앞벽 2 mm를 두고 유리 자리만 뚫음.
 4. C 차양이 쉘과 0.05 mm 떨어져 별도 바디가 됨 → 쉘 벽에 0.5 겹침.
 5. orch 요청: B 렌즈 링을 SHELL_ALU에서 떼어 LENS_RING(`B_LENS_RING.stl`)으로 따로 냄.
+6. C 상태 LED 광 파이프가 박스용 자리(x 17, 맨 위 y)라 원통 표면 위 4 mm에 떠 차양 밑에 보였다 → C는 (0, 맨 위, 앞면 −20)으로 옮겨 원통에 붙임.
+   - 앞유리 r 29.99 / 쉘 앞벽 구멍 r 30.00, 앞벽 z 41.5…43.5 → 앞면이 막혀 있음(STL 확인).
+   - 차양이 떨어졌던 중간판 `C_SHELL_PLASTIC (1).stl`은 `design/C/stale/C_SHELL_PLASTIC (1)_stale.stl`로 옮김.
 - 처음 보고한 A · B 해시는 3번 · 5번 수정 전 것이다(그때 음각은 안쪽 면에 들어감). 위 표가 최종이다.
