@@ -112,6 +112,7 @@ def main():
     ap.add_argument('--boards-from', default=None, help='이미 만든 board_*.glb 폴더 (내보내기 건너뜀)')
     ap.add_argument('--extra', default=None, help='덧붙일 STL 폴더 — --enclosure 에 없는 이름만 복사 (렌즈 · 나사 · 하니스 등)')
     ap.add_argument('--deflection', type=float, default=DEFLECTION, help='STEP 삼각화 곡면 오차 mm')
+    ap.add_argument('--stl-only', action='store_true', help='외함 폴더의 STEP 은 쓰지 않는다(부품별 STL 과 통짜 STEP 이 같이 있는 시안 폴더)')
     a = ap.parse_args()
     DEFLECTION = a.deflection
     os.makedirs(a.out, exist_ok=True)
@@ -132,7 +133,7 @@ def main():
         bad += nb
         index += rec
     names = {}
-    for p in sorted(glob.glob(os.path.join(a.enclosure, '*.stl')) + glob.glob(os.path.join(a.enclosure, '*.step')) + glob.glob(os.path.join(a.enclosure, '*.stp'))):
+    for p in sorted(glob.glob(os.path.join(a.enclosure, '*.stl')) + ([] if a.stl_only else glob.glob(os.path.join(a.enclosure, '*.step')) + glob.glob(os.path.join(a.enclosure, '*.stp')))):
         names[os.path.splitext(os.path.basename(p))[0]] = p     # 같은 이름이면 뒤에 오는 STEP 이 이긴다
     if not names:
         print('외함 메시 없음:', a.enclosure)

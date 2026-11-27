@@ -3,7 +3,7 @@
   blender -b --factory-startup --python-exit-code 1 --python mechanical/ren003b/scene.py -- --mesh <메시 폴더> --out <출력 폴더>
       [--cuts hero,front,rear,exploded,section,inuse] [--turntable N] [--engine cycles|eevee] [--res 3840x2160] [--tt-res 1920x1080]
       [--samples 256] [--hdri <.hdr>] [--hdri-strength 0.7] [--hdri-rot 110] [--exposure 0.0] [--fstop 8] [--bevel 0.3] [--label OpenHW]
-      [--z-carrier -9.6] [--z-front 9.6] [--save-blend <새 .blend>]
+      [--z-carrier -9.6] [--z-front 9.6] [--frame-radius mm] [--save-blend <새 .blend>]
 
 - 입력 = prep.py 가 만든 폴더: board_carrier.glb · board_front.glb · <부품>.stl(mm) · index.json
 - 재질 = mechanical/ren003/materials.py MATS 전부(읽기만) + materials_ext.py(새 재질 · 미세 질감).
@@ -52,6 +52,7 @@ EXPOSURE = float(arg('--exposure', '0.0'))
 FSTOP = float(arg('--fstop', '8'))
 BEVEL = float(arg('--bevel', '0.3'))
 LABEL = arg('--label', 'OpenHW')
+FRAME_R = float(arg('--frame-radius', '0'))      # mm — 0 이 아니면 카메라 거리 · 조명을 이 반지름에 맞춘다(시안끼리 같은 카메라 · 조명)
 MM = 0.001
 
 
@@ -139,6 +140,7 @@ prod = bpy.data.objects.new('PRODUCT', None)
 scn.collection.objects.link(prod)
 index = json.load(open(os.path.join(MESH, 'index.json'), encoding='utf-8'))
 parts = {}
+OWN_BRACKET = []
 for it in index['items']:
     if it['kind'] != 'enclosure':
         continue
@@ -158,6 +160,9 @@ for it in index['items']:
     o.data.materials.clear()
     o.data.materials.append(M[mk])
     bev = refine(o, BEVEL)
+    if 'BRACKET' in name:       # 시안의 브래킷 부품은 사용 장면에서만 보인다(시안끼리 히어로가 비교되게) — 내장 브래킷 소품은 그때 쓰지 않는다
+        o.hide_render = True
+        OWN_BRACKET.append(o)
     parts[name] = o
     REPORT['enclosure'].append({'name': name, 'material': mk, 'triangles': len(o.data.polygons), 'bevel': bev, 'deflection_mm': it.get('deflection_mm')})
 lens = [o for n, o in parts.items() if n.startswith('LENS_CIL093')]
@@ -358,7 +363,7 @@ def cyclorama(name, mk, depth_front, depth_back, radius, height, width):
     return o
 
 
-S = RAD / 0.06          # 장면 크기를 제품 크기에 맞춤 (기준: 반지름 60 mm)
+S = (FRAME_R * MM if FRAME_R else RAD) / 0.06          # 장면 크기를 제품 크기에 맞춤 (기준: 반지름 60 mm)
 cyc = cyclorama('CYC', 'backdrop', 1.6 * S, 0.45 * S, 0.5 * S, 1.2 * S, 5.0 * S)
 wall = cyclorama('WALL', 'wall', 2.0 * S, 0.0, 0.004 * S, 2.5 * S, 6.0 * S)     # 사용 장면: 바닥 없이 벽만 보이게 쓴다
 wall.hide_render = True
@@ -397,7 +402,7 @@ def stage(yaw, el, lens, fit, thirds=0.0, az=0.0, target=None, res=None, focus_b
     objs = [o for o in children(prod) if o.type == 'MESH']
     l, h = bounds(objs)
     c = Vector(target) if target else (l + h) / 2
-    r = (h - l).length / 2
+    r = FRAME_R * MM if FRAME_R else (h - l).length / 2
     cyc.location = (c.x, c.y, l.z - 0.0002)
     wall.location = (c.x, h.y, l.z - 1.2 * (r / 0.06))      # 사용 장면: 벽 = 브래킷 판 뒷면(+Y 끝), 바닥은 화면 밖 아래
     cd.lens = lens
@@ -465,7 +470,7 @@ def section(on):
 
 
 def accessories(on):
-    for o in ACC:
+    for o in (OWN_BRACKET or ACC):
         o.hide_render = not on
     cyc.hide_render = on
     wall.hide_render = not on
@@ -514,7 +519,7 @@ scn.render.image_settings.file_format = 'PNG'
 scn.view_settings.view_transform = 'AgX'
 scn.view_settings.look = 'AgX - Medium High Contrast'
 scn.view_settings.exposure = EXPOSURE
-REPORT.update(engine=scn.render.engine, res=RES, tt_res=TT_RES, samples=SAMPLES, fstop=FSTOP, exposure=EXPOSURE, bevel_mm=BEVEL,
+REPORT.update(frame_radius_mm=FRAME_R or None, engine=scn.render.engine, res=RES, tt_res=TT_RES, samples=SAMPLES, fstop=FSTOP, exposure=EXPOSURE, bevel_mm=BEVEL,
               view_transform=scn.view_settings.view_transform, radius_mm=round(RAD / MM, 1), objects=len([o for o in PROD_OBJS if o.type == 'MESH']),
               beveled=sum(1 for e in REPORT['enclosure'] if e['bevel']), frames_requested=TT)
 

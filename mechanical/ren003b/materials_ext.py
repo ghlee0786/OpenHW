@@ -7,7 +7,7 @@
 값은 보기용 가정이다(측정값 아님). 좌표 단위: 객체 좌표 = m."""
 
 EXT_MATS = {
-    'ir_glass':  dict(label='IR 투과 앞유리 (짙은 검정 반투과 아크릴, 코팅)', rgb=(0.006, 0.005, 0.007), rough=0.03, trans=0.55, ior=1.49, coat=1.0),
+    'ir_glass':  dict(label='IR 투과 앞유리 (짙은 검정 반투과 아크릴, 코팅)', rgb=(0.004, 0.0035, 0.005), rough=0.03, trans=0.3, ior=1.49, coat=0.3),
     'rubber':    dict(label='고무 가스킷 (흑색 실리콘)', rgb=(0.012, 0.012, 0.013), rough=0.85, spec=0.25),
     'backdrop':  dict(label='무한 배경 (밝은 회색 종이)', rgb=(0.62, 0.62, 0.63), rough=0.75, spec=0.2),
     'wall':      dict(label='사용 장면 벽 (무광 도장)', rgb=(0.72, 0.71, 0.68), rough=0.8, spec=0.2),
@@ -16,7 +16,8 @@ EXT_MATS = {
 }
 
 # (이름 조각, 재질) — 앞쪽이 먼저. NAME_RULES 가 못 가른 이름에만 쓴다(시안에서 쓸 법한 이름).
-EXT_NAME_RULES = [('IR_GLASS', 'ir_glass'), ('FRONT_GLASS', 'ir_glass'), ('GLASS_FRONT', 'ir_glass'), ('GASKET', 'rubber'), ('ORING', 'rubber'),
+EXT_NAME_RULES = [('IR_GLASS', 'ir_glass'), ('FRONT_GLASS', 'ir_glass'), ('GLASS_FRONT', 'ir_glass'), ('GLASS_IR', 'ir_glass'),
+                  ('SHELL_PLASTIC', 'petg'), ('SHELL_ALU', 'anod'), ('GASKET', 'rubber'), ('ORING', 'rubber'),
                   ('LIGHT_PIPE', 'lightpipe'), ('LIGHTPIPE', 'lightpipe'), ('BRACKET', 'bracket'), ('HEATSINK', 'anod'), ('HS_SHELL', 'anod'),
                   ('SHELL_AL', 'anod'), ('SCREW', 'steel'), ('LENS_RING', 'lens'), ('SUNSHIELD', 'petg'), ('GLAND', 'plastic'), ('BODY', 'petg'),
                   ('COVER', 'petg')]
@@ -104,12 +105,11 @@ def detail(bpy, m, kind):
         p.inputs['Coat Roughness'].default_value = 0.02
         shadow_pass(0.92)
     elif kind == 'coated_glass':    # IR 투과 앞유리: 프레넬 반사 + 얇은 코팅(박막 간섭 약하게)
-        p.inputs['Coat Weight'].default_value = 1.0
+        p.inputs['Coat Weight'].default_value = 0.3        # 얇은 코팅감 — 세게 주면 흰 스튜디오가 비쳐 검정이 회색으로 뜬다
         p.inputs['Coat Roughness'].default_value = 0.015
         if 'Thin Film Thickness' in p.inputs:
-            p.inputs['Thin Film Thickness'].default_value = 180.0
+            p.inputs['Thin Film Thickness'].default_value = 110.0   # 반사를 줄이는 쪽(반사 방지 코팅 기미)
             p.inputs['Thin Film IOR'].default_value = 1.38
-        shadow_pass(0.5)
     elif kind == 'lens_coating':    # 렌즈 다층 코팅: 박막 간섭(보라 · 초록 기미)
         p.inputs['Coat Weight'].default_value = 1.0
         p.inputs['Coat Roughness'].default_value = 0.0

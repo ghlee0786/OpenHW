@@ -1,7 +1,7 @@
 """REN-003b 한 명령 (O-125 2단계) — 메시 준비 → HDRI 확인 → Blender 컷 · 턴테이블 → 1600px 축소 · MP4 → 판정.
 
   python -I -B mechanical/ren003b/run.py [--case <외함 STEP/STL 폴더>] [--extra <STL 폴더>] [--boards-from <GLB 폴더> | --pcb <커밋>]
-        [--final] [--hero-only] [--tag 이름] [--cuts a,b] [--frames N] [--res WxH] [--samples N] [--engine cycles|eevee] [--no-label]
+        [--final] [--hero-only] [--design A] [--tag 이름] [--cuts a,b] [--frames N] [--res WxH] [--samples N] [--engine cycles|eevee] [--no-label]
 
 - 메시 (기본값은 main 체크아웃 validation/runtime/vd001/ 의 M-010 최종 산출):
     --case        외함 STEP/STL 폴더. 기본 case/step (STEP → 곡면 오차 ≤ 0.01 mm 삼각화). 시안은 design/A 같은 폴더를 준다.
@@ -9,7 +9,8 @@
     --boards-from 보드 GLB 폴더. 기본 render/mesh. 없으면 --pcb <커밋> 으로 새로 내보낸다(prep.py).
 - 기본 = 저해상도 시험(Cycles 960×540 · 48 샘플 · 턴테이블 24프레임 480×270).
   --final = 4K(3840×2160) · 256 샘플 · 턴테이블 200프레임(8 s @ 25) 1920×1080 + 대표본 복사.
-  --hero-only = 히어로 컷 1장만(시안 비교용). --final 과 같이 쓰면 4K 1장.
+  --hero-only = 히어로 컷 1장만. --final 과 같이 쓰면 4K 1장.
+  --design A = 시안 폴더 design/A 의 부품 STL(+ 보드)로 히어로 1장 → render/blender-b/design/A_hero.png · A_hero_1600.jpg. 시안끼리 카메라 · 조명이 같다.
 - 출력: main 체크아웃 validation/runtime/vd001/render/blender-b/<tag>/ (O-100)
     stills/<컷>.png(원본) · web/<컷>.jpg(긴 변 1600px) · turntable/ · turntable.mp4 · scene_report.json · report.json
 - 대표본(--final, 이 체크아웃): docs/renders/final/blender-product.png(히어로 1600px) · blender-turntable.mp4
@@ -83,7 +84,11 @@ def main():
     ap.add_argument('--engine', default='cycles')
     ap.add_argument('--tag')
     ap.add_argument('--no-label', action='store_true')
+    ap.add_argument('--design', help='시안 이름(A · B · C): design/<이름>/ 의 부품 STL 로 히어로 1장 — 같은 카메라 · 조명(틀 반지름 62 mm)')
     a = ap.parse_args()
+    if a.design:
+        a.case, a.extra, a.hero_only, a.no_label = os.path.join(V, 'design', a.design), 'none', True, True
+        a.tag = a.tag or os.path.join('design', a.design + '_work')
     cuts = a.cuts.split(',') if a.cuts else (['hero'] if a.hero_only else ALL_CUTS)
     res = a.res or ('3840x2160' if a.final else '960x540')
     tt_res = '1920x1080' if a.final else '480x270'
@@ -104,6 +109,7 @@ def main():
     if a.extra and a.extra != 'none':
         cmd += ['--extra', os.path.abspath(a.extra)]
     cmd += ['--pcb', a.pcb] if a.pcb else ['--boards-from', os.path.abspath(a.boards_from)]
+    cmd += ['--stl-only'] if a.design else []
     rc = sh('메시 준비', cmd, os.path.join(out, 'prep.log'))
     chk('메시 준비 종료 코드', rc, rc == 0)
     items = json.load(open(os.path.join(mesh, 'index.json'), encoding='utf-8'))['items'] if os.path.exists(os.path.join(mesh, 'index.json')) else []
@@ -112,7 +118,10 @@ def main():
     chk('보드 GLB 수', nb, nb == 2)
     chk('외함 · 부품 메시 수', len(enc), len(enc) > 0)
     step = [i for i in enc if i.get('deflection_mm') is not None]
-    chk('STEP 삼각화 곡면 오차 mm (STEP 에서 온 %d개)' % len(step), sorted({i['deflection_mm'] for i in step}), bool(step) and all(i['deflection_mm'] <= 0.01 for i in step))
+    if a.design:
+        chk('시안 부품 STL 수 (삼각화는 내보낸 쪽 설정)', '%d개 · 삼각형 %d' % (len(enc), sum(i['triangles'] for i in enc)), len(enc) > 0)
+    else:
+        chk('STEP 삼각화 곡면 오차 mm (STEP 에서 온 %d개)' % len(step), sorted({i['deflection_mm'] for i in step}), bool(step) and all(i['deflection_mm'] <= 0.01 for i in step))
 
     # ② HDRI (CC0, 격리 폴더)
     rc = sh('HDRI 확인 (Poly Haven CC0)', PY + [os.path.join(HERE, 'fetch_hdri.py')], os.path.join(out, 'hdri.log'))
@@ -131,7 +140,8 @@ def main():
         os.remove(sp)
     rc = sh('Blender 장면 · 렌더', [BLENDER, '-b', '--factory-startup', '--python-exit-code', '1', '--python', os.path.join(HERE, 'scene.py'), '--',
                                 '--mesh', mesh, '--out', out, '--cuts', ','.join(cuts), '--turntable', str(frames), '--engine', a.engine, '--res', res,
-                                '--tt-res', tt_res, '--samples', str(samples), '--hdri', hdri, '--label', '' if a.no_label else 'OpenHW'],
+                                '--tt-res', tt_res, '--samples', str(samples), '--hdri', hdri, '--label', '' if a.no_label else 'OpenHW']
+                               + (['--frame-radius', '62'] if a.design else []),
             os.path.join(out, 'blender.log')) if items else 1
     chk('Blender 종료 코드 (--python-exit-code 1)', rc, rc == 0)
     rep = json.load(open(sp, encoding='utf-8')) if rc == 0 and os.path.exists(sp) else {}
@@ -218,6 +228,11 @@ def main():
         Image.open(os.path.join(out, 'web', 'hero.jpg')).save(os.path.join(d, 'blender-product.png'))
         shutil.copy2(mp4, os.path.join(d, 'blender-turntable.mp4'))
         docs = ['docs/renders/final/blender-product.png', 'docs/renders/final/blender-turntable.mp4']
+    if a.design and all(c['pass'] for c in checks):     # 시안 히어로: design/<이름>_hero.png (원본) · _hero_1600.jpg
+        d = os.path.join(BASE, 'design')
+        shutil.copy2(stills[0], os.path.join(d, a.design + '_hero.png'))
+        shutil.copy2(web[0], os.path.join(d, a.design + '_hero_1600.jpg'))
+        docs = [rel(os.path.join(d, a.design + '_hero.png')), rel(os.path.join(d, a.design + '_hero_1600.jpg'))]
     chk('사실감 · 보기 품질 (재질 · 조명 · 구도)', '사람 확인 필요 — 컷 %d장%s' % (len(cuts), ' · MP4' if frames else ''), True, verifiable=False)
     fails = [c for c in checks if c['verifiable'] and not c['pass']]
     json.dump({'mode': ('final' if a.final else 'preview') + ('-hero' if a.hero_only else ''), 'engine': a.engine, 'res': [W, H], 'tt_res': [TW, TH],
