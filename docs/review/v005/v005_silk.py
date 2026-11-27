@@ -6,8 +6,8 @@
 
 판정 (기준값은 아래 TH, 근거는 docs/review/v005-pcb-review.md):
   S1  실크 잉크 ∩ 마스크 개구(패드 + 실효 마스크 확장, 마스크 그림, 열린 비아) 면적 > 0        → 제조 시 잘림
-  S1v 실크 잉크 ∩ 비아 구리(덮인 비아 포함)                                                     → PCBWay 「avoid overlapping with vias」
-  S1h 실크 잉크 ∩ 구멍(패드·비아 드릴, NPTH)                                                     → 구멍에서 사라짐
+  S1v 실크 잉크 ∩ 열린(마스크로 안 덮인) 비아 구리 — 덮인(tented) 비아 위 실크는 허용 (D-003 #58, O-110)
+  S1h 실크 잉크 ∩ 열린 구멍(패드 드릴·NPTH·안 덮인 비아 드릴) — 덮인 비아 드릴은 마스크 밑이라 제외 (D-003 #58)
   S2  실크–마스크 개구 거리 < 0.15 (DRU fab_silk_to_pad, O-64)
   S3  채우지 않은 실크 선폭 < 0.15
   S4  글자 높이 < 1.0, 획 < 0.15 (DRU) / S4r 획/높이 < 1/5 (PCBWay 1:5, O-65 획 0.2)
@@ -109,9 +109,10 @@ for fp in b.Footprints():
         pass
     seen = set()
     for t in texts:
-        if t is None or id(t) in seen:
+        # SWIG 는 같은 글자도 꺼낼 때마다 다른 파이썬 객체를 준다(Reference() 와 GetFields()) → id() 가 아니라 KIID 로 거른다 (V-006a)
+        if t is None or t.m_Uuid.AsString() in seen:
             continue
-        seen.add(id(t))
+        seen.add(t.m_Uuid.AsString())
         for side, L in SIDES.items():
             if t.GetLayer() != L['silk'] or not t.IsVisible():
                 continue
@@ -156,13 +157,13 @@ for side, L in SIDES.items():
                 g.TransformShapeToPolygon(s, L['mask'], 0, ERR, pcbnew.ERROR_OUTSIDE)
     for t in b.Tracks():
         if t.GetClass() == 'PCB_VIA':
-            t.TransformShapeToPolygon(vc, L['cu'], 0, ERR, pcbnew.ERROR_OUTSIDE)
             tented = True
             try:
                 tented = t.IsTented(L['mask'])
             except Exception:
                 pass
-            if not tented:
+            if not tented:   # D-003 #58: 덮인 비아 위 실크 허용 → S1v 는 안 덮인 비아 구리만
+                t.TransformShapeToPolygon(vc, L['cu'], 0, ERR, pcbnew.ERROR_OUTSIDE)
                 t.TransformShapeToPolygon(s, L['mask'], max(0, t.GetSolderMaskExpansion()), ERR, pcbnew.ERROR_OUTSIDE)
     for d in b.GetDrawings():
         if d.GetLayer() == L['mask'] and d.GetClass() == 'PCB_SHAPE':
@@ -188,7 +189,12 @@ for fp in b.Footprints():
             add_hole(p.GetPosition(), mm(max(ds.x, ds.y)) / 2)
 for t in b.Tracks():
     if t.GetClass() == 'PCB_VIA':
-        add_hole(t.GetPosition(), mm(t.GetDrill()) / 2)
+        try:   # D-003 #58: 두 면 모두 덮인 비아의 드릴은 열린 구멍이 아님
+            covered = t.IsTented(pcbnew.F_Mask) and t.IsTented(pcbnew.B_Mask)
+        except Exception:
+            covered = False
+        if not covered:
+            add_hole(t.GetPosition(), mm(t.GetDrill()) / 2)
 
 edge = pcbnew.SHAPE_POLY_SET()
 b.GetBoardPolygonOutlines(edge, False)

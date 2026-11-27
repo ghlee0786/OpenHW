@@ -16,6 +16,10 @@
   {"match": {"rule": "csi_100_pair", "constraint": "diff_pair_uncoupled"}, "d003": 28, "must_contain": ["CSI 3→{value}mm"]},
   {"match": {"rule": "mdi_100_pair", "constraint": "diff_pair_uncoupled"}, "d003": 28, "must_contain": ["MDI 5→{value}mm"]},
   {"match": {"rule": "usb_90_pair", "constraint": "diff_pair_uncoupled"}, "d003": 28, "must_contain": ["USB 5→{value}mm"]},
-  {"match": {"area": "DP_TWIST"}, "d003": 31, "must_contain": ["ESD→RJ45 구간", "규칙 예외"]}
+  {"match": {"area": "DP_TWIST"}, "d003": 31, "must_contain": ["ESD→RJ45 구간", "규칙 예외"]},
+  {"match": {"key": "ignore:footprint_filters_mismatch"}, "d003": 46, "must_contain": ["회로도 필터 경고 ignore"]},
+  {"match": {"rule": "dp_breakout_pair", "constraint": "diff_pair_gap", "area": "DP_BRK"}, "d003": 46, "must_contain": ["DP_BRK 쌍 간격 {value}"]},
+  {"match": {"rule": "dp_breakout_spacing", "constraint": "clearance", "area": "DP_BRK"}, "d003": 46, "must_contain": ["DP_BRK 간격 {value}"]},
+  {"match": {"rule": "dp_tuning_gap", "constraint": "diff_pair_gap", "area": "DP_TUNE"}, "d003": 46, "must_contain": ["DP_TUNE 쌍 간격 {value}"]}
  ]
 }

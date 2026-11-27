@@ -140,6 +140,14 @@ put(SP, 'SOT-23-5', t_drop_fab(txt('Package_TO_SOT_SMD', 'SOT-23-5')))          
 put(OHR, 'SOT-23_OH', t_rename(txt('Package_TO_SOT_SMD', 'SOT-23'), 'SOT-23_OH'))
 put(SP, 'SOT-23_OH', t_drop_silk(t_rename(txt('Package_TO_SOT_SMD', 'SOT-23'), 'SOT-23_OH')))     # openhw 원본, 실크만 → 통과
 oh_file = os.path.join(OHR, 'SOT-23_OH.kicad_mod')
+# V-006a: 프로젝트 라이브러리 별칭(OpenHW_Mech → hardware/pcb/lib/OpenHW_Mech.pretty) 원본
+PMR = os.path.join(WORK, 'hardware', 'pcb', 'lib', 'OpenHW_Mech.pretty'); os.makedirs(PMR)
+put(PMR, 'SOT-23_PM', t_rename(txt('Package_TO_SOT_SMD', 'SOT-23'), 'SOT-23_PM'))
+put(SP, 'SOT-23_PM', t_drop_silk(t_rename(txt('Package_TO_SOT_SMD', 'SOT-23'), 'SOT-23_PM')))     # 프로젝트 원본, 실크만 → 통과
+pm_file = os.path.join(PMR, 'SOT-23_PM.kicad_mod')
+open(os.path.join(OHR, 'SOT-23_OH2.kicad_mod'), 'w', encoding='utf-8', newline='\n').write(t_rename(txt('Package_TO_SOT_SMD', 'SOT-23'), 'SOT-23_OH2'))  # 원본은 LF (put 은 윈도우에서 CRLF)
+put(SP, 'SOT-23_OH2', t_drop_silk(t_rename(txt('Package_TO_SOT_SMD', 'SOT-23'), 'SOT-23_OH2')))
+oh2_file = os.path.join(OHR, 'SOT-23_OH2.kicad_mod')
 rows = [
     ('Resistor_SMD.pretty/R_0402_1005Metric.kicad_mod', '${KICAD10_FOOTPRINT_DIR}/Resistor_SMD.pretty/R_0402_1005Metric.kicad_mod', sha(kfp('Resistor_SMD', 'R_0402_1005Metric'))),
     ('Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod', '${KICAD10_FOOTPRINT_DIR}/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod', '0' * 64),
@@ -147,6 +155,9 @@ rows = [
     ('Package_TO_SOT_SMD.pretty/SOT-23.kicad_mod', kfp('Package_TO_SOT_SMD', 'SOT-23').replace('\\', '/'), sha(kfp('Package_TO_SOT_SMD', 'SOT-23'))),  # 절대 경로
     ('Package_TO_SOT_SMD.pretty/SOT-23-5.kicad_mod', '/opt/kicad/share/kicad/footprints/Package_TO_SOT_SMD.pretty/SOT-23-5.kicad_mod', sha(kfp('Package_TO_SOT_SMD', 'SOT-23-5'))),  # 다른 PC 절대 경로 → 이 PC KiCad
     ('Package_TO_SOT_SMD.pretty/SOT-23_OH.kicad_mod', 'openhw:SOT-23_OH', sha(oh_file)),
+    ('Package_TO_SOT_SMD.pretty/SOT-23_PM.kicad_mod', 'OpenHW_Mech:SOT-23_PM', sha(pm_file)),
+    # V-006a: 기록 sha 가 CRLF 형태(autocrlf worktree 에서 잼) — 같은 원본으로 통과
+    ('Package_TO_SOT_SMD.pretty/SOT-23_OH2.kicad_mod', 'openhw:SOT-23_OH2', hashlib.sha256(open(oh2_file, 'rb').read().replace(b'\r\n', b'\n').replace(b'\n', b'\r\n')).hexdigest()),
 ]
 open(os.path.join(SILK_DIR, 'SOURCES.tsv'), 'w', encoding='utf-8').write('copy\tsource\tsha256\n' + ''.join('%s\t%s\t%s\n' % r for r in rows))
 open(os.path.join(WORK, 'fp-lib-table'), 'w', encoding='utf-8').write(
@@ -269,6 +280,9 @@ CASES = [
     ('E4c SOT-23 패드 0.05 이동 불합격(절대 경로 원본)', cp.get('SOT-23', {}).get('ok') is False and cp['SOT-23'].get('pads_equal') is False and cp['SOT-23'].get('sha_ok') is True),
     ('E4c SOT-23-5 Fab 지움 불합격(다른 PC 경로 → 이 PC KiCad)', cp.get('SOT-23-5', {}).get('ok') is False and cp['SOT-23-5'].get('sha_ok') is True and cp['SOT-23-5'].get('nonsilk_equal') is False),
     ('E4c openhw:이름 원본·실크만 통과', cp.get('SOT-23_OH', {}).get('ok') is True),
+    ('E4c 프로젝트 라이브러리 별칭:이름 원본(hardware/pcb/lib) 통과', cp.get('SOT-23_PM', {}).get('ok') is True),
+    ('E4c 기록 sha 가 CRLF 형태 — 줄바꿈만 다름 통과', cp.get('SOT-23_OH2', {}).get('ok') is True and cp['SOT-23_OH2'].get('sha_form') == 'crlf'),
+    ('E4c 기록 sha 0 은 여전히 불합격(줄바꿈 허용이 틀린 sha 를 통과시키지 않음)', cp.get('R_0603_1608Metric', {}).get('sha_ok') is False),
     ('E4c 불합격 목록 5', len(R['verdict']['E4c_fail']) == 5),
 ]
 fail = 0
