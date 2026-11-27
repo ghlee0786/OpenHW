@@ -10,3 +10,10 @@
 *-geom-all.json
 *.pairs.json
 *.signals.json
+# 마무리 배선 중간 결과(적용한 것만 -f 로 커밋)
+*-rr*.json
+*-finish*.json
+*-orig-as-rr.json
+*.best
+*-assist*.json
+*-islands.json

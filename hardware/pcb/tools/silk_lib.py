@@ -150,6 +150,8 @@ def fix_types(board):
     od = out_dir(board)
     rows, log = [], {"marks": [], "widened": 0, "clipped": {}, "to_fab": {}, "dots_fail": [], "other_shapes": [], "marks_moved": [],
                      "refs_silk": [], "refs_fab_only": []}
+    for old in od.glob("*.pretty/*.kicad_mod"):  # 지금 넷리스트에 없는 낡은 사본이 남지 않게(V-006a ③: SOURCES.tsv 행 없는 사본)
+        old.unlink()
     for fpid in used_fpids(board):
         lib, name = fpid.split(":", 1)
         sp = src_path(lib) / f"{name}.kicad_mod"
