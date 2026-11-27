@@ -8,7 +8,7 @@ import argparse, hashlib, json, os, subprocess, sys, tarfile, io, shutil
 sys.stdout.reconfigure(encoding='utf-8')
 HERE = os.path.dirname(os.path.abspath(__file__))
 LANE = os.path.abspath(os.path.join(HERE, '..', '..'))
-MAIN = r'C:\workspace_python\OpenHW'   # 산출물 validation/runtime 은 main 체크아웃 (O-100 — 레인 worktree 안은 accept 때 지워짐)
+MAIN = os.path.abspath(os.environ.get('OPENHW_MAIN') or os.path.dirname(subprocess.run(['git', '-C', os.path.dirname(os.path.abspath(__file__)), 'rev-parse', '--path-format=absolute', '--git-common-dir'], capture_output=True, text=True).stdout.strip()))   # main 체크아웃 — 산출물 validation/runtime (O-100)
 OUT = os.path.join(MAIN, 'validation', 'runtime', 'vd001')
 PCB_LANE = MAIN   # pcb 커밋은 같은 저장소(pcb 레인 브랜치) — 레인 worktree 가 없어져도 커밋으로 읽힘
 KICAD = os.path.join(os.environ['LOCALAPPDATA'], 'Programs', 'KiCad', '10.0', 'bin', 'kicad-cli.exe')
@@ -65,6 +65,7 @@ def main():
     ap.add_argument('--pcb-carrier'); ap.add_argument('--pcb-front')
     ap.add_argument('--pcb-lane', default=PCB_LANE)
     ap.add_argument('--skip-build', action='store_true')
+    ap.add_argument('--no-fusion', action='store_true', help='O-107: 보드 사본·모델 감사·STEP·커넥터까지만 (Fusion 조립·판정·judge.md·조건 5 결과 파일 안 씀)')
     a = ap.parse_args()
     os.makedirs(os.path.join(OUT, 'boards'), exist_ok=True)
     log = []
@@ -128,6 +129,8 @@ def main():
         conn['sd_front'] = [19.6]
         json.dump(conn, open(os.path.join(OUT, 'boards', 'connectors.json'), 'w', encoding='utf-8'), indent=1)
         log.append('커넥터 (pcb fab): ' + json.dumps(conn))
+        if a.no_fusion:
+            print('\n'.join(log)); return 0
         rc, o = sh([sys.executable, '-I', '-B', FRUN, os.path.join(HERE, 'scripts', '02_assembly.py')]); log.append('02_assembly rc %d %s' % (rc, o.strip()[-300:]))
         if rc:
             print('\n'.join(log)); return 98
