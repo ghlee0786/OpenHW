@@ -65,7 +65,7 @@
 | **패치 적용 빌드 3 (최종)** | hc t199, 같은 명령 | **0** | 338초, 20:59:11 KST 종료 |
 | collect | `OUT_DIR=…/out-f003 slot -- build-baseline.sh collect` | 0 | 아래 해시 |
 
-### 최종 산출물 (`C:/Users/gh/.local/share/openhw-tools/recamera-sdk/out-f003/`)
+### 최종 산출물 (`%USERPROFILE%/.local/share/openhw-tools/recamera-sdk/out-f003/`)
 
 | 파일 | sha256 |
 |---|---|

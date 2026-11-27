@@ -8,7 +8,8 @@ HERE="$(cd "$(dirname "$0")" && pwd)"
 VOL="${VOL:-openhw-recamera-sdk}"
 IMAGE="recamera-os-builder"
 TARGET="${TARGET:-sg2002_recamera_emmc}"
-MODEL_DIR="${MODEL_DIR:-C:/Users/gh/.local/share/openhw-tools/models}"
+MODEL_DIR="${MODEL_DIR:-$HOME/.local/share/openhw-tools/models}"
+command -v cygpath >/dev/null && MODEL_DIR="$(cygpath -m "$MODEL_DIR")"   # Docker -v 용 Windows 경로
 MODEL=yolox_nano_person_416_bf16_cv181x.cvimodel
 if [ "${SKIP_MODEL:-0}" != 1 ] && [ ! -f "$MODEL_DIR/$MODEL" ]; then echo "모델 없음: $MODEL_DIR/$MODEL (convert-yolox-person.sh 먼저, 또는 SKIP_MODEL=1)" >&2; exit 2; fi
 

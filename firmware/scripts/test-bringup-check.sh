@@ -1,7 +1,7 @@
 #!/bin/bash
 # bringup-check.sh 사전 시험: 가짜 ROOT 트리 3개(낮 정상 · 밤 정상 · 고장)로 PASS/FAIL 판정과 종료 코드 확인
 # 실행: docker run --rm -v <저장소>/firmware:/fw:ro -v <모델 폴더>:/models:ro recamera-os-builder bash /fw/scripts/test-bringup-check.sh
-#   <모델 폴더> = C:/Users/gh/.local/share/openhw-tools/models (BF16 cvimodel, P1 sha256 시험용)
+#   <모델 폴더> = <사용자 홈>/.local/share/openhw-tools/models (BF16 cvimodel, P1 sha256 시험용)
 set -u
 command -v busybox >/dev/null || { apt-get update -qq >/dev/null 2>&1; apt-get install -y -qq busybox shellcheck >/dev/null 2>&1; }
 SCR=/fw/scripts/bringup-check.sh
