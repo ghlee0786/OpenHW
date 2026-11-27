@@ -1,7 +1,7 @@
 {
     "$schema": "https://schemas.kicad.org/drc.v1.json",
     "coordinate_units": "mm",
-    "date": "2026-11-27T14:37:47",
+    "date": "2026-11-27T14:45:51",
     "ignored_checks": [
         {
             "description": "Footprint doesn't match symbol's footprint filters",
@@ -17,29 +17,6 @@
     "schematic_parity": [],
     "source": "carrier.kicad_pcb",
     "unconnected_items": [
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "SH의 PTH 패드[/GND]J3",
-                    "pos": {
-                        "x": 86.325,
-                        "y": 104.32
-                    },
-                    "uuid": "33da78e8-bf98-44fb-8efe-6526c3ea3548"
-                },
-                {
-                    "description": "구역 'AUTO_GND_F.Cu' [/GND] on F.Cu, 우선순위 0",
-                    "pos": {
-                        "x": 79.95,
-                        "y": 79.95
-                    },
-                    "uuid": "be9ff6d3-4934-4ace-920d-16c83cdb68c8"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
         {
             "description": "Missing connection between items",
             "items": [
@@ -144,29 +121,6 @@
                     "uuid": "be9ff6d3-4934-4ace-920d-16c83cdb68c8"
                 },
                 {
-                    "description": "구역 'AUTO_GND_F.Cu' [/GND] on F.Cu, 우선순위 0",
-                    "pos": {
-                        "x": 79.95,
-                        "y": 79.95
-                    },
-                    "uuid": "be9ff6d3-4934-4ace-920d-16c83cdb68c8"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "구역 'AUTO_GND_F.Cu' [/GND] on F.Cu, 우선순위 0",
-                    "pos": {
-                        "x": 79.95,
-                        "y": 79.95
-                    },
-                    "uuid": "be9ff6d3-4934-4ace-920d-16c83cdb68c8"
-                },
-                {
                     "description": "구역 'AUTO_GND_B.Cu' [/GND] on B.Cu, 우선순위 0",
                     "pos": {
                         "x": 79.95,
@@ -205,20 +159,20 @@
             "description": "Missing connection between items",
             "items": [
                 {
-                    "description": "구역 'AUTO_GND_F.Cu' [/GND] on F.Cu, 우선순위 0",
-                    "pos": {
-                        "x": 79.95,
-                        "y": 79.95
-                    },
-                    "uuid": "be9ff6d3-4934-4ace-920d-16c83cdb68c8"
-                },
-                {
                     "description": "구역 'AUTO_GND_B.Cu' [/GND] on B.Cu, 우선순위 0",
                     "pos": {
                         "x": 79.95,
                         "y": 79.95
                     },
                     "uuid": "6f79b13d-fcae-4c8f-84e5-3e083b49d59b"
+                },
+                {
+                    "description": "구역 'AUTO_GND_F.Cu' [/GND] on F.Cu, 우선순위 0",
+                    "pos": {
+                        "x": 79.95,
+                        "y": 79.95
+                    },
+                    "uuid": "be9ff6d3-4934-4ace-920d-16c83cdb68c8"
                 }
             ],
             "severity": "error",
@@ -264,7 +218,7 @@
                         "x": 103.2,
                         "y": 92.6
                     },
-                    "uuid": "fc852d7f-f8fb-4764-88bb-3b5da4c7b63e"
+                    "uuid": "ac02ed3a-6113-48f0-8684-682a977fb25e"
                 }
             ],
             "severity": "error",
@@ -284,12 +238,12 @@
                     "uuid": "f6d8a99f-f470-4397-8fe6-395d108deae6"
                 },
                 {
-                    "description": "배선 [/USB_DN] on F.Cu, 길이 0.1061 mm",
+                    "description": "비아 [/USB_DN] on F.Cu - B.Cu",
                     "pos": {
-                        "x": 86.225,
-                        "y": 100.975
+                        "x": 86.1,
+                        "y": 100.85
                     },
-                    "uuid": "ae2f28d3-5484-472f-ab4d-520bbf66f3d5"
+                    "uuid": "b5d7ae24-044c-4073-8c80-85a8e7111a88"
                 }
             ],
             "severity": "error",
@@ -299,20 +253,20 @@
             "description": "차동 비결합 길이 너무 긺 (mdi_100_pair 최대 비결합 길이 6.0000 mm, 실제 6.8798 mm)",
             "items": [
                 {
-                    "description": "배선 [/EPHY_TXP] on F.Cu, 길이 1.4524 mm",
+                    "description": "배선 [/EPHY_TXP] on F.Cu, 길이 0.2193 mm",
                     "pos": {
-                        "x": 109.4313,
-                        "y": 91.16
+                        "x": 108.75,
+                        "y": 92.75
                     },
-                    "uuid": "09fd12a6-896d-4384-bf84-9f9fd3c006bd"
+                    "uuid": "0a598370-e2e9-40cc-8d16-8da2b5ce35ba"
                 },
                 {
-                    "description": "배선 [/EPHY_TXN] on F.Cu, 길이 1.6353 mm",
+                    "description": "배선 [/EPHY_TXN] on F.Cu, 길이 0.0163 mm",
                     "pos": {
-                        "x": 105.8163,
-                        "y": 109.16
+                        "x": 111.51,
+                        "y": 91.3337
                     },
-                    "uuid": "024ed91a-5e4d-4e4b-83d7-53be5f669a07"
+                    "uuid": "31a7e8e0-75a2-40bc-b6d9-4e93dd9e0246"
                 }
             ],
             "severity": "error",
