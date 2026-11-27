@@ -132,6 +132,8 @@ def main():
                 if nm and nm != NET and not rip.LOCK.fullmatch(nm):
                     cnt[nm] = cnt.get(nm, 0) + int(c_)
         cands = [k for k, _ in sorted(cnt.items(), key=lambda kv: -kv[1])][:6]
+        if os.environ.get("P5_CANDS"):
+            cands = os.environ["P5_CANDS"].split(",")
         print(f"섬 {n} {o['layer']} {o['pads']}: 막힘 — 뜯을 후보 {cands}", flush=True)
         done = False
         for k in (1, 2):
