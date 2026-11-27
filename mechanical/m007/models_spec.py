@@ -1,6 +1,7 @@
 # M-007 대체 3D 모델 사양 (CAD 독립). 몸체 XY = KiCad 표준 풋프린트 F.Fab 외곽(풋프린트 로컬 좌표), 리드 = 패드 범위 두께 0.15, 높이 = 데이터시트.
 # 원점 = 풋프린트 원점, 회전 0, 단위 mm, +Z = 부품 윗면 방향(보드 윗면 기준). KiCad 3D 설정: offset 0, rotation 0, scale 1 (뒷면 실장은 KiCad 가 뒤집음).
-KICAD_FP = r"C:\Users\gh\AppData\Local\Programs\KiCad\10.0\share\kicad\footprints"
+import os
+KICAD_FP = os.environ.get('KICAD10_FOOTPRINT_DIR') or os.path.expandvars(r'%LOCALAPPDATA%\Programs\KiCad\10.0\share\kicad\footprints')   # KiCad 10 설치
 MODELS = [
     # 파일 이름, 풋프린트(라이브러리/이름), 높이, 높이 근거, 쓰는 자리
     ('USB_C_Receptacle_HRO_TYPE-C-31-M-12', 'Connector_USB.pretty/USB_C_Receptacle_HRO_TYPE-C-31-M-12', 3.26,

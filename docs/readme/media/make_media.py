@@ -9,7 +9,7 @@ import argparse, glob, hashlib, io, json, os, shutil, subprocess, sys, tarfile
 sys.stdout.reconfigure(encoding='utf-8')
 HERE = os.path.dirname(os.path.abspath(__file__))
 LANE = os.path.abspath(os.path.join(HERE, '..', '..', '..'))
-MAIN = os.path.dirname(os.path.abspath(subprocess.run(['git', '-C', HERE, 'rev-parse', '--git-common-dir'], capture_output=True, text=True).stdout.strip()))   # main 체크아웃
+MAIN = os.path.abspath(os.environ.get('OPENHW_MAIN') or os.path.dirname(subprocess.run(['git', '-C', os.path.dirname(os.path.abspath(__file__)), 'rev-parse', '--path-format=absolute', '--git-common-dir'], capture_output=True, text=True).stdout.strip()))   # main 체크아웃 — 산출물 validation/runtime (O-100)
 W0 = os.path.join(MAIN, 'validation', 'runtime', 'vd001', 'ren004')
 KICAD = os.path.expandvars(r'%LOCALAPPDATA%\Programs\KiCad\10.0\bin\kicad-cli.exe')
 FFMPEG = os.environ.get('FFMPEG', 'ffmpeg')   # 격리 ffmpeg 경로는 환경 변수 FFMPEG 로 (공개 저장소에 로컬 경로를 적지 않음)

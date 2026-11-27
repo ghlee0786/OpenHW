@@ -8,7 +8,7 @@ import argparse, hashlib, json, os, subprocess, sys, tarfile, io, shutil
 sys.stdout.reconfigure(encoding='utf-8')
 HERE = os.path.dirname(os.path.abspath(__file__))
 LANE = os.path.abspath(os.path.join(HERE, '..', '..'))
-MAIN = r'C:\workspace_python\OpenHW'   # 산출물 validation/runtime 은 main 체크아웃 (O-100 — 레인 worktree 안은 accept 때 지워짐)
+MAIN = os.path.abspath(os.environ.get('OPENHW_MAIN') or os.path.dirname(subprocess.run(['git', '-C', os.path.dirname(os.path.abspath(__file__)), 'rev-parse', '--path-format=absolute', '--git-common-dir'], capture_output=True, text=True).stdout.strip()))   # main 체크아웃 — 산출물 validation/runtime (O-100)
 OUT = os.path.join(MAIN, 'validation', 'runtime', 'vd001')
 PCB_LANE = MAIN   # pcb 커밋은 같은 저장소(pcb 레인 브랜치) — 레인 worktree 가 없어져도 커밋으로 읽힘
 KICAD = os.path.join(os.environ['LOCALAPPDATA'], 'Programs', 'KiCad', '10.0', 'bin', 'kicad-cli.exe')

@@ -2,8 +2,8 @@
 화면 위쪽 = +Y (센서 세로), 광축 +Z = 앞. 기준 중복·대체된 바디와 플러그 블록은 숨긴다(끝나면 되돌림)."""
 import adsk.core, adsk.fusion, os
 
-LANE = r"C:\workspace_python\OpenHW"   # 소스 체크아웃 — mechanical/fusion_run.py 가 실행하는 스크립트의 체크아웃으로 바꿈
-MAIN = r"C:\workspace_python\OpenHW"   # 산출물(validation/runtime) — main 체크아웃 (O-100)
+LANE = None   # 소스 체크아웃 — mechanical/fusion_run.py 가 이 스크립트의 체크아웃 경로로 채움
+MAIN = None   # main 체크아웃 — mechanical/fusion_run.py 가 채움 (산출물 validation/runtime, O-100)
 OUT = LANE + r"\mechanical\m003\render"
 HIDE = ('CARRIER_40x54', 'FRONT_40x40', 'WINDOW_PMMA', 'LIGHT_COLLAR', 'AL_SPREADER_TAB_PX', 'THERMAL_PILLAR', 'INS_PAD_',
         'KEEPIN', 'HARNESS_CORRIDOR', 'ENVELOPE', 'DF30_SITE', 'J_ICR')

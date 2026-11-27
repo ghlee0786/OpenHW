@@ -3,8 +3,8 @@
 전면 보드 부품(참조 번호별)·LED·센서 블록·덮개·폼과 간섭·최소 틈을 잰다 → validation/runtime/vd001/m008_check.json"""
 import adsk.core, adsk.fusion, json, math
 
-LANE = r"C:\workspace_python\OpenHW"   # 소스 체크아웃 — mechanical/fusion_run.py 가 실행하는 스크립트의 체크아웃으로 바꿈
-MAIN = r"C:\workspace_python\OpenHW"   # 산출물(validation/runtime) — main 체크아웃 (O-100)
+LANE = None   # 소스 체크아웃 — mechanical/fusion_run.py 가 이 스크립트의 체크아웃 경로로 채움
+MAIN = None   # main 체크아웃 — mechanical/fusion_run.py 가 채움 (산출물 validation/runtime, O-100)
 OUT = MAIN + r"\validation\runtime\vd001"
 OLD = ('CLA216_ICR', 'HOLDER_SPACER_FRAME', 'ICR_LEAD_PATH', 'DF30_SITE', 'FPC_3mm')
 

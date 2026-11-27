@@ -1,8 +1,8 @@
 """M-007 01: 대체 3D 모델 만들기 (Fusion) — models_spec.py 를 읽어 새 로컬 문서에 부품마다 몸체·리드 상자를 만들고 mechanical/models/*.step 으로 내보낸다."""
 import adsk.core, adsk.fusion, re, math, os
 
-LANE = r"C:\workspace_python\OpenHW"   # 소스 체크아웃 — mechanical/fusion_run.py 가 실행하는 스크립트의 체크아웃으로 바꿈
-MAIN = r"C:\workspace_python\OpenHW"   # 산출물(validation/runtime) — main 체크아웃 (O-100)
+LANE = None   # 소스 체크아웃 — mechanical/fusion_run.py 가 이 스크립트의 체크아웃 경로로 채움
+MAIN = None   # main 체크아웃 — mechanical/fusion_run.py 가 채움 (산출물 validation/runtime, O-100)
 BASE = LANE + r"\mechanical"
 
 

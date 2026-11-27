@@ -8,7 +8,7 @@ import argparse, hashlib, json, os, shutil, struct, subprocess, sys
 sys.stdout.reconfigure(encoding='utf-8')
 HERE = os.path.dirname(os.path.abspath(__file__))
 LANE = os.path.abspath(os.path.join(HERE, '..', '..'))
-MAIN = r'C:\workspace_python\OpenHW'
+MAIN = os.path.abspath(os.environ.get('OPENHW_MAIN') or os.path.dirname(subprocess.run(['git', '-C', os.path.dirname(os.path.abspath(__file__)), 'rev-parse', '--path-format=absolute', '--git-common-dir'], capture_output=True, text=True).stdout.strip()))   # main 체크아웃 — 산출물 validation/runtime (O-100)
 V = os.path.join(MAIN, 'validation', 'runtime', 'vd001')
 F = os.path.join(V, 'render', 'fusion')
 PY = [sys.executable, '-I', '-B']

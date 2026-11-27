@@ -11,7 +11,7 @@ import argparse, datetime, glob, hashlib, json, os, shutil, subprocess, sys, tim
 sys.stdout.reconfigure(encoding='utf-8')
 HERE = os.path.dirname(os.path.abspath(__file__))
 LANE = os.path.abspath(os.path.join(HERE, '..', '..'))
-MAIN = r'C:\workspace_python\OpenHW'   # 산출물 (O-100)
+MAIN = os.path.abspath(os.environ.get('OPENHW_MAIN') or os.path.dirname(subprocess.run(['git', '-C', os.path.dirname(os.path.abspath(__file__)), 'rev-parse', '--path-format=absolute', '--git-common-dir'], capture_output=True, text=True).stdout.strip()))   # main 체크아웃 — 산출물 validation/runtime (O-100)
 V = os.path.join(MAIN, 'validation', 'runtime', 'vd001')
 R = os.path.join(V, 'render')
 M = os.path.join(LANE, 'mechanical')
@@ -95,7 +95,8 @@ def main():
     for p in reps:
         if p not in big:
             shutil.copy2(p, os.path.join(a.docs, os.path.basename(p)))
-    steps.append({'step': '대표본 복사 → %s' % a.docs, 'rc': len(big), 'blocked': bool(big), 's': 0,
+    rel = os.path.relpath(os.path.abspath(a.docs), LANE).replace('\\', '/')   # 기록에는 저장소 상대 경로만 (공개 저장소)
+    steps.append({'step': '대표본 복사 → %s' % (rel if not rel.startswith('..') else '(저장소 밖 폴더)'), 'rc': len(big), 'blocked': bool(big), 's': 0,
                   'tail': '복사 %d · 없음/20MB 이상 %s' % (len(reps) - len(big), [os.path.basename(p) for p in big]),
                   'files': {os.path.basename(p): [os.path.getsize(p), sha(p)] for p in reps if p not in big}})
     return finish(a, rc5)

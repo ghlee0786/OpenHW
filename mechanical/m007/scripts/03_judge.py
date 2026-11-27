@@ -3,8 +3,8 @@ J1 바디 쌍 간섭 (의도된 쌍은 asm_spec.INTENDED 이름 규칙으로 제
 J4 광축 ↔ 렌즈 창 중심 어긋남 · J5 LED 직접광 광선 추적 (시야 방향마다 처음 맞는 바디가 PMMA 창인지) · J6 짝 BTB 결합 높이."""
 import adsk.core, adsk.fusion, re, json, math, os
 
-LANE = r"C:\workspace_python\OpenHW"   # 소스 체크아웃 — mechanical/fusion_run.py 가 실행하는 스크립트의 체크아웃으로 바꿈
-MAIN = r"C:\workspace_python\OpenHW"   # 산출물(validation/runtime) — main 체크아웃 (O-100)
+LANE = None   # 소스 체크아웃 — mechanical/fusion_run.py 가 이 스크립트의 체크아웃 경로로 채움
+MAIN = None   # main 체크아웃 — mechanical/fusion_run.py 가 채움 (산출물 validation/runtime, O-100)
 OUT = MAIN + r"\validation\runtime\vd001"
 
 
