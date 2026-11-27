@@ -1,0 +1,42 @@
+{
+ "front": {
+  "board": "front",
+  "pcb": "d1fa9e2",
+  "models_applied": "changed footprints 0",
+  "models_missing": [],
+  "gif": {
+   "path": "docs/readme/media/front_spin.gif",
+   "bytes": 2533830,
+   "size": [
+    720,
+    540
+   ],
+   "frames": 40,
+   "fps": 12,
+   "loop": 0,
+   "sha256": "f2ffec6f07601d270a398d266543978dc2bcc34b563d4196b77448ceb9136202",
+   "render": "kicad-cli pcb render --quality high --perspective --floor --zoom 0.8 --rotate -40,0,<0..360>"
+  },
+  "png": {
+   "top": {
+    "path": "docs/readme/media/front_top.png",
+    "bytes": 55030,
+    "size": [
+     915,
+     915
+    ],
+    "sha256": "73a65dfbcf748aca504847b31b31366231e1ea8713887ff98e94b25478a5334c"
+   },
+   "bottom": {
+    "path": "docs/readme/media/front_bottom.png",
+    "bytes": 79259,
+    "size": [
+     915,
+     915
+    ],
+    "sha256": "ec934bdee4b3d768c131033a712a92ad164a9a0ef977a5f8fc003d86b1222fbf"
+   }
+  },
+  "fails": []
+ }
+}
