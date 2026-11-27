@@ -114,7 +114,15 @@ def why(p):
     return ' '.join(v['why']) if v else ''
 
 
-def cond2(dru):
+def cond2(dru, d003=None, tx=None):
+    if tx is not None:   # O-119: 쌍 안 길이 차를 정해진 값으로 (TX 는 인자, RX 는 0.5)
+        _r = json.load(open(rj, encoding='utf-8'))
+        _r['pairs']['/EPHY_TX']['diff'] = tx; _r['pairs']['/EPHY_RX']['diff'] = 0.5
+        json.dump(_r, open(rj, 'w', encoding='utf-8'), ensure_ascii=False)
+    extra = []
+    if d003 is not None:
+        open(os.path.join(W, 'd003.md'), 'w', encoding='utf-8').write(d003)
+        extra = ['--d003', os.path.join(W, 'd003.md')]
     open(os.path.join(BD, 'carrier.kicad_dru'), 'w', encoding='utf-8').write(dru)
     json.dump(dict(violations=[], unconnected_items=[], schematic_parity=[]), open(os.path.join(RES, 'drc_carrier.json'), 'w'))
     # O-115: 실크 참조 멂·모호(S6a)는 사람 확인 H4 — 불합격 수에 들지 않아야 한다
@@ -122,16 +130,23 @@ def cond2(dru):
                    findings={'S6a_ref_far': [{'owner': 'R1'}, {'owner': 'R2'}], 'S6a_ref_ambiguous': [{'owner': 'R2'}]}),
               open(os.path.join(RES, 'silk_carrier.json'), 'w'))
     o = os.path.join(RES, 'cond2.json')
-    subprocess.run([sys.executable, '-I', os.path.join(HERE, 'v006_cond2.py'), RES, 'test', o, '--snap', os.path.join(W, 'snap'), '--root', W],
+    subprocess.run([sys.executable, '-I', os.path.join(HERE, 'v006_cond2.py'), RES, 'test', o, '--snap', os.path.join(W, 'snap'), '--root', W] + extra,
                    capture_output=True, text=True, encoding='utf-8')
     d = json.load(open(o, encoding='utf-8'))
     r = {i['id']: i for i in d['items'] if i['board'] == 'carrier'}
     r['_exit'] = d['exit_code']; r['_fails'] = sum(1 for i in d['items'] if i['verifiable'] and i['pass'] is False)
+    r['_a8'] = {i['title'].split()[4]: i for i in d['items'] if i['id'] == '2.A8' and i['board'] == 'carrier'}   # 「쌍 안 길이 차 <넷>」
     return r
 
 
 C_ok = cond2('(version 1)\n(rule "j1_esc" (condition "A.Type == \'Via\' && A.enclosedByArea(\'J1_ESC\')") (constraint via_diameter (min 0.50mm)))\n')
 C_bad = cond2('(version 1)\n(rule "j1_esc" (condition "A.Type == \'Via\' && A.intersectsArea(\'J1_ESC\')") (constraint via_diameter (min 0.50mm)))\n')
+DRU_OK = '(version 1)\n(rule "j1_esc" (condition "A.Type == \'Via\' && A.enclosedByArea(\'J1_ESC\')") (constraint via_diameter (min 0.50mm)))\n'
+ROW62 = '| 62 | MDI TX 쌍 길이 차 예외(O-119, #28 예외) | (가) MDI TX 쌍만 쌍 안 길이 차 ≤1.7mm 허용, 비결합 길이는 그대로 | 근거 | 차선 |\n'
+X_ok = cond2(DRU_OK, d003='| # | 항목 |\n|---|---|\n' + ROW62, tx=1.677)
+X_over = cond2(DRU_OK, d003='| # | 항목 |\n|---|---|\n' + ROW62, tx=1.75)
+X_norow = cond2(DRU_OK, d003='| # | 항목 |\n|---|---|\n| 28 | 차동쌍 | 쌍 안 길이 차 0 | 근거 | 차선 |\n', tx=1.677)
+X_noarg = cond2(DRU_OK, tx=1.677)
 CASES = [
     ('영역 2개 인식, J1_ESC 는 J1 둘레 1.0 (통과) · J1_FAR 는 멀다 (불합격)', {a['name']: a['beyond_ok'] for a in E['areas']} == {'J1_ESC': True, 'J1_FAR': False}),
     ('A 정상 0.50/0.20 → 영역 안, 불합격 아님(음성)', at(E['inside'], A_) is not None and at(E['inside_fail'], A_) is None and at(E['non_j1_net'], A_) is None),
@@ -153,6 +168,11 @@ CASES = [
     ('cond2 V3 영역 안 불합격 (B·C·D1·D2 포함)', C_ok['2.V3']['value'] == len(E['inside_fail']) >= 4 and C_ok['2.V3']['pass'] is False),
     ('cond2 V4 J1 넷 아님 (E 포함)', C_ok['2.V4']['value'] == len(E['non_j1_net']) >= 1 and C_ok['2.V4']['pass'] is False),
     ('cond2 V5 J1_FAR 때문에 불합격', C_ok['2.V5']['pass'] is False),
+    ('#62 MDI TX 쌍 안 길이 차 1.677 ≤ 1.7 통과(음성)', X_ok['_a8']['/EPHY_TX']['pass'] is True and '#62' in X_ok['_a8']['/EPHY_TX']['limit']),
+    ('#62 MDI TX 1.75 > 1.7 불합격(양성)', X_over['_a8']['/EPHY_TX']['pass'] is False),
+    ('#62 는 TX 한정 — MDI RX 0.5 는 #28 「0」 그대로 불합격(양성)', X_ok['_a8']['/EPHY_RX']['pass'] is False and '#28' in X_ok['_a8']['/EPHY_RX']['limit']),
+    ('D-003 에 #62 행이 없으면 예외 없음 — TX 1.677 불합격(양성)', X_norow['_a8']['/EPHY_TX']['pass'] is False),
+    ('--d003 을 안 주면 예외 없음 — TX 1.677 불합격(양성)', X_noarg['_a8']['/EPHY_TX']['pass'] is False),
     ('cond2 S6a 는 기계 항목에서 빠짐 (O-115)', '2.S6a' not in C_ok),
     ('cond2 H4 사람 확인: verifiable 아니오 · pass 없음 · 멂 2(R1, R2) / 모호 1(R2)', C_ok.get('2.H4', {}).get('verifiable') is False and C_ok['2.H4']['pass'] is None
      and C_ok['2.H4']['value'] == '2 / 1' and 'R1, R2' in C_ok['2.H4']['title']),

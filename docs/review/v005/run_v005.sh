@@ -57,7 +57,7 @@ EV="$ROOT/docs/research/r020"
 AM="$ROOT/mechanical/ren002/audit_models.py"
 [ -f "$AM" ] && step models python -I -B "$AM" --src "$WORK" --out-json "$OUT/models.json" --no-md
 for b in carrier front; do step "refs_$b" "$KPY" -I "$HERE/v006a_refs.py" "$WORK/hardware/schematic/$b/$b.kicad_pcb" "$OUT/refs_$b.json" || bad=1; done
-step cond2 python -I "$HERE/v006_cond2.py" "$OUT" "$C" "$OUT/cond2.json" --snap "$WORK" --root "$MAIN"
+step cond2 python -I "$HERE/v006_cond2.py" "$OUT" "$C" "$OUT/cond2.json" --snap "$WORK" --root "$MAIN" --d003 "$MAIN/docs/decisions/D-003-working-defaults.md"
 # V-006: VD-001 조건 3 — R-010 16항 (산출물 폴더 manufacturing/pcb/<보드>/ 또는 <보드>.zip, 종료 코드 = 불합격 수)
 for b in carrier front; do
   F="$WORK/manufacturing/pcb/$b"; [ -d "$F" ] || F="$WORK/manufacturing/pcb/$b.zip"
