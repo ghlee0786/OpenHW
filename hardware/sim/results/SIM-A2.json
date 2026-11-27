@@ -46,7 +46,7 @@
   "name": "ngspice",
   "version": "ngspice-47 (공식 SourceForge ng-spice-rework/47/ngspice-47_64.7z)",
   "sha256": "59225971… (7z, firmware 설치·검증 — orch O-81)",
-  "path": "C:/Users/gh/tools/ngspice/47/Spice64/bin/ngspice_con.exe"
+  "path": "ngspice_con.exe"
  },
  "notes": "「분압 저항 ±1% 최악」은 해당 없음: 회로도는 UVLO→IN, OVP→RTN 이라 분압 저항이 없다(내부 고정 문턱). 입력 쪽 TVS SMBJ15A 가 OVP 보다 먼저 클램프한다."
 }

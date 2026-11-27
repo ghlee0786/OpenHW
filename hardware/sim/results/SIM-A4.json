@@ -122,7 +122,7 @@
   "name": "ngspice",
   "version": "ngspice-47 (공식 SourceForge ng-spice-rework/47/ngspice-47_64.7z)",
   "sha256": "59225971… (7z, firmware 설치·검증 — orch O-81)",
-  "path": "C:/Users/gh/tools/ngspice/47/Spice64/bin/ngspice_con.exe"
+  "path": "ngspice_con.exe"
  },
  "notes": "GST40A12 정전류: 정상 피크 1.837 A·평균 0.915 A, 과부하 피크 2.740 A, 5V 최소 4.979 V / hiccup 5V 최소 4.979 V. GST60A12 정전류 5V 최소 4.979 V. GST25A12(2.29 A): 과부하 피크 2.983 A, 5V 최소 정전류 3.923 V · hiccup 0.000 V, 12V_IN 최소 4.06 V. IR 두 스트링을 같은 위상(최악)으로 둠. 어댑터 출력 C 100 µF·감지 1 ms 는 가정."
 }

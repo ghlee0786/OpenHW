@@ -1,7 +1,7 @@
 # OpenHW KiCad 프로젝트 라이브러리 (L-001)
 
 - 배정: orch t18r L-001 (README 단계 4 준비) + G-001 (KiCad GUI로 보이게 작업) · 작성: schematic · 레인 `t-20261126-161205-dcb9` · 2026-11-26
-- 도구: KiCad 10.0.8 (`C:/Users/gh/AppData/Local/Programs/KiCad/10.0`)
+- 도구: KiCad 10.0.8 (`%LOCALAPPDATA%/Programs/KiCad/10.0`)
 - 계약 기준: `hardware/schematic/hw-fw-contract.md` v1 (C-001 레인 `t-20261126-155208-d030`, 커밋 `8613910`)
 - **원칙:** KiCad 공식 라이브러리에 있는 부품은 새로 만들지 않고 아래 표에 「공식 참조」로 적는다.
 
@@ -156,7 +156,7 @@ C-002 회로도·PCB 프로젝트에서는 이 폴더의 `openhw.kicad_sym`과 `
 
 | 번호 | 단계 | 스크린샷 | 상태 |
 |---|---|---|---|
-| 01 | 프로젝트 열기: 창 제목 「openhw-libs — KiCad 10.0」, 상태줄 「프로젝트: C:\workspace_python\OpenHW\.harnes…hardware\libraries\openhw-libs.kicad_pro」, 트리 「openhw-libs.kicad_pro [harness/t-20261126-161205-dcb9]」 | `C:/workspace_python/OpenHW/validation/runtime/kicad-gui/L-001/01-project.png` | 완료 |
+| 01 | 프로젝트 열기: 창 제목 「openhw-libs — KiCad 10.0」, 상태줄 「프로젝트: <저장소>\…\hardware\libraries\openhw-libs.kicad_pro」, 트리 「openhw-libs.kicad_pro [harness/t-20261126-161205-dcb9]」 | `validation/runtime/kicad-gui/L-001/01-project.png` | 완료 |
 | 02 | 심벌 편집기에서 `openhw` 라이브러리 확인 | — | **보류**: 심벌 편집기를 열고 라이브러리를 고르던 중 화면이 잠겼다(「There is no active desktop」, 「screen grab failed」). 화면이 돌아오면 이어서 한다 |
 | 03 | 풋프린트 편집기에서 `openhw.pretty` 확인 | — | 보류 (위와 같은 이유) |
 

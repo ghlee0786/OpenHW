@@ -5,6 +5,7 @@
 - 결과: `kicad-cli pcb drc --schematic-parity --severity-all --exit-code-violations` **종료 0 — 위반 0 · 미연결 0 · parity 0** (`hardware/pcb/drc/front-drc.json`).
 - 방식: 헤드리스(kicad-cli · KiCad 번들 pcbnew python). GUI · Freerouting · Docker 는 쓰지 않았다.
 - 도구: `hardware/pcb/tools_front/` (공용 `hardware/pcb/tools` 사본 + `p005_*.py`). 공용 도구와 캐리어 파일은 고치지 않았다.
+  - 사본 가운데 전면 마무리에 쓰지 않은 실행 스크립트 8개(`build_boards.py` · `silk_lib.py` · `fab_outputs.ps1` · `fr_board.ps1` · `gui_shot.ps1` · `run_board.ps1` · `run_all.ps1` · `step_evidence.ps1`)는 뒤에 지웠다(O-117). 원본은 `hardware/pcb/tools` 에 있다.
 
 ## 무엇이 막고 있었나
 

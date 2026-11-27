@@ -46,7 +46,7 @@
   "name": "ngspice",
   "version": "ngspice-47 (공식 SourceForge ng-spice-rework/47/ngspice-47_64.7z)",
   "sha256": "59225971… (7z, firmware 설치·검증 — orch O-81)",
-  "path": "C:/Users/gh/tools/ngspice/47/Spice64/bin/ngspice_con.exe"
+  "path": "ngspice_con.exe"
  },
  "notes": "2010년 판 데이터시트(LCSC 사본). 5V_SYS 최소는 SIM-B1 의 4.863 V 이지만 계약 하한 4.75 V 로 판정."
 }

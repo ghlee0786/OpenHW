@@ -1,7 +1,7 @@
 """SIM-001a 전원 경로 시뮬레이션 — 모든 시험을 다시 돌려 results/*.json, png/*.png, <ID>.cir 를 만든다.
 기준: criteria.md (결과보다 먼저 커밋, CRITERIA_COMMIT). 모델: 데이터시트 수치로 만든 동작(평균) 모델 — 근거는 PARAM 의 출처 문자열.
 usage: python run_all.py            종료 코드 = fail + error 수
-ngspice: 환경변수 NGSPICE 또는 C:/Users/gh/tools/ngspice/47/Spice64/bin/ngspice_con.exe (orch O-81 공용 경로)"""
+ngspice: 환경변수 NGSPICE(실행 파일 경로), 없으면 PATH 의 ngspice_con"""
 import json, math, os, subprocess, sys, tempfile
 import numpy as np
 import matplotlib
@@ -9,12 +9,12 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-NG = os.environ.get('NGSPICE', r'C:\Users\gh\tools\ngspice\47\Spice64\bin\ngspice_con.exe')
+NG = os.environ.get('NGSPICE', 'ngspice_con')
 CRITERIA_COMMIT = '64bde61'  # d00a3ac + A4(781961b) + 개정 1 ef3c0d0 + 개정 2 (R-021 GST40A12-P1J)
 SCH_COMMIT = 'a2d878c'  # C-020 (S6 전면 R20·R5 100k, R21 1k, D4·D5 BAT54) — C-019 R2 78.7k/R3 10.7k·C20/C21, C-018 R6 6.04k 포함
 FB_R2, FB_R3 = 78.7e3, 10.7e3   # 캐리어 TPS54302 FB 분압 (C-019; C-018 까지 100k/13.3k)
 TOOL = {'name': 'ngspice', 'version': 'ngspice-47 (공식 SourceForge ng-spice-rework/47/ngspice-47_64.7z)',
-        'sha256': '59225971… (7z, firmware 설치·검증 — orch O-81)', 'path': NG.replace('\\', '/')}
+        'sha256': '59225971… (7z, firmware 설치·검증 — orch O-81)', 'path': os.path.basename(NG)}  # 결과에는 실행 파일 이름만(로컬 경로를 남기지 않는다)
 for d in ('results', 'png'): os.makedirs(os.path.join(HERE, d), exist_ok=True)
 
 # ------------------------------------------------------------------ 데이터시트 수치 (출처)

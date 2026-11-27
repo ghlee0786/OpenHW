@@ -65,7 +65,7 @@
   "name": "ngspice",
   "version": "ngspice-47 (공식 SourceForge ng-spice-rework/47/ngspice-47_64.7z)",
   "sha256": "59225971… (7z, firmware 설치·검증 — orch O-81)",
-  "path": "C:/Users/gh/tools/ngspice/47/Spice64/bin/ngspice_con.exe"
+  "path": "ngspice_con.exe"
  },
  "notes": "기준선 CORE_3V3 3.320 V, CORE_1V8 1.800 V (0.1 Ω 경로 강하 포함). 코어 쪽 실제 디커플링(SoC 주변 C)은 더 크므로 강하는 이보다 작을 수 있다."
 }
