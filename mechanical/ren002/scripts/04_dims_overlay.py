@@ -1,11 +1,11 @@
-"""REN-002 04: 외형 치수선 겹치기 — render/stills/ren002_dims_raw.png + ren002_dims.json (scene.py 가 외함·덮개·방열판 외형 상자 모서리를 화면 좌표로 투영)
-→ render/stills/ren002_dims.png. 값은 Fusion STL 외형(제품 좌표 mm) 그대로, 소수 첫째 자리."""
+"""REN-002 04: 외형 치수선 겹치기 — render/blender/stills/ren002_dims_raw.png + ren002_dims.json (scene.py 가 외함·덮개·방열판 외형 상자 모서리를 화면 좌표로 투영)
+→ render/blender/stills/ren002_dims.png. 값은 Fusion STL 외형(제품 좌표 mm) 그대로, 소수 첫째 자리."""
 import json, math, os, sys
 from PIL import Image, ImageDraw, ImageFont
 
 LANE = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', '..'))
 MAIN = r'C:\workspace_python\OpenHW'   # 산출물 validation/runtime 은 main 체크아웃 (O-100 — 레인 worktree 안은 accept 때 지워짐)
-S = os.path.join(MAIN, 'validation', 'runtime', 'vd001', 'render', 'stills')
+S = os.path.join(MAIN, 'validation', 'runtime', 'vd001', 'render', 'blender', 'stills')
 F = ImageFont.truetype(r'C:\Windows\Fonts\malgunbd.ttf', 46)
 FS = ImageFont.truetype(r'C:\Windows\Fonts\malgun.ttf', 34)
 INK, EXT = (20, 120, 230), (20, 120, 230, 150)

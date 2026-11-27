@@ -82,15 +82,15 @@ def main():
     step('Blender 스틸 10', [BLENDER, '-b', '--factory-startup', '--python', os.path.join(M, 'ren002', 'scene.py'), '--', '--mode', 'stills'], timeout=7200)
     step('치수선 겹침', PY + [os.path.join(M, 'ren002', 'scripts', '04_dims_overlay.py')])
     step('턴테이블 .blend', [BLENDER, '-b', '--factory-startup', '--python', os.path.join(M, 'ren002', 'scene.py'), '--', '--mode', 'blend'])
-    for p in glob.glob(os.path.join(R, 'ren002_turntable.mp4')) + glob.glob(os.path.join(R, 'turntable', '*.png')):   # 남은 프레임·MP4 는 render_chunks 가 건너뜀
+    for p in glob.glob(os.path.join(R, 'blender', 'ren002_turntable.mp4')) + glob.glob(os.path.join(R, 'blender', 'turntable', '*.png')):   # 남은 프레임·MP4 는 render_chunks 가 건너뜀
         os.remove(p)
-    step('턴테이블 렌더·MP4', [sys.executable, CHUNKS, '--blend', os.path.join(R, 'turntable.blend'), '--out', os.path.join(R, 'turntable'),
-                           '--start', '1', '--end', '200', '--chunk', '40', '--fps', '25', '--mp4', os.path.join(R, 'ren002_turntable.mp4')], timeout=7200)
+    step('턴테이블 렌더·MP4', [sys.executable, CHUNKS, '--blend', os.path.join(R, 'blender', 'turntable.blend'), '--out', os.path.join(R, 'blender', 'turntable'),
+                           '--start', '1', '--end', '200', '--chunk', '40', '--fps', '25', '--mp4', os.path.join(R, 'blender', 'ren002_turntable.mp4')], timeout=7200)
     step('렌더 판정 (judge.py)', PY + [os.path.join(M, 'ren002', 'judge.py')])
     # 4) 대표본: 제품 10 · PCB 앞뒤 4 · MP4 → --docs (개당 < 20 MB)
     os.makedirs(a.docs, exist_ok=True)
-    reps = [os.path.join(R, 'stills', 'ren002_%s.png' % v) for v in VIEWS] + \
-           [os.path.join(R, 'pcb', '%s_%s.png' % (b, s)) for b in ('carrier', 'front') for s in ('top', 'bottom')] + [os.path.join(R, 'ren002_turntable.mp4')]
+    reps = [os.path.join(R, 'blender', 'stills', 'ren002_%s.png' % v) for v in VIEWS] + \
+           [os.path.join(R, 'pcb', '%s_%s.png' % (b, s)) for b in ('carrier', 'front') for s in ('top', 'bottom')] + [os.path.join(R, 'blender', 'ren002_turntable.mp4')]
     big = [p for p in reps if not os.path.exists(p) or os.path.getsize(p) >= 20 * 1024 * 1024]
     for p in reps:
         if p not in big:
@@ -122,7 +122,7 @@ def finish(a, rc5):
              open(os.path.join(case, 'interference.txt'), encoding='utf-8').read().strip().split('\n') + ['```']
     L += ['', '## 산출 해시 (main 체크아웃 validation/runtime/vd001/)', '']
     for p in sorted(glob.glob(os.path.join(V, 'boards', '*.step')) + glob.glob(os.path.join(case, '*.*')) + glob.glob(os.path.join(case, '*', '*.*'))
-                    + [os.path.join(R, 'ren002_turntable.mp4'), os.path.join(R, 'manifest.json')]):
+                    + [os.path.join(R, 'blender', 'ren002_turntable.mp4'), os.path.join(R, 'manifest.json')]):
         if os.path.isfile(p):
             L.append('- %s %s' % (os.path.relpath(p, V).replace('\\', '/'), sha(p)))
     open(os.path.join(HERE, 'run.md'), 'w', encoding='utf-8').write('\n'.join(L) + '\n')

@@ -85,8 +85,8 @@ def main():
                 png(t, kind, b, '%s %s 확대 %s (부품 번호 주석 = Fab 위치, 실크 아님)' % (BKO[b], ko, t.rsplit('zoom', 1)[1][:-4]), PCB_SRC, ik,
                     '실크 선·부품 번호(노란 주석) 읽힘')
     for v, kind, title, check in STILLS:
-        png(os.path.join(R, 'stills', 'ren002_%s.png' % v), kind, '-', title, BL_SRC, 'm007_assembly.step', check)
-    mp4 = os.path.join(R, 'ren002_turntable.mp4')
+        png(os.path.join(R, 'blender', 'stills', 'ren002_%s.png' % v), kind, '-', title, BL_SRC, 'm007_assembly.step', check)
+    mp4 = os.path.join(R, 'blender', 'ren002_turntable.mp4')
     if os.path.exists(mp4) and FFPROBE:
         j = json.loads(subprocess.run([FFPROBE[0], '-v', 'error', '-show_entries', 'format=duration:stream=width,height,nb_frames,codec_name', '-of', 'json', mp4],
                                       capture_output=True, text=True).stdout)
