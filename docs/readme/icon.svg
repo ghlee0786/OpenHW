@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="100%" role="img" aria-labelledby="t d">
+<!-- 생성: docs/readme/tools/make_svgs.py · 수치 기준 main 1898e1f -->
+
+<title id="t">OpenHW 아이콘</title><desc id="d">칩 안에 카메라 렌즈가 있는 아이콘</desc>
+<style>
+:root{--bg:#ffffff;--card:#f6f8fa;--fg:#1f2328;--mut:#59636e;--ln:#d0d7de;--pcb:#1a7f37;--pcb2:#2da44e;--pcbs:#116329;
+--core:#0969da;--cores:#0550ae;--pw:#bf8700;--dat:#0969da;--ctl:#8250df;--ir:#cf222e;--ok:#1a7f37;--wip:#bf8700;--todo:#8c959f;--metal:#57606a}
+@media (prefers-color-scheme:dark){:root{--bg:#0d1117;--card:#161b22;--fg:#e6edf3;--mut:#9198a1;--ln:#3d444d;--pcb:#2ea043;--pcb2:#3fb950;--pcbs:#1a7f37;
+--core:#4493f8;--cores:#1f6feb;--pw:#d29922;--dat:#4493f8;--ctl:#ab7df8;--ir:#f85149;--ok:#3fb950;--wip:#d29922;--todo:#6e7681;--metal:#8b949e}}
+text{font-family:system-ui,-apple-system,"Segoe UI","Noto Sans KR","Apple SD Gothic Neo",sans-serif;fill:var(--fg)}
+.t{font-size:22px;font-weight:700}.s{font-size:13px;fill:var(--mut)}.l{font-size:14px;font-weight:600}.m{font-size:12px;fill:var(--mut)}
+.bg{fill:var(--bg);stroke:var(--ln)}
+.c1{fill:var(--core)}.c2{fill:var(--cores)}.pin{fill:var(--cores)}
+.iris{fill:none;stroke:var(--bg);stroke-width:2.5;transform-box:fill-box;transform-origin:center;animation:ir 3.2s ease-in-out infinite}
+@keyframes ir{0%,100%{transform:scale(1)}50%{transform:scale(.72)}}
+.gl{fill:var(--bg);opacity:.85;animation:gl 3.2s ease-in-out infinite}@keyframes gl{0%,100%{opacity:.85}50%{opacity:.35}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important}}
+</style>
+<rect class="bg" x="0.5" y="0.5" width="95" height="95" rx="14"/>
+<rect class="pin" x="30" y="10" width="8" height="10" rx="1.5"/><rect class="pin" x="30" y="76" width="8" height="10" rx="1.5"/><rect class="pin" x="10" y="30" width="10" height="8" rx="1.5"/><rect class="pin" x="76" y="30" width="10" height="8" rx="1.5"/><rect class="pin" x="44" y="10" width="8" height="10" rx="1.5"/><rect class="pin" x="44" y="76" width="8" height="10" rx="1.5"/><rect class="pin" x="10" y="44" width="10" height="8" rx="1.5"/><rect class="pin" x="76" y="44" width="10" height="8" rx="1.5"/><rect class="pin" x="58" y="10" width="8" height="10" rx="1.5"/><rect class="pin" x="58" y="76" width="8" height="10" rx="1.5"/><rect class="pin" x="10" y="58" width="10" height="8" rx="1.5"/><rect class="pin" x="76" y="58" width="10" height="8" rx="1.5"/><rect class="c2" x="18" y="18" width="60" height="60" rx="10"/><rect class="c1" x="22" y="22" width="52" height="52" rx="8"/><circle class="c2" cx="48" cy="48" r="17"/><circle cx="48" cy="48" r="11" fill="var(--fg)" opacity=".85"/><circle class="iris" cx="48" cy="48" r="7"/><circle class="gl" cx="43" cy="43" r="3"/>
+</svg>
