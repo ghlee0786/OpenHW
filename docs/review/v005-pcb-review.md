@@ -199,7 +199,7 @@ bash docs/review/v005/run_v005.sh <pcb 최종 커밋>
 | S4 / S4r | 글자 높이 · 획(`GetEffectiveTextPenWidth`) / 획 ÷ 높이 | ≥1.0 · ≥0.15 / ≥0.2 | DRU, PCBWay 1:5, O-65 |
 | S5 | 외곽 안쪽으로 0.30 줄인 영역 밖 잉크 | 0 | O-66 |
 | S6 / S6t | 참조 글자 중심이 같은 면 courtyard 안 / 잉크만 걸침 | 0 | 몸체 아래 숨음 |
-| **S6a** | 참조 → 자기 courtyard 거리 > 2.0 = 멀다. 다른 부품 courtyard가 0.3 이상 더 가까움 = 모호 | 0 | 참조가 어느 부품 것인지 기계로 판정한다 |
+| **S6a** | 참조 → 자기 courtyard 거리 > 2.0 = 멀다. 다른 부품 courtyard가 0.3 이상 더 가까움 = 모호. **O-115(lead 결정): 기계 불합격이 아니라 사람 확인 H4(verifiable 아니오)** — 목록을 VD-001 HTML 사람 확인 칸에 낸다 | 사람 확인 | 참조가 어느 부품 것인지 기계로 판정한다 |
 | S7 / S7l / S7s | 글자–글자 · 글자–선 잉크 겹침 / 글자와 다른 실크 사이 거리 | 0 / ≥0.127 | PCBWay 「spacing … greater than 5mil」 |
 | S8 / S8m | 면마다 그려지는 회전각 종류 / 앞면 거울상 · 뒷면 비거울 | ≤2 / 0 | — |
 | **S9** | 아래 1번 핀 규칙 | missing · wrong_side 0 | PCBWay 「add polarity … and pin 1 in silkscreen」(R-010) |

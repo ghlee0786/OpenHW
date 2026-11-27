@@ -124,7 +124,7 @@ for b in BOARDS:
         names = {'S1_on_mask_open': '패드·노출 동박 위 실크', 'S1v_over_via': '안 덮인 비아 위 실크 (덮인 비아는 허용, D-003 #58)', 'S1h_over_hole': '열린 구멍 위 실크',
                  'S2_clear_lt_0p15': '실크–마스크 개구 < 0.15', 'S3_line_lt_0p15': '실크 선폭 < 0.15', 'S4_text': '글자 높이·획 미달',
                  'S4r_ratio_lt_1to5': '글자 획/높이 < 1:5', 'S5_edge': '외곽까지 < 0.30', 'S6_ref_hidden': '부품 아래 숨는 참조',
-                 'S6a_ref_far': '자기 부품에서 먼 참조', 'S6a_ref_ambiguous': '다른 부품이 더 가까운 참조', 'S7_text_text': '글자 겹침',
+                 'S7_text_text': '글자 겹침',
                  'S7l_text_line': '글자–선 겹침', 'S7s_text_space': '글자–실크 간격 < 0.127', 'S8_orient_gt2': '읽는 방향 > 2',
                  'S8m_mirror': '거울상 오류', 'S9_missing': '1번 핀·극성 표시 없음', 'S9_wrong_side': '1번 핀·극성 표시 반대'}
         for k, n in names.items():
@@ -135,6 +135,12 @@ for b in BOARDS:
             (c.get('F', {}).get('ref', 0) + c.get('B', {}).get('ref', 0)) > 0, [fs])
         ex_ = [p['ref'] for p in si['pin1_candidates'] if p['verdict'] == 'exempt']
         half = [p['ref'] for p in si['pin1_candidates'] if p['verdict'] == 'ok_half']
+        # O-115(lead 결정 c): 참조 글자 멂·모호(S6a)는 기계 불합격이 아니라 사람 확인 — 자리 없어 떨어뜨린 글자가 어느 부품 것인지 사람이 본다
+        far_ = sorted(set(x['owner'] for x in si['findings'].get('S6a_ref_far', [])))
+        amb_ = sorted(set(x['owner'] for x in si['findings'].get('S6a_ref_ambiguous', [])))
+        if far_ or amb_:
+            add('2.H4', b, '부품에서 떨어진 참조 글자가 어느 부품 것인지 알아보는가 — 멂(>2.0) %d: %s / 다른 부품이 더 가까움 %d: %s'
+                % (len(far_), ', '.join(far_) or '-', len(amb_), ', '.join(amb_) or '-'), '%d / %d' % (len(far_), len(amb_)), '사람 확인', None, [fs, 'index.html#4'], verifiable=False)
         if ex_:
             add('2.H1', b, '기구 키 커넥터는 1번 핀 표시 없어도 되는가: ' + ', '.join(ex_), '-', '사람 확인', None, [fs, 'index.html#4.1'], verifiable=False)
         if half:

@@ -67,6 +67,10 @@ def via(x, y, d, dr, net):
     return [round(x, 3), round(y, 3)]
 
 
+# 입력 보드에 이미 있는 J1_* 규칙 영역(pcb 의 진짜 J1_ESC)은 이름을 바꿔 판정에서 뺀다 — 이 시험이 넣은 영역만 보게 (Remove 는 SWIG 가 깨져 못 씀)
+for z in b.Zones():
+    if z.GetIsRuleArea() and z.GetZoneName().startswith('J1_'):
+        z.SetZoneName('ORIG_' + z.GetZoneName())
 area('J1_ESC', X0, Y0, X1, Y1)
 area('J1_FAR', X0 - 8.0, Y0, X0 - 6.0, Y0 + 2.0)                 # J1 에서 5 mm 넘게 떨어진 영역 → V5 불합격
 sp = free_spots(6, X0, Y0, X1, Y1)
@@ -113,10 +117,17 @@ def why(p):
 def cond2(dru):
     open(os.path.join(BD, 'carrier.kicad_dru'), 'w', encoding='utf-8').write(dru)
     json.dump(dict(violations=[], unconnected_items=[], schematic_parity=[]), open(os.path.join(RES, 'drc_carrier.json'), 'w'))
+    # O-115: 실크 참조 멂·모호(S6a)는 사람 확인 H4 — 불합격 수에 들지 않아야 한다
+    json.dump(dict(summary={'S6a_ref_far': 2, 'S6a_ref_ambiguous': 1, 'S7_text_text': 1}, counts={'F': {'ref': 3}, 'B': {'ref': 0}}, pin1_candidates=[],
+                   findings={'S6a_ref_far': [{'owner': 'R1'}, {'owner': 'R2'}], 'S6a_ref_ambiguous': [{'owner': 'R2'}]}),
+              open(os.path.join(RES, 'silk_carrier.json'), 'w'))
     o = os.path.join(RES, 'cond2.json')
     subprocess.run([sys.executable, '-I', os.path.join(HERE, 'v006_cond2.py'), RES, 'test', o, '--snap', os.path.join(W, 'snap'), '--root', W],
                    capture_output=True, text=True, encoding='utf-8')
-    return {i['id']: i for i in json.load(open(o, encoding='utf-8'))['items'] if i['board'] == 'carrier'}
+    d = json.load(open(o, encoding='utf-8'))
+    r = {i['id']: i for i in d['items'] if i['board'] == 'carrier'}
+    r['_exit'] = d['exit_code']; r['_fails'] = sum(1 for i in d['items'] if i['verifiable'] and i['pass'] is False)
+    return r
 
 
 C_ok = cond2('(version 1)\n(rule "j1_esc" (condition "A.Type == \'Via\' && A.enclosedByArea(\'J1_ESC\')") (constraint via_diameter (min 0.50mm)))\n')
@@ -142,6 +153,10 @@ CASES = [
     ('cond2 V3 영역 안 불합격 (B·C·D1·D2 포함)', C_ok['2.V3']['value'] == len(E['inside_fail']) >= 4 and C_ok['2.V3']['pass'] is False),
     ('cond2 V4 J1 넷 아님 (E 포함)', C_ok['2.V4']['value'] == len(E['non_j1_net']) >= 1 and C_ok['2.V4']['pass'] is False),
     ('cond2 V5 J1_FAR 때문에 불합격', C_ok['2.V5']['pass'] is False),
+    ('cond2 S6a 는 기계 항목에서 빠짐 (O-115)', '2.S6a' not in C_ok),
+    ('cond2 H4 사람 확인: verifiable 아니오 · pass 없음 · 멂 2(R1, R2) / 모호 1(R2)', C_ok.get('2.H4', {}).get('verifiable') is False and C_ok['2.H4']['pass'] is None
+     and C_ok['2.H4']['value'] == '2 / 1' and 'R1, R2' in C_ok['2.H4']['title']),
+    ('cond2 종료 코드는 기계 불합격만 셈 (H4 제외, 글자 겹침 S7 은 그대로 불합격)', C_ok['_exit'] == C_ok['_fails'] and C_ok['2.S7']['pass'] is False),
 ]
 fail = 0
 for n, ok in CASES:
