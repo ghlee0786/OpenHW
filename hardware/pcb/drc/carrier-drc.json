@@ -1,7 +1,7 @@
 {
     "$schema": "https://schemas.kicad.org/drc.v1.json",
     "coordinate_units": "mm",
-    "date": "2026-11-27T14:50:12",
+    "date": "2026-11-27T14:52:44",
     "ignored_checks": [
         {
             "description": "Footprint doesn't match symbol's footprint filters",
@@ -21,12 +21,12 @@
             "description": "Missing connection between items",
             "items": [
                 {
-                    "description": "구역 'AUTO_GND_In1.Cu' [/GND] on GND, 우선순위 0",
+                    "description": "구역 'AUTO_GND_In2.Cu' [/GND] on GND_PWR, 우선순위 0",
                     "pos": {
                         "x": 79.95,
                         "y": 79.95
                     },
-                    "uuid": "2a110134-049f-423b-9724-f7700e04277c"
+                    "uuid": "b2251e87-1302-4a67-aa25-a2325b20e4b4"
                 },
                 {
                     "description": "구역 'AUTO_GND_F.Cu' [/GND] on F.Cu, 우선순위 0",
@@ -240,158 +240,6 @@
             ],
             "severity": "warning",
             "type": "track_dangling"
-        },
-        {
-            "description": "보드 가장자리로 클리핑 된 실크 스크린 (규칙 'fab_silk_to_pad' 공간거리 0.1500 mm; 실제값 0.0000 mm)",
-            "items": [
-                {
-                    "description": "세그먼트 (Edge.Cuts)",
-                    "pos": {
-                        "x": 120.0,
-                        "y": 134.0
-                    },
-                    "uuid": "c29663ee-869b-477b-a281-8ce9a94435d8"
-                },
-                {
-                    "description": "TP12 의 참조 필드",
-                    "pos": {
-                        "x": 120.328331,
-                        "y": 110.949999
-                    },
-                    "uuid": "2d78aa9b-4931-4c82-a058-c8dffe857f7b"
-                }
-            ],
-            "severity": "warning",
-            "type": "silk_edge_clearance"
-        },
-        {
-            "description": "Silkscreen clipped by solder mask",
-            "items": [
-                {
-                    "description": "R6 의 참조 필드",
-                    "pos": {
-                        "x": 100.245186,
-                        "y": 119.323156
-                    },
-                    "uuid": "bbf217e7-312d-4f90-9b78-d6fe6011bee9"
-                }
-            ],
-            "severity": "warning",
-            "type": "silk_over_copper"
-        },
-        {
-            "description": "Silkscreen clipped by solder mask",
-            "items": [
-                {
-                    "description": "U1 의 참조 필드",
-                    "pos": {
-                        "x": 108.0,
-                        "y": 117.831
-                    },
-                    "uuid": "3a573af7-9ba8-4abe-833f-4265f1ee1a16"
-                }
-            ],
-            "severity": "warning",
-            "type": "silk_over_copper"
-        },
-        {
-            "description": "Silkscreen clipped by solder mask",
-            "items": [
-                {
-                    "description": "TP6 의 참조 필드",
-                    "pos": {
-                        "x": 109.874984,
-                        "y": 84.503456
-                    },
-                    "uuid": "e79fc360-a218-4342-81bd-4641130c00f1"
-                }
-            ],
-            "severity": "warning",
-            "type": "silk_over_copper"
-        },
-        {
-            "description": "Silkscreen clipped by solder mask",
-            "items": [
-                {
-                    "description": "J2 의 참조 필드",
-                    "pos": {
-                        "x": 113.205,
-                        "y": 116.973999
-                    },
-                    "uuid": "0a4e67b4-8acf-4e0d-a49d-ff0dfb3988f2"
-                }
-            ],
-            "severity": "warning",
-            "type": "silk_over_copper"
-        },
-        {
-            "description": "실크스크린 클리어런스 (규칙 'fab_silk_to_pad' 공간거리 0.1500 mm; 실제값 0.1357 mm)",
-            "items": [
-                {
-                    "description": "세그먼트 of U2 on F.Silkscreen",
-                    "pos": {
-                        "x": 101.246377,
-                        "y": 119.622715
-                    },
-                    "uuid": "5edee19b-ae89-4303-abf4-2ed87a4724d8"
-                },
-                {
-                    "description": "R6 의 참조 필드",
-                    "pos": {
-                        "x": 100.245186,
-                        "y": 119.323156
-                    },
-                    "uuid": "bbf217e7-312d-4f90-9b78-d6fe6011bee9"
-                }
-            ],
-            "severity": "warning",
-            "type": "silk_overlap"
-        },
-        {
-            "description": "실크스크린 클리어런스 (규칙 'fab_silk_to_pad' 공간거리 0.1500 mm; 실제값 0.0000 mm)",
-            "items": [
-                {
-                    "description": "TP12 의 참조 필드",
-                    "pos": {
-                        "x": 120.328331,
-                        "y": 110.949999
-                    },
-                    "uuid": "2d78aa9b-4931-4c82-a058-c8dffe857f7b"
-                },
-                {
-                    "description": "R4 의 참조 필드",
-                    "pos": {
-                        "x": 118.478899,
-                        "y": 110.109497
-                    },
-                    "uuid": "729b70dc-a950-4519-97d6-5f59aa07fda0"
-                }
-            ],
-            "severity": "warning",
-            "type": "silk_overlap"
-        },
-        {
-            "description": "실크스크린 클리어런스 (규칙 'fab_silk_to_pad' 공간거리 0.1500 mm; 실제값 0.0000 mm)",
-            "items": [
-                {
-                    "description": "TP14 의 참조 필드",
-                    "pos": {
-                        "x": 105.219113,
-                        "y": 113.449999
-                    },
-                    "uuid": "2fb531e5-6761-4e1f-ac31-54e9af5b23d7"
-                },
-                {
-                    "description": "세그먼트 of J5 on B.Silkscreen",
-                    "pos": {
-                        "x": 105.675,
-                        "y": 112.045
-                    },
-                    "uuid": "cb96d432-5078-4245-b01d-f890b7c39b67"
-                }
-            ],
-            "severity": "warning",
-            "type": "silk_overlap"
         }
     ]
 }
