@@ -442,6 +442,17 @@
 			(layer "F.Fab")
 			(uuid "10aaf0dd-b8fb-47a5-a639-674bff041575")
 		)
+		(fp_text user "${REFERENCE}"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(uuid "42e14267-5487-454e-9833-85e64330fd3b")
+			(effects
+				(font
+					(size 0.5 0.5)
+					(thickness 0.08)
+				)
+			)
+		)
 		(pad "1" smd rect
 			(at 0 1.125)
 			(size 2.8 0.55)
@@ -529,7 +540,7 @@
 		(descr "Resistor SMD 0402 (1005 Metric), square (rectangular) end terminal, IPC-7351 nominal, (Body size source: IPC-SM-782 page 72, https://www.pcb-3d.com/wordpress/wp-content/uploads/ipc-sm-782a_amendment_1_and_2.pdf)")
 		(tags "resistor")
 		(property "Reference" "R7"
-			(at 3.111001 -2 0)
+			(at 2.061001 -2 0)
 			(unlocked yes)
 			(layer "F.SilkS")
 			(uuid "a4074596-9570-45a3-aaee-d7f25c4661d9")
@@ -758,6 +769,17 @@
 			(layer "F.Fab")
 			(uuid "9c961346-354a-413e-abd1-96f4dba195c3")
 		)
+		(fp_text user "${REFERENCE}"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(uuid "673d7284-8183-4dde-a313-bdeeb128edde")
+			(effects
+				(font
+					(size 0.5 0.5)
+					(thickness 0.08)
+				)
+			)
+		)
 		(pad "1" smd rect
 			(at -0.6 0.7)
 			(size 0.7 0.6)
@@ -892,7 +914,7 @@
 		(descr "Commonlands CLA216-ICR M12 holder: 2x NPTH 1.8 at 20.0 spacing (R-007: spacing 20.0, hole ref 1.7; screw M1.6, ISO 273 medium clearance 1.8). Derived from Antmicro ov9281-camera-board antmicro-footprints:Camera_Lens_20mm (ea69666, Apache-2.0); artwork removed; Arducam properties replaced (V-003 8). C-008: courtyard x +-12.45 (ears +-12.2 + 0.25, R-007); C-022: F.CrtYd 16-point outline with notches 0.100 around back BTB J1 boss NPTH (mechanical M-009 f5f6-drc.md, O-101); sensor pedestal 13.2 sq (M-001d K11, h 0.75, bonded, no copper - O-39) as F.Fab + footprint keepout SENSOR_PEDESTAL.")
 		(tags "M12 S-mount lens holder ICR CLA216 20mm")
 		(property "Reference" "MH1"
-			(at -14.416429 -3.5 0)
+			(at 14.416428 -1.5 0)
 			(unlocked yes)
 			(layer "F.SilkS")
 			(uuid "5c5265f1-4541-4309-afc7-b05a3f4d270d")
@@ -1277,9 +1299,9 @@
 		(descr "Capacitor SMD 0402 (1005 Metric), square (rectangular) end terminal, IPC-7351 nominal, (Body size source: IPC-SM-782 page 76, https://www.pcb-3d.com/wordpress/wp-content/uploads/ipc-sm-782a_amendment_1_and_2.pdf)")
 		(tags "capacitor")
 		(property "Reference" "C10"
-			(at 0 0 0)
+			(at -4.407381 1.5 90)
 			(unlocked yes)
-			(layer "F.Fab")
+			(layer "F.SilkS")
 			(uuid "f23ccc51-a80f-4401-84ed-55384d8a2f5e")
 			(effects
 				(font
@@ -1533,7 +1555,7 @@
 		(descr "CLA216-ICR IR-cut coil lead solder pads, 2 THT pads 2.54 mm, no header fitted (C-016/O-84). Courtyard = pads + 0.25 (mechanical F5, pcb 5a20d44 DRC). Pad geometry identical to PinHeader_1x02_P2.54mm_Vertical.")
 		(tags "solder pad wire lead ICR CLA216")
 		(property "Reference" "J2"
-			(at -2.352143 1.270001 0)
+			(at 2.352143 1.270001 0)
 			(unlocked yes)
 			(layer "F.SilkS")
 			(uuid "9542cd6c-9249-4ee4-91c2-921bf7a03b86")
@@ -1646,6 +1668,17 @@
 			(layer "F.Fab")
 			(uuid "4a197362-49ff-45e8-83c0-b2463fcf5c46")
 		)
+		(fp_text user "${REFERENCE}"
+			(at 0 0 180)
+			(layer "F.Fab")
+			(uuid "0656d385-e867-4071-99a8-d42a18b326ea")
+			(effects
+				(font
+					(size 0.5 0.5)
+					(thickness 0.08)
+				)
+			)
+		)
 		(pad "1" thru_hole rect
 			(at 0 0 180)
 			(size 1.7 1.7)
@@ -1755,9 +1788,9 @@
 		(descr "SMD pad as test Point, diameter 1.0mm")
 		(tags "test point SMD pad")
 		(property "Reference" "TP21"
-			(at 0 0 0)
+			(at -0.001278 -2.132274 0)
 			(unlocked yes)
-			(layer "F.Fab")
+			(layer "F.SilkS")
 			(uuid "a739d23b-338e-45d7-9210-58f330216526")
 			(effects
 				(font
@@ -1972,9 +2005,9 @@
 		(descr "Resistor SMD 0402 (1005 Metric), square (rectangular) end terminal, IPC-7351 nominal, (Body size source: IPC-SM-782 page 72, https://www.pcb-3d.com/wordpress/wp-content/uploads/ipc-sm-782a_amendment_1_and_2.pdf)")
 		(tags "resistor")
 		(property "Reference" "R23"
-			(at 0 0 0)
+			(at 0 -2.317382 90)
 			(unlocked yes)
-			(layer "F.Fab")
+			(layer "F.SilkS")
 			(uuid "5f832533-1664-45cd-81a9-f22cf3ab2eb4")
 			(effects
 				(font
@@ -2100,9 +2133,9 @@
 		(descr "Resistor SMD 0402 (1005 Metric), square (rectangular) end terminal, IPC-7351 nominal, (Body size source: IPC-SM-782 page 72, https://www.pcb-3d.com/wordpress/wp-content/uploads/ipc-sm-782a_amendment_1_and_2.pdf)")
 		(tags "resistor")
 		(property "Reference" "R11"
-			(at 0 0 0)
+			(at -4.427381 2.5 0)
 			(unlocked yes)
-			(layer "F.Fab")
+			(layer "F.SilkS")
 			(uuid "ef545445-14c3-48a9-923b-98fb9a317582")
 			(effects
 				(font
@@ -2321,6 +2354,17 @@
 			(layer "F.Fab")
 			(uuid "aae5efaf-40d9-438e-b180-7c5d65a584d7")
 		)
+		(fp_text user "${REFERENCE}"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(uuid "d6f279be-e823-4c7c-a500-7cd93e664263")
+			(effects
+				(font
+					(size 0.5 0.5)
+					(thickness 0.08)
+				)
+			)
+		)
 		(pad "1" smd rect
 			(at -0.75 0)
 			(size 0.8 0.8)
@@ -2355,9 +2399,9 @@
 		(descr "Vishay VSMA1085600 850nm IRED 3.4x3.4x1.8mm; resist openings 2.8x0.55/2.8x1.0/2.8x0.55, Cu heat area 5.5x5.5 per Vishay doc 80298 Rev 1.4 recommended footprint (https://www.vishay.com/docs/80298/vsma1085600.pdf). Pad1=K, Pad2=A (centre thermal pad is anode)")
 		(tags "IR LED IRED 850nm VSMA")
 		(property "Reference" "D_IR_B1"
-			(at 0 0 0)
+			(at -5.781 0 90)
 			(unlocked yes)
-			(layer "F.Fab")
+			(layer "F.SilkS")
 			(uuid "8299fbb2-60a1-46d9-b1bb-0356fb2584f6")
 			(effects
 				(font
@@ -2497,6 +2541,17 @@
 			(fill no)
 			(layer "F.Fab")
 			(uuid "8824a874-c2d2-4895-8910-3b4584d8ae5e")
+		)
+		(fp_text user "${REFERENCE}"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(uuid "d30bb287-1339-451d-9a81-fc62c2e05694")
+			(effects
+				(font
+					(size 0.5 0.5)
+					(thickness 0.08)
+				)
+			)
 		)
 		(pad "1" smd rect
 			(at 0 1.125)
@@ -2728,6 +2783,17 @@
 			(layer "F.Fab")
 			(uuid "ff929018-e046-4468-b78b-cb2e63ce1eee")
 		)
+		(fp_text user "${REFERENCE}"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(uuid "60fc0f1c-e2cb-4c62-b48a-99d5ef3a9f89")
+			(effects
+				(font
+					(size 0.5 0.5)
+					(thickness 0.08)
+				)
+			)
+		)
 		(pad "1" smd rect
 			(at 0 1.125)
 			(size 2.8 0.55)
@@ -2813,7 +2879,7 @@
 		(uuid "b0a247ef-b191-5da7-87ee-45a0ee1a5c73")
 		(at 83 117)
 		(property "Reference" "H4"
-			(at 3.394999 0 0)
+			(at 0.001273 -3.128453 0)
 			(unlocked yes)
 			(layer "F.SilkS")
 			(uuid "20b5504b-ca22-5f74-8521-ccc9413a5e01")
@@ -2897,7 +2963,7 @@
 		(descr "Capacitor SMD 0402 (1005 Metric), square (rectangular) end terminal, IPC-7351 nominal, (Body size source: IPC-SM-782 page 76, https://www.pcb-3d.com/wordpress/wp-content/uploads/ipc-sm-782a_amendment_1_and_2.pdf)")
 		(tags "capacitor")
 		(property "Reference" "C8"
-			(at 4.63119 0 0)
+			(at 2.28119 0.5 0)
 			(unlocked yes)
 			(layer "F.SilkS")
 			(uuid "ff77e5cb-9d42-49e7-a43b-52ce9650e34d")
@@ -3151,7 +3217,7 @@
 		(uuid "d6b2b021-f208-5a28-9b88-7504d76d23ee")
 		(at 113 113)
 		(property "Reference" "H2"
-			(at 1.001273 -3.128453 0)
+			(at 0.001273 -3.128453 0)
 			(unlocked yes)
 			(layer "F.SilkS")
 			(uuid "84ff8bdb-f628-5ada-bb6c-58181c1720bb")
@@ -3235,9 +3301,9 @@
 		(descr "Vishay VSMA1085600 850nm IRED 3.4x3.4x1.8mm; resist openings 2.8x0.55/2.8x1.0/2.8x0.55, Cu heat area 5.5x5.5 per Vishay doc 80298 Rev 1.4 recommended footprint (https://www.vishay.com/docs/80298/vsma1085600.pdf). Pad1=K, Pad2=A (centre thermal pad is anode)")
 		(tags "IR LED IRED 850nm VSMA")
 		(property "Reference" "D_IR_B2"
-			(at 0 0 0)
+			(at 8.02119 0 0)
 			(unlocked yes)
-			(layer "F.Fab")
+			(layer "F.SilkS")
 			(uuid "0c74615c-7e28-43f8-b079-f96da7376f79")
 			(effects
 				(font
@@ -3378,6 +3444,17 @@
 			(layer "F.Fab")
 			(uuid "a90b3720-f9e0-4968-9a8c-13437a0e3953")
 		)
+		(fp_text user "${REFERENCE}"
+			(at 0 0 0)
+			(layer "F.Fab")
+			(uuid "45994be2-80e6-4482-aa74-3883d4e52f7f")
+			(effects
+				(font
+					(size 0.5 0.5)
+					(thickness 0.08)
+				)
+			)
+		)
 		(pad "1" smd rect
 			(at 0 1.125)
 			(size 2.8 0.55)
@@ -3465,9 +3542,9 @@
 		(descr "Resistor SMD 0402 (1005 Metric), square (rectangular) end terminal, IPC-7351 nominal, (Body size source: IPC-SM-782 page 72, https://www.pcb-3d.com/wordpress/wp-content/uploads/ipc-sm-782a_amendment_1_and_2.pdf)")
 		(tags "resistor")
 		(property "Reference" "R16"
-			(at 0 0 0)
+			(at 0 -3.967381 0)
 			(unlocked yes)
-			(layer "F.Fab")
+			(layer "F.SilkS")
 			(uuid "ba2febe1-730f-48c0-a260-cec80832ef21")
 			(effects
 				(font
@@ -3593,9 +3670,9 @@
 		(descr "Hirose DF30FC-24DS-0.4V(81) 24P 0.4mm receptacle (mates BXF4677-GC2053 module). Derived from Seeed OSHW-reCamera-Series f5fcf0a (Apache-2.0) footprint Connector:BTB2x12P_0d4_7_02x3_76x0_9mm in sensors/s401-gc2053 PCB (J2); flipped to front, nets/3D removed. Pin numbering = S401 J2 numbering.")
 		(tags "Hirose DF30 0.4mm 24P board-to-board GC2053")
 		(property "Reference" "J3"
-			(at -0.5127 -3.6606 0)
+			(at 0 0 0)
 			(unlocked yes)
-			(layer "F.SilkS")
+			(layer "F.Fab")
 			(uuid "7b4f9053-374e-4800-a610-68b5f50c4a02")
 			(effects
 				(font
@@ -5108,9 +5185,9 @@
 		(descr "Capacitor SMD 0402 (1005 Metric), square (rectangular) end terminal, IPC-7351 nominal, (Body size source: IPC-SM-782 page 76, https://www.pcb-3d.com/wordpress/wp-content/uploads/ipc-sm-782a_amendment_1_and_2.pdf)")
 		(tags "capacitor")
 		(property "Reference" "C12"
-			(at 0 0 0)
+			(at -2.291 0 0)
 			(unlocked yes)
-			(layer "B.Fab")
+			(layer "B.SilkS")
 			(uuid "743de75c-39e5-43ac-acc2-9879995b90d6")
 			(effects
 				(font
@@ -5336,9 +5413,9 @@
 		(descr "SUNGTECH ST-BTB-058060-B 60P 0.5mm board-to-board (socket, front board side). Derived from Seeed OSHW-reCamera-Series (commit f5fcf0a, Apache-2.0) footprint Connector:BTB60-Male-Female-0.5-17.7x4.4mm in sensors/s401-gc2053; nets/3D path removed. Mates reCamera Core 2002 J1. Dimensions to be checked vs SUNGTECH datasheet (R-004).")
 		(tags "board-to-board BTB 0.5mm 60P reCamera SUNGTECH")
 		(property "Reference" "J1"
-			(at -2.5 -5.381 0)
+			(at 0 0 0)
 			(unlocked yes)
-			(layer "B.SilkS")
+			(layer "B.Fab")
 			(uuid "622befd6-6a1b-46a2-a915-9c231f892958")
 			(effects
 				(font
@@ -6720,7 +6797,7 @@
 		(descr "SOT, 5 Pin (JEDEC MO-178 Var AA https://www.jedec.org/document_search?search_api_views_fulltext=MO-178)")
 		(tags "SOT TO_SOT_SMD")
 		(property "Reference" "U1"
-			(at -3.445 -1.5 90)
+			(at -3.181 0 0)
 			(unlocked yes)
 			(layer "B.SilkS")
 			(uuid "33181abb-9177-415b-928a-cef18a6cf1f1")
@@ -7096,9 +7173,9 @@
 		(descr "Resistor SMD 0402 (1005 Metric), square (rectangular) end terminal, IPC-7351 nominal, (Body size source: IPC-SM-782 page 72, https://www.pcb-3d.com/wordpress/wp-content/uploads/ipc-sm-782a_amendment_1_and_2.pdf)")
 		(tags "resistor")
 		(property "Reference" "R12"
-			(at -4.411 -2 0)
+			(at 0 0 0)
 			(unlocked yes)
-			(layer "B.SilkS")
+			(layer "B.Fab")
 			(uuid "450a436b-45c2-4489-8658-2961da82bd41")
 			(effects
 				(font
@@ -7230,9 +7307,9 @@
 		(descr "SOD-323")
 		(tags "SOD-323")
 		(property "Reference" "D4"
-			(at 0 0 0)
+			(at 1.5 3.97119 0)
 			(unlocked yes)
-			(layer "B.Fab")
+			(layer "B.SilkS")
 			(uuid "a2739fa9-d506-47d0-8263-baed516ebfc8")
 			(effects
 				(font
@@ -7526,9 +7603,9 @@
 		(descr "Capacitor SMD 0402 (1005 Metric), square (rectangular) end terminal, IPC-7351 nominal, (Body size source: IPC-SM-782 page 76, https://www.pcb-3d.com/wordpress/wp-content/uploads/ipc-sm-782a_amendment_1_and_2.pdf)")
 		(tags "capacitor")
 		(property "Reference" "C4"
-			(at 0 0 0)
+			(at -0.5 4.18119 0)
 			(unlocked yes)
-			(layer "B.Fab")
+			(layer "B.SilkS")
 			(uuid "848ec71f-b7d7-446b-80b4-a902acefdee1")
 			(effects
 				(font
@@ -7660,9 +7737,9 @@
 		(descr "Resistor SMD 0402 (1005 Metric), square (rectangular) end terminal, IPC-7351 nominal, (Body size source: IPC-SM-782 page 72, https://www.pcb-3d.com/wordpress/wp-content/uploads/ipc-sm-782a_amendment_1_and_2.pdf)")
 		(tags "resistor")
 		(property "Reference" "R1"
-			(at 4.411001 -0.5 0)
+			(at 0 0 0)
 			(unlocked yes)
-			(layer "B.SilkS")
+			(layer "B.Fab")
 			(uuid "c4169a21-8cc5-4f9b-89e5-2ce9609b500e")
 			(effects
 				(font
@@ -8273,7 +8350,7 @@
 		(descr "SOD-323")
 		(tags "SOD-323")
 		(property "Reference" "D5"
-			(at 2.5 -3.731001 270)
+			(at 2.731 0 0)
 			(unlocked yes)
 			(layer "B.SilkS")
 			(uuid "2da112c6-a665-4ae3-b8ad-c1041b1f326e")
@@ -8957,7 +9034,7 @@
 		(descr "SOT523, https://www.diodes.com/assets/Package-Files/SOT523.pdf")
 		(tags "SOT-523")
 		(property "Reference" "Q7"
-			(at 2.545 -0.5 90)
+			(at 2.281001 1 0)
 			(unlocked yes)
 			(layer "B.SilkS")
 			(uuid "be02b82d-8dd6-4fe8-b2c4-42c9841a601b")
@@ -9718,7 +9795,7 @@
 		(descr "SMD pad as test Point, diameter 1.0mm")
 		(tags "test point SMD pad")
 		(property "Reference" "TP15"
-			(at 3.228331 1.499999 0)
+			(at 3.228331 -0.000001 0)
 			(unlocked yes)
 			(layer "B.SilkS")
 			(uuid "86fc2031-ebed-4869-93f2-3b6c17f047e9")
@@ -10771,9 +10848,9 @@
 		(descr "SMD pad as test Point, diameter 1.0mm")
 		(tags "test point SMD pad")
 		(property "Reference" "TP17"
-			(at 0 0 0)
+			(at 4.878331 -0.000001 0)
 			(unlocked yes)
-			(layer "B.Fab")
+			(layer "B.SilkS")
 			(uuid "c5c4582f-0132-47db-ae78-898af18074ba")
 			(effects
 				(font
@@ -10865,9 +10942,9 @@
 		(descr "SMD pad as test Point, diameter 1.0mm")
 		(tags "test point SMD pad")
 		(property "Reference" "TP7"
-			(at 0 0 0)
+			(at 0.998722 -4.482273 0)
 			(unlocked yes)
-			(layer "B.Fab")
+			(layer "B.SilkS")
 			(uuid "b09db855-1037-4bba-a65d-1375a79ea52a")
 			(effects
 				(font
@@ -11614,7 +11691,7 @@
 		(descr "SMD pad as test Point, diameter 1.0mm")
 		(tags "test point SMD pad")
 		(property "Reference" "TP19"
-			(at 3.478331 -0.000001 0)
+			(at 3.228331 -0.000001 0)
 			(unlocked yes)
 			(layer "B.SilkS")
 			(uuid "5abfd044-b5db-4015-9dbe-dd929dfcf9df")
@@ -11842,7 +11919,7 @@
 		(descr "SOT, 3 Pin (JEDEC TO-236 Var AB https://www.jedec.org/document_search?search_api_views_fulltext=TO-236)")
 		(tags "SOT TO_SOT_SMD")
 		(property "Reference" "Q1"
-			(at 0.5 -2.831001 0)
+			(at 1.5 -2.831001 0)
 			(unlocked yes)
 			(layer "B.SilkS")
 			(uuid "67c0a682-04b1-49a8-9757-90fa91584b6c")
@@ -12780,9 +12857,9 @@
 		(descr "Capacitor SMD 0402 (1005 Metric), square (rectangular) end terminal, IPC-7351 nominal, (Body size source: IPC-SM-782 page 76, https://www.pcb-3d.com/wordpress/wp-content/uploads/ipc-sm-782a_amendment_1_and_2.pdf)")
 		(tags "capacitor")
 		(property "Reference" "C13"
-			(at 0 0 0)
+			(at -5.107381 1.5 90)
 			(unlocked yes)
-			(layer "B.Fab")
+			(layer "B.SilkS")
 			(uuid "92ef7945-5269-404c-b1a3-b827543bc826")
 			(effects
 				(font
@@ -13008,9 +13085,9 @@
 		(descr "Resistor SMD 0402 (1005 Metric), square (rectangular) end terminal, IPC-7351 nominal, (Body size source: IPC-SM-782 page 72, https://www.pcb-3d.com/wordpress/wp-content/uploads/ipc-sm-782a_amendment_1_and_2.pdf)")
 		(tags "resistor")
 		(property "Reference" "R18"
-			(at 2.061 2.5 90)
+			(at 0 0 0)
 			(unlocked yes)
-			(layer "B.SilkS")
+			(layer "B.Fab")
 			(uuid "ed6d5ab4-08eb-4b29-87b7-e0f8c2400141")
 			(effects
 				(font
@@ -15471,9 +15548,9 @@
 		(descr "Resistor SMD 0402 (1005 Metric), square (rectangular) end terminal, IPC-7351 nominal, (Body size source: IPC-SM-782 page 72, https://www.pcb-3d.com/wordpress/wp-content/uploads/ipc-sm-782a_amendment_1_and_2.pdf)")
 		(tags "resistor")
 		(property "Reference" "R6"
-			(at 0 0 0)
+			(at -0.000001 -1.601001 0)
 			(unlocked yes)
-			(layer "B.Fab")
+			(layer "B.SilkS")
 			(uuid "db7e89ae-523f-44da-9a85-a39bc6f5e0c2")
 			(effects
 				(font
@@ -16233,7 +16310,7 @@
 		(descr "SOT523, https://www.diodes.com/assets/Package-Files/SOT523.pdf")
 		(tags "SOT-523")
 		(property "Reference" "Q5"
-			(at 1 -2.445 0)
+			(at 0 -2.445 0)
 			(unlocked yes)
 			(layer "B.SilkS")
 			(uuid "11fc3333-93f9-4c69-8091-1b8ce8e6a77d")
@@ -17585,9 +17662,9 @@
 		(descr "SOT, 3 Pin (JEDEC TO-236 Var AB https://www.jedec.org/document_search?search_api_views_fulltext=TO-236)")
 		(tags "SOT TO_SOT_SMD")
 		(property "Reference" "Q2"
-			(at 0 -3.095001 0)
+			(at 0 0 0)
 			(unlocked yes)
-			(layer "B.SilkS")
+			(layer "B.Fab")
 			(uuid "0f61d645-a63f-4622-877e-b3d9a96c87c3")
 			(effects
 				(font

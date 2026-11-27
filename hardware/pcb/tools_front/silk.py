@@ -28,6 +28,7 @@ MASK = {"F": pcbnew.F_Mask, "B": pcbnew.B_Mask}
 CRT = {"F": pcbnew.F_CrtYd, "B": pcbnew.B_CrtYd}
 FAB = {"F": pcbnew.F_Fab, "B": pcbnew.B_Fab}
 ERR = MM(0.005)
+TENTED_OK = True  # 전면 보드 설정: 비아 tenting front · back = yes
 
 
 def V(x, y):
@@ -50,7 +51,8 @@ def mask_openings(b, s, skip=frozenset()):
             d.TransformShapeToPolygon(ps, L, 0, ERR, pcbnew.ERROR_OUTSIDE)
     # V-005b RQ-14: 비아는 텐팅이어도 장애물(구멍 위 인쇄 불량 — PCBWay 'avoid overlapping with vias') → 비아 구리 링 전체
     cu = pcbnew.F_Cu if s == "F" else pcbnew.B_Cu
-    for t in b.GetTracks():
+    # P-005 (O-110 ① · D-003 #58): 두 면 모두 덮인(tented) 비아 위 실크는 허용 — 비아는 장애물에서 뺀다(TENTED_OK)
+    for t in ([] if TENTED_OK else b.GetTracks()):
         if t.GetClass() == "PCB_VIA" and (t.GetPosition().x, t.GetPosition().y) not in skip:
             t.TransformShapeToPolygon(ps, cu, 0, ERR, pcbnew.ERROR_OUTSIDE)
     ps.Simplify()
@@ -291,7 +293,7 @@ def place_refs(b, edge, log):
     obst = {}
     crt = {}
     # 글자 자리가 이음 비아뿐이면 그 비아를 비킨다(지우고 면을 다시 채움) — 섬 미연결은 DRC 가 판정
-    free = free_gnd_vias(b)
+    free = {} if TENTED_OK else free_gnd_vias(b)  # 덮인 비아는 글자 아래 있어도 되므로 지우지 않는다
     log["vias_removed"] = []
     for s in ("F", "B"):
         o = pcbnew.SHAPE_POLY_SET(mask_openings(b, s, frozenset(free)))
