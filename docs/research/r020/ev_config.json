@@ -9,6 +9,7 @@
  "gap_distribution_max_mm": 1.0,
  "paired_via_max_mm": 1.2,
  "twist_area_names": ["DP_TWIST"],
+ "coupled_area_gap_mm": {"DP_BRK": 2.2, "DP_TUNE": 1.0, "_source": "D-003 #63 ② · #46 — 세그먼트 양 끝이 같은 층 영역 안이면 그 간격까지 결합"},
  "mask_correction": {"zdiff_ohm": -8.0, "z0_ohm": -2.0,
    "source": "PCBWay Impedance Control: 'printing one pass of solder mask reduces single-ended impedance by 2 ohms and differential impedance by 8 ohms' https://www.pcbway.com/pcb_prototype/Impedance_Control.html (2026-11-27 확인)"},
  "nominal_geometries": [[0.15, 0.16], [0.15, 0.17], [0.20, 0.16], [0.20, 0.17]],
@@ -22,7 +23,8 @@
   {"board": "front", "name": "CSI_L0", "p": "/CAM_RX0_0P", "n": "/CAM_RX0_0N", "target": 100, "class": "CSI"},
   {"board": "front", "name": "CSI_L1", "p": "/CAM_RX0_1P", "n": "/CAM_RX0_1N", "target": 100, "class": "CSI"},
   {"board": "front", "name": "CSI_CLK", "p": "/CAM_RX0_CLKP", "n": "/CAM_RX0_CLKN", "target": 100, "class": "CSI"},
-  {"board": "carrier", "name": "MDI_TX", "p": "/EPHY_TXP", "n": "/EPHY_TXN", "target": 100, "class": "MDI"},
+  {"board": "carrier", "name": "MDI_TX", "p": "/EPHY_TXP", "n": "/EPHY_TXN", "target": 100, "class": "MDI",
+   "limits": {"intra_pair_mismatch_mm": 1.27, "uncoupled_mm": 7.0, "source": "D-003 #62 (다)"}},
   {"board": "carrier", "name": "MDI_RX", "p": "/EPHY_RXP", "n": "/EPHY_RXN", "target": 100, "class": "MDI"},
   {"board": "carrier", "name": "USB", "p": "/USB_DP", "n": "/USB_DN", "target": 90, "class": "USB"}
  ],
