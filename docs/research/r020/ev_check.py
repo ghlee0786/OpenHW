@@ -500,7 +500,8 @@ def elementary(intervals, L):
 
 
 def length_in_areas(seg, a_u, b_u, areas):
-    """seg 의 축 구간 [a_u,b_u](mm) 중 규칙 영역 안 길이 (0.01 mm 표본)."""
+    """seg 의 축 구간 [a_u,b_u](mm) 중 규칙 영역(seg 와 같은 층) 안 길이 (0.01 mm 표본)."""
+    areas = [z for z in areas if z.IsOnLayer(seg.GetLayer())]
     if not areas:
         return 0.0
     a, b = seg_xy(seg)
@@ -518,9 +519,23 @@ def length_in_areas(seg, a_u, b_u, areas):
     return inside
 
 
+def seg_area_gap(bd, seg, area_gap):
+    """D-003 #63 ②: 세그먼트 양 끝이 같은 층의 탈출·보정 영역(DP_BRK·DP_TUNE) 안이면 그 영역의 쌍 간격 상한, 아니면 None."""
+    a, b = seg_xy(seg)
+    best = None
+    for z in bd.rule_areas:
+        cap = area_gap.get(z.GetZoneName())
+        if cap is None or not z.IsOnLayer(seg.GetLayer()):
+            continue
+        if z.Outline().Contains(V(a)) and z.Outline().Contains(V(b)):
+            best = cap if best is None else max(best, cap)
+    return best
+
+
 def analyse_pair(bd, pair, cfg):
     gap_cap_dist = cfg['gap_distribution_max_mm']
     gap_cpl = cfg['coupled_gap_max_mm']
+    area_gap = cfg.get('coupled_area_gap_mm', {})
     mask_dz = cfg['mask_correction']['zdiff_ohm']
     tw_areas = [z for z in bd.rule_areas if z.GetZoneName() in cfg.get('twist_area_names', [])]
     res = {'name': pair['name'], 'board': bd.key, 'p': pair['p'], 'n': pair['n'], 'target': pair['target'],
@@ -535,21 +550,28 @@ def analyse_pair(bd, pair, cfg):
         cpl = 0.0
         unc = 0.0
         unc_tw = 0.0
+        unc_strict = 0.0   # ① 셈법(간격 ≤ coupled_gap_max_mm 만 결합) — 대조용
+        unc_strict_tw = 0.0
         widths = {}
         for t in tr:
             lname = bd.disp[t.GetLayer()]
             widths.setdefault(lname, set()).add(round(nm2mm(t.GetWidth()), 3))
             if t.GetClass() == 'PCB_ARC':
                 unc += track_len(t)
+                unc_strict += track_len(t)
                 continue
-            ivs, L = coupled_intervals(t, ot, gap_cap_dist)
+            seg_cap = seg_area_gap(bd, t, area_gap)
+            ivs, L = coupled_intervals(t, ot, max(gap_cap_dist, seg_cap or 0.0))
             for a, b, g, wo in elementary(ivs, L):
                 ln = b - a
-                if g is not None and me == pair['p']:
+                if g is not None and g <= gap_cap_dist and me == pair['p']:
                     gaps.append((g, ln, lname))
-                if g is not None and g <= gap_cpl:
+                if g is None or g > gap_cpl:
+                    unc_strict += ln
+                    unc_strict_tw += length_in_areas(t, a, b, tw_areas)
+                if g is not None and (g <= gap_cpl or (seg_cap is not None and g <= seg_cap)):
                     cpl += ln
-                    if me == pair['p']:
+                    if g <= gap_cpl and me == pair['p']:
                         geo = line_geometry(bd.stk, bd.std[t.GetLayer()])
                         w = 0.5 * (nm2mm(t.GetWidth()) + wo)
                         if geo['kind'] == 'microstrip':
@@ -561,12 +583,15 @@ def analyse_pair(bd, pair, cfg):
                     unc += ln
                     unc_tw += length_in_areas(t, a, b, tw_areas)
         # 비아 높이: 그 비아에서 이 넷 트랙이 닿는 가장 바깥 두 층 사이 z 거리
+        # (review 합의 (c)): 꼬임 영역(DP_TWIST, 비아 중심 기준) 안 비아 높이는 #31 꼬임 예외로 판정값에서 뺀다
         vh_total = 0.0
         vh_unpaired = 0.0
+        vh_twist = 0.0
         vias = bd.vias.get(me, [])
         ovias = bd.vias.get(other, [])
         for v in vias:
             pos = (nm2mm(v.GetPosition().x), nm2mm(v.GetPosition().y))
+            in_tw = any(z.Outline().Contains(v.GetPosition()) for z in tw_areas)
             r = nm2mm(v.GetWidth(pcbnew.F_Cu)) / 2
             used = set()
             for t in tr:
@@ -581,13 +606,18 @@ def analyse_pair(bd, pair, cfg):
             if len(used) >= 2:
                 zs = [bd.z_center(l) for l in used]
                 h = max(zs) - min(zs)
+            if in_tw:
+                vh_twist += h
+                continue
             vh_total += h
             paired = any(math.hypot(nm2mm(o.GetPosition().x) - pos[0], nm2mm(o.GetPosition().y) - pos[1])
                          <= cfg['paired_via_max_mm'] for o in ovias)
             if not paired:
                 vh_unpaired += h
         side[me] = {'len_track': L_tr, 'len_with_via': L_tr + vh_total, 'vias': len(vias), 'via_h': vh_total,
+                    'via_h_twist': vh_twist, 'len_with_all_via': L_tr + vh_total + vh_twist,
                     'coupled': cpl, 'uncoupled': unc, 'uncoupled_with_via': unc + vh_unpaired,
+                    'uncoupled_strict': unc_strict, 'uncoupled_strict_in_twist': unc_strict_tw,
                     'uncoupled_in_twist': unc_tw, 'widths': {k: sorted(v) for k, v in widths.items()}}
     res['side'] = side
     P, N = side[pair['p']], side[pair['n']]
@@ -599,6 +629,9 @@ def analyse_pair(bd, pair, cfg):
     res['uncoupled_outside_twist_with_via'] = max(P['uncoupled_with_via'] - P['uncoupled_in_twist'],
                                                   N['uncoupled_with_via'] - N['uncoupled_in_twist'])
     res['twist_len'] = max(P['uncoupled_in_twist'], N['uncoupled_in_twist'])
+    res['mismatch_with_all_via'] = abs(P['len_with_all_via'] - N['len_with_all_via'])   # 참고: 꼬임 비아까지 넣은 값
+    res['uncoupled_strict_outside_twist'] = max(P['uncoupled_strict'] - P['uncoupled_strict_in_twist'],
+                                                N['uncoupled_strict'] - N['uncoupled_strict_in_twist'])   # 참고: ① 셈법
     # 간격 분포 (P 기준, 길이 가중)
     def wpct(items, q):
         items = sorted(items)
@@ -850,15 +883,18 @@ def judge(pairs, powers, cfg, bdmap):
             add('①임피던스', tag, 'Zdiff 최소/평균/최대 Ω (마스크 보정)',
                 '%.1f / %.1f / %.1f (±10%% 밖 %.3f mm)' % (r['z_min'], r['z_mean'], r['z_max'], r['z_out_len']),
                 '%g ±%d%% (%.0f~%.0f)' % (tgt, tol * 100, tgt * (1 - tol), tgt * (1 + tol)), ok, unr)
-        mm_lim = lim['intra_pair_mismatch_mm'] + lim['mismatch_numeric_tol_mm']
+        own = r.get('limits', {})   # 쌍별 한도 (D-003 #62: MDI TX 한정)
+        src = (' [%s]' % own['source']) if own.get('source') else ''
+        mm_base = own.get('intra_pair_mismatch_mm', lim['intra_pair_mismatch_mm'])
+        mm_lim = mm_base + lim['mismatch_numeric_tol_mm']
         m = max(r['mismatch_track'], r['mismatch_with_via'])
-        add('②차동', tag, '쌍 안 길이 차 mm (트랙 / +비아)', '%.3f / %.3f' % (r['mismatch_track'], r['mismatch_with_via']),
-            '%g (수치 허용 %g)' % (lim['intra_pair_mismatch_mm'], lim['mismatch_numeric_tol_mm']), m <= mm_lim, unr)
-        ul = lim['uncoupled_mm'][r['class']]
+        add('②차동', tag, '쌍 안 길이 차 mm (트랙 / +비아, 꼬임 비아 제외)', '%.3f / %.3f' % (r['mismatch_track'], r['mismatch_with_via']),
+            '%g (수치 허용 %g)%s' % (mm_base, lim['mismatch_numeric_tol_mm'], src), m <= mm_lim, unr)
+        ul = own.get('uncoupled_mm', lim['uncoupled_mm'][r['class']])
         if r['class'] == 'MDI':
             u = max(r['uncoupled_outside_twist'], r['uncoupled_outside_twist_with_via'])
             add('②차동', tag, '비결합 mm, 꼬임 영역 밖 (트랙 / +비아)',
-                '%.3f / %.3f' % (r['uncoupled_outside_twist'], r['uncoupled_outside_twist_with_via']), '≤ %g' % ul, u <= ul, unr)
+                '%.3f / %.3f' % (r['uncoupled_outside_twist'], r['uncoupled_outside_twist_with_via']), '≤ %g%s' % (ul, src), u <= ul, unr)
             ut = lim['uncoupled_mm']['MDI_TWIST_TOTAL']
             u2 = max(r['uncoupled_max'], r['uncoupled_max_with_via'])
             add('②차동', tag, '비결합 mm, 꼬임 포함 전체 (트랙 / +비아)',
@@ -941,6 +977,8 @@ def main(argv=None):
         if bd is None:
             continue
         r = analyse_pair(bd, pr, cfg)
+        if 'limits' in pr:
+            r['limits'] = pr['limits']
         r['unrouted'] = pr['p'] in unrouted_nets[pr['board']]['nets'] or pr['n'] in unrouted_nets[pr['board']]['nets']
         pairs.append(r)
     powers = [analyse_power(bdmap[pw['board']], pw, cfg) for pw in cfg['power'] if pw['board'] in bdmap]
@@ -955,7 +993,7 @@ def main(argv=None):
             z = ipc2141_microstrip_zdiff(w, s, geo['h'], geo['t'], geo['er'])
             ref.append({'board': bk, 'w': w, 's': s, 'zdiff_nomask': z, 'zdiff_mask': z + cfg['mask_correction']['zdiff_ohm']})
         break
-    out = {'boards': {k: {'path': bd.path, 'sha256': bd.sha256, 'stackup': bd.stk['stack'], 'mask': bd.stk['mask'],
+    out = {'boards': {k: {'path': os.path.basename(bd.path), 'sha256': bd.sha256,   # 공개 저장소: 로컬 경로 대신 파일 이름 'stackup': bd.stk['stack'], 'mask': bd.stk['mask'],
                           'geometry_F': line_geometry(bd.stk, 'F.Cu'), 'geometry_B': line_geometry(bd.stk, 'B.Cu'),
                           'layers': {bd.std[l]: bd.disp[l] for l in bd.cu_ids}} for k, bd in bdmap.items()},
            'unrouted': unrouted_nets, 'pairs': pairs, 'power': powers, 'items': items, 'nominal': ref,
@@ -1005,13 +1043,15 @@ def write_md(path, out, cfg):
                 f(d['coupled_min']), f(d['coupled_mean']), f(d['coupled_max']), f(d['min']), f(d['p50']), f(d['max']),
                 '—' if r['z_min'] is None else '%.1f / %.1f / %.1f' % (r['z_min'], r['z_mean'], r['z_max'])))
     L.append('\n### ② 쌍 길이 (mm)\n')
-    L.append('| 쌍 | P 트랙 / +비아 | N 트랙 / +비아 | 비아 P/N | 쌍 안 차 트랙 / +비아 | 비결합 P / N (트랙) | 비결합 최대 +짝없는 비아 | 꼬임 영역 안 비결합 |')
-    L.append('|---|---|---|---|---|---|---|---|')
+    L.append('+비아 = 꼬임 영역(DP_TWIST) 밖 비아 높이만 더함(#31 꼬임 예외, review 합의). 비결합은 D-003 #63 ② 셈법(DP_BRK·DP_TUNE 안은 그 영역 간격까지 결합).\n')
+    L.append('| 쌍 | P 트랙 / +비아 | N 트랙 / +비아 | 비아 P/N (꼬임 비아 높이 P/N) | 쌍 안 차 트랙 / +비아 | 참고: +꼬임 비아 포함 차 | 비결합 P / N (트랙, ②) | 비결합 최대 +짝없는 비아 | 꼬임 영역 안 비결합 | 참고: ① 셈법 비결합(꼬임 밖) |')
+    L.append('|---|---|---|---|---|---|---|---|---|---|')
     for r in out['pairs']:
         P, N = r['side'][r['p']], r['side'][r['n']]
-        L.append('| %s:%s | %.3f / %.3f | %.3f / %.3f | %d / %d | %.3f / %.3f | %.3f / %.3f | %.3f | %.3f |' % (
+        L.append('| %s:%s | %.3f / %.3f | %.3f / %.3f | %d / %d (%.3f / %.3f) | %.3f / %.3f | %.3f | %.3f / %.3f | %.3f | %.3f | %.3f |' % (
             r['board'], r['name'], P['len_track'], P['len_with_via'], N['len_track'], N['len_with_via'], P['vias'], N['vias'],
-            r['mismatch_track'], r['mismatch_with_via'], P['uncoupled'], N['uncoupled'], r['uncoupled_max_with_via'], r['twist_len']))
+            P['via_h_twist'], N['via_h_twist'], r['mismatch_track'], r['mismatch_with_via'], r['mismatch_with_all_via'],
+            P['uncoupled'], N['uncoupled'], r['uncoupled_max_with_via'], r['twist_len'], r['uncoupled_strict_outside_twist']))
     L.append('\n### ③ 전원 (ΔT %g K, 구리 고온 %g °C 저항으로 강하 계산)\n' % (cfg['delta_t_k'], cfg['hot_copper_c']))
     L.append('| 넷 | 최악 전류 A (근거) · 배분 | 층별 넷 최소 선폭 mm (그 폭 길이 mm, 그 폭 허용 A 2152/2221) | 비아 수 (드릴) | 최대 이용률 트랙: w mm 층 · 흐르는/허용 A · ΔT@I | 전류 흐르는 가장 좁은 트랙: w · 흐르는/허용 A | 전류 흐르는 비아: 드릴 · 흐르는/허용 A |')
     L.append('|---|---|---|---|---|---|---|')
