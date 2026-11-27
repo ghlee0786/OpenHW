@@ -1,0 +1,105 @@
+{
+ "files": {
+  "pcb/front-fcu.png": {
+   "bytes": 60029,
+   "size": [
+    900,
+    900
+   ],
+   "source": "hardware/schematic/front/front.kicad_pcb · F.Cu + Edge.Cuts",
+   "sha256": "21f493eeced4e0c750f2e3b0e704382b557fdf72c5280ce2519c46a47c111077"
+  },
+  "pcb/front-in1.png": {
+   "bytes": 57678,
+   "size": [
+    900,
+    900
+   ],
+   "source": "hardware/schematic/front/front.kicad_pcb · In1.Cu + Edge.Cuts",
+   "sha256": "271498629826a44ef79c0db93006f8847d89aefc1fa05305f59d7fdae9a82cce"
+  },
+  "pcb/front-in2.png": {
+   "bytes": 59751,
+   "size": [
+    900,
+    900
+   ],
+   "source": "hardware/schematic/front/front.kicad_pcb · In2.Cu + Edge.Cuts",
+   "sha256": "f5b16b811b23b9f965301ec81182bbf235b2f6528b62efa15b5e1fc50852fc13"
+  },
+  "pcb/front-bcu.png": {
+   "bytes": 74325,
+   "size": [
+    900,
+    900
+   ],
+   "source": "hardware/schematic/front/front.kicad_pcb · B.Cu + Edge.Cuts",
+   "sha256": "ae4a724959149e9b1a816a628716a1717f8aed1d3cc5eef72812cb7b3344e141"
+  },
+  "pcb/front-silk.png": {
+   "bytes": 17727,
+   "size": [
+    900,
+    900
+   ],
+   "source": "hardware/schematic/front/front.kicad_pcb · F.Silkscreen + Edge.Cuts",
+   "sha256": "2ff1e203f48a9dee3144077b65679b29e589fee79f808e06a428bfba9dae91cd"
+  },
+  "sch/front-sch.svg": {
+   "bytes": 2514788,
+   "source": "hardware/schematic/front/front.kicad_sch (첫 장)",
+   "sha256": "4533c3a36802653c00de5efb66cce4869076710ce8809588467d55129a97e9e6"
+  },
+  "sch/front-sch.png": {
+   "bytes": 55346,
+   "size": [
+    1400,
+    481
+   ],
+   "source": "hardware/schematic/front/front.kicad_sch (첫 장 미리보기)",
+   "sha256": "0ac3b159f6712454f061e81782b25200e02bbbc275935b41a259ee8b56cbe046"
+  },
+  "sch/carrier-sch.svg": {
+   "bytes": 2677063,
+   "source": "hardware/schematic/carrier/carrier.kicad_sch (첫 장)",
+   "sha256": "fc1eae4d498bab3e5011a671de4e1adb507eada1165e6772c7e059cb0b2ea250"
+  },
+  "sch/carrier-sch.png": {
+   "bytes": 56395,
+   "size": [
+    1400,
+    478
+   ],
+   "source": "hardware/schematic/carrier/carrier.kicad_sch (첫 장 미리보기)",
+   "sha256": "0f08ad3fd953b44636a252e080c5e3ee899a2e052f79c651f3e5b5164168633a"
+  },
+  "mech/case-front-iso.png": {
+   "bytes": 81142,
+   "size": [
+    900,
+    675
+   ],
+   "source": "mechanical/m003/render/m003_front_iso.png",
+   "sha256": "4f4bd18615641d7591f534d9797de2eef0439eb56a9cf967d8ed5328ad0e94bb"
+  },
+  "mech/case-exploded.png": {
+   "bytes": 79966,
+   "size": [
+    900,
+    675
+   ],
+   "source": "mechanical/m003/render/m003_exploded.png",
+   "sha256": "5054afde9510876c590799919c1bfd8b8d5ae8e77ee2812e172ace6f20b6382c"
+  },
+  "mech/case-section.png": {
+   "bytes": 85283,
+   "size": [
+    900,
+    675
+   ],
+   "source": "mechanical/m003/render/m003_section_x0.png",
+   "sha256": "542c767f5495f1848da75aa2f5ac0a2942fa69e51be6638247bcbfafaac46aab"
+  }
+ },
+ "fails": []
+}
