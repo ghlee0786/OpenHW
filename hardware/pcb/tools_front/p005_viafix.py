@@ -23,9 +23,10 @@ def main():
             for e in (t.GetStart(), t.GetEnd()):
                 d = math.hypot(e.x - q.x, e.y - q.y)
                 if 1000 < d < r:  # 1µm 넘게 어긋나고 비아 구리 안
-                    # 이미 이 끝에서 중심으로 가는 선이 있으면 건너뜀
-                    if any(s.GetLayer() == t.GetLayer() and s.GetNetCode() == t.GetNetCode() and
-                           {(s.GetStart().x, s.GetStart().y), (s.GetEnd().x, s.GetEnd().y)} == {(e.x, e.y), (q.x, q.y)} for s in segs):
+                    # 이 끝이 다른 트랙과 만나는 접합점이면(같은 넷 · 층의 다른 트랙 끝이 1µm 안) 이미 이어진 것 — 건너뜀
+                    #  (초판은 좌표를 정확히 비교해 반올림 차 38nm 에 속아 겹친 선을 넣었다 → p005_csi.py dedup)
+                    if any(s is not t and s.GetLayer() == t.GetLayer() and s.GetNetCode() == t.GetNetCode() and
+                           any(math.hypot(p_.x - e.x, p_.y - e.y) < 1000 for p_ in (s.GetStart(), s.GetEnd())) for s in segs):
                         continue
                     s = pcbnew.PCB_TRACK(b)
                     s.SetStart(pcbnew.VECTOR2I(e.x, e.y))
