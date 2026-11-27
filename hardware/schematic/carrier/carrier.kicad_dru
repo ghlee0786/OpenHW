@@ -136,3 +136,10 @@
   (constraint via_diameter (min 0.50mm))
   (constraint hole_size (min 0.20mm))
   (constraint annular_width (min 0.15mm)))
+
+# O-119 (lead, D-003 #62 (다) · #63 셈법 ②): MDI TX 쌍만 비결합 상한 7.0mm (RX 와 공통 mdi_100_pair 는 6 그대로).
+#  TX 는 J1 왼쪽 줄 위 핀에서 J1 을 돌아 안쪽 통로로 내려와 P/N 길이차가 구조적으로 크다 → TXP 굴곡 2개로 쌍 안 차 1.218mm(≤ 1.27 = 50mil,
+#  100M MDI 길이 맞춤 권고) 까지 보정하면 그 굴곡이 비결합으로 잡혀 DRC 실측 6.88mm. 꼬임 구간(DP_TWIST)은 mdi_twist_pair 그대로.
+(rule "mdi_tx_uncoupled"
+  (condition "(A.NetName == '/EPHY_TXP' || A.NetName == '/EPHY_TXN') && !A.enclosedByArea('DP_TWIST')")
+  (constraint diff_pair_uncoupled (max 7mm)))
