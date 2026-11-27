@@ -1,7 +1,7 @@
 (export
 	(version "E")
 	(design
-		(source "C:\\workspace_python\\OpenHW\\.harness-worktrees\\t-20261127-081137-acef\\hardware\\schematic\\carrier\\carrier.kicad_sch")
+		(source "carrier.kicad_sch")
 		(date "2026-11-27T08:13:07")
 		(tool "Eeschema 10.0.8")
 		(sheet

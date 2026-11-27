@@ -104,6 +104,16 @@
 		(layer "F.Fab")
 		(uuid "92dafdee-7868-4093-880b-db4c6f4bea03")
 	)
+	(fp_text user "${REFERENCE}"
+		(at 0 0 0)
+		(layer "F.Fab")
+		(effects
+			(font
+				(size 0.5 0.5)
+				(thickness 0.08)
+			)
+		)
+	)
 	(pad "1" smd rect
 		(at 0 1.125)
 		(size 2.8 0.55)
