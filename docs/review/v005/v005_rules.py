@@ -485,6 +485,9 @@ R['bmask_other_net_exposed'] = expo
 # 영역 = 이름이 ESC_PREFIX 로 시작하는 규칙 영역. 「영역 안」 = 비아 구리 원 둘레 16점과 중심이 모두 영역 안(KiCad enclosedByArea 와 같은 뜻).
 ESC_PREFIX = 'J1_'
 VIA_STD, ESC_MIN = (0.65, 0.30), (0.50, 0.20)   # 지름/드릴
+VIA_PWR = (0.60, 0.30)   # D-003 #21(2026-11-27): 열 비아·GND 이음 비아는 0.60/0.30 허용 (신호 비아는 0.65/0.30)
+GND_NETS = ('/GND', 'GND')
+th_z = [z for z in b.Zones() if not z.GetIsRuleArea() and z.GetZoneName().startswith('THERMAL')]
 ESC_RING, ESC_HOLE_GAP, ESC_REACH = 0.15, 0.28, 3.0   # 링, 구멍 가장자리 사이, 영역이 J1 외곽 상자 밖으로 나가도 되는 거리 [가정]
 esc_z = [z for z in b.Zones() if z.GetIsRuleArea() and z.GetZoneName().startswith(ESC_PREFIX)]
 j1 = next((fp for fp in b.Footprints() if fp.GetReference() == 'J1'), None)
@@ -512,7 +515,7 @@ def via_area_state(v):
     return best
 
 
-esc = dict(prefix=ESC_PREFIX, std=VIA_STD, esc_min=ESC_MIN, ring_min=ESC_RING, hole_gap_min=ESC_HOLE_GAP, areas=[], small_total=0,
+esc = dict(prefix=ESC_PREFIX, std=VIA_STD, pwr=VIA_PWR, esc_min=ESC_MIN, ring_min=ESC_RING, hole_gap_min=ESC_HOLE_GAP, areas=[], small_total=0, allowed_060=[],
            inside=[], inside_fail=[], outside_small=[], straddle_small=[], non_j1_net=[])
 for z in esc_z:
     bb = z.GetBoundingBox()
@@ -531,6 +534,11 @@ for v in vias:
     state, zname = via_area_state(v)
     rec = dict(at=[round(x, 3), round(y, 3)], net=v.GetNetname(), dia=round(d, 3), drill=round(dr, 3), ring=round((d - dr) / 2, 4), area=zname)
     if state != 'in':
+        # 열 비아(같은 넷 THERMAL 구리 영역 안) · GND 이음 비아는 0.60/0.30 이상이면 허용 (#21)
+        kind = 'GND' if v.GetNetname() in GND_NETS else ('열' if any(z.GetNetname() == v.GetNetname() and z.Outline().Contains(v.GetPosition()) for z in th_z) else None)
+        if kind and d >= VIA_PWR[0] - 1e-6 and dr >= VIA_PWR[1] - 1e-6:
+            esc['allowed_060'].append(dict(rec, kind=kind))
+            continue
         esc['outside_small'].append(rec)
         if state == 'straddle':
             esc['straddle_small'].append(rec)

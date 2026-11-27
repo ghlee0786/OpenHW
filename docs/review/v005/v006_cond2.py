@@ -95,8 +95,9 @@ for b in BOARDS:
         ev_ = ru.get('esc_vias')
         if ev_ is not None:   # O-114 / D-003 #60: J1 탈출 비아 0.50/0.20 은 J1 둘레 규칙 영역(enclosedByArea) 안에서만
             an = [a['name'] for a in ev_['areas']]
-            add('2.V1', b, '비아 0.65/0.30 미만은 J1 탈출 영역 안에만 (D-003 #21·#60) — 영역 밖·걸친 작은 비아', len(ev_['outside_small']), 0, not ev_['outside_small'], [frr],
-                '; '.join(sorted(set('%s/%s' % (v['dia'], v['drill']) for v in ev_['outside_small']))) + (' · 걸침 %d' % len(ev_['straddle_small']) if ev_['straddle_small'] else ''))
+            add('2.V1', b, '비아 0.65/0.30 미만은 J1 탈출 영역 안에만, 열·GND 이음 비아는 0.60/0.30 허용 (D-003 #21·#60) — 그 밖의 작은 비아', len(ev_['outside_small']), 0, not ev_['outside_small'], [frr],
+                '; '.join(sorted(set('%s/%s %s' % (v['dia'], v['drill'], v['net']) for v in ev_['outside_small']))[:8]) + (' · 걸침 %d' % len(ev_['straddle_small']) if ev_['straddle_small'] else '')
+                + ' · 0.60/0.30 허용분: GND %d, 열 %d' % (sum(1 for v in ev_.get('allowed_060', []) if v['kind'] == 'GND'), sum(1 for v in ev_.get('allowed_060', []) if v['kind'] == '열')))
             if an or ev_['inside']:
                 inter = sorted(set(re.findall(r"intersectsArea\('(%s[^']*)'\)" % re.escape(ev_['prefix']), t)))
                 encl = sorted(set(re.findall(r"enclosedByArea\('(%s[^']*)'\)" % re.escape(ev_['prefix']), t)))

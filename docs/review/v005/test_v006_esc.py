@@ -23,9 +23,14 @@ X0, Y0, X1, Y1 = mm(bb.GetX()) - 1.0, mm(bb.GetY()) - 1.0, mm(bb.GetRight()) + 1
 j1_nets = sorted(set(p.GetNetname() for p in j1.Pads() if p.GetNetname()))
 other_net = next(n.GetNetname() for c, n in b.GetNetInfo().NetsByNetcode().items() if n.GetNetname() and n.GetNetname() not in j1_nets)
 # 이미 있는 0.65/0.30 미만 비아는 그대로 두고 수만 센다 (KiCad 10 SWIG 는 Remove 뒤 Tracks() 가 깨진다)
-base = [(mm(t.GetPosition().x), mm(t.GetPosition().y), mm(t.GetWidth(pcbnew.F_Cu)) / 2) for t in b.Tracks()
+base = [(mm(t.GetPosition().x), mm(t.GetPosition().y), mm(t.GetWidth(pcbnew.F_Cu)) / 2, t.GetNetname(), mm(t.GetDrill())) for t in b.Tracks()
         if t.GetClass() == 'PCB_VIA' and (mm(t.GetWidth(pcbnew.F_Cu)) < 0.65 - 1e-6 or mm(t.GetDrill()) < 0.30 - 1e-6)]
-base_in = sum(1 for x, y, r in base if X0 <= x - r and x + r <= X1 and Y0 <= y - r and y + r <= Y1)
+base_in = sum(1 for x, y, r, n, dr in base if X0 <= x - r and x + r <= X1 and Y0 <= y - r and y + r <= Y1)
+# 영역 밖 원래 비아 중 #21 허용분(GND 0.60/0.30 이상)과 아닌 것
+base_ok = sum(1 for x, y, r, n, dr in base if not (X0 <= x - r and x + r <= X1 and Y0 <= y - r and y + r <= Y1)
+              and n in ('/GND', 'GND') and 2 * r >= 0.60 - 1e-6 and dr >= 0.30 - 1e-6)
+base_bad = len(base) - base_in - base_ok
+GND = '/GND' if b.FindNet('/GND') else 'GND'
 holes = [(mm(t.GetPosition().x), mm(t.GetPosition().y), mm(t.GetDrill()) / 2) for t in b.Tracks() if t.GetClass() == 'PCB_VIA']
 for fp in b.Footprints():
     for p in fp.Pads():
@@ -65,7 +70,7 @@ def via(x, y, d, dr, net):
 area('J1_ESC', X0, Y0, X1, Y1)
 area('J1_FAR', X0 - 8.0, Y0, X0 - 6.0, Y0 + 2.0)                 # J1 에서 5 mm 넘게 떨어진 영역 → V5 불합격
 sp = free_spots(6, X0, Y0, X1, Y1)
-N = j1_nets[0]
+N = next(n for n in j1_nets if n not in ('/GND', 'GND'))
 A_ = via(sp[0][0], sp[0][1], 0.50, 0.20, N)                      # 정상
 B_ = via(sp[1][0], sp[1][1], 0.45, 0.20, N)                      # 지름·링 미달
 C_ = via(sp[2][0], sp[2][1], 0.50, 0.15, N)                      # 드릴 미달
@@ -73,10 +78,19 @@ D1 = via(sp[3][0], sp[3][1], 0.50, 0.20, N)                      # 구멍 간격
 D2 = via(sp[3][0] + 0.45, sp[3][1], 0.50, 0.20, N)
 E_ = via(sp[4][0], sp[4][1], 0.50, 0.20, other_net)              # J1 넷 아님
 G_ = via(X0, sp[5][1], 0.50, 0.20, N)                            # 영역 가장자리에 걸침
-far = free_spots(2, X1 + 6.0, Y0, X1 + 14.0, Y1)
+far = free_spots(6, X1 + 6.0, Y0, X1 + 14.0, Y1)
 F_ = via(far[0][0], far[0][1], 0.50, 0.20, N)                    # 영역 밖 작은 비아
 H_ = via(far[1][0], far[1][1], 0.60, 0.30, N)                    # 영역 밖 0.60/0.30 (#21 0.65 미달)
-S_ = via(far[1][0], far[1][1] + 3.0, 0.65, 0.30, N)              # 표준 → 세지 않음
+S_ = via(far[2][0], far[2][1], 0.65, 0.30, N)                    # 표준 → 세지 않음
+I_ = via(far[3][0], far[3][1], 0.60, 0.30, GND)                  # GND 이음 비아 0.60/0.30 → #21 허용
+K_ = via(far[4][0], far[4][1], 0.55, 0.30, GND)                  # GND 라도 0.60 미만 → 불합격
+tz = pcbnew.ZONE(b); tz.SetZoneName('THERMAL_T'); tz.SetNet(b.FindNet(N)); tz.SetLayer(pcbnew.F_Cu)
+to = tz.Outline(); to.NewOutline()
+for x, y in ((far[5][0] - 1.0, far[5][1] - 1.0), (far[5][0] + 1.0, far[5][1] - 1.0), (far[5][0] + 1.0, far[5][1] + 1.0), (far[5][0] - 1.0, far[5][1] + 1.0)):
+    to.Append(FM(x), FM(y))
+b.Add(tz)
+T_ = via(far[5][0] - 0.4, far[5][1], 0.60, 0.30, N)              # 같은 넷 THERMAL 구리 안 열 비아 → #21 허용
+U_ = via(far[5][0] + 0.4, far[5][1], 0.60, 0.30, other_net)      # THERMAL 안이지만 다른 넷 → 불합격
 pcb = os.path.join(BD, 'carrier.kicad_pcb')
 pcbnew.SaveBoard(pcb, b)
 RES = os.path.join(W, 'res'); os.makedirs(RES)
@@ -116,10 +130,14 @@ CASES = [
     ('E J1 넷 아닌 작은 비아(양성)', at(E['non_j1_net'], E_) is not None),
     ('G 영역에 걸친 비아 → 밖으로 셈 + 걸침(양성)', at(E['outside_small'], G_) is not None and at(E['straddle_small'], G_) is not None),
     ('F 영역 밖 0.50/0.20(양성)', at(E['outside_small'], F_) is not None and at(E['straddle_small'], F_) is None),
-    ('H 영역 밖 0.60/0.30 — #21 0.65 미달(양성)', at(E['outside_small'], H_) is not None),
-    ('S 0.65/0.30 은 세지 않음(음성) — 원래 있던 작은 비아 %d(영역 안 %d) 더함' % (len(base), base_in),
-     E['small_total'] == 9 + len(base) and len(E['outside_small']) == 3 + len(base) - base_in and len(E['inside']) == 6 + base_in),
-    ('cond2 V1 영역 밖 3(+원래 것) 불합격', C_ok['2.V1']['value'] == 3 + len(base) - base_in and C_ok['2.V1']['pass'] is False),
+    ('H 영역 밖 신호 비아 0.60/0.30 — #21 신호 0.65 미달(양성)', at(E['outside_small'], H_) is not None),
+    ('I GND 이음 비아 0.60/0.30 → #21 허용(음성)', at(E['allowed_060'], I_) is not None and at(E['outside_small'], I_) is None),
+    ('K GND 라도 0.55/0.30 → 불합격(양성)', at(E['outside_small'], K_) is not None),
+    ('T 같은 넷 THERMAL 구리 안 열 비아 0.60/0.30 → 허용(음성)', (at(E['allowed_060'], T_) or {}).get('kind') == '열'),
+    ('U THERMAL 안 다른 넷 0.60/0.30 → 불합격(양성)', at(E['outside_small'], U_) is not None),
+    ('S 0.65/0.30 은 세지 않음(음성) — 원래 있던 작은 비아 %d(영역 안 %d · #21 허용 %d) 더함' % (len(base), base_in, base_ok),
+     E['small_total'] == 13 + len(base) and len(E['outside_small']) == 5 + base_bad and len(E['inside']) == 6 + base_in and len(E['allowed_060']) == 2 + base_ok),
+    ('cond2 V1 영역 밖 5(+원래 것 중 허용 아닌 것) 불합격', C_ok['2.V1']['value'] == 5 + base_bad and C_ok['2.V1']['pass'] is False),
     ('cond2 V2 enclosedByArea 통과 / intersectsArea 불합격', C_ok['2.V2']['pass'] is True and C_bad['2.V2']['pass'] is False),
     ('cond2 V3 영역 안 불합격 (B·C·D1·D2 포함)', C_ok['2.V3']['value'] == len(E['inside_fail']) >= 4 and C_ok['2.V3']['pass'] is False),
     ('cond2 V4 J1 넷 아님 (E 포함)', C_ok['2.V4']['value'] == len(E['non_j1_net']) >= 1 and C_ok['2.V4']['pass'] is False),

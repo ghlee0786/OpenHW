@@ -39,7 +39,7 @@ for b in carrier front; do
   step "netlist_$b" "$KCLI" sch export netlist --format kicadsexpr -o "$OUT/$b.net" "$SCH" || bad=1
   step "silk_$b" "$KPY" -I "$HERE/v005_silk.py" "$P" "$OUT/silk_$b.json" --netlist "$OUT/$b.net" || bad=1
   # V-006: 규칙 완화·ignore ↔ D-003 (종료 코드 = 기록 없는 완화 수 — 실행 실패로 치지 않고 판정은 cond2)
-  step "relax_$b" python -I "$HERE/v006_relax.py" "$P" "$OUT/relax_$b.json" --d003 "$ROOT/docs/decisions/D-003-working-defaults.md"
+  step "relax_$b" python -I "$HERE/v006_relax.py" "$P" "$OUT/relax_$b.json" --d003 "$MAIN/docs/decisions/D-003-working-defaults.md"
   # O-74: 제외·ignore 나열, 허용 종류, pcb 문서 목록 대조, openhw 사본 패드·구멍
   step "excl_$b" "$KPY" -I "$HERE/v005_excl.py" "$P" "$OUT/excl_$b.json" --board-name $b --repo-root "$WORK" --doc $(ls "$WORK"/hardware/pcb/*.md "$WORK"/hardware/pcb/*/*.md 2>/dev/null) || bad=1
   for s in top bottom; do step "render_${b}_$s" "$KCLI" pcb render --side $s --width 1400 --height 1400 --quality high --background opaque -o "$OUT/${b}_$s.png" "$P" || bad=1; done
