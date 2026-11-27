@@ -12,7 +12,7 @@
 | OS | Windows 11 Pro 10.0.26200 |
 | Docker | Docker Desktop, client/server 29.2.1, WSL2 백엔드(`docker-desktop` 배포판, 커널 6.6.87.2-microsoft-standard-WSL2). 작업 시작 때 꺼져 있어 켰다 |
 | Docker VM | CPU 32 · 메모리 31.2 GiB · 스왑 8 GiB. 빌드 직전 `wsl -d docker-desktop -- free -m`에서 available 약 28 GB |
-| 호스트 메모리 | 총 64 GB. 여유가 3~7 GB까지 내려간다. `vmmemWSL` 약 27 GB 중 대부분은 VM 페이지 캐시다. 같은 시간에 다른 WSL 배포판 `gop-ha-b`와 다른 프로젝트 컨테이너 약 30개(합 약 1.5 GB)가 돌았다 |
+| 호스트 메모리 | 총 64 GB. 여유가 3~7 GB까지 내려간다. `vmmemWSL` 약 27 GB 중 대부분은 VM 페이지 캐시다. 같은 시간에 다른 WSL 배포판과 다른 프로젝트 컨테이너 약 30개(합 약 1.5 GB)가 돌았다 |
 | 디스크 | C: 여유 147 GB(Docker VHDX가 있는 곳) · E: 여유 2.8 TB. 빌드 볼륨은 36.85 GB를 쓴다 |
 | 소스·중간 결과 | Docker 이름 볼륨 `openhw-recamera-sdk` (`/work/src`) — 저장소 밖 |
 | 로그·산출물 | `C:/Users/gh/.local/share/openhw-tools/recamera-sdk/` — `clone.log`, `image.log`, `build-1~9.log`, `build-N.result`, `serial-1.log`, `dmesg-7.txt`, `run-build-5.sh`(hc 칸 실행기), `out-0.2.4/`(산출물) |
@@ -89,7 +89,7 @@ node harness/cli.js slot --label F-002-collect -- bash firmware/scripts/build-ba
 | B. wireless_tools 병렬 경합 | 1 | `build-2.log` 20531–20540행 `/usr/bin/ld: iwmulticall.o: Relocations in generic ELF (EM: 243)` → `file in wrong format` → `.stamp_target_installed] Error 2`. 141개 패키지 가운데 이 패키지만 `.stamp_built`가 `.stamp_configured`보다 이르다 | 병렬 실행 중 RISC-V 오브젝트를 설치 단계에서 호스트 `gcc`가 다시 링크했다 | `wireless_tools-dirclean wireless_tools`를 `-j1`로 먼저 빌드. 이후 다시 나지 않았다 |
 | C. 호스트 메모리 압박으로 Claude Code가 명령을 끝냄 | 2 | Claude Code 알림 "stopped because the system is running low on memory". 4번째 시도 때 컨테이너 21.37 GiB, VM available 5,832 MB, VM `dmesg`에 OOM 없음 | 빌드 오류가 아니다. 무거운 명령을 Claude 백그라운드 셸에서 돌린 실행 방식이 문제였다 | 빌드를 hc 칸에서 일반 프로그램으로 돌렸다(O-29). 이후 Claude가 끝낸 것은 대기 명령 하나뿐이었고, 빌드는 계속 돌았다(orch 판단에 따라 횟수에 넣지 않음) |
 | D. 컨테이너 메모리 상한 초과(OOM) | 2 | VM `dmesg`(`dmesg-7.txt`): `Memory cgroup out of memory: Killed process ... (cc1plus) ... anon-rss:795432kB`, `memory: usage 16777216kB, limit 16777216kB`. 로그 `g++: fatal error: Killed signal terminated program cc1plus`. nodejs(V8)를 컴파일하던 중이었다 | buildroot의 `package/Makefile.in`은 `BR2_JLEVEL=0`일 때 `PARALLEL_JOBS = 1 + getconf _NPROCESSORS_ONLN`이다. `getconf`는 cpuset을 무시한다(컨테이너 안 `nproc`=2, `getconf`=32). 그래서 nodejs가 `ninja JOBS=33`으로 돌았고, cc1plus 하나가 약 0.8 GB를 써서 16 GB를 넘었다. **7번째 시도(CPUSET 0-1)는 이 원인을 바꾸지 못했다** — 근본 원인을 찾기 전의 재시도였다 | `make`에 `BR2_JLEVEL=N`을 붙였다. 명령줄 변수는 MAKEFLAGS로 하위 make에 넘어가 `.config` 값을 덮는다(작은 Makefile로 확인: 넘기면 2, 넘기지 않으면 33). 8·9번째 시도에서는 OOM이 없었다 |
-| E. hc 칸의 실행 환경 | 1 | `build-5.log`: "The command 'docker' could not be found in this WSL 2 distro". `date`도 없었다 | Git `usr/bin/bash.exe`로 띄우자 PATH가 비었고, `bash`가 기본 WSL 배포판(`gop-ha-b`)의 bash로 잡혔다. 그 배포판에서는 스크립트가 `docker`를 찾지 못하고 바로 끝났으며, 바뀐 것은 없다 | Git `bin/bash.exe`를 쓰고, 공용 줄 명령에 bash 전체 경로를 넣었다 |
+| E. hc 칸의 실행 환경 | 1 | `build-5.log`: "The command 'docker' could not be found in this WSL 2 distro". `date`도 없었다 | Git `usr/bin/bash.exe`로 띄우자 PATH가 비었고, `bash`가 기본 WSL 배포판(다른 프로젝트용)의 bash로 잡혔다. 그 배포판에서는 스크립트가 `docker`를 찾지 못하고 바로 끝났으며, 바뀐 것은 없다 | Git `bin/bash.exe`를 쓰고, 공용 줄 명령에 bash 전체 경로를 넣었다 |
 
 ## 분기점·선택·이유·차선책
 

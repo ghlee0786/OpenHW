@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 550" width="100%" role="img" aria-labelledby="t d">
+<!-- 생성: docs/readme/tools/make_svgs.py · 수치 기준 main 1898e1f -->
+<!-- 출처 전원: docs/decisions/D-003-working-defaults.md #10 #22 · carrier.kicad_pcb 넷 /12V_IN → U1 · U2 → /12V_IR → J7 -->
+<!-- 출처 네트워크: D-003 #11 -->
+<!-- 출처 센서: D-003 #5 #17 -->
+<!-- 출처 조도: D-003 #7 #18 -->
+<!-- 출처 부품: hardware/schematic/carrier/carrier.kicad_pcb · hardware/schematic/front/front.kicad_pcb 값 필드 -->
+<!-- 출처 모델: D-003 #19 -->
+<!-- 출처 커널: D-003 #1 -->
+<title id="t">시스템 블록도</title><desc id="d">12V 입력에서 코어 모듈까지 전원, 센서와 네트워크 신호 흐름</desc>
+<style>
+:root{--bg:#ffffff;--card:#f6f8fa;--fg:#1f2328;--mut:#59636e;--ln:#d0d7de;--pcb:#1a7f37;--pcb2:#2da44e;--pcbs:#116329;
+--core:#0969da;--cores:#0550ae;--pw:#bf8700;--dat:#0969da;--ctl:#8250df;--ir:#cf222e;--ok:#1a7f37;--wip:#bf8700;--todo:#8c959f;--metal:#57606a}
+@media (prefers-color-scheme:dark){:root{--bg:#0d1117;--card:#161b22;--fg:#e6edf3;--mut:#9198a1;--ln:#3d444d;--pcb:#2ea043;--pcb2:#3fb950;--pcbs:#1a7f37;
+--core:#4493f8;--cores:#1f6feb;--pw:#d29922;--dat:#4493f8;--ctl:#ab7df8;--ir:#f85149;--ok:#3fb950;--wip:#d29922;--todo:#6e7681;--metal:#8b949e}}
+text{font-family:system-ui,-apple-system,"Segoe UI","Noto Sans KR","Apple SD Gothic Neo",sans-serif;fill:var(--fg)}
+.t{font-size:22px;font-weight:700}.s{font-size:13px;fill:var(--mut)}.l{font-size:14px;font-weight:600}.m{font-size:12px;fill:var(--mut)}
+.bg{fill:var(--bg);stroke:var(--ln)}
+.b{fill:var(--card);stroke:var(--ln);stroke-width:1.2}.bc{fill:var(--card);stroke:var(--core);stroke-width:2}
+.g{fill:none;stroke:var(--ln);stroke-width:1.2;stroke-dasharray:3 4}
+.pw,.dt,.ct{fill:none;stroke-width:2.4;stroke-dasharray:7 6;animation:f 1.4s linear infinite}
+.pw{stroke:var(--pw)}.dt{stroke:var(--dat)}.ct{stroke:var(--ctl);stroke-width:1.8;animation-duration:2.2s}
+.rv{animation-direction:reverse}
+@keyframes f{to{stroke-dashoffset:-26}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important}}
+</style>
+<rect class="bg" x="0.5" y="0.5" width="899" height="549" rx="14"/>
+<text class="t" x="28" y="40">시스템 블록도</text>
+<text class="s" x="28" y="62">전원 · 영상 · 제어 · 네트워크 흐름</text>
+<rect class="g" x="20" y="80" width="300" height="420" rx="12"/><text class="m" x="32" y="98">캐리어 보드</text>
+<rect class="g" x="345" y="80" width="210" height="420" rx="12"/><text class="m" x="357" y="98">코어 모듈</text>
+<rect class="g" x="580" y="80" width="300" height="420" rx="12"/><text class="m" x="592" y="98">전면 보드</text>
+<rect class="b" x="36" y="110" width="128" height="46" rx="8"/><text class="l" x="46" y="131">12 V DC 입력</text>
+<rect class="b" x="36" y="176" width="128" height="46" rx="8"/><text class="l" x="46" y="197">퓨즈 · 역접속 보호</text>
+<rect class="b" x="36" y="242" width="128" height="46" rx="8"/><text class="l" x="46" y="263">5 V 강압</text><text class="m" x="46" y="280">TPS54302 → 코어</text>
+<rect class="b" x="36" y="308" width="128" height="46" rx="8"/><text class="l" x="46" y="329">eFuse (IR 전원)</text><text class="m" x="46" y="346">TPS26600</text>
+<rect class="b" x="180" y="110" width="128" height="46" rx="8"/><text class="l" x="190" y="131">이더넷 RJ45</text><text class="m" x="190" y="148">10/100 · ESD</text>
+<rect class="b" x="180" y="176" width="128" height="46" rx="8"/><text class="l" x="190" y="197">USB-C</text><text class="m" x="190" y="214">USB 2.0 · ESD</text>
+<rect class="b" x="180" y="242" width="128" height="46" rx="8"/><text class="l" x="190" y="263">microSD</text><text class="m" x="190" y="280">SDIO</text>
+<rect class="b" x="180" y="308" width="128" height="46" rx="8"/><text class="l" x="190" y="329">디버그 UART</text>
+<rect class="b" x="36" y="410" width="272" height="46" rx="8"/><text class="l" x="46" y="431">GH 6핀 하니스 → 전면</text><text class="m" x="46" y="448">12 V IR 전원 · 제어선</text>
+<rect class="bc" x="360" y="150" width="180" height="220" rx="8"/><text class="l" x="370" y="171">SG2002</text><text class="m" x="370" y="188">SoC · NPU</text>
+<text class="m" x="370" y="210">reCamera Core 2002</text><text class="m" x="370" y="228">Linux (커널 5.10)</text>
+<text class="m" x="370" y="246">사람 감지 모델 (NPU)</text>
+<text class="m" x="370" y="360">BTB J2 ← 캐리어 · J1 → 전면</text>
+<rect class="b" x="596" y="110" width="268" height="46" rx="8"/><text class="l" x="606" y="131">이미지 센서 GC2053</text><text class="m" x="606" y="148">2 MP · MIPI CSI</text>
+<rect class="b" x="596" y="176" width="268" height="46" rx="8"/><text class="l" x="606" y="197">IR-cut 전환</text><text class="m" x="606" y="214">DRV8837 → 필터 코일</text>
+<rect class="b" x="596" y="242" width="268" height="46" rx="8"/><text class="l" x="606" y="263">조도센서 LTR-329</text><text class="m" x="606" y="280">I2C · 주야 판별</text>
+<rect class="b" x="596" y="308" width="268" height="46" rx="8"/><text class="l" x="606" y="329">IR LED 구동 ×2</text><text class="m" x="606" y="346">AL8860 · 850 nm LED 자리 4</text>
+<rect class="b" x="596" y="410" width="268" height="46" rx="8"/><text class="l" x="606" y="431">M12 렌즈 · 광축</text><text class="m" x="606" y="448">수평 화각 약 90°</text>
+<path class="pw" d="M100,156 V176"/><path class="pw" d="M100,222 V242"/><path class="pw" d="M164,258 H172 V232 H360"/>
+<path class="pw" d="M36,199 H28 V331 H36"/><path class="pw" d="M100,354 V410"/><path class="pw" d="M308,433 H570 V331 H596"/>
+<path class="dt rv" d="M308,133 H360"/><path class="dt" d="M308,199 H360"/><path class="dt" d="M308,265 H340 V300 H360"/>
+<path class="dt rv" d="M596,133 H540"/><path class="ct" d="M540,199 H596"/><path class="ct rv" d="M540,265 H596"/><path class="ct" d="M540,320 H596"/>
+<path class="ct" d="M308,331 H360"/>
+<path class="pw" d="M40,524 h26"/><text class="m" x="72" y="528">전원</text>
+<path class="dt" d="M120,524 h26"/><text class="m" x="152" y="528">영상·데이터</text>
+<path class="ct" d="M240,524 h26"/><text class="m" x="272" y="528">제어 (GPIO · I2C · PWM)</text>
+</svg>
