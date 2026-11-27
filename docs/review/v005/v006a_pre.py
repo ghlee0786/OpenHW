@@ -18,7 +18,7 @@ A = ap.parse_args()
 SNAP = A.snap or os.path.join(A.res, 'snap')
 BOARDS = ['carrier', 'front']
 # cond2 항목 중 배선 무관 (v006_cond2.py id)
-COND2_PRE = {'2.PAR', '2.RLX', '2.E2b', '2.E4', '2.A12', '2.A13', '2.A13g', '2.A13x', '2.TXT', '2.V1', '2.V2', '2.V3', '2.V4', '2.V5', '2.A14'}
+COND2_PRE = {'2.PAR', '2.RLX', '2.E2b', '2.E4', '2.A12', '2.A13', '2.A13g', '2.A13x', '2.TXT', '2.V1', '2.V2', '2.V3', '2.V4', '2.V5', '2.V6', '2.A14'}
 # DRC 종류 중 배치·실크·라이브러리 (배선과 무관)
 DRC_PRE = {'courtyards_overlap', 'malformed_courtyard', 'missing_courtyard', 'npth_inside_courtyard', 'pth_inside_courtyard',
            'silk_overlap', 'silk_over_copper', 'silk_edge_clearance', 'text_height', 'text_thickness', 'text_on_edge_cuts',

@@ -319,11 +319,21 @@ for nick, d in sorted(silk_libs.items()):
     for f in find_sources(d):
         srcs += parse_sources(f)
     copies = sorted(glob.glob(os.path.join(d, '*.kicad_mod')))
+
+    def row_lib(r):
+        """SOURCES 행의 사본 표기가 가리키는 라이브러리 이름 (폴더 X.pretty/… 또는 별칭:이름). 파일 이름뿐이면 None.
+        이름을 통째로 비교한다 — 'Package_SO' 가 'Package_SON.pretty/…' 행을 끌어오면 안 된다 (V-006e)."""
+        c_ = r['copy'].replace('\\', '/')
+        if '/' in c_:
+            f_ = os.path.basename(os.path.dirname(c_))
+            return f_[:-len('.pretty')] if f_.endswith('.pretty') else f_
+        return c_.split(':')[0] if ':' in c_ else None
+
     for cp in copies:
         name = os.path.splitext(os.path.basename(cp))[0]
         lib_dir_name = os.path.basename(d)
         cand = [r for r in srcs if os.path.splitext(os.path.basename(r['copy'].replace('\\', '/').split(':')[-1]))[0] == name
-                and (lib_dir_name in r['copy'] or nick in r['copy'] or '/' not in r['copy'].replace('\\', '/'))]
+                and row_lib(r) in (None, nick, lib_dir_name[:-len('.pretty')] if lib_dir_name.endswith('.pretty') else lib_dir_name)]
         row = dict(lib=nick, dir=d, name=name, copy_sha256=sha256(cp))
         if not cand:
             row.update(ok=False, error='SOURCES.tsv 에 행 없음'); copy_rows.append(row); continue
@@ -350,7 +360,7 @@ for nick, d in sorted(silk_libs.items()):
     names = {os.path.splitext(os.path.basename(c))[0] for c in copies}
     for r in srcs:
         n = os.path.splitext(os.path.basename(r['copy'].replace('\\', '/').split(':')[-1]))[0]
-        if (os.path.basename(d) in r['copy'] or nick in r['copy']) and n not in names:
+        if row_lib(r) in (nick, os.path.basename(d)[:-len('.pretty')] if os.path.basename(d).endswith('.pretty') else os.path.basename(d)) and n not in names:
             copy_rows.append(dict(lib=nick, dir=d, name=n, ok=False, error='SOURCES.tsv 행의 사본 파일 없음'))
 R['E4c_silk_copies'] = copy_rows
 

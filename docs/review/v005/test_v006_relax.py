@@ -97,8 +97,16 @@ DRU2 = '''(version 1)
 (rule "j1_h2h"
   (condition "A.enclosedByArea('J1_ESC')")
   (constraint hole_to_hole (min 0.28mm)))
+(rule "sd_esc_via"
+  (condition "A.Type == 'Via' && A.enclosedByArea('SD_ESC')")
+  (constraint via_diameter (min 0.50mm))
+  (constraint hole_size (min 0.20mm)))
+(rule "sd_bad_inter"
+  (condition "A.Type == 'Via' && A.intersectsArea('SD_ESC')")
+  (constraint hole_size (min 0.20mm)))
 '''
-D3b = D3 + '| 60 | J1 탈출 비아 | J1 탈출 비아만 0.50/0.20(링 0.15)을 J1 둘레 규칙 영역(enclosedByArea) 안에서 허용 | 근거 | 차선 |\n'
+D3b = D3 + '| 60 | J1 탈출 비아 | J1 탈출 비아만 0.50/0.20(링 0.15)을 J1 둘레 규칙 영역(enclosedByArea) 안에서 허용 | 근거 | 차선 |\n' \
+    + '| 64 | 캐리어 SD ESD 어레이 GND | U4/U5 아래 규칙 영역 SD_ESC(F.Cu, enclosedByArea)에만 0.50/0.20 비아 허용 | 근거 | 차선 |\n'
 W2 = os.path.join(W, 'esc'); os.makedirs(W2)
 open(os.path.join(W2, 't.kicad_dru'), 'w', encoding='utf-8').write(DRU2)
 open(os.path.join(W2, 'd003.md'), 'w', encoding='utf-8').write(D3b)
@@ -121,7 +129,9 @@ CASES += [
     ('#60 지름 0.45 는 기록 값 0.50 과 다름 → 문구 불일치(양성)', st2('rule:j1_small:via_diameter') == '기록 문구 불일치'
      and any('보드 값 0.45' in x for x in by2['rule:j1_small:via_diameter']['missing_text'])),
     ('#60 구멍 간격 0.28 은 D-003 에 값 없음 → 문구 불일치(양성)', st2('rule:j1_h2h:hole_to_hole') == '기록 문구 불일치'),
-    ('#60 종료 코드 = 불합격 3', rc2.returncode == R2['fail'] == 3),
+    ('#64 SD_ESC 비아 지름 0.50 · 드릴 0.20 (enclosedByArea) 기록 일치(음성)', st2('rule:sd_esc_via:via_diameter') == '기록 일치' and st2('rule:sd_esc_via:hole_size') == '기록 일치'),
+    ('#64 intersectsArea 로 쓴 SD 완화 → 기록 없음(양성)', st2('rule:sd_bad_inter:hole_size') == '기록 없음'),
+    ('#60·#64 종료 코드 = 불합격 4', rc2.returncode == R2['fail'] == 4),
 ]
 fail = 0
 for n, ok in CASES:

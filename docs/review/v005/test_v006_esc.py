@@ -22,12 +22,25 @@ bb = j1.GetBoundingBox(False)
 X0, Y0, X1, Y1 = mm(bb.GetX()) - 1.0, mm(bb.GetY()) - 1.0, mm(bb.GetRight()) + 1.0, mm(bb.GetBottom()) + 1.0
 j1_nets = sorted(set(p.GetNetname() for p in j1.Pads() if p.GetNetname()))
 other_net = next(n.GetNetname() for c, n in b.GetNetInfo().NetsByNetcode().items() if n.GetNetname() and n.GetNetname() not in j1_nets)
+# O-121 / D-003 #64: SD ESD 어레이(U4·U5) 영역 — 두 부품 외곽 상자를 합쳐 0.6 넓힌 사각형
+sd_fps = [fp for fp in b.Footprints() if fp.GetReference() in ('U4', 'U5')]
+sd_bbs = [fp.GetBoundingBox(False) for fp in sd_fps]
+SX0, SY0 = mm(min(q.GetX() for q in sd_bbs)) - 0.6, mm(min(q.GetY() for q in sd_bbs)) - 0.6
+SX1, SY1 = mm(max(q.GetRight() for q in sd_bbs)) + 0.6, mm(max(q.GetBottom() for q in sd_bbs)) + 0.6
+sd_nets = set(p.GetNetname() for fp in sd_fps for p in fp.Pads())
+sd_sig = [(fp, p) for fp in sd_fps for p in fp.Pads() if p.GetNetname() and p.GetNetname() not in ('/GND', 'GND')]
+sd_gnd = [(fp, p) for fp in sd_fps for p in fp.Pads() if p.GetNetname() in ('/GND', 'GND')]
+not_sd_net = next(n for n in j1_nets if n not in sd_nets and n not in ('/GND', 'GND'))
 # 이미 있는 0.65/0.30 미만 비아는 그대로 두고 수만 센다 (KiCad 10 SWIG 는 Remove 뒤 Tracks() 가 깨진다)
 base = [(mm(t.GetPosition().x), mm(t.GetPosition().y), mm(t.GetWidth(pcbnew.F_Cu)) / 2, t.GetNetname(), mm(t.GetDrill())) for t in b.Tracks()
         if t.GetClass() == 'PCB_VIA' and (mm(t.GetWidth(pcbnew.F_Cu)) < 0.65 - 1e-6 or mm(t.GetDrill()) < 0.30 - 1e-6)]
-base_in = sum(1 for x, y, r, n, dr in base if X0 <= x - r and x + r <= X1 and Y0 <= y - r and y + r <= Y1)
+def in_rects(x, y, r):
+    return (X0 <= x - r and x + r <= X1 and Y0 <= y - r and y + r <= Y1) or (SX0 <= x - r and x + r <= SX1 and SY0 <= y - r and y + r <= SY1)
+
+
+base_in = sum(1 for x, y, r, n, dr in base if in_rects(x, y, r))
 # 영역 밖 원래 비아 중 #21 허용분(GND 0.60/0.30 이상)과 아닌 것
-base_ok = sum(1 for x, y, r, n, dr in base if not (X0 <= x - r and x + r <= X1 and Y0 <= y - r and y + r <= Y1)
+base_ok = sum(1 for x, y, r, n, dr in base if not in_rects(x, y, r)
               and n in ('/GND', 'GND') and 2 * r >= 0.60 - 1e-6 and dr >= 0.30 - 1e-6)
 base_bad = len(base) - base_in - base_ok
 GND = '/GND' if b.FindNet('/GND') else 'GND'
@@ -69,7 +82,7 @@ def via(x, y, d, dr, net):
 
 # 입력 보드에 이미 있는 J1_* 규칙 영역(pcb 의 진짜 J1_ESC)은 이름을 바꿔 판정에서 뺀다 — 이 시험이 넣은 영역만 보게 (Remove 는 SWIG 가 깨져 못 씀)
 for z in b.Zones():
-    if z.GetIsRuleArea() and z.GetZoneName().startswith('J1_'):
+    if z.GetIsRuleArea() and (z.GetZoneName().startswith('J1_') or z.GetZoneName().startswith('SD_')):
         z.SetZoneName('ORIG_' + z.GetZoneName())
 area('J1_ESC', X0, Y0, X1, Y1)
 area('J1_FAR', X0 - 8.0, Y0, X0 - 6.0, Y0 + 2.0)                 # J1 에서 5 mm 넘게 떨어진 영역 → V5 불합격
@@ -95,6 +108,52 @@ for x, y in ((far[5][0] - 1.0, far[5][1] - 1.0), (far[5][0] + 1.0, far[5][1] - 1
 b.Add(tz)
 T_ = via(far[5][0] - 0.4, far[5][1], 0.60, 0.30, N)              # 같은 넷 THERMAL 구리 안 열 비아 → #21 허용
 U_ = via(far[5][0] + 0.4, far[5][1], 0.60, 0.30, other_net)      # THERMAL 안이지만 다른 넷 → 불합격
+# ---- O-121: SD_ESC 영역, 영역 안 작은 비아 2개, ESD GND 패드 4개의 비아·트랙 ----
+area('SD_ESC', SX0, SY0, SX1, SY1)
+
+
+def pxy(p):
+    return mm(p.GetPosition().x), mm(p.GetPosition().y)
+
+
+SDok = via(pxy(sd_sig[0][1])[0], pxy(sd_sig[0][1])[1], 0.50, 0.20, sd_sig[0][1].GetNetname())     # U4·U5 핀 넷 → 통과
+SDbad = via(pxy(sd_sig[1][1])[0], pxy(sd_sig[1][1])[1], 0.50, 0.20, not_sd_net)                   # J1 넷이지만 U4·U5 넷 아님 → 불합격
+
+
+def gnd_stub(fp, p, length, width):
+    """GND 패드 중심에서 부품 바깥쪽으로 length 만큼 트랙(폭 width)을 내고 끝에 0.65/0.30 비아. length 0 이면 패드 안 비아."""
+    x, y = pxy(p)
+    # 네 방향 중 끝점이 기존 GND 비아·GND 트랙 끝에서 가장 먼 쪽 — 보드에 이미 있는 GND 트랙을 타고 시험 비아에 닿으면 안 된다
+    ux, uy = max(((0.0, 1.0), (0.0, -1.0), (1.0, 0.0), (-1.0, 0.0)),
+                 key=lambda u: min([math.hypot(x + u[0] * max(length, 0.7) - gx, y + u[1] * max(length, 0.7) - gy) for gx, gy in gnd_pts] or [9.0]))
+    ex, ey = x + ux * length, y + uy * length
+    gnd_pts.append((ex, ey))
+    if length > 0:
+        t = pcbnew.PCB_TRACK(b)
+        t.SetStart(pcbnew.VECTOR2I(FM(x), FM(y))); t.SetEnd(pcbnew.VECTOR2I(FM(ex), FM(ey))); t.SetWidth(FM(width))
+        t.SetLayer(pcbnew.F_Cu if p.IsOnLayer(pcbnew.F_Cu) else pcbnew.B_Cu); t.SetNet(b.FindNet(p.GetNetname()))
+        b.Add(t)
+    return via(ex, ey, 0.65, 0.30, p.GetNetname())
+
+
+assert len(sd_gnd) >= 4, 'U4·U5 GND 패드 %d' % len(sd_gnd)
+# 입력 보드에 이미 있는 U4·U5 둘레 GND 트랙은 다른 넷으로 돌려 놓는다 — 시험이 넣은 트랙만 패드에서 비아로 이어지게 (지우면 SWIG 가 깨져 넷만 바꾼다)
+_gp = [pxy(p) for _f, p in sd_gnd]
+for t in b.Tracks():
+    if t.GetClass() == 'PCB_TRACK' and t.GetNetname() in ('/GND', 'GND') and any(
+            math.hypot(mm(e.x) - gx, mm(e.y) - gy) < 4.0 for e in (t.GetStart(), t.GetEnd()) for gx, gy in _gp):
+        t.SetNet(b.FindNet(other_net))
+gnd_pts = []   # 기존 GND 비아 중심과 GND 트랙 끝점
+for t in b.Tracks():
+    if t.GetNetname() in ('/GND', 'GND'):
+        if t.GetClass() == 'PCB_VIA':
+            gnd_pts.append((mm(t.GetPosition().x), mm(t.GetPosition().y)))
+        else:
+            gnd_pts += [(mm(t.GetStart().x), mm(t.GetStart().y)), (mm(t.GetEnd().x), mm(t.GetEnd().y))]
+G_in = gnd_stub(sd_gnd[0][0], sd_gnd[0][1], 0.0, 0.25)      # 패드 안 비아 → 조건 맞음
+G_ok = gnd_stub(sd_gnd[1][0], sd_gnd[1][1], 0.7, 0.25)      # 0.7 mm · 폭 0.25 → 조건 맞음
+G_thin = gnd_stub(sd_gnd[2][0], sd_gnd[2][1], 0.7, 0.15)    # 폭 0.15 → 조건 안 맞음
+G_long = gnd_stub(sd_gnd[3][0], sd_gnd[3][1], 1.4, 0.25)    # 1.4 mm → 조건 안 맞음
 pcb = os.path.join(BD, 'carrier.kicad_pcb')
 pcbnew.SaveBoard(pcb, b)
 RES = os.path.join(W, 'res'); os.makedirs(RES)
@@ -103,6 +162,15 @@ rc = subprocess.run([sys.executable, '-I', os.path.join(HERE, 'v005_rules.py'), 
 if rc.returncode != 0:
     print('v005_rules.py 실패', rc.returncode, rc.stderr[-2500:]); sys.exit(1)
 E = json.load(open(rj, encoding='utf-8'))['esc_vias']
+EG = json.load(open(rj, encoding='utf-8'))['esd_gnd']['pads']
+
+
+def esd_via(pos):
+    for x_ in EG:
+        for v_ in x_['vias']:
+            if abs(v_['at'][0] - pos[0]) < 2e-3 and abs(v_['at'][1] - pos[1]) < 2e-3:
+                return v_
+    return None
 
 
 def at(lst, p):
@@ -114,7 +182,11 @@ def why(p):
     return ' '.join(v['why']) if v else ''
 
 
-def cond2(dru, d003=None, tx=None, unc=None, unc_ar=None, base=None, nopairs=False):
+def cond2(dru, d003=None, tx=None, unc=None, unc_ar=None, base=None, nopairs=False, esd=None):
+    if esd is not None:   # ESD GND 핀 목록을 정해진 값으로 (원본은 뒤에 되돌림)
+        _keep2 = open(rj, encoding='utf-8').read()
+        _r2 = json.loads(_keep2); _r2['esd_gnd']['pads'] = esd
+        json.dump(_r2, open(rj, 'w', encoding='utf-8'), ensure_ascii=False)
     if nopairs:   # 넷클래스를 못 읽은 것처럼 쌍을 비움 (원본은 뒤에 되돌림)
         _keep = open(rj, encoding='utf-8').read()
         _r0 = json.loads(_keep); _r0['pairs'] = {}
@@ -152,13 +224,19 @@ def cond2(dru, d003=None, tx=None, unc=None, unc_ar=None, base=None, nopairs=Fal
     r['_all'] = {i['id']: i for i in d['items'] if i['board'] == 'carrier'}
     if nopairs:
         open(rj, 'w', encoding='utf-8').write(_keep)
+    if esd is not None:
+        open(rj, 'w', encoding='utf-8').write(_keep2)
     r['_a10'] = {('/EPHY_TX' if '/EPHY_TX' in i['title'] else '/EPHY_RX'): i for i in d['items'] if i['id'] == '2.A10' and i['board'] == 'carrier' and '/EPHY_' in i['title']}
     return r
 
 
-C_ok = cond2('(version 1)\n(rule "j1_esc" (condition "A.Type == \'Via\' && A.enclosedByArea(\'J1_ESC\')") (constraint via_diameter (min 0.50mm)))\n')
+RULE = '(rule "%s" (condition "A.Type == \'Via\' && A.%s(\'%s\')") (constraint via_diameter (min 0.50mm)))\n'
+DRU_ALL = '(version 1)\n' + RULE % ('j1_esc', 'enclosedByArea', 'J1_ESC') + RULE % ('j1_far', 'enclosedByArea', 'J1_FAR') + RULE % ('sd_esc', 'enclosedByArea', 'SD_ESC')
+C_ok = cond2(DRU_ALL)
+C_norule = cond2('(version 1)\n' + RULE % ('j1_esc', 'enclosedByArea', 'J1_ESC') + RULE % ('j1_far', 'enclosedByArea', 'J1_FAR'))   # SD_ESC 영역은 있는데 규칙 없음
+C_sdinter = cond2('(version 1)\n' + RULE % ('j1_esc', 'enclosedByArea', 'J1_ESC') + RULE % ('j1_far', 'enclosedByArea', 'J1_FAR') + RULE % ('sd_esc', 'intersectsArea', 'SD_ESC'))
 C_bad = cond2('(version 1)\n(rule "j1_esc" (condition "A.Type == \'Via\' && A.intersectsArea(\'J1_ESC\')") (constraint via_diameter (min 0.50mm)))\n')
-DRU_OK = '(version 1)\n(rule "j1_esc" (condition "A.Type == \'Via\' && A.enclosedByArea(\'J1_ESC\')") (constraint via_diameter (min 0.50mm)))\n'
+DRU_OK = DRU_ALL
 ROW62 = '| 62 | MDI TX 쌍 길이 차·비결합 예외(O-119, #28 예외) | (다) MDI TX 쌍만: 쌍 안 길이 차 ≤1.27mm, 비결합 길이 ≤7mm(mdi_100_pair 6 → MDI TX 한정 7). 처음 (가)(차 ≤1.7·비결합 6)였으나 갱신 | 근거 | 차선 |\n'
 HD = '| # | 항목 |\n|---|---|\n'
 X_ok = cond2(DRU_OK, d003=HD + ROW62, tx=1.2, unc=6.5)
@@ -169,7 +247,7 @@ X_noarg = cond2(DRU_OK, tx=1.2, unc=6.5)
 ROW63 = '| 63 | 고속 쌍 비결합 길이 셈법 | ② #46에서 승인한 탈출·보정 영역(DP_BRK·DP_TUNE, enclosedByArea) 안 구간은 결합으로 셈, 꼬임 영역(DP_TWIST) 제외는 그대로 | 근거 | 차선 |\n'
 _at = json.load(open(rj, encoding='utf-8'))['area_table']
 BASE = {'carrier': {}}
-for _a in _at:
+for _a in _at + E['areas']:   # 0.50/0.20 영역(J1_ · SD_)도 같은 기준으로 감시한다
     _c = BASE['carrier'].setdefault(_a['name'], dict(count=0, area_mm2=0.0)); _c['count'] += 1; _c['area_mm2'] = round(_c['area_mm2'] + _a['area_mm2'], 3)
 SMALL = {'carrier': {n: dict(count=c['count'], area_mm2=round(c['area_mm2'] - 0.5, 3)) for n, c in BASE['carrier'].items()}}
 FEWER = {'carrier': {n: dict(count=c['count'] - 1, area_mm2=c['area_mm2']) for n, c in BASE['carrier'].items()}}
@@ -178,8 +256,22 @@ Y_63over = cond2(DRU_OK, d003=HD + ROW62 + ROW63, tx=1.2, unc=7.5, unc_ar=7.2, b
 Y_no63 = cond2(DRU_OK, d003=HD + ROW62, tx=1.2, unc=7.5, unc_ar=6.5, base=FEWER)
 Y_nobase = cond2(DRU_OK, d003=HD + ROW62 + ROW63, tx=1.2, unc=7.5, unc_ar=6.5, base={})
 Y_nopairs = cond2(DRU_OK, d003=HD + ROW62 + ROW63, nopairs=True)
+Z_esd_bad = cond2(DRU_OK, esd=[dict(ref='U4', pad='3', n_ok=2, vias=[]), dict(ref='U4', pad='8', n_ok=1, vias=[]), dict(ref='U5', pad='3', n_ok=0, vias=[])])
+Z_esd_ok = cond2(DRU_OK, esd=[dict(ref='U4', pad='3', n_ok=2, vias=[]), dict(ref='U4', pad='8', n_ok=1, vias=[])])
 CASES = [
-    ('영역 2개 인식, J1_ESC 는 J1 둘레 1.0 (통과) · J1_FAR 는 멀다 (불합격)', {a['name']: a['beyond_ok'] for a in E['areas']} == {'J1_ESC': True, 'J1_FAR': False}),
+    ('영역 3개 인식, J1_ESC 는 J1 둘레 1.0 (통과) · J1_FAR 는 멀다 (불합격) · SD_ESC 는 U4·U5 둘레 0.6 (통과)',
+     {a['name']: a['beyond_ok'] for a in E['areas']} == {'J1_ESC': True, 'J1_FAR': False, 'SD_ESC': True} and {a['name']: a['group'] for a in E['areas']}['SD_ESC'] == 'SD_'),
+    ('#64 SD_ESC 안 0.50/0.20, U4·U5 핀 넷 → 영역 안·넷 통과(음성)', (at(E['inside'], SDok) or {}).get('area') == 'SD_ESC' and at(E['non_j1_net'], SDok) is None),
+    ('#64 SD_ESC 안 0.50/0.20, J1 넷이지만 U4·U5 넷 아님 → 불합격(양성)', (at(E['non_j1_net'], SDbad) or {}).get('area') == 'SD_ESC'),
+    ('#64 ESD GND: 패드 안 비아 → 조건 맞음(음성)', (esd_via(G_in) or {}).get('ok') is True and esd_via(G_in)['len'] == 0),
+    ('#64 ESD GND: 0.7 mm · 폭 0.25 → 조건 맞음(음성)', (esd_via(G_ok) or {}).get('ok') is True and abs(esd_via(G_ok)['len'] - 0.7) < 0.02),
+    ('#64 ESD GND: 폭 0.15 → 조건 안 맞음(양성)', (esd_via(G_thin) or {}).get('ok') is False and abs(esd_via(G_thin)['min_w'] - 0.15) < 1e-3),
+    ('#64 ESD GND: 1.4 mm → 조건 안 맞음(양성)', (esd_via(G_long) or {}).get('ok') is False and abs(esd_via(G_long)['len'] - 1.4) < 0.02),
+    ('#64 cond2 V6: 비아 0 인 핀 1 → 불합격, 1개뿐인 핀은 참고란에(양성)', Z_esd_bad['_all']['2.V6']['pass'] is False and Z_esd_bad['_all']['2.V6']['value'] == 1
+     and 'U5.3' in Z_esd_bad['_all']['2.V6']['note'] and 'U4.8' in Z_esd_bad['_all']['2.V6']['note']),
+    ('#64 cond2 V6: 모든 핀에 1개 이상 → 통과(음성)', Z_esd_ok['_all']['2.V6']['pass'] is True),
+    ('#64 cond2 V2: SD_ESC 영역은 있는데 규칙 없음 → 불합격(양성)', C_norule['2.V2']['pass'] is False and 'SD_ESC' in C_norule['2.V2']['note']),
+    ('#64 cond2 V2: SD_ESC 규칙이 intersectsArea → 불합격(양성)', C_sdinter['2.V2']['pass'] is False),
     ('A 정상 0.50/0.20 → 영역 안, 불합격 아님(음성)', at(E['inside'], A_) is not None and at(E['inside_fail'], A_) is None and at(E['non_j1_net'], A_) is None),
     ('B 0.45/0.20 → 지름·링 미달(양성)', '지름' in why(B_) and '링' in why(B_)),
     ('C 0.50/0.15 → 드릴 미달(양성)', '드릴' in why(C_)),
@@ -193,7 +285,7 @@ CASES = [
     ('T 같은 넷 THERMAL 구리 안 열 비아 0.60/0.30 → 허용(음성)', (at(E['allowed_060'], T_) or {}).get('kind') == '열'),
     ('U THERMAL 안 다른 넷 0.60/0.30 → 불합격(양성)', at(E['outside_small'], U_) is not None),
     ('S 0.65/0.30 은 세지 않음(음성) — 원래 있던 작은 비아 %d(영역 안 %d · #21 허용 %d) 더함' % (len(base), base_in, base_ok),
-     E['small_total'] == 13 + len(base) and len(E['outside_small']) == 5 + base_bad and len(E['inside']) == 6 + base_in and len(E['allowed_060']) == 2 + base_ok),
+     E['small_total'] == 15 + len(base) and len(E['outside_small']) == 5 + base_bad and len(E['inside']) == 8 + base_in and len(E['allowed_060']) == 2 + base_ok),
     ('cond2 V1 영역 밖 5(+원래 것 중 허용 아닌 것) 불합격', C_ok['2.V1']['value'] == 5 + base_bad and C_ok['2.V1']['pass'] is False),
     ('cond2 V2 enclosedByArea 통과 / intersectsArea 불합격', C_ok['2.V2']['pass'] is True and C_bad['2.V2']['pass'] is False),
     ('cond2 V3 영역 안 불합격 (B·C·D1·D2 포함)', C_ok['2.V3']['value'] == len(E['inside_fail']) >= 4 and C_ok['2.V3']['pass'] is False),
