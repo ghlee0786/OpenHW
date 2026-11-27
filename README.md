@@ -1,17 +1,16 @@
-<!-- 수치는 저장소 결과 파일에서 읽은 값이다(기준 커밋 main 1898e1f, 2026-11-27). 값마다 출처 경로를 표 각주와 docs/readme/*.svg 주석에 적었다. -->
+<!-- 수치는 저장소 결과 파일에서 읽은 값이다(기준 커밋 main c0f0eb5, 2026-11-27). 값마다 출처 경로를 표 각주와 docs/readme/*.svg 주석에 적었다. -->
 
 <div align="center">
 
-# OpenHW — SG2002 엣지 AI 카메라
+<img src="docs/readme/icon.svg" width="96" alt="OpenHW 아이콘 — 칩 안의 카메라 렌즈">
 
-**구매한 SG2002 코어 모듈에 직접 설계한 PCB 두 장을 붙이고, 렌즈·IR-cut·IR 조명까지 한 몸으로 묶은 오픈 하드웨어 카메라 PoC**
+# OpenHW
 
-[![License: Apache-2.0](https://img.shields.io/badge/License-Apache--2.0-blue.svg)](LICENSE)
-[![KiCad 10](https://img.shields.io/badge/KiCad-10-314CB0.svg)](hardware/schematic)
-[![Status](https://img.shields.io/badge/Status-%EA%B0%80%EC%83%81%20%EC%84%A4%EA%B3%84%20%EC%A7%84%ED%96%89-orange.svg)](#진행-현황)
-[![SoC: SG2002](https://img.shields.io/badge/SoC-SG2002-6f42c1.svg)](#무엇인가)
+**SG2002 엣지 AI 카메라 — 직접 설계한 PCB 두 장과 구매한 코어 모듈, 렌즈·IR-cut·IR 조명을 한 몸으로**
 
-<img src="docs/readme/media/front_spin.gif" alt="전면 보드 3D 회전" width="420">
+[![License: Apache-2.0](https://img.shields.io/badge/License-Apache--2.0-D22128?logo=apache&logoColor=white)](LICENSE) [![KiCad 10](https://img.shields.io/badge/KiCad-10-314CB0?logo=kicad&logoColor=white)](hardware/schematic) [![Linux 5.10](https://img.shields.io/badge/Linux-5.10-FCC624?logo=linux&logoColor=black)](firmware) [![SoC: SG2002](https://img.shields.io/badge/SoC-SG2002-6f42c1)](#사양) [![Status](https://img.shields.io/badge/Status-%EA%B0%80%EC%83%81%20%EC%84%A4%EA%B3%84%20%EC%A7%84%ED%96%89-orange)](#진행-상태)
+
+<img src="docs/readme/hero.svg" width="880" alt="흐름 애니메이션: 피사체의 빛이 렌즈·센서로 들어가 SG2002 NPU에서 사람을 감지하고 캐리어 보드를 거쳐 이벤트로 나간다">
 
 </div>
 
@@ -25,30 +24,122 @@
 > and the front board passes DRC with zero violations and zero unconnected items, while carrier routing is still in progress.
 > Hardware design files are released under the Apache License 2.0.
 
-## 무엇인가
+## 진행 상태
 
-- **엣지 AI 카메라 노드**다. 카메라 영상을 보드 안의 NPU로 바로 분석해 사람을 감지하고, 이벤트를 유선 이더넷으로 보낸다.
-- **세 층으로 쌓는다.** 아래부터 차례로 다음과 같다.
-  - 캐리어 보드(직접 설계)
-  - SG2002 코어 모듈(구매품, reCamera Core 2002)
-  - 전면 보드(직접 설계)
-- 보드 사이는 0.5 mm 60핀 BTB 커넥터로 바로 꽂고, 전면과 캐리어 사이 전원·제어는 GH 6핀 하니스로 잇는다.
-- **광학을 보드 설계에 함께 넣었다.**
-  - M12 고정초점 렌즈(수평 화각 약 90°)의 광축을 PCB 배치 기준으로 삼았다.
-  - 광학 부품은 주야 전환용 IR-cut 필터, 850 nm IR LED(자리 4개, PoC는 2개 실장), 주야 판별용 조도센서다.
-- **지금은 가상 설계 단계다.** 회로도·시뮬레이션·PCB·3D 조립 검증까지 컴퓨터 안에서 끝내는 것이 목표이고, 실물 제작은 그 뒤다.
+<p align="center"><img src="docs/readme/pipeline.svg" width="880" alt="설계 흐름 8단계: 요구사항·회로도·시뮬레이션 완료, PCB 배선·DRC·3D 검증·케이스 진행 중, 렌더 대기"></p>
 
-## 한눈에 보기
+| 단계 | 상태 | 근거 (결과 파일) |
+|---|---|---|
+| 제품 기획 · 작업 기본값 | ✅ 완료 | [`product-brief.md`](docs/planning/product-brief.md) · [`D-003`](docs/decisions/D-003-working-defaults.md) |
+| 회로도 2장 | ✅ ERC 위반 0 | [`carrier-erc.json`](hardware/schematic/carrier/carrier-erc.json) · [`front-erc.json`](hardware/schematic/front/front-erc.json) |
+| 회로 시뮬레이션 | ✅ 25/25 통과 (ngspice-47) | [`hardware/sim/results/`](hardware/sim/results) |
+| 전면 보드 PCB | ✅ DRC 위반 0 · 미연결 0 · 회로도 일치 0 | [`front-drc.json`](hardware/pcb/drc/front-drc.json) |
+| 캐리어 보드 PCB | 🔧 배선 마무리 중 — DRC 위반 7 · 미연결 35 | [`carrier-drc.json`](hardware/pcb/drc/carrier-drc.json) |
+| 3D 조립 판정 | 🔧 모델 빠짐 0 · 판정 실패 0 (중간 보드 기준, 최종 보드로 다시) | [`judge.md`](mechanical/m007/judge.md) |
+| 케이스 | 🔧 1차 초안 — 최종 보드 기준 확정 대기 | [`m003-enclosure.md`](mechanical/m003/m003-enclosure.md) |
+| 최종 렌더 · 실물 제작 | ⏳ 가상 설계가 끝난 뒤 | — |
 
-<p align="center"><img src="docs/readme/stack.svg" alt="3층 적층 구조: 전면 보드, 코어 모듈, 캐리어 보드" width="100%"></p>
+<p align="center"><img src="docs/readme/numbers.svg" width="880" alt="핵심 수치 카드: ERC 0, 시뮬레이션 25/25, 전면 DRC 0·0, 캐리어 DRC 7·35, 3D 모델 빠짐 0, 4층 1.6 mm"></p>
 
-<p align="center"><img src="docs/readme/block.svg" alt="시스템 블록도: 전원, 영상, 제어, 네트워크 흐름" width="100%"></p>
+## 주요 기능
 
-<p align="center"><img src="docs/readme/pipeline.svg" alt="설계 흐름과 단계별 진행 상태" width="100%"></p>
+- **사람 감지를 보드 안에서** — SG2002의 NPU에서 YOLOX-Nano(BF16)를 돌린다. 영상을 밖으로 보내지 않고 감지 이벤트만 보낸다. ([D-003](docs/decisions/D-003-working-defaults.md) #3 #8 #19)
+- **주야 자동 전환** — 조도센서로 밤낮을 판단해 IR-cut 필터를 바꾸고, 850 nm IR LED를 켠다. LED는 듀티와 피크를 펌웨어로 제한한다. ([D-003](docs/decisions/D-003-working-defaults.md) #6 #7 #26)
+- **12 V 한 줄 입력** — 퓨즈·역접속 보호 뒤 5 V 강압으로 코어를 먹이고, IR 조명 갈래는 eFuse로 전류를 제한한다. ([D-003](docs/decisions/D-003-working-defaults.md) #10 #22)
+- **유선 이더넷 10/100 · USB-C · microSD** — 네트워크 서비스는 닫힌 상태가 기본이다. ([D-003](docs/decisions/D-003-working-defaults.md) #11 #30)
+- **광학 일체 설계** — M12 렌즈 광축·IR LED 위치·조도 창을 PCB 배치 기준으로 삼았다. ([D-003](docs/decisions/D-003-working-defaults.md) #4 #17)
 
-<p align="center"><img src="docs/readme/numbers.svg" alt="핵심 수치: ERC 0, 시뮬레이션 25/25, 전면 DRC 0" width="100%"></p>
+## 아키텍처
 
-> 그림은 움직이는 SVG다. 운영체제에서 「동작 줄이기」를 켜면 멈춘 그림으로 보인다. 밝은·어두운 테마를 따른다.
+### 3층 적층
+
+<p align="center"><img src="docs/readme/stack.svg" width="880" alt="3층 적층 분해·결합 애니메이션: 전면 보드, 코어 모듈, 캐리어 보드와 BTB 커넥터, 광축"></p>
+
+캐리어 보드(아래) – 코어 모듈 – 전면 보드(위)를 0.5 mm 60핀 BTB 커넥터 두 쌍으로 바로 꽂는다(결합 높이 8.0 mm). 전면과 캐리어 사이 IR 전원·제어는 GH 6핀 하니스로 잇는다.
+
+### 시스템 블록도
+
+<p align="center"><img src="docs/readme/block.svg" width="880" alt="시스템 블록도: 12 V 입력, 보호, 5 V 강압, eFuse, SG2002, 이미지 센서, IR-cut, 조도센서, IR LED, 이더넷, USB-C, microSD"></p>
+
+## 갤러리
+
+### 전면 보드 3D
+
+<table>
+<tr>
+<td align="center" width="33%"><a href="docs/renders/p005/front-iso.png"><img src="docs/renders/p005/front-iso.png" width="260" alt="전면 보드 비스듬한 앞면 3D 렌더"></a><br><sub>비스듬한 앞면 — 렌즈 홀더·IR LED</sub></td>
+<td align="center" width="33%"><a href="docs/renders/p005/front-iso-back.png"><img src="docs/renders/p005/front-iso-back.png" width="260" alt="전면 보드 비스듬한 뒷면 3D 렌더"></a><br><sub>비스듬한 뒷면 — BTB·열 패드</sub></td>
+<td align="center" width="33%"><a href="docs/readme/media/front_spin.gif"><img src="docs/readme/media/front_spin.gif" width="260" alt="전면 보드 360도 회전 애니메이션"></a><br><sub>360° 회전</sub></td>
+</tr>
+<tr>
+<td align="center"><a href="docs/renders/p005/front-top.png"><img src="docs/renders/p005/front-top.png" width="260" alt="전면 보드 윗면 3D 렌더"></a><br><sub>윗면</sub></td>
+<td align="center"><a href="docs/renders/p005/front-bottom.png"><img src="docs/renders/p005/front-bottom.png" width="260" alt="전면 보드 아랫면 3D 렌더"></a><br><sub>아랫면</sub></td>
+<td align="center"><sub><b>캐리어 보드</b><br>배선 마무리 중<br>(DRC 0 뒤 3D·회전 그림 추가)</sub></td>
+</tr>
+</table>
+
+### 전면 보드 PCB 층 (4층)
+
+<table>
+<tr>
+<td align="center"><a href="docs/readme/gallery/pcb/front-fcu.png"><img src="docs/readme/gallery/pcb/front-fcu.png" width="260" alt="전면 보드 윗면 구리층 F.Cu"></a><br><sub>F.Cu — 윗면 신호</sub></td>
+<td align="center"><a href="docs/readme/gallery/pcb/front-in1.png"><img src="docs/readme/gallery/pcb/front-in1.png" width="260" alt="전면 보드 내부 1층 In1.Cu"></a><br><sub>In1.Cu — GND 기준면</sub></td>
+<td align="center"><a href="docs/readme/gallery/pcb/front-in2.png"><img src="docs/readme/gallery/pcb/front-in2.png" width="260" alt="전면 보드 내부 2층 In2.Cu"></a><br><sub>In2.Cu — GND · 전원</sub></td>
+</tr>
+<tr>
+<td align="center"><a href="docs/readme/gallery/pcb/front-bcu.png"><img src="docs/readme/gallery/pcb/front-bcu.png" width="260" alt="전면 보드 아랫면 구리층 B.Cu"></a><br><sub>B.Cu — 아랫면 신호</sub></td>
+<td align="center"><a href="docs/readme/gallery/pcb/front-silk.png"><img src="docs/readme/gallery/pcb/front-silk.png" width="260" alt="전면 보드 실크 인쇄층"></a><br><sub>실크</sub></td>
+<td align="center"><sub>규칙: 트랙/간격 0.15/0.16 mm 이상<br>고속 차동 100 Ω · USB 90 Ω<br>(<a href="docs/decisions/D-003-working-defaults.md">D-003</a> #21)</sub></td>
+</tr>
+</table>
+
+### 회로도
+
+<table>
+<tr>
+<td align="center" width="50%"><a href="docs/readme/gallery/sch/front-sch.svg"><img src="docs/readme/gallery/sch/front-sch.png" width="400" alt="전면 보드 회로도 첫 장 미리보기"></a><br><sub>전면 보드 — 누르면 원본 SVG</sub></td>
+<td align="center" width="50%"><a href="docs/readme/gallery/sch/carrier-sch.svg"><img src="docs/readme/gallery/sch/carrier-sch.png" width="400" alt="캐리어 보드 회로도 첫 장 미리보기"></a><br><sub>캐리어 보드 — 누르면 원본 SVG</sub></td>
+</tr>
+</table>
+
+### 회로 시뮬레이션 파형
+
+캐리어 전원 계열 **15/15**(SIM-A·B·C·D), 전면 보드 **10/10**(SIM-L) 통과 — [`hardware/sim/results/`](hardware/sim/results)
+
+<table>
+<tr>
+<td align="center" width="50%"><a href="hardware/sim/png/SIM-D1-sequence.png"><img src="hardware/sim/png/SIM-D1-sequence.png" width="400" alt="전원 순서 전체 기동 파형: 12 V에서 5 V, 코어 레일, 전면 2.8 V까지"></a><br><sub>SIM-D1 전원 순서 전체 기동 (12 V → 5 V → 코어 → 전면 2.8 V)</sub></td>
+<td align="center" width="50%"><a href="hardware/sim/png/SIM-B4-startup.png"><img src="hardware/sim/png/SIM-B4-startup.png" width="400" alt="5 V 강압 기동 파형, 소프트 스타트 5 ms"></a><br><sub>SIM-B4 5 V 강압 기동 (소프트 스타트 5 ms)</sub></td>
+</tr>
+<tr>
+<td align="center"><a href="hardware/sim/png/SIM-L1-al8860.png"><img src="hardware/sim/png/SIM-L1-al8860.png" width="400" alt="IR LED 한 줄의 전류와 리플 파형"></a><br><sub>SIM-L1 IR LED 한 줄 전류 · 리플 · 주파수</sub></td>
+<td align="center"><a href="hardware/sim/png/SIM-L10-cam-on.png"><img src="hardware/sim/png/SIM-L10-cam-on.png" width="400" alt="카메라 전원 켜는 순서 파형: IOVDD 다음 AVDD가 50 µs 이상 늦게"></a><br><sub>SIM-L10 카메라 전원 켜는 순서 (IOVDD → AVDD ≥ 50 µs)</sub></td>
+</tr>
+</table>
+
+### 케이스 — 1차 초안 (최종 아님)
+
+> 최종 보드가 확정되면 그 STEP으로 다시 맞춘다. 아래는 중간 보드 기준 초안이다.
+
+<table>
+<tr>
+<td align="center" width="33%"><a href="mechanical/m003/render/m003_front_iso.png"><img src="docs/readme/gallery/mech/case-front-iso.png" width="260" alt="케이스 1차 초안 앞쪽 비스듬한 모습"></a><br><sub>앞쪽 — 1차 초안</sub></td>
+<td align="center" width="33%"><a href="mechanical/m003/render/m003_exploded.png"><img src="docs/readme/gallery/mech/case-exploded.png" width="260" alt="케이스 1차 초안 분해도"></a><br><sub>분해도 — 1차 초안</sub></td>
+<td align="center" width="33%"><a href="mechanical/m003/render/m003_section_x0.png"><img src="docs/readme/gallery/mech/case-section.png" width="260" alt="케이스 1차 초안 단면"></a><br><sub>단면 — 1차 초안</sub></td>
+</tr>
+</table>
+
+## 기술 스택
+
+| 분야 | 도구 · 구성 | 근거 |
+|---|---|---|
+| 회로도 · PCB | KiCad 10 (`kicad-cli`로 ERC · DRC · STEP · 렌더 · 그림 내보내기) | [`hardware/schematic/`](hardware/schematic) |
+| 회로 시뮬레이션 | ngspice-47, 넷리스트와 판정 스크립트 | [`hardware/sim/README.md`](hardware/sim/README.md) |
+| PCB 규칙 | 4층 1.6 mm, 넷클래스 + 사용자 DRC 규칙 | [`hardware/pcb/rules/`](hardware/pcb/rules) |
+| 기구 | STEP 기반 3D 조립 판정 스크립트, 케이스 매개변수 설계 | [`mechanical/`](mechanical) |
+| 펌웨어 | Buildroot Linux (벤더 커널 5.10.4), 사람 감지·주야 전환 앱 | [`firmware/`](firmware) |
+| AI 모델 | YOLOX-Nano → NPU용 BF16 모델 변환 | [D-003](docs/decisions/D-003-working-defaults.md) #19 |
+| 검사 자동화 | Python 스크립트 — 종료 코드 = 불합격 수 | [검증 방법](#사용법) |
 
 ## 사양
 
@@ -67,25 +158,12 @@
 | 저장 | 이벤트 전송 기본 + microSD 슬롯 |
 | 운영체제 | Linux (벤더 커널 5.10) |
 | 감지 | 사람 감지 — YOLOX-Nano, NPU용 BF16 모델 |
+| 렌즈 | M12 고정초점, 수평 화각 약 90° |
 | BTB 결합 높이 | 8.0 mm |
 
 출처: [D-003 작업 기본값](docs/decisions/D-003-working-defaults.md) #1 #4 #5 #7 #8 #10 #11 #15 #17 #19 #21 #25 #44 · 보드 파일 [`carrier.kicad_pcb`](hardware/schematic/carrier/carrier.kicad_pcb) · [`front.kicad_pcb`](hardware/schematic/front/front.kicad_pcb)(부품 값·풋프린트 수·층 수) · [`params.md`](mechanical/m003/params.md)(btb_h 8.0)
 
-## 진행 현황
-
-2026-11-27 기준이다. 표시는 저장소의 결과 파일 값을 따른다.
-
-- [x] 제품 기획과 작업 기본값 — [`product-brief.md`](docs/planning/product-brief.md), [`D-003`](docs/decisions/D-003-working-defaults.md)
-- [x] 회로도 2장 ERC 위반 0 — [`carrier-erc.json`](hardware/schematic/carrier/carrier-erc.json) · [`front-erc.json`](hardware/schematic/front/front-erc.json)
-- [x] 회로 시뮬레이션 25/25 통과 (ngspice-47) — [`hardware/sim/results/`](hardware/sim/results)
-- [x] 전면 보드 DRC 위반 0 · 미연결 0 · 회로도 일치 0 — [`front-drc.json`](hardware/pcb/drc/front-drc.json)
-- [ ] 캐리어 보드 배선 마무리 — 현재 DRC 위반 7 · 미연결 35 — [`carrier-drc.json`](hardware/pcb/drc/carrier-drc.json)
-- [x] 3D 모델 빠짐 0 · 조립 판정 실패 0 (중간 보드 기준, 최종 보드로 다시 판정 예정) — [`judge.md`](mechanical/m007/judge.md)
-- [ ] 케이스 — 1차 설계 [`m003-enclosure.md`](mechanical/m003/m003-enclosure.md), 최종 보드 기준 확정 대기
-- [ ] 최종 렌더
-- [ ] 실물 제작과 bring-up (가상 설계가 끝난 뒤)
-
-## 저장소 지도
+## 저장소 구조
 
 | 폴더 | 내용 |
 |---|---|
@@ -96,11 +174,13 @@
 | [`hardware/datasheets/`](hardware/datasheets) | 공개 라이선스 데이터시트·참고 설계 원본과 [목록](hardware/datasheets/INDEX.md) |
 | [`firmware/`](firmware) | Linux 이미지 패치·앱(사람 감지, 주야 전환)·모델 |
 | [`mechanical/`](mechanical) | 적층 기준 모델·조립 판정·케이스 설계 |
-| [`docs/`](docs) | 기획(`planning/`), 결정(`decisions/`), 조사(`research/`), 검토(`review/`), 이 README의 그림(`readme/`) |
+| [`docs/`](docs) | 기획(`planning/`), 결정(`decisions/`), 조사(`research/`), 검토(`review/`), 렌더(`renders/`), 이 README의 그림(`readme/`) |
 | [`manufacturing/`](manufacturing) | 부품표(BOM) 정리 |
 | [`validation/`](validation) | 독립 검토 기록 |
 
 그 밖의 점(.)으로 시작하는 폴더와 자동화 폴더는 작업 환경 설정이며 설계 내용이 아니다.
+
+## 사용법
 
 ### KiCad로 열기
 
@@ -108,7 +188,7 @@
 2. `hardware/schematic/front/front.kicad_pro` 또는 `hardware/schematic/carrier/carrier.kicad_pro`를 연다.
 3. 프로젝트 라이브러리는 각 프로젝트의 `fp-lib-table`·`sym-lib-table`이 저장소 안 경로로 잡는다.
 
-## 검증 방법
+### 검증 방법
 
 모든 판정은 도구의 종료 코드와 결과 파일로 한다. 그림이나 의견으로 통과를 정하지 않는다.
 
@@ -118,15 +198,23 @@
 | DRC | `kicad-cli pcb drc --format json --severity-all --schematic-parity --exit-code-violations -o hardware/pcb/drc/front-drc.json hardware/schematic/front/front.kicad_pcb` | `hardware/pcb/drc/*-drc.json` |
 | 회로 시뮬레이션 | [`hardware/sim/README.md`](hardware/sim/README.md)의 실행 방법 (종료 코드 = fail + error 수) | `hardware/sim/results/SIM-*.json` |
 | 3D 조립 판정 | `python -I -B mechanical/m007/run_all.py` (종료 코드 = 불합격 수) | [`mechanical/m007/judge.md`](mechanical/m007/judge.md) |
+| README 그림 | `python -I docs/readme/tools/make_svgs.py` 후 `python -I docs/readme/tools/check_readme.py` (종료 코드 = 실패 수) | `docs/readme/*.svg` |
 
 캐리어는 위 명령의 `front`를 `carrier`로 바꾼다. ERC·DRC는 위반이 있으면 종료 코드가 0이 아니다.
 
-## 결정 기록
+## 문서
 
-설계 중 갈림길마다 「분기점 · 선택 · 이유 · 차선책」을 남겼다.
-
-- [D-003 작업 기본값](docs/decisions/D-003-working-defaults.md) — 센서·전원·적층·규칙 등 50여 개 결정
-- [D-001 SoC 선택](docs/decisions/D-001-soc.md) · [D-002 모듈 + 캐리어 구조](docs/decisions/D-002-module-carrier.md) · [HW/FW 인터페이스](docs/decisions/hw-fw-interface.md)
+| 문서 | 내용 |
+|---|---|
+| [제품 기획](docs/planning/product-brief.md) | 용도·형태·미정 항목 |
+| [D-003 작업 기본값](docs/decisions/D-003-working-defaults.md) | 설계 갈림길마다 「분기점 · 선택 · 이유 · 차선책」 50여 개 |
+| [D-001 SoC 선택](docs/decisions/D-001-soc.md) · [D-002 모듈 + 캐리어 구조](docs/decisions/D-002-module-carrier.md) | 구조 결정 |
+| [HW/FW 인터페이스](docs/decisions/hw-fw-interface.md) | 핀·버스·전원 계약 |
+| [PCB 배치 계획](hardware/pcb/layout-plan.md) | 보드 배치·적층 기준 |
+| [시뮬레이션](hardware/sim/README.md) | 시뮬레이션 실행 방법과 결과 |
+| [3D 조립 판정](mechanical/m007/m007-assembly.md) · [케이스 설계](mechanical/m003/m003-enclosure.md) | 기구 판정과 케이스 1차 초안 |
+| [PCB 독립 검토](docs/review/v005-pcb-review.md) | 규칙·완화 검토 |
+| [데이터시트 목록](hardware/datasheets/INDEX.md) | 출처·리비전·sha256 |
 
 ## 라이선스 · 제3자 고지
 
@@ -142,3 +230,5 @@
 | 사람 감지 모델 YOLOX-Nano | Apache 2.0 | [D-003](docs/decisions/D-003-working-defaults.md) #19 |
 
 라이선스가 표기되지 않았거나 배포가 제한된 데이터시트는 저장소에 넣지 않았고, 링크와 sha256만 [INDEX.md](hardware/datasheets/INDEX.md)에 남겼다.
+
+<div align="center"><sub>그림은 움직이는 SVG다. 운영체제에서 「동작 줄이기」를 켜면 멈춘 그림으로 보이고, 밝은·어두운 테마를 따른다.</sub></div>

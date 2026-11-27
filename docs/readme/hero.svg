@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 300" width="100%" role="img" aria-labelledby="t d">
+<!-- 생성: docs/readme/tools/make_svgs.py · 수치 기준 main 1898e1f -->
+<!-- 출처 흐름: docs/planning/product-brief.md (카메라 입력 → NPU 감지 → 네트워크 이벤트) -->
+<!-- 출처 센서·IR: docs/decisions/D-003-working-defaults.md #5 #6 -->
+<!-- 출처 감지: D-003 #3 #19 -->
+<!-- 출처 캐리어: D-003 #8 #11 -->
+<title id="t">OpenHW 엣지 AI 카메라 흐름</title><desc id="d">피사체에서 렌즈와 센서, SG2002 NPU, 캐리어 보드를 거쳐 사람 감지 결과가 나가는 흐름 애니메이션</desc>
+<style>
+:root{--bg:#ffffff;--card:#f6f8fa;--fg:#1f2328;--mut:#59636e;--ln:#d0d7de;--pcb:#1a7f37;--pcb2:#2da44e;--pcbs:#116329;
+--core:#0969da;--cores:#0550ae;--pw:#bf8700;--dat:#0969da;--ctl:#8250df;--ir:#cf222e;--ok:#1a7f37;--wip:#bf8700;--todo:#8c959f;--metal:#57606a}
+@media (prefers-color-scheme:dark){:root{--bg:#0d1117;--card:#161b22;--fg:#e6edf3;--mut:#9198a1;--ln:#3d444d;--pcb:#2ea043;--pcb2:#3fb950;--pcbs:#1a7f37;
+--core:#4493f8;--cores:#1f6feb;--pw:#d29922;--dat:#4493f8;--ctl:#ab7df8;--ir:#f85149;--ok:#3fb950;--wip:#d29922;--todo:#6e7681;--metal:#8b949e}}
+text{font-family:system-ui,-apple-system,"Segoe UI","Noto Sans KR","Apple SD Gothic Neo",sans-serif;fill:var(--fg)}
+.t{font-size:22px;font-weight:700}.s{font-size:13px;fill:var(--mut)}.l{font-size:14px;font-weight:600}.m{font-size:12px;fill:var(--mut)}
+.bg{fill:var(--bg);stroke:var(--ln)}
+.ray{stroke:var(--wip);stroke-width:2;stroke-dasharray:4 8;animation:f 1.2s linear infinite}
+.sig{fill:none;stroke:var(--dat);stroke-width:3;stroke-dasharray:10 10;animation:f 1s linear infinite}
+@keyframes f{to{stroke-dashoffset:-24}}
+.card{fill:var(--card);stroke:var(--ln)}.pcb{fill:var(--pcb2)}.chip{fill:var(--core)}
+.glow{fill:none;stroke:var(--core);stroke-width:3;transform-box:fill-box;transform-origin:center;animation:gw 2s ease-out infinite}
+@keyframes gw{0%{transform:scale(1);opacity:.8}100%{transform:scale(1.35);opacity:0}}
+.box{fill:none;stroke:var(--ok);stroke-width:2.5;stroke-dasharray:180;animation:bx 3s ease-in-out infinite}
+@keyframes bx{0%{stroke-dashoffset:180}35%,85%{stroke-dashoffset:0}100%{stroke-dashoffset:180}}
+.tag{fill:var(--ok)}.tagt{fill:#fff;font-size:11px;font-weight:700}
+.st{font-size:15px;font-weight:700}.sm{font-size:12px;fill:var(--mut)}
+@media (prefers-reduced-motion:reduce){*{animation:none!important}}
+</style>
+<rect class="bg" x="0.5" y="0.5" width="879" height="299" rx="14"/>
+<text class="t" x="28" y="44">보고 → 판단하고 → 알린다</text><text class="s" x="28" y="64">카메라 영상을 보드 안의 NPU가 바로 분석해 사람 감지 이벤트를 보낸다</text><circle cx="70" cy="118" r="11" fill="var(--mut)"/><path d="M46,172 q24,-30 48,0 z" fill="var(--mut)"/><line class="ray" x1="98" y1="104" x2="196" y2="128"/><line class="ray" x1="98" y1="126" x2="196" y2="133"/><line class="ray" x1="98" y1="148" x2="196" y2="139"/><line class="ray" x1="98" y1="170" x2="196" y2="144"/><rect class="card" x="196" y="78" width="130" height="118" rx="12"/><rect class="pcb" x="214" y="96" width="94" height="66" rx="6"/><circle cx="261" cy="129" r="22" fill="var(--metal)"/><circle cx="261" cy="129" r="13" fill="var(--fg)" opacity=".85"/><circle cx="256" cy="124" r="3" fill="var(--bg)" opacity=".8"/><rect x="220" y="102" width="9" height="6" rx="1.5" fill="var(--ir)"/><rect x="293" y="102" width="9" height="6" rx="1.5" fill="var(--ir)"/><rect x="220" y="150" width="9" height="6" rx="1.5" fill="var(--ir)"/><rect x="293" y="150" width="9" height="6" rx="1.5" fill="var(--ir)"/><rect class="card" x="380" y="78" width="130" height="118" rx="12"/><rect class="glow" x="414" y="96" width="62" height="62" rx="8"/><rect class="chip" x="414" y="96" width="62" height="62" rx="8"/><text x="445" y="124" text-anchor="middle" style="fill:#fff;font-size:12px;font-weight:700">SG2002</text><text x="445" y="142" text-anchor="middle" style="fill:#fff;font-size:11px">NPU</text><rect class="card" x="564" y="78" width="130" height="118" rx="12"/><rect class="pcb" x="582" y="96" width="94" height="66" rx="6"/><rect x="590" y="104" width="24" height="18" rx="2" fill="var(--metal)"/><rect x="622" y="104" width="16" height="10" rx="2" fill="var(--metal)"/><rect x="646" y="104" width="22" height="12" rx="2" fill="var(--metal)"/><rect x="590" y="136" width="14" height="18" rx="2" fill="var(--metal)"/><rect class="card" x="742" y="78" width="118" height="118" rx="12"/><rect x="756" y="92" width="90" height="70" rx="6" fill="var(--bg)" stroke="var(--ln)"/><circle cx="801" cy="116" r="7" fill="var(--mut)"/><path d="M789,156 q12,-30 24,0 z" fill="var(--mut)"/><rect class="box" x="784" y="104" width="34" height="54" rx="3"/><rect class="tag" x="784" y="94" width="40" height="13" rx="3"/><text class="tagt" x="788" y="104">사람</text><path class="sig" d="M326,137 H380"/><path class="sig" d="M510,137 H564"/><path class="sig" d="M694,137 H742"/><text class="st" x="70" y="224" text-anchor="middle">피사체</text><text class="sm" x="70" y="244" text-anchor="middle">가시광 · 850 nm IR</text><text class="st" x="261" y="224" text-anchor="middle">렌즈 · 센서</text><text class="sm" x="261" y="244" text-anchor="middle">전면 보드 · GC2053</text><text class="st" x="445" y="224" text-anchor="middle">AI 추론</text><text class="sm" x="445" y="244" text-anchor="middle">SG2002 코어 · NPU</text><text class="st" x="629" y="224" text-anchor="middle">캐리어</text><text class="sm" x="629" y="244" text-anchor="middle">이더넷 · USB · microSD</text><text class="st" x="801" y="224" text-anchor="middle">결과</text><text class="sm" x="801" y="244" text-anchor="middle">감지 이벤트 전송</text><text class="sm" x="852" y="284" text-anchor="end">가상 설계 단계 · 2026-11-27</text>
+</svg>
