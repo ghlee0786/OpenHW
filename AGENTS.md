@@ -40,7 +40,7 @@
 <!-- harness:end -->
 
 ## OpenHW 프로젝트 운영
-README.md를 먼저 읽는다. 현재는 제품 미정인 소량 완전기능 PoC. 역할별 지침은 orchestration/roles. 사용자 설정만 수행하고 독자 제품설계/제조발주 금지. 공유 CAD는 단일 작성자. 구현/편집 전에 Pilot 레인을 만든다. 제조 주문/구매/외부 업로드는 별도 명시 지시 필요. 모든 응답 한국어.
+orchestration/OPERATIONS.md(운영 규칙, 옛 README 본문)를 먼저 읽는다. README.md는 공개 소개 페이지다. 현재는 제품 미정인 소량 완전기능 PoC. 역할별 지침은 orchestration/roles. 사용자 설정만 수행하고 독자 제품설계/제조발주 금지. 공유 CAD는 단일 작성자. 구현/편집 전에 Pilot 레인을 만든다. 제조 주문/구매/외부 업로드는 별도 명시 지시 필요. 모든 응답 한국어.
 ```yaml
 reply_language: Korean
 bug_report: off
