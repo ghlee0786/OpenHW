@@ -3,8 +3,8 @@
 입력 풋프린트: validation/runtime/vd001/ren002/pcbsrc/hardware/libraries/openhw.pretty (audit_models.py 가 pcb 커밋에서 꺼냄)."""
 import adsk.core, adsk.fusion, re, os
 
-LANE = r"C:\workspace_python\OpenHW"   # 소스 체크아웃 — mechanical/fusion_run.py 가 실행하는 스크립트의 체크아웃으로 바꿈
-MAIN = r"C:\workspace_python\OpenHW"   # 산출물(validation/runtime) — main 체크아웃 (O-100)
+LANE = None   # 소스 체크아웃 — mechanical/fusion_run.py 가 이 스크립트의 체크아웃 경로로 채움
+MAIN = None   # main 체크아웃 — mechanical/fusion_run.py 가 채움 (산출물 validation/runtime, O-100)
 SRC = MAIN + r"\validation\runtime\vd001\ren002\pcbsrc"
 
 

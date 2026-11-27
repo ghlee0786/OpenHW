@@ -1,7 +1,7 @@
 """M-010 00 (Fusion): openhw/doc 속성이 DOC 인 문서 중 마지막 것을 활성으로. mechanical/fusion_run.py --set DOC=M007_assembly"""
 import adsk.core, adsk.fusion
 
-LANE = r"C:\workspace_python\OpenHW"   # fusion_run.py 규약 (이 스크립트는 쓰지 않음)
+LANE = None   # 소스 체크아웃 — mechanical/fusion_run.py 가 이 스크립트의 체크아웃 경로로 채움
 DOC = r"M007_assembly"
 
 

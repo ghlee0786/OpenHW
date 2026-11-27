@@ -2,8 +2,8 @@
 맞닿는 면은 빼고(areCoincidentFacesIncluded=False) 부피가 있는 겹침만 센다. 결과를 m003/interference.txt 로 쓴다."""
 import adsk.core, adsk.fusion
 
-LANE = r"C:\workspace_python\OpenHW"   # 소스 체크아웃 — mechanical/fusion_run.py 가 실행하는 스크립트의 체크아웃으로 바꿈
-MAIN = r"C:\workspace_python\OpenHW"   # 산출물(validation/runtime) — main 체크아웃 (O-100)
+LANE = None   # 소스 체크아웃 — mechanical/fusion_run.py 가 이 스크립트의 체크아웃 경로로 채움
+MAIN = None   # main 체크아웃 — mechanical/fusion_run.py 가 채움 (산출물 validation/runtime, O-100)
 BASE = LANE + r"\mechanical\m003"
 TXT = BASE + r"\interference.txt"   # M-010 run_case.py 는 --set TXT=<main>\validation\runtime\vd001\case\interference.txt
 # 기준 중 이번 외함으로 대체된 것 (같은 자리 중복 또는 M-003에서 바뀐 것)

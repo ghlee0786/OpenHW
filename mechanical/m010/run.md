@@ -22,7 +22,7 @@
 | 턴테이블 .blend | 0 | 아니오 | 14.1 |
 | 턴테이블 렌더·MP4 | 0 | 아니오 | 113.7 |
 | 렌더 판정 (judge.py) | 0 | 아니오 | 4.5 |
-| 대표본 복사 → C:/Users/gh/AppData/Local/Temp/claude/152719db0d1b2c74/decb4398-40a5-4677-aeb1-556f1d7e2c56/scratchpad/m010/docs_renders | 0 | 아니오 | 0 |
+| 대표본 복사 → (저장소 밖 작업 폴더, 사전 1회라 커밋 안 함) | 0 | 아니오 | 0 |
 
 ## 조건 5 불합격 항목
 

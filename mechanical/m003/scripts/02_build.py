@@ -3,8 +3,8 @@
 활성 문서에 openhw/doc = M003_enclosure 속성이 있어야 한다 (01_new_doc_import.py 가 만든 문서)."""
 import adsk.core, adsk.fusion, math
 
-LANE = r"C:\workspace_python\OpenHW"   # 소스 체크아웃 — mechanical/fusion_run.py 가 실행하는 스크립트의 체크아웃으로 바꿈
-MAIN = r"C:\workspace_python\OpenHW"   # 산출물(validation/runtime) — main 체크아웃 (O-100)
+LANE = None   # 소스 체크아웃 — mechanical/fusion_run.py 가 이 스크립트의 체크아웃 경로로 채움
+MAIN = None   # main 체크아웃 — mechanical/fusion_run.py 가 채움 (산출물 validation/runtime, O-100)
 BASE = LANE + r"\mechanical\m003"
 COLORS = {  # 부품 → (R,G,B,불투명도)
     'HOUSING': (30, 30, 30, 255), 'FRONT_COVER': (45, 45, 45, 255), 'HS_EXTRUSION': (40, 40, 45, 255), 'HS_PEDESTAL': (150, 150, 155, 255),

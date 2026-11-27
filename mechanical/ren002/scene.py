@@ -4,7 +4,7 @@
   stills : Cycles OptiX → render/blender/stills/ren002_<view>.png  (dims 는 _raw.png + dims.json, 04_dims_overlay.py 가 치수선을 그림)
   blend  : 턴테이블(8 s, 200프레임 @25) .blend → render/blender/turntable.blend
 좌표: 제품 +Y 위 · +Z 앞(광축). 서 있는 자세 = PRODUCT X 90° (제품 +Y → 월드 +Z), 누운 자세 = X 0° (뒷면이 바닥, 렌즈가 위, 커넥터 면 −Y 가 카메라 쪽)."""
-import bpy, math, os, re, sys, json
+import bpy, math, os, re, sys, json, subprocess
 from mathutils import Vector
 from bpy_extras.object_utils import world_to_camera_view
 
@@ -13,7 +13,7 @@ def arg(k, d=None):
     return argv[argv.index(k) + 1] if k in argv else d
 MODE = arg('--mode', 'stills')
 LANE = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
-MAIN = r'C:\workspace_python\OpenHW'   # 산출물 validation/runtime 은 main 체크아웃 (O-100 — 레인 worktree 안은 accept 때 지워짐)
+MAIN = os.path.abspath(os.environ.get('OPENHW_MAIN') or os.path.dirname(subprocess.run(['git', '-C', os.path.dirname(os.path.abspath(__file__)), 'rev-parse', '--path-format=absolute', '--git-common-dir'], capture_output=True, text=True).stdout.strip()))   # main 체크아웃 — 산출물 validation/runtime (O-100)
 R = os.path.join(MAIN, 'validation', 'runtime', 'vd001', 'render')
 MESH = os.path.join(R, 'mesh')
 RES = [int(v) for v in arg('--res', '2560x1440').split('x')]

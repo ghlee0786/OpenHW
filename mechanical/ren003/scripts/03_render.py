@@ -6,8 +6,8 @@
 실행: python -I -B mechanical/fusion_run.py mechanical/ren003/scripts/03_render.py"""
 import adsk.core, adsk.fusion, os, time
 
-LANE = r"C:\workspace_python\OpenHW"   # 소스 체크아웃 — mechanical/fusion_run.py 가 바꿈
-MAIN = r"C:\workspace_python\OpenHW"   # 산출물 (O-100)
+LANE = None   # 소스 체크아웃 — mechanical/fusion_run.py 가 이 스크립트의 체크아웃 경로로 채움
+MAIN = None   # main 체크아웃 — mechanical/fusion_run.py 가 채움 (산출물 validation/runtime, O-100)
 OUT = MAIN + r"\validation\runtime\vd001\render\fusion"
 W, H = 2560, 1440
 HIDE = ('ENC_BLOCKS', 'BLK_J4_CARD', 'PRINT_COUPON', 'KEEPIN', 'ENVELOPE', 'HARNESS_CORRIDOR', 'DF30_SITE', 'J_ICR', 'REF_CARRIER', 'REF_FRONT',

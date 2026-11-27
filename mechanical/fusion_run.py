@@ -1,8 +1,8 @@
 """Fusion 스크립트 실행기 (M-010). Fusion 안에서는 __file__ 이 없어 스크립트가 자기 저장소 위치를 모른다 →
 스크립트의 `LANE = r"..."` 줄을 그 스크립트가 든 체크아웃(레인 worktree 또는 main) 경로로 바꾼 사본을 fusion_cli 로 돌린다.
   python -I -B mechanical/fusion_run.py <스크립트.py> [--set 이름=값 ...] [--readonly]
-- 스크립트 안의 기본값 LANE = main 체크아웃 (fusion_cli 로 직접 돌려도 main 기준으로 동작)
-- 산출물(validation/runtime)은 스크립트의 MAIN(main 체크아웃) 아래 — O-100 (레인 worktree 안은 accept 때 지워짐)
+- 스크립트 안의 LANE · MAIN 은 None — 이 실행기로만 돌린다 (공개 저장소에 로컬 경로를 적지 않음)
+- MAIN = main 체크아웃 (git rev-parse --git-common-dir, 환경 변수 OPENHW_MAIN 이 있으면 그것) — 산출물 validation/runtime (O-100)
 - --set: `이름 = ...` 로 시작하는 줄을 `이름 = r"값"` 으로 바꿈 (예: --set OUT=C:\\...\\case)
 종료 코드 = fusion_cli 종료 코드."""
 import argparse, os, re, subprocess, sys, tempfile
@@ -27,7 +27,9 @@ def main():
     ap.add_argument('--readonly', action='store_true')
     a = ap.parse_args()
     src = open(a.script, encoding='utf-8').read()
-    subs = [('LANE', checkout_of(a.script))] + [tuple(s.split('=', 1)) for s in a.set]
+    main_ = os.path.abspath(os.environ.get('OPENHW_MAIN') or os.path.dirname(subprocess.run(['git', '-C', os.path.dirname(os.path.abspath(a.script)), 'rev-parse',
+                                                                             '--path-format=absolute', '--git-common-dir'], capture_output=True, text=True).stdout.strip()))
+    subs = [('LANE', checkout_of(a.script))] + ([('MAIN', main_)] if re.search(r'(?m)^MAIN = ', src) else []) + [tuple(s.split('=', 1)) for s in a.set]
     for name, val in subs:
         src, n = re.subn(r'(?m)^%s = .*$' % re.escape(name), lambda m: '%s = r"%s"' % (name, val), src, count=1)
         if not n:

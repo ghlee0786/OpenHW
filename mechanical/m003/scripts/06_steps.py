@@ -2,8 +2,8 @@
 끝나면 보이기 상태를 되돌린다."""
 import adsk.core, adsk.fusion, os
 
-LANE = r"C:\workspace_python\OpenHW"   # 소스 체크아웃 — mechanical/fusion_run.py 가 실행하는 스크립트의 체크아웃으로 바꿈
-MAIN = r"C:\workspace_python\OpenHW"   # 산출물(validation/runtime) — main 체크아웃 (O-100)
+LANE = None   # 소스 체크아웃 — mechanical/fusion_run.py 가 이 스크립트의 체크아웃 경로로 채움
+MAIN = None   # main 체크아웃 — mechanical/fusion_run.py 가 채움 (산출물 validation/runtime, O-100)
 OUT = LANE + r"\mechanical\m003\render\steps"
 HOUSE = ['HOUSING', 'HS_EXTRUSION', 'HS_PEDESTAL', 'HW_M25_NUTS']
 CORE = ['REF_CARRIER', 'HW_STANDOFFS', 'CORE_ENVELOPE', 'J1_MATED', 'J2_MATED']

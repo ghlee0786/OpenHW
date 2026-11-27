@@ -6,8 +6,8 @@
 을 놓고 조립 STEP 을 validation/runtime/vd001/m007_assembly.step 으로 내보낸다. Seeed 형상은 넣지 않는다(코어는 우리 외형 덩어리)."""
 import adsk.core, adsk.fusion, math, os, hashlib
 
-LANE = r"C:\workspace_python\OpenHW"   # 소스 체크아웃 — mechanical/fusion_run.py 가 실행하는 스크립트의 체크아웃으로 바꿈
-MAIN = r"C:\workspace_python\OpenHW"   # 산출물(validation/runtime) — main 체크아웃 (O-100)
+LANE = None   # 소스 체크아웃 — mechanical/fusion_run.py 가 이 스크립트의 체크아웃 경로로 채움
+MAIN = None   # main 체크아웃 — mechanical/fusion_run.py 가 채움 (산출물 validation/runtime, O-100)
 OUT = MAIN + r"\validation\runtime\vd001"
 
 
