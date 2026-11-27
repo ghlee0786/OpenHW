@@ -21,3 +21,12 @@
 (rule "mdi_tx_uncoupled"
   (condition "(A.NetName == '/EPHY_TXP' || A.NetName == '/EPHY_TXN') && !A.enclosedByArea('DP_TWIST')")
   (constraint diff_pair_uncoupled (max 7mm)))
+
+# O-121 (lead, D-003 #64) (A): SD ESD 어레이 U4 · U5(USON-10, 0.5 피치) 아래 탈출 비아만 0.50/0.20 — 규칙 영역 SD_ESC 안에 다 든 비아에만.
+#  근거: 윗줄은 USB 쌍(0.35 위)과 J4 뒷면 금지 띠(y 89.86~91.46)라 비아 불가, 아랫줄은 0.5 피치 패드 4개(신호 3 + GND)에 0.65 비아(피치 0.81)가
+#  한 줄에 안 들어감 → J1_ESC 와 같은 두 줄 엇갈림(0.66). 제조 수치는 #60 과 같음(드릴 0.20 · 링 0.15 · 구멍 간격은 공통 0.45 그대로 · 텐팅).
+(rule "sd_esc_via"
+  (condition "A.Type == 'Via' && A.enclosedByArea('SD_ESC')")
+  (constraint via_diameter (min 0.50mm))
+  (constraint hole_size (min 0.20mm))
+  (constraint annular_width (min 0.15mm)))
