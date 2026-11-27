@@ -11,6 +11,7 @@
     보드: GLB 재질 원값 + 모델 이름 + 참조 번호 → body_key(). 'keep'(못 가른 색)은 빠짐.
 - 메시: 겹친 꼭짓점 합침 → 30° 넘는 모서리만 날카롭게 → 베벨(--bevel mm, 3단) → Weighted Normal.
 - 조명: HDRI(--hdri, CC0) 월드 + KEY · RIM 면광. 무한 배경(바닥이 곡면으로 벽이 됨) 위에 제품을 세운다.
+    스모크 앞유리가 있으면 거울 반사 방향에 띠 조명(GLASS_STRIP, 반사에만 잡힘)과 유리 안쪽 보조광 2개를 더한다.
 - 카메라: 85~100 mm, 피사계 심도(--fstop), 3분할 구도(hero · inuse 는 주제를 3분할선에). 색 관리 AgX, 노출 --exposure.
 - 컷: hero(앞 3/4) · front(정면) · rear(뒤 3/4, 포트 · 방열) · exploded(분해) · section(단면) · inuse(벽 브래킷) + 턴테이블(제품만 돈다).
 - 출력: <out>/stills/<컷>.png · <out>/turntable/frame_0001.png …(있는 프레임은 건너뜀) · <out>/scene_report.json
@@ -405,6 +406,22 @@ def area(name, energy, size, color=(1, 1, 1)):
 
 area('KEY', 14 * S * S, 0.35 * S, (1, 0.97, 0.93))
 area('RIM', 10 * S * S, 0.22 * S)
+# 유리 하이라이트용 띠 조명: 앞유리의 거울 반사 방향에 두는 긴 면광. 반사(glossy)에만 잡히고 확산 조명에는 기여하지 않는다 — 유리가 유리로 읽히게.
+STRIP_D = 0.55 * S                                  # 유리에서 띠 조명까지 (m)
+STRIP_W = 2 * STRIP_D * math.tan(math.radians(0.7))  # 유리에서 본 띠 폭 약 1.4° — 유리(지름 약 3~4°) 위에 띠로 걸친다
+STRIP = area('GLASS_STRIP', float(arg('--strip-radiance', '45')) * math.pi * STRIP_W * (0.9 * S) * 4, 0.5 * S)
+STRIP.data.shape = 'RECTANGLE'
+STRIP.data.size = STRIP_W
+STRIP.data.size_y = 0.9 * S
+STRIP.visible_diffuse = False
+STRIP.visible_camera = False
+STRIP.hide_render = True
+if GLASS:       # 유리에만 비친다(빛 연결) — 본체 플라스틱 · 알루미늄의 밝기는 그대로
+    gcol = bpy.data.collections.new('GLASS_ONLY')
+    for o_ in GLASS:
+        gcol.objects.link(o_)
+    STRIP.light_linking.receiver_collection = gcol
+    STRIP.light_linking.blocker_collection = gcol      # 바닥 · 차양에 가리지 않는다(카메라가 내려다보면 거울 방향이 바닥 아래다) — 스튜디오 반사 카드 구실
 
 # ---------------- 카메라 ----------------
 cd = bpy.data.cameras.new('CAM')
@@ -439,6 +456,17 @@ def stage(yaw, el, lens, fit, thirds=0.0, az=0.0, target=None, res=None, focus_b
         o = LIGHTS[name]
         o.location = c + Vector(off) * (r / 0.06)
         o.rotation_euler = (c - o.location).to_track_quat('-Z', 'Y').to_euler()
+    STRIP.hide_render = not GLASS
+    if GLASS:       # 유리 중심에서 카메라 쪽 방향을 유리 법선으로 거울 반사한 곳 + 옆으로 0.5° 비켜서(하이라이트 띠가 유리 한쪽에 걸리게)
+        gl_, gh_ = bounds(GLASS)
+        gc = (gl_ + gh_) / 2
+        nrm = (prod.matrix_world.to_3x3() @ Vector((0, 0, 1))).normalized()
+        v = (cam.location - gc).normalized()
+        rfl = (2 * nrm.dot(v) * nrm - v).normalized()
+        side = rfl.cross(Vector((0, 0, 1))).normalized()
+        dirn = (rfl + side * math.tan(math.radians(0.5))).normalized()
+        STRIP.location = gc + dirn * STRIP_D
+        STRIP.rotation_euler = (gc - STRIP.location).to_track_quat('-Z', 'Y').to_euler()
     return c, r, d
 
 
