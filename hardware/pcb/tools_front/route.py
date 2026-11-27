@@ -271,7 +271,7 @@ class Board:
 
     # --- A* ---
     def astar(self, win, starts, targets, passable, viaok, layers, via_cost=30.0, pair_off=None, start_dir=8, end_dir=None, cap=200_000,
-              no_via_near=None, min_run=0):
+              no_via_near=None, min_run=0, hmap=None):
         """starts/targets: {(L, r, c)} 창 좌표. pair_off: 쌍 비아 간격(셀) — 비아는 진행 방향 직각 양쪽.
         min_run>0 (쌍): 90° 꺾임 금지, 꺾임·비아 앞뒤 최소 직진 min_run 셀 — 띄운 P/N 선이 뒤집히지 않게.
         상태 비용·이전 칸은 numpy 배열(float32/int32)에 둔다 — 파이썬 사전은 상태 수백만에서 메모리가 GB 단위로 커진다(O-48)."""
@@ -285,6 +285,8 @@ class Board:
         tr0, tr1, tc0, tc1 = trs.min(), trs.max(), tcs.min(), tcs.max()
 
         def h(r, c):
+            if hmap is not None:  # P-005: 도착 칸까지 직선 거리 지도(도착이 넓게 퍼져 있으면 bbox 추정은 0 이 된다)
+                return float(hmap[r, c])
             dr = max(tr0 - r, 0, r - tr1)
             dc = max(tc0 - c, 0, c - tc1)
             return max(dr, dc) + 0.414 * min(dr, dc)

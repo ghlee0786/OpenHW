@@ -57,6 +57,10 @@ def main():
         rep = {n: {"tracks": [t for t in tracks if t["net"] == n], "vias": [v for v in vias if v["net"] == n]} for n in sorted(touched)}
         json.dump({"replace": rep}, open(sys.argv[2], "w", encoding="utf-8"), ensure_ascii=False, indent=1)
 
+    def ncomp(B_, net):
+        comp = pr.components(B_, net)
+        return len([i for i in pr.np.unique(comp[comp > 0]) if (comp[[0, 2, 3]] == i).any()])
+
     B = build()
     nets = [n for pat in pats for n in B.netid if pat.fullmatch(n) and n != "/GND"]
     left = []
@@ -66,26 +70,33 @@ def main():
         ok, tr, vi = pr.route_net(B, net, margin, cap, layers, quiet)
         if tr or vi:
             commit(net, tr, vi)
+            save()
         if ok:
             log(f"{net}: 바로 이음 (트랙 {len(tr)} · 비아 {len(vi)})")
-            save()
             continue
+        base_n = ncomp(B, net)
+        base_x = {}
+        log(f"{net}: 덩어리 {base_n} 남음 (바로 이은 트랙 {len(tr)})")
         cands = [n for n, _ in sorted(pr.BLOCKERS.items(), key=lambda kv: -kv[1]) if n.startswith("/") and not LOCK.fullmatch(n) and n != net]
         log(f"{net}: 막힘 — 뜯을 후보 {cands}")
         done = False
         for k in range(1, maxk + 1):
             for combo in itertools.combinations(cands[:6], k):
+                for x in combo:
+                    if x not in base_x:
+                        base_x[x] = ncomp(build(), x)
                 B = build(skip=set(combo))
                 ok1, t1, v1 = pr.route_net(B, net, margin, cap, layers, quiet)
-                if not ok1:
+                n1 = ncomp(B, net)
+                if n1 >= base_n:
                     continue
                 res = []
                 good = True
                 for x in combo:
                     ok2, t2, v2 = pr.route_net(B, x, margin, cap, layers, quiet)
-                    if not ok2:
+                    if not ok2 and ncomp(B, x) > base_x[x]:  # 뜯은 넷이 원래보다 더 끊기면 버림
                         good = False
-                        log(f"   {combo} 뜯음: {net} 이음, {x} 다시 못 깖")
+                        log(f"   {combo} 뜯음: {net} 덩어리 {base_n}→{n1}, {x} 다시 못 깖")
                         break
                     res.append((x, t2, v2))
                 if not good:
@@ -93,10 +104,12 @@ def main():
                 commit(net, t1, v1)
                 for x, t2, v2 in res:
                     commit(x, t2, v2, replace=True)
-                log(f"{net}: {combo} 뜯고 다시 깔아 이음")
+                log(f"{net}: {combo} 뜯고 다시 깔아 덩어리 {base_n}→{n1}")
                 save()
-                done = True
-                break
+                base_n = n1
+                done = n1 <= 1
+                if done:
+                    break
             if done:
                 break
         if not done:

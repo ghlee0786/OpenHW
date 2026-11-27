@@ -191,7 +191,11 @@ def route_net(B, net, margin, cap, layers, log):
                     for k_, v_ in blk.items():
                         BLOCKERS[k_] = BLOCKERS.get(k_, 0) + v_
                 continue
-            path = B.astar(win, starts, targets, passable, viaok, layers, cap=cap)
+            tm2 = np.zeros(viaok.shape, bool)
+            for _, r_, c_ in targets:
+                tm2[r_, c_] = True
+            hmap = ndimage.distance_transform_edt(~tm2).astype(np.float32)
+            path = B.astar(win, starts, targets, passable, viaok, layers, cap=cap, hmap=hmap)
             if path:
                 got = (w, path, win)
                 break

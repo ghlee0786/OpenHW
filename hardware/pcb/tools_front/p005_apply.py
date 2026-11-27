@@ -15,9 +15,11 @@ def main():
     b = pcbnew.LoadBoard(sys.argv[1])
     d = json.load(open(sys.argv[2], encoding="utf-8"))
     nd = nt = nv = 0
-    for name, r in d["replace"].items():
+    jobs = [(name, r, True) for name, r in d.get("replace", {}).items()]
+    jobs += [(r["net"], r, False) for r in d.get("routes", []) if r.get("ok")]  # 더하기만(p005_gnd.py)
+    for name, r, repl in jobs:
         net = b.FindNet(name)
-        for t in [t for t in b.GetTracks() if t.GetNetname() == name]:
+        for t in ([t for t in b.GetTracks() if t.GetNetname() == name] if repl else []):
             b.Delete(t)
             nd += 1
         for t in r["tracks"]:
@@ -39,7 +41,7 @@ def main():
             nv += 1
     pcbnew.ZONE_FILLER(b).Fill(b.Zones())
     b.Save(sys.argv[1])
-    print(f"넷 {len(d['replace'])} · 지움 {nd} · 넣음 트랙 {nt} · 비아 {nv}")
+    print(f"넷 {len(jobs)} · 지움 {nd} · 넣음 트랙 {nt} · 비아 {nv}")
 
 
 if __name__ == "__main__":
