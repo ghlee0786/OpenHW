@@ -5,6 +5,7 @@
 # Writes manufacturing/pcb/<board>/ (gerber + drill, top/bottom pos, pcbway bom, assembly pdf, step, README.md, SHA256SUMS) and manufacturing/pcb/<board>.zip
 # Files only: no upload, no quote, no login.
 param([string[]]$Boards = @("carrier", "front"))
+$Boards = @($Boards | ForEach-Object { $_ -split ',' } | Where-Object { $_ })  # "-File ... -Boards carrier,front" arrives as one string
 $ErrorActionPreference = "Continue"
 $root = (Resolve-Path "$PSScriptRoot\..\..\..").Path
 Set-Location $root
@@ -58,4 +59,11 @@ foreach ($b in $Boards) {
     "zip $b exit=$?"
     "{0}  {1}" -f (Get-FileHash $zip -Algorithm SHA256).Hash.ToLower(), "$b.zip" | Set-Content -Encoding ascii "$out\SHA256SUMS"
 }
+# Size and sha256 of every output file (relative paths only)
+$man = Join-Path $fab "MANIFEST.tsv"
+$rows = Get-ChildItem -Recurse -File $fab | Where-Object { $_.FullName -ne $man } | Sort-Object FullName | ForEach-Object {
+    "{0}`t{1}`t{2}" -f $_.Length, (Get-FileHash $_.FullName -Algorithm SHA256).Hash.ToLower(), ($_.FullName.Substring($fab.Length + 1) -replace '\\', '/')
+}
+@("bytes`tsha256`tpath") + $rows | Set-Content -Encoding ascii $man
+"manifest rows=$($rows.Count)"
 "== end"
