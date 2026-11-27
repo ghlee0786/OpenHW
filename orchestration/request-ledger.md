@@ -286,3 +286,4 @@
 - [x] 병합 main c9ca2a7 (958b M-010), push 완료
 - [ ] (사용자 지시 A) pcb 남은 손 배선은 KiCad GUI를 화면에 켜고 IPC로 실시간 편집
 - [ ] P-004(PCB 완료 후): firmware P-004t 발견 4건 반영 — fab_outputs.ps1 ref-range-delimiter 인용, J3 Hybrid·MH1 Manual 처리(검사기/보드), 검사기 front-bottom 패턴, README 표기 맞춤
+- [x] D-003 #46 DP_BRK·DP_TUNE 값·영역·이유 기록(lead main 8fb7460), 병합 main ad4a55a(caa3 V-006a), push
