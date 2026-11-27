@@ -113,7 +113,7 @@
 | P-005 | lead O-107 → orch | schematic t18z | 전면 보드 배선 마무리(start --from 251f, front.kicad_pcb만, 헤드리스, O-103/105 방식, 11:30 A→C→13:00 D) | hardware/schematic/front/front.kicad_pcb (새 레인) | DRC 0·미연결 0·parity 0, 커밋 | running |
 | R-026 | lead O-107 → orch | research t18s | Freerouting DSN 규칙 누락 원인 수정, main 사본 저속 넷만 Java Freerouting 시험(60분 상한) | 사본·문서 (새 레인) | 위반 증가 0·미연결 감소면 SES 전달 | running |
 | V-006a | lead O-107 → orch | review t191 | WIP 보드로 V-006 사전 감수(배선 무관 항목) | docs/review (새 레인), main validation/runtime/vd001 | 수정 요청 목록 | running |
-| P-004t | lead O-107 → orch | firmware t18w | fab_outputs.ps1·v006_fab WIP 사본 시험(커밋 안 함) | scratch | 오류 목록 → pcb | 중단(O-108) |
+| P-004t | lead O-107 → orch | firmware t18w | fab_outputs.ps1·v006_fab WIP 사본 시험(커밋 안 함) | scratch | 오류 목록 → pcb | 중단(O-108) — 중단 전 발견(b6842e9 사본, P-004 때 반영): ① fab_outputs.ps1 빈 ref-range-delimiter 인자가 PS5.1에서 사라져 BOM 범위 묶임 → make_pcbway_bom exit 1(큰따옴표 두 개로 주면 0) ② v006_fab 보드마다 3 불합격: 캐리어 J3 Type Hybrid·전면 MH1 Manual/BOM에만 MH1·front-bottom-pos 패턴(검사기)·README 1 oz/tented 표기 대 검사 문자열. Gerber 11·드릴·원점·조립도·zip·STEP 통과 |
 
 ## 운영 변경 (2026-11-26, 사용자 지시 · lead 전달)
 - 의견 묻지 않고 진행: 사람 쪽 미정값은 D-003(lead 레인 t-20261126-144135-5470 docs/decisions/D-003-working-defaults.md, 커밋 8ac5ce5) 값으로 확정 취급. 새 갈림길은 기본값 선택 → 아래 「분기 기록」에 분기점·선택·이유·차선책 → lead 요약 보고. 문제 시 해당 행으로 돌아가 차선책.
@@ -283,3 +283,4 @@
 - [x] 병합 main 1a9eb97 (acef C-022·344a M-009), push 완료(lead)
 - [x] 병합 main c9ca2a7 (958b M-010), push 완료
 - [ ] (사용자 지시 A) pcb 남은 손 배선은 KiCad GUI를 화면에 켜고 IPC로 실시간 편집
+- [ ] P-004(PCB 완료 후): firmware P-004t 발견 4건 반영 — fab_outputs.ps1 ref-range-delimiter 인용, J3 Hybrid·MH1 Manual 처리(검사기/보드), 검사기 front-bottom 패턴, README 표기 맞춤
