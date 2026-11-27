@@ -1,8 +1,8 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 260" width="100%" role="img" aria-labelledby="t d">
-<!-- 생성: docs/readme/tools/make_svgs.py · 수치 기준 main 1898e1f -->
+<!-- 생성: docs/readme/tools/make_svgs.py · 수치 기준 main 995b872 -->
 <!-- 출처 회로도: hardware/schematic/carrier/carrier-erc.json · hardware/schematic/front/front-erc.json (violations 0, KiCad 10.0.8) -->
 <!-- 출처 시뮬레이션: hardware/sim/results/SIM-*.json (25개 모두 verdict pass) -->
-<!-- 출처 DRC: hardware/pcb/drc/front-drc.json (violations 0 · unconnected_items 0 · schematic_parity 0) · hardware/pcb/drc/carrier-drc.json (violations 7 · unconnected_items 35 — 배선 진행 중) -->
+<!-- 출처 DRC: hardware/pcb/drc/front-drc.json (violations 0 · unconnected_items 0 · schematic_parity 0) · hardware/pcb/drc/carrier-drc.json (violations 0 · unconnected_items 0 · schematic_parity 0, 2026-11-27T15:40) -->
 <!-- 출처 3D: mechanical/m007/judge.md (캐리어·전면 원본 3D 모델 빠짐 0, 03_judge 실패 0) · mechanical/m010/m010.md (최종 pcb 커밋으로 다시 판정) -->
 <!-- 출처 케이스: mechanical/m003/m003-enclosure.md (2차) · docs/decisions/D-003-working-defaults.md #53 -->
 <!-- 출처 렌더: D-003 #51 #53 -->
@@ -26,7 +26,7 @@ text{font-family:system-ui,-apple-system,"Segoe UI","Noto Sans KR","Apple SD Got
 <rect class="bg" x="0.5" y="0.5" width="899" height="259" rx="14"/>
 <text class="t" x="28" y="40">설계 흐름</text><text class="s" x="28" y="62">요구 → 회로도 → 시뮬레이션 → PCB → DRC → 3D → 케이스 → 렌더</text>
 <line class="ln" x1="70" y1="140" x2="840" y2="140"/>
-<line class="pr" x1="70" y1="140" x2="400" y2="140"/>
+<line class="pr" x1="70" y1="140" x2="620" y2="140"/>
 <circle class="ok" cx="70" cy="140" r="16"/>
 <path class="ck" d="M63,140 l5,5 l9,-10"/>
 <text class="l" x="70" y="110" text-anchor="middle">요구사항</text>
@@ -39,18 +39,16 @@ text{font-family:system-ui,-apple-system,"Segoe UI","Noto Sans KR","Apple SD Got
 <path class="ck" d="M283,140 l5,5 l9,-10"/>
 <text class="l" x="290" y="110" text-anchor="middle">시뮬레이션</text>
 <text class="m" x="290" y="178" text-anchor="middle">25/25 통과</text>
-<circle class="ring" cx="400" cy="140" r="16" style="animation-delay:0.75s"/>
-<circle class="wip" cx="400" cy="140" r="16"/>
-<circle cx="400" cy="140" r="5" fill="#fff"/>
+<circle class="ok" cx="400" cy="140" r="16"/>
+<path class="ck" d="M393,140 l5,5 l9,-10"/>
 <text class="l" x="400" y="110" text-anchor="middle">PCB 배선</text>
-<text class="m" x="400" y="178" text-anchor="middle">전면 완료</text>
-<text class="m" x="400" y="194" text-anchor="middle">캐리어 진행</text>
-<circle class="ring" cx="510" cy="140" r="16" style="animation-delay:1.00s"/>
-<circle class="wip" cx="510" cy="140" r="16"/>
-<circle cx="510" cy="140" r="5" fill="#fff"/>
+<text class="m" x="400" y="178" text-anchor="middle">전면</text>
+<text class="m" x="400" y="194" text-anchor="middle">캐리어 완료</text>
+<circle class="ok" cx="510" cy="140" r="16"/>
+<path class="ck" d="M503,140 l5,5 l9,-10"/>
 <text class="l" x="510" y="110" text-anchor="middle">DRC</text>
-<text class="m" x="510" y="178" text-anchor="middle">전면 0</text>
-<text class="m" x="510" y="194" text-anchor="middle">캐리어 7</text>
+<text class="m" x="510" y="178" text-anchor="middle">두 보드 0</text>
+<text class="m" x="510" y="194" text-anchor="middle">0</text>
 <circle class="ring" cx="620" cy="140" r="16" style="animation-delay:1.25s"/>
 <circle class="wip" cx="620" cy="140" r="16"/>
 <circle cx="620" cy="140" r="5" fill="#fff"/>
