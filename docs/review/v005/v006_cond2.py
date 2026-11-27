@@ -12,7 +12,9 @@ ap = argparse.ArgumentParser()
 ap.add_argument('res'); ap.add_argument('commit'); ap.add_argument('out')
 ap.add_argument('--snap', default=None)
 ap.add_argument('--root', default='.', help='근거 경로를 이 저장소 루트 기준 상대 경로로 쓴다')
-ap.add_argument('--d003', default=None, help='D-003 문서 — #62(MDI TX 쌍 안 길이 차·비결합 예외) 한도를 이 행에서 읽는다')
+ap.add_argument('--d003', default=None, help='D-003 문서 — #62(MDI TX 쌍 안 길이 차·비결합 예외) 한도와 #63(비결합 셈법)을 이 행에서 읽는다')
+ap.add_argument('--area-baseline', default=os.path.join(os.path.dirname(os.path.abspath(__file__)), 'area-baseline.json'),
+                help='탈출·보정 영역(DP_BRK·DP_TUNE) 수·면적 기준 — 이보다 커지면 불합격 (D-003 #63)')
 A = ap.parse_args()
 BOARDS = ['carrier', 'front']
 items = []
@@ -37,6 +39,7 @@ def add(id_, board, title, value, limit, ok, ev, note='', verifiable=True):
 # O-119 / D-003 #62: 캐리어 MDI TX 쌍만 쌍 안 길이 차·비결합 길이 예외. 한도는 #62 행의 「쌍 안 길이 차 ≤N mm」「비결합 길이 ≤N mm」에서 읽는다
 #   — 행이 없거나 「MDI TX」가 없거나 그 문구가 없으면 그 예외는 없음(#28: 차 「0」, 비결합은 mdi_100_pair 한도)
 TX_DIFF_MAX = TX_UNC_MAX = None
+UNC63 = False   # D-003 #63: 비결합은 탈출·보정 영역(DP_BRK·DP_TUNE) 안 구간을 결합으로 셈 — 행이 있을 때만
 if A.d003 and os.path.exists(A.d003):
     for _l in open(A.d003, encoding='utf-8'):
         if re.match(r'\|\s*62\s*\|', _l) and 'MDI TX' in _l:
@@ -44,6 +47,11 @@ if A.d003 and os.path.exists(A.d003):
             TX_DIFF_MAX = float(_m.group(1)) if _m else None
             _m = re.search(r'비결합 길이\s*≤\s*([\d.]+)\s*mm', _l)
             TX_UNC_MAX = float(_m.group(1)) if _m else None
+        if re.match(r'\|\s*63\s*\|', _l) and 'DP_BRK' in _l and 'DP_TUNE' in _l and '결합으로' in _l:
+            UNC63 = True
+AREA_GAP_MAX = {'DP_BRK': 2.2, 'DP_TUNE': 1.0}   # D-003 #46 — 보드 규칙 값은 v006_relax 가 #46 기록과 대조한다
+ABASE = json.load(open(A.area_baseline, encoding='utf-8')) if os.path.exists(A.area_baseline) else {}
+area_rows = []
 
 
 def dru_text(b):
@@ -87,23 +95,58 @@ for b in BOARDS:
         lim = {'CSI_100': rule_max(t, 'csi_100_pair', 'diff_pair_uncoupled', 4.0), 'MDI_100': rule_max(t, 'mdi_100_pair', 'diff_pair_uncoupled', 6.0),
                'USB_90': rule_max(t, 'usb_90_pair', 'diff_pair_uncoupled', 12.0)}
         twist_lim = rule_max(t, 'mdi_twist_pair', 'diff_pair_uncoupled', 20.0)
+        # 안전장치: 넷클래스(.kicad_pro)를 못 읽으면 쌍이 0 이 되어 아래 판정이 통째로 빠진다 — 그 경우를 불합격으로 드러낸다
+        np_ = len(ru.get('pairs', {}))
+        add('2.A0', b, '고속 차동쌍 인식 수 (넷클래스 CSI_100 · MDI_100 · USB_90)', np_, '≥1', np_ >= 1, [frr],
+            '' if np_ else '쌍 0 — 보드 옆 .kicad_pro(넷클래스) 없이 돌렸는지 확인')
         for k, p in ru.get('pairs', {}).items():
+            vi = p.get('via')
+            dj = vi['diff_judged'] if vi else p['diff']   # 판정값 = max(트랙, 트랙+비아 높이) — 꼬임 영역 안 비아는 뺌 (research 와 합의, D-003 #63)
+            dn = ('트랙 %g / +비아 %g (꼬임 비아 제외)' % (p['diff'], vi['diff_with_via'])) if vi else '트랙 길이만'
             if b == 'carrier' and k == '/EPHY_TX' and TX_DIFF_MAX is not None:
-                add('2.A8', b, '쌍 안 길이 차 %s (MDI TX 예외)' % k, p['diff'], '≤%g (D-003 #62, #28 예외)' % TX_DIFF_MAX, p['diff'] <= TX_DIFF_MAX + 1e-6, [frr])
+                add('2.A8', b, '쌍 안 길이 차 %s (MDI TX 예외)' % k, dj, '≤%g (D-003 #62, #28 예외)' % TX_DIFF_MAX, dj <= TX_DIFF_MAX + 1e-6, [frr], dn)
             else:
-                add('2.A8', b, '쌍 안 길이 차 %s' % k, p['diff'], '≤0.025 (D-003 #28 「0」)', p['diff'] <= 0.025, [frr])
+                add('2.A8', b, '쌍 안 길이 차 %s' % k, dj, '≤0.025 (D-003 #28 「0」)', dj <= 0.025, [frr], dn)
             s = p['strict_0.18']
             if p['cls'] == 'MDI_100' and 'uncoupled_outside_twist' in p:
-                o = max(p['uncoupled_outside_twist'].values())
+                o1 = max(p['uncoupled_outside_twist'].values())
                 ar = p.get('uncoupled_area_rule')
                 tx62 = b == 'carrier' and k == '/EPHY_TX' and TX_UNC_MAX is not None
                 ulim = TX_UNC_MAX if tx62 else lim['MDI_100']
-                add('2.A10', b, '비결합(꼬임 밖, 쌍 간격 0.18 이하만 결합) %s%s' % (k, ' (MDI TX 예외)' if tx62 else ''), o,
-                    '≤%g%s' % (ulim, ' (D-003 #62, #28 예외)' if tx62 else ''), o <= ulim + 1e-6, [frr],
-                    ('참고: 탈출·보정 영역 간격(D-003 #46 DP_BRK 2.2 · DP_TUNE 1.0)을 결합으로 보면 %g' % max(ar['P'], ar['N'])) if ar else '')
-                add('2.A10t', b, '비결합(꼬임 포함) %s' % k, s['uncoupled_max'], '≤%g' % twist_lim, s['uncoupled_max'] <= twist_lim + 1e-6, [frr])
+                if UNC63 and ar:   # ② 탈출·보정 영역 안 구간은 결합, 짝 없는 비아 높이는 더함(꼬임 비아 제외)
+                    av = vi['uncoupled_area_rule_with_via'] if vi else ar
+                    o = max(av['P'], av['N'])
+                    add('2.A10', b, '비결합(꼬임 밖, 탈출·보정 영역은 결합 — D-003 #63) %s%s' % (k, ' (MDI TX 예외)' if tx62 else ''), o,
+                        '≤%g%s' % (ulim, ' (D-003 #62, #28 예외)' if tx62 else ''), o <= ulim + 1e-6, [frr],
+                        '트랙만 %g · 참고: 쌍 간격 0.18 이하만 결합으로 세면 %g' % (max(ar['P'], ar['N']), o1))
+                    ot = max(ar['P'] + ar['in_twist_P'], ar['N'] + ar['in_twist_N'])
+                    add('2.A10t', b, '비결합(꼬임 포함, 탈출·보정 영역은 결합) %s' % k, round(ot, 3), '≤%g' % twist_lim, ot <= twist_lim + 1e-6, [frr])
+                else:
+                    add('2.A10', b, '비결합(꼬임 밖, 쌍 간격 0.18 이하만 결합) %s%s' % (k, ' (MDI TX 예외)' if tx62 else ''), o1,
+                        '≤%g%s' % (ulim, ' (D-003 #62, #28 예외)' if tx62 else ''), o1 <= ulim + 1e-6, [frr],
+                        ('참고: 탈출·보정 영역 간격(D-003 #46 DP_BRK 2.2 · DP_TUNE 1.0)을 결합으로 보면 %g' % max(ar['P'], ar['N'])) if ar else '')
+                    add('2.A10t', b, '비결합(꼬임 포함) %s' % k, s['uncoupled_max'], '≤%g' % twist_lim, s['uncoupled_max'] <= twist_lim + 1e-6, [frr])
             else:
-                add('2.A10', b, '비결합 %s' % k, s['uncoupled_max'], '≤%g' % lim[p['cls']], s['uncoupled_max'] <= lim[p['cls']] + 1e-6, [frr])
+                ar = p.get('uncoupled_area_rule')
+                if UNC63 and ar:
+                    av = vi['uncoupled_area_rule_with_via'] if vi else ar
+                    o = max(av['P'], av['N'])
+                    add('2.A10', b, '비결합(탈출·보정 영역은 결합 — D-003 #63) %s' % k, o, '≤%g' % lim[p['cls']], o <= lim[p['cls']] + 1e-6, [frr],
+                        '트랙만 %g · 참고: 쌍 간격 0.18 이하만 결합으로 세면 %g' % (max(ar['P'], ar['N']), s['uncoupled_max']))
+                else:
+                    add('2.A10', b, '비결합 %s' % k, s['uncoupled_max'], '≤%g' % lim[p['cls']], s['uncoupled_max'] <= lim[p['cls']] + 1e-6, [frr])
+        at = ru.get('area_table')
+        if at is not None:   # D-003 #63: 탈출·보정 영역이 커지지 않는지 — 수·면적을 기준 파일과 대조, 영역 안 쌍 간격은 #46 상한 안
+            cur = {}
+            for r_ in at:
+                c_ = cur.setdefault(r_['name'], dict(count=0, area_mm2=0.0)); c_['count'] += 1; c_['area_mm2'] = round(c_['area_mm2'] + r_['area_mm2'], 3)
+                for pk, pv in (r_['pairs'] or {'-': dict(lenP=0, lenN=0, extraP=0, extraN=0, gap_max=None)}).items():
+                    area_rows.append((b, r_['name'], r_['idx'], r_['bbox'], r_['w'], r_['h'], r_['area_mm2'], pk, pv['lenP'], pv['lenN'], pv['gap_max'], pv['extraP'], pv['extraN'], '·'.join(r_['layers'])))
+            base_ = ABASE.get(b, {})
+            bad_ = [n for n, c_ in cur.items() if n not in base_ or c_['count'] > base_[n]['count'] or c_['area_mm2'] > base_[n]['area_mm2'] + 0.01]
+            fmt_ = lambda d_: ' / '.join('%s %d개 %g mm²' % (n, d_[n]['count'], d_[n]['area_mm2']) for n in sorted(d_)) or '없음'
+            add('2.A14', b, '탈출·보정 영역(DP_BRK·DP_TUNE) 수·면적이 기준 이하 (D-003 #63)', fmt_(cur), '≤ ' + fmt_({n: base_[n] for n in base_ if not n.startswith('_')}), not bad_, [frr, 'areas.md'],
+                ('커짐·기준 없음: ' + ', '.join(bad_)) if bad_ else '')
         if ru.get('csi_skew'):
             add('2.A9', b, 'CSI 레인 skew', ru['csi_skew']['skew_net'], '≤1.0', ru['csi_skew']['skew_net'] <= 1.0, [frr])
         xc = len(ru.get('hs_cross_in2_signal', [])) + len(ru.get('hs_cross_in1_signal', []))
@@ -167,6 +210,17 @@ for b in BOARDS:
         if half:
             add('2.H2', b, '약한 1번 핀 표시(ok_half)를 알아보는가: ' + ', '.join(half), '-', '사람 확인', None, [fs, 'index.html#4.1'], verifiable=False)
 add('2.H3', '-', '첫 보드 실물 실크 인쇄 품질(0.15 선·1.0 글자) — bring-up 으로 넘김', '-', '실물 확인', None, ['docs/review/v005-pcb-review.md'], verifiable=False)
+
+# 영역 표 (D-003 #63 감시용) — 결과 폴더의 areas.md
+_L = ['# 탈출·보정 영역 표 (pcb %s, D-003 #63)' % A.commit, '',
+      '「영역 덕에 결합으로 센 길이」 = 쌍 간격이 0.18 초과 ~ 영역 상한 이하라서, 이 영역이 없으면 비결합으로 셌을 길이.', '',
+      '| 보드 | 영역 | # | 층 | 범위 (x0, y0, x1, y1) | 크기 | 면적 mm² | 쌍 | 영역 안 길이 P / N | 영역 덕에 결합으로 센 길이 P / N | 결합 구간 쌍 간격 최대 | 상한 |',
+      '|---|---|---|---|---|---|---|---|---|---|---|---|']
+for r_ in area_rows:
+    _L.append('| %s | %s | %d | %s | %s | %g × %g | %g | %s | %g / %g | %g / %g | %s | %g |' % (
+        r_[0], r_[1], r_[2], r_[13], ', '.join('%g' % v for v in r_[3]), r_[4], r_[5], r_[6], r_[7], r_[8], r_[9], r_[11], r_[12],
+        '-' if r_[10] is None else '%g' % r_[10], AREA_GAP_MAX[r_[1]]))
+open(os.path.join(os.path.dirname(os.path.abspath(A.out)), 'areas.md'), 'w', encoding='utf-8', newline='\n').write('\n'.join(_L) + '\n')
 
 fails = [i for i in items if i['verifiable'] and i['pass'] is False]
 R = dict(cond='2', owner='review', title='PCB DRC·미연결·parity·완화 기록·V-005 최종', commit=A.commit,
