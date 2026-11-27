@@ -51,13 +51,19 @@ def lay(b, log):
     r = MM(0.325 + 0.05)
     ring = [(1, 0), (-1, 0), (0, 1), (0, -1), (0.707, 0.707), (-0.707, 0.707), (0.707, -0.707), (-0.707, -0.707)]
     added = []
+    # 이미 있는 구멍(모든 넷 비아 · 관통 패드)과 중심 0.9 이상 — 1차 lay 가 기존 GND 비아 위에 겹쳐 holes_co_located 20 · hole_to_hole 21 을 냈다
+    holes = [t.GetPosition() for t in b.GetTracks() if t.GetClass() == "PCB_VIA"]
+    holes += [p.GetPosition() for fp in b.GetFootprints() for p in fp.Pads() if p.GetAttribute() in (pcbnew.PAD_ATTRIB_PTH, pcbnew.PAD_ATTRIB_NPTH)]
+    hx = [(h.x, h.y) for h in holes]
+    dmin = MM(0.9) ** 2
     x = eb.GetLeft() + MM(1.0)
     while x < eb.GetRight() - MM(1.0):
         y = eb.GetTop() + MM(1.0)
         while y < eb.GetBottom() - MM(1.0):
             q = pcbnew.VECTOR2I(int(x), int(y))
             pts = [q] + [pcbnew.VECTOR2I(q.x + int(r * c), q.y + int(r * s)) for c, s in ring]
-            if len(fills) == 4 and all(all(f.Contains(p) for p in pts) for f in fills.values()):
+            if len(fills) == 4 and all((q.x - a) ** 2 + (q.y - c) ** 2 >= dmin for a, c in hx) and                     all(all(f.Contains(p) for p in pts) for f in fills.values()):
+                hx.append((q.x, q.y))
                 v = pcbnew.PCB_VIA(b)
                 v.SetPosition(q)
                 v.SetWidth(MM(0.65))
