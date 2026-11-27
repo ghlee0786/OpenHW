@@ -28,6 +28,7 @@ step test_silk "$KPY" -I "$HERE/test_v005_silk.py" "$OUT/test" || bad=1
 step test_excl "$KPY" -I "$HERE/test_v005_excl.py" "$OUT/test_excl" || bad=1
 step test_relax python -I "$HERE/test_v006_relax.py" "$OUT/test_relax" || bad=1
 step test_fab python -I "$HERE/test_v006_fab.py" "$WORK/hardware/schematic/carrier/carrier.kicad_pcb" "$OUT/test_fab" || bad=1
+step test_esc "$KPY" -I "$HERE/test_v006_esc.py" "$WORK/hardware/schematic/carrier/carrier.kicad_pcb" "$OUT/test_esc" || bad=1
 step test_vd001 python -I "$HERE/test_v006_vd001_html.py" "$OUT/test_vd001" || bad=1
 for b in carrier front; do
   P="$WORK/hardware/schematic/$b/$b.kicad_pcb"

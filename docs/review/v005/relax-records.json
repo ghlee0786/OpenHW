@@ -20,6 +20,9 @@
   {"match": {"key": "ignore:footprint_filters_mismatch"}, "d003": 46, "must_contain": ["회로도 필터 경고 ignore"]},
   {"match": {"rule": "dp_breakout_pair", "constraint": "diff_pair_gap", "area": "DP_BRK"}, "d003": 46, "must_contain": ["DP_BRK 쌍 간격 {value}"]},
   {"match": {"rule": "dp_breakout_spacing", "constraint": "clearance", "area": "DP_BRK"}, "d003": 46, "must_contain": ["DP_BRK 간격 {value}"]},
-  {"match": {"rule": "dp_tuning_gap", "constraint": "diff_pair_gap", "area": "DP_TUNE"}, "d003": 46, "must_contain": ["DP_TUNE 쌍 간격 {value}"]}
+  {"match": {"rule": "dp_tuning_gap", "constraint": "diff_pair_gap", "area": "DP_TUNE"}, "d003": 46, "must_contain": ["DP_TUNE 쌍 간격 {value}"]},
+  {"match": {"constraint": "via_diameter", "area_re": "enclosedByArea[(]J1_[^)]*[)]"}, "d003": 60, "must_contain": ["0.50/0.20", "enclosedByArea"], "value": 0.5},
+  {"match": {"constraint": "hole_size", "area_re": "enclosedByArea[(]J1_[^)]*[)]"}, "d003": 60, "must_contain": ["0.50/0.20", "enclosedByArea"], "value": 0.2},
+  {"match": {"constraint": "hole_to_hole", "area_re": "enclosedByArea[(]J1_[^)]*[)]"}, "d003": 60, "must_contain": ["구멍 간격 {value}"]}
  ]
 }
