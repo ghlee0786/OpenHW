@@ -126,6 +126,8 @@ def widths_of(net):
     nc = route.netclass(net)
     if nc["name"] == "Default":
         return [0.2, 0.15]
+    if net == "/CORE_3V3":  # R-020: 최악 1.0A — 0.30mm 이상만(review V-006a)
+        return [0.3]
     if nc["name"] == "PWR_LOGIC":
         return [0.3, 0.2]
     return [nc["track_width"], max(0.3, nc["track_width"] / 2), 0.3]
