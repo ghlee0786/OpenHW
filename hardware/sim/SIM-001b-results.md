@@ -4,7 +4,7 @@
 
 - 기준: `SIM-001b-criteria.md` (`7cab389`, 실행 전 커밋)
 - 실행: `python hardware/sim/sim001b/run.py` → **종료 코드 4** (pass 4 · fail 4 · error 0)
-- 도구: ngspice-47 (`C:/Users/gh/tools/ngspice/47/Spice64/bin/ngspice_con.exe`)
+- 도구: ngspice-47 (`ngspice_con.exe`, 환경 변수 `NGSPICE`)
 - 결과 JSON: `hardware/sim/results/SIM-L1~B8.json` (orch O-81 형식)
 - 파형: `hardware/sim/png/`
 - 넷리스트: `hardware/sim/SIM-L*.cir`

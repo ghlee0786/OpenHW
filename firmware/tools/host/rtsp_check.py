@@ -12,7 +12,7 @@
 근거: 절차서 bringup-checklist.md 3-2(720p 15fps, persond cam_fps=15) · 1-9(RTSP 부하).
 비밀번호가 든 URL 은 출력에서 가린다(D-003 #30 — rtsp_pass 는 시험 동안만).
 ffprobe/ffmpeg 위치: --ffmpeg-dir <bin 폴더> (하위 명령 앞) 또는 환경 변수 OPENHW_FFMPEG_DIR, 없으면 PATH.
-  예) python rtsp_check.py --ffmpeg-dir C:/Users/gh/tools/ffmpeg/9.0.2/ffmpeg-9.0.2-essentials_build/bin probe x.mkv
+  예) python rtsp_check.py --ffmpeg-dir <ffmpeg bin 폴더> probe x.mkv
 """
 import argparse
 import os

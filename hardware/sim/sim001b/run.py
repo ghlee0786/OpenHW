@@ -3,13 +3,14 @@
 
 기준: hardware/sim/SIM-001b-criteria.md (실행 전에 커밋, CRITERIA_COMMIT).
 사용: python hardware/sim/sim001b/run.py   (종료 코드 = fail + error 수)
-ngspice: 환경 변수 NGSPICE (기본 C:/Users/gh/tools/ngspice/47/Spice64/bin/ngspice_con.exe)
+ngspice: 환경 변수 NGSPICE(실행 파일 경로), 없으면 PATH 의 ngspice_con
 """
 import hashlib
 import json
 import math
 import os
 import re
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -23,7 +24,7 @@ import matplotlib.pyplot as plt  # noqa: E402
 HERE = os.path.dirname(os.path.abspath(__file__))
 SIM = os.path.dirname(HERE)
 REPO = os.path.dirname(os.path.dirname(SIM))
-NG = os.environ.get("NGSPICE", "C:/Users/gh/tools/ngspice/47/Spice64/bin/ngspice_con.exe")
+NG = os.environ.get("NGSPICE") or shutil.which("ngspice_con") or "ngspice_con"
 CRITERIA_COMMIT = "7cab389"
 SCH_COMMIT = "613cf14"   # C-021 (O-99): 전면 R22·R23 10k LED 양단 블리더 + C-020 (S6): R20 100k·R21 1k·D4 BAT54WS, R5 100k·D5 BAT54WS (+ C-018/C-019: R6 6.04k, R17 4.7k·C19 4.7nF, C20·C21 4.7nF)
 ILIM = 1.86   # TPS26600 R6 6.04 kΩ: I(OL) 최소 1.86 A (대표 ≈1.99 A, 계약 v1.14 3.1절 L108) — "시험 회로의 ILIM"을 보수적으로 최솟값으로

@@ -15,7 +15,7 @@
 | 호스트 메모리 | 총 64 GB. 여유가 3~7 GB까지 내려간다. `vmmemWSL` 약 27 GB 중 대부분은 VM 페이지 캐시다. 같은 시간에 다른 WSL 배포판과 다른 프로젝트 컨테이너 약 30개(합 약 1.5 GB)가 돌았다 |
 | 디스크 | C: 여유 147 GB(Docker VHDX가 있는 곳) · E: 여유 2.8 TB. 빌드 볼륨은 36.85 GB를 쓴다 |
 | 소스·중간 결과 | Docker 이름 볼륨 `openhw-recamera-sdk` (`/work/src`) — 저장소 밖 |
-| 로그·산출물 | `C:/Users/gh/.local/share/openhw-tools/recamera-sdk/` — `clone.log`, `image.log`, `build-1~9.log`, `build-N.result`, `serial-1.log`, `dmesg-7.txt`, `run-build-5.sh`(hc 칸 실행기), `out-0.2.4/`(산출물) |
+| 로그·산출물 | `%USERPROFILE%/.local/share/openhw-tools/recamera-sdk/` — `clone.log`, `image.log`, `build-1~9.log`, `build-N.result`, `serial-1.log`, `dmesg-7.txt`, `run-build-5.sh`(hc 칸 실행기), `out-0.2.4/`(산출물) |
 
 ## 소스
 
