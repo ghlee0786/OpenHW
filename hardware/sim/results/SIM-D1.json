@@ -95,7 +95,7 @@
   "name": "ngspice",
   "version": "ngspice-47 (공식 SourceForge ng-spice-rework/47/ngspice-47_64.7z)",
   "sha256": "59225971… (7z, firmware 설치·검증 — orch O-81)",
-  "path": "C:/Users/gh/tools/ngspice/47/Spice64/bin/ngspice_con.exe"
+  "path": "ngspice_con.exe"
  },
  "notes": "코어 내부 순서(VDDC·VDDQ·PWR_SEQ)는 모델에 없음. CAM_EN·SD0_PWR_EN·IR_LED_EN 은 FW 가 나중에 켠다(SIM-C3)."
 }

@@ -49,7 +49,7 @@
   "name": "ngspice",
   "version": "ngspice-47 (공식 SourceForge ng-spice-rework/47/ngspice-47_64.7z)",
   "sha256": "59225971… (7z, firmware 설치·검증 — orch O-81)",
-  "path": "C:/Users/gh/tools/ngspice/47/Spice64/bin/ngspice_con.exe"
+  "path": "ngspice_con.exe"
  },
  "notes": "LED 부하는 기동 중 꺼진 것으로 둔다(FW 규칙: IR_LED_EN 전에 IR_PWM High). 출력 C DC 바이어스 감액은 무시(돌입 쪽 보수적)."
 }

@@ -65,7 +65,7 @@
   "name": "ngspice",
   "version": "ngspice-47 (공식 SourceForge ng-spice-rework/47/ngspice-47_64.7z)",
   "sha256": "59225971… (7z, firmware 설치·검증 — orch O-81)",
-  "path": "C:/Users/gh/tools/ngspice/47/Spice64/bin/ngspice_con.exe"
+  "path": "ngspice_con.exe"
  },
  "notes": "회로도 R6 = 6.98k (C-017, ≈1.72 A typ; 이전 8.06k ≈1.49 A). lead 문구의 10k(1.2 A)와 다름 — 10k 이면 I(OL) 최소 1.13 A < 1.22 A 부하라 2스트링이 제한에 걸린다. I(OL) 최대 2.115 A. 빠른 차단(1.87×I(OL)) 은 모델에 없음."
 }

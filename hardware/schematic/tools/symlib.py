@@ -1,5 +1,5 @@
 import re,os
-S=r'C:/Users/gh/AppData/Local/Programs/KiCad/10.0/share/kicad/symbols'
+S=os.environ.get('KICAD10_SYMBOL_DIR') or os.path.expandvars(r'%LOCALAPPDATA%/Programs/KiCad/10.0/share/kicad/symbols')  # KiCad 10 표준 심벌 폴더(환경 변수로 바꿀 수 있다)
 def blocks(txt):
     # top-level (symbol "...") blocks inside kicad_symbol_lib
     out={};i=0;n=len(txt)

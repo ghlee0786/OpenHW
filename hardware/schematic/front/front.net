@@ -1,7 +1,7 @@
 (export
 	(version "E")
 	(design
-		(source "C:\\workspace_python\\OpenHW\\.harness-worktrees\\t-20261127-081137-acef\\hardware\\schematic\\front\\front.kicad_sch")
+		(source "front.kicad_sch")
 		(date "2026-11-27T08:13:09")
 		(tool "Eeschema 10.0.8")
 		(sheet

@@ -56,7 +56,7 @@
   "name": "ngspice",
   "version": "ngspice-47 (공식 SourceForge ng-spice-rework/47/ngspice-47_64.7z)",
   "sha256": "59225971… (7z, firmware 설치·검증 — orch O-81)",
-  "path": "C:/Users/gh/tools/ngspice/47/Spice64/bin/ngspice_con.exe"
+  "path": "ngspice_con.exe"
  },
  "notes": "Isat 6.0 A = I(LIM_HS) 최대 6 A 로 여유 0 (같음). Isat 정의가 L −20% 라 그 점에서도 급격한 포화는 아니다. L1 MPN 은 회로도 값 「10uH Isat>=6A」·풋프린트 SRP7028A 로 추정."
 }
