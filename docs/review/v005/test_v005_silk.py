@@ -98,9 +98,23 @@ Q10 = fp_add('Package_TO_SOT_SMD', 'SOT-23', 'Q10', 134, 104)                # S
 Q11 = fp_add('Package_TO_SOT_SMD', 'SOT-23', 'Q11', 142, 104); strip_silk(Q11, only_filled=True)  # 삼각 표시 제거 → missing
 Q12 = fp_add('Package_TO_SOT_SMD', 'SOT-23', 'Q12', 150, 104, rot=90)        # 회전해도 ok
 J10 = fp_add('Connector_USB', 'USB_C_Receptacle_HRO_TYPE-C-31-M-12', 'J10', 150, 128, rot=90)  # 면제
+# V-006e: 1번 핀 표시를 풋프린트가 아니라 보드 그림(실크 점)으로 넣은 경우 — 1번 패드 옆이면 인정, 다른 패드 옆이면 인정 안 함
+def dot(x, y, r=0.2):
+    s = pcbnew.PCB_SHAPE(b)
+    s.SetShape(pcbnew.SHAPE_T_CIRCLE); s.SetCenter(V(x, y)); s.SetEnd(V(x + r, y)); s.SetLayer(pcbnew.F_SilkS); s.SetWidth(FM(0.1)); s.SetFilled(True)
+    b.Add(s)
+
+
 # V-006b: 원점이 1번 패드인 풋프린트(핀 헤더) — 사분면 중심은 원점이 아니라 패드 전체의 가운데여야 한다
 J20 = fp_add('Connector_PinHeader_2.54mm', 'PinHeader_1x02_P2.54mm_Vertical', 'J20', 158, 110, rot=180, ref_at=(158, 116))   # 라이브러리 1번 핀 표시 그대로 → ok
 J21 = fp_add('Connector_PinHeader_2.54mm', 'PinHeader_1x02_P2.54mm_Vertical', 'J21', 166, 110, ref_at=(166, 116)); strip_silk(J21)  # 실크 없음 → missing
+
+# V-006e 보드 그림 1번 핀 표시 사례 — 삼각 표시를 지운 SOT-23 두 개(Q13 · Q14)는 저장한 보드 파일에서 Q11 블록을 복제해 만든다
+#   (pcbnew 로 더 읽고 지우면 KiCad 10 SWIG 가 깨진다: Remove 뒤 FootprintLoad · Pads() · GraphicalItems() 오류)
+# SOT-23 패드 자리(회전 0): 1번 (−0.9375, −0.95), 3번 (+0.9375, 0). fp.Pads() 는 앞의 Remove 때문에 못 쓴다
+q13p1, q14p3 = (104 - 0.9375, 109 - 0.95), (122 + 0.9375, 128.0)
+dot(q13p1[0] - 0.9, q13p1[1])                                 # 보드 그림 점을 1번 패드 왼쪽에 → ok_marker
+dot(q14p3[0] + 0.9, q14p3[1])                                 # 보드 그림 점을 3번 패드 오른쪽에 → 1번 표시 아님 → missing
 
 # ---- 실크 위반 ----
 line(109.0, 110.0, 109.6, 110.0)                 # S1: R1 패드 1(x 109.49) 위로 지남
@@ -127,6 +141,23 @@ line(140.0, 132.0, 142.0, 132.0)                 # 덮인 비아 위 → 허용 
 
 pcb = os.path.join(WORK, 'inject.kicad_pcb')
 pcbnew.SaveBoard(pcb, b)
+import re, uuid
+_t = open(pcb, encoding='utf-8').read()
+_i = _t.find('(property "Reference" "Q11"'); _s = _t.rfind('\n\t(footprint ', 0, _i) + 2   # 줄바꿈과 탭 다음의 「(」
+_d, _k = 0, _s
+while True:
+    _d += (_t[_k] == '(') - (_t[_k] == ')')
+    _k += 1
+    if _d == 0:
+        break
+_blk = _t[_s:_k]
+assert _blk.count('(at 142 104') == 1, _blk[:300]
+_new = ''
+for _ref, _xy in (('Q13', '104 109'), ('Q14', '122 128')):
+    _n = _blk.replace('(at 142 104', '(at ' + _xy).replace('"Q11"', '"%s"' % _ref)
+    _new += '\t' + re.sub(r'\(uuid "[^"]+"\)', lambda m: '(uuid "%s")' % uuid.uuid4(), _n) + '\n'
+_e = _t.rstrip().rfind(')')
+open(pcb, 'w', encoding='utf-8', newline='\n').write(_t[:_e] + _new + ')\n')
 out = os.path.join(WORK, 'inject.json')
 rc = subprocess.run([sys.executable, '-I', os.path.join(HERE, 'v005_silk.py'), pcb, out], capture_output=True, text=True, encoding='utf-8')
 if rc.returncode != 0:
@@ -184,7 +215,9 @@ CASES = [
     ('S9 SOT-23 90° 회전 ok(음성)', P1.get('Q12', {}).get('verdict') in ('ok', 'ok_marker')),
     ('S9 USB-C 면제', P1.get('J10', {}).get('verdict') == 'exempt'),
     # V-006a: 참조 필드는 Reference()·GetFields() 두 길로 나옴 — 한 번만 센다 (부품 14개 모두 앞면 실크 참조)
-    ('참조 한 번만 셈 (앞면 실크 참조 16)', R['counts']['F']['ref'] == 16),
+    ('참조 한 번만 셈 (앞면 실크 참조 18)', R['counts']['F']['ref'] == 18),
+    ('S9 보드 그림 점이 1번 패드 옆 → 표시로 인정 ok_marker(음성)', P1.get('Q13', {}).get('verdict') == 'ok_marker'),
+    ('S9 보드 그림 점이 다른 패드 옆 → missing(양성)', P1.get('Q14', {}).get('verdict') == 'missing'),
     ('S9 원점이 1번 패드인 헤더, 1번 핀 표시 있음 ok(음성)', P1.get('J20', {}).get('verdict') in ('ok', 'ok_marker', 'ok_half')),
     ('S9 같은 헤더 실크 없음 missing(양성)', P1.get('J21', {}).get('verdict') == 'missing'),
     ('S7 자기 참조끼리 겹침 없음(음성)', not has('S7_text_text', lambda x: x['text'].get('owner') == x['other'].get('owner') and x['text'].get('at') == x['other'].get('at'))),

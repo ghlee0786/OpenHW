@@ -142,10 +142,13 @@ for b in BOARDS:
                 c_ = cur.setdefault(r_['name'], dict(count=0, area_mm2=0.0)); c_['count'] += 1; c_['area_mm2'] = round(c_['area_mm2'] + r_['area_mm2'], 3)
                 for pk, pv in (r_['pairs'] or {'-': dict(lenP=0, lenN=0, extraP=0, extraN=0, gap_max=None)}).items():
                     area_rows.append((b, r_['name'], r_['idx'], r_['bbox'], r_['w'], r_['h'], r_['area_mm2'], pk, pv['lenP'], pv['lenN'], pv['gap_max'], pv['extraP'], pv['extraN'], '·'.join(r_['layers'])))
+            for a_ in (ru.get('esc_vias') or {}).get('areas', []):   # 0.50/0.20 비아 영역(J1_ · SD_)도 같은 기준으로 감시 (D-003 #60 · #64 「최소 크기」)
+                c_ = cur.setdefault(a_['name'], dict(count=0, area_mm2=0.0)); c_['count'] += 1; c_['area_mm2'] = round(c_['area_mm2'] + a_.get('area_mm2', 0.0), 3)
+                area_rows.append((b, a_['name'], 0, a_['bbox'], a_.get('w', 0), a_.get('h', 0), a_.get('area_mm2', 0), '-', 0, 0, None, 0, 0, '·'.join(a_['layers'])))
             base_ = ABASE.get(b, {})
             bad_ = [n for n, c_ in cur.items() if n not in base_ or c_['count'] > base_[n]['count'] or c_['area_mm2'] > base_[n]['area_mm2'] + 0.01]
             fmt_ = lambda d_: ' / '.join('%s %d개 %g mm²' % (n, d_[n]['count'], d_[n]['area_mm2']) for n in sorted(d_)) or '없음'
-            add('2.A14', b, '탈출·보정 영역(DP_BRK·DP_TUNE) 수·면적이 기준 이하 (D-003 #63)', fmt_(cur), '≤ ' + fmt_({n: base_[n] for n in base_ if not n.startswith('_')}), not bad_, [frr, 'areas.md'],
+            add('2.A14', b, '규칙 완화 영역(DP_BRK·DP_TUNE·J1_·SD_) 수·면적이 기준 이하 (D-003 #63 · #60 · #64)', fmt_(cur), '≤ ' + fmt_({n: base_[n] for n in base_ if not n.startswith('_')}), not bad_, [frr, 'areas.md'],
                 ('커짐·기준 없음: ' + ', '.join(bad_)) if bad_ else '')
         if ru.get('csi_skew'):
             add('2.A9', b, 'CSI 레인 skew', ru['csi_skew']['skew_net'], '≤1.0', ru['csi_skew']['skew_net'] <= 1.0, [frr])
@@ -159,20 +162,29 @@ for b in BOARDS:
         ev_ = ru.get('esc_vias')
         if ev_ is not None:   # O-114 / D-003 #60: J1 탈출 비아 0.50/0.20 은 J1 둘레 규칙 영역(enclosedByArea) 안에서만
             an = [a['name'] for a in ev_['areas']]
-            add('2.V1', b, '비아 0.65/0.30 미만은 J1 탈출 영역 안에만, 열·GND 이음 비아는 0.60/0.30 허용 (D-003 #21·#60) — 그 밖의 작은 비아', len(ev_['outside_small']), 0, not ev_['outside_small'], [frr],
+            add('2.V1', b, '비아 0.65/0.30 미만은 0.50/0.20 영역(J1_ · SD_) 안에만, 열·GND 이음 비아는 0.60/0.30 허용 (D-003 #21·#60·#64) — 그 밖의 작은 비아', len(ev_['outside_small']), 0, not ev_['outside_small'], [frr],
                 '; '.join(sorted(set('%s/%s %s' % (v['dia'], v['drill'], v['net']) for v in ev_['outside_small']))[:8]) + (' · 걸침 %d' % len(ev_['straddle_small']) if ev_['straddle_small'] else '')
                 + ' · 0.60/0.30 허용분: GND %d, 열 %d' % (sum(1 for v in ev_.get('allowed_060', []) if v['kind'] == 'GND'), sum(1 for v in ev_.get('allowed_060', []) if v['kind'] == '열')))
             if an or ev_['inside']:
-                inter = sorted(set(re.findall(r"intersectsArea\('(%s[^']*)'\)" % re.escape(ev_['prefix']), t)))
-                encl = sorted(set(re.findall(r"enclosedByArea\('(%s[^']*)'\)" % re.escape(ev_['prefix']), t)))
-                add('2.V2', b, 'J1 탈출 규칙이 enclosedByArea 뿐 (영역 %s)' % (', '.join(an) or '없음'), len(inter), 0, bool(encl) and not inter, [frr],
-                    ('intersectsArea 규칙: ' + ', '.join(inter)) if inter else ('enclosedByArea: ' + (', '.join(encl) or '규칙 없음')))
+                pfx = '(?:%s)' % '|'.join(re.escape(x) for x in ev_.get('prefixes', ['J1_']))
+                inter = sorted(set(re.findall(r"intersectsArea\('(%s[^']*)'\)" % pfx, t)))
+                encl = sorted(set(re.findall(r"enclosedByArea\('(%s[^']*)'\)" % pfx, t)))
+                norule = sorted(set(an) - set(encl))   # 보드에 영역은 있는데 그 이름의 enclosedByArea 규칙이 없음
+                add('2.V2', b, '0.50/0.20 비아 규칙이 enclosedByArea 뿐 (영역 %s)' % (', '.join(sorted(set(an))) or '없음'), len(inter) + len(norule), 0,
+                    bool(encl) and not inter and not norule, [frr],
+                    ('intersectsArea 규칙: ' + ', '.join(inter)) if inter else (('규칙 없는 영역: ' + ', '.join(norule)) if norule else ('enclosedByArea: ' + (', '.join(encl) or '규칙 없음'))))
                 add('2.V3', b, '영역 안 작은 비아 %d개: 지름 ≥0.50 · 드릴 ≥0.20 · 링 ≥0.15 · 구멍 간격 ≥0.28' % len(ev_['inside']), len(ev_['inside_fail']), 0,
                     not ev_['inside_fail'], [frr], '; '.join('%s %s' % (v['at'], ','.join(v['why'])) for v in ev_['inside_fail'][:8]))
-                add('2.V4', b, '영역 안 작은 비아는 J1 핀 넷뿐', len(ev_['non_j1_net']), 0, not ev_['non_j1_net'], [frr],
+                add('2.V4', b, '영역 안 작은 비아는 그 영역 부품(J1_ → J1, SD_ → U4·U5) 핀 넷뿐', len(ev_['non_j1_net']), 0, not ev_['non_j1_net'], [frr],
                     ', '.join(sorted(set(v['net'] for v in ev_['non_j1_net']))))
                 far = [a for a in ev_['areas'] if not a['beyond_ok']]
-                add('2.V5', b, '탈출 영역이 J1 둘레 안 (J1 외곽 상자 + 3.0 [가정])', max([a['beyond_j1'] or 0 for a in ev_['areas']] or [0]), '≤3.0', bool(an) and not far, [frr])
+                add('2.V5', b, '0.50/0.20 영역이 그 부품 둘레 안 (부품 외곽 상자 + 3.0 [가정])', max([a['beyond_j1'] or 0 for a in ev_['areas']] or [0]), '≤3.0', bool(an) and not far, [frr])
+        eg = (ru.get('esd_gnd') or {}).get('pads')
+        if eg:   # O-121 / D-003 #64: ESD 어레이 GND — 핀마다 조건 맞는 비아(패드→비아 ≤1.0 · 폭 ≥0.25) 1개 이상, 가능하면 2개
+            none_ = ['%s.%s' % (x['ref'], x['pad']) for x in eg if x['n_ok'] == 0]
+            one_ = ['%s.%s' % (x['ref'], x['pad']) for x in eg if x['n_ok'] == 1]
+            add('2.V6', b, 'ESD 어레이(U4·U5) GND 핀 %d개: 핀마다 조건 맞는 비아 ≥1 (패드→비아 ≤%g · 폭 ≥%g, D-003 #64)' % (len(eg), ru['esd_gnd']['len_max'], ru['esd_gnd']['width_min']),
+                len(none_), 0, not none_, [frr], '; '.join(x for x in (('조건 맞는 비아 없음: ' + ', '.join(none_)) if none_ else '', ('비아 1개뿐(가능하면 2개): ' + ', '.join(one_)) if one_ else '') if x))
         for l in ru.get('ir_leds', []):
             add('2.A12', b, 'IR LED 열 비아 %s' % l['ref'], l['thermal_vias'], '≥4 (D-003 #29)', l['thermal_vias'] >= 4, [frr])
         for e in ru.get('exposed_pads', []):
@@ -217,9 +229,9 @@ _L = ['# 탈출·보정 영역 표 (pcb %s, D-003 #63)' % A.commit, '',
       '| 보드 | 영역 | # | 층 | 범위 (x0, y0, x1, y1) | 크기 | 면적 mm² | 쌍 | 영역 안 길이 P / N | 영역 덕에 결합으로 센 길이 P / N | 결합 구간 쌍 간격 최대 | 상한 |',
       '|---|---|---|---|---|---|---|---|---|---|---|---|']
 for r_ in area_rows:
-    _L.append('| %s | %s | %d | %s | %s | %g × %g | %g | %s | %g / %g | %g / %g | %s | %g |' % (
+    _L.append('| %s | %s | %d | %s | %s | %g × %g | %g | %s | %g / %g | %g / %g | %s | %s |' % (
         r_[0], r_[1], r_[2], r_[13], ', '.join('%g' % v for v in r_[3]), r_[4], r_[5], r_[6], r_[7], r_[8], r_[9], r_[11], r_[12],
-        '-' if r_[10] is None else '%g' % r_[10], AREA_GAP_MAX[r_[1]]))
+        '-' if r_[10] is None else '%g' % r_[10], ('%g' % AREA_GAP_MAX[r_[1]]) if r_[1] in AREA_GAP_MAX else '-'))
 open(os.path.join(os.path.dirname(os.path.abspath(A.out)), 'areas.md'), 'w', encoding='utf-8', newline='\n').write('\n'.join(_L) + '\n')
 
 fails = [i for i in items if i['verifiable'] and i['pass'] is False]

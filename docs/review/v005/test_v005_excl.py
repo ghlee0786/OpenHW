@@ -155,6 +155,8 @@ rows = [
     ('Package_TO_SOT_SMD.pretty/SOT-23.kicad_mod', kfp('Package_TO_SOT_SMD', 'SOT-23').replace('\\', '/'), sha(kfp('Package_TO_SOT_SMD', 'SOT-23'))),  # 절대 경로
     ('Package_TO_SOT_SMD.pretty/SOT-23-5.kicad_mod', '/opt/kicad/share/kicad/footprints/Package_TO_SOT_SMD.pretty/SOT-23-5.kicad_mod', sha(kfp('Package_TO_SOT_SMD', 'SOT-23-5'))),  # 다른 PC 절대 경로 → 이 PC KiCad
     ('Package_TO_SOT_SMD.pretty/SOT-23_OH.kicad_mod', 'openhw:SOT-23_OH', sha(oh_file)),
+    # V-006e: 이름이 이 라이브러리 이름으로 시작하는 다른 라이브러리의 행 — Resistor_SMD 의 「사본 파일 없음」으로 잡히면 안 된다
+    ('Resistor_SMDX.pretty/R_ZZZ.kicad_mod', '${KICAD10_FOOTPRINT_DIR}/Resistor_SMD.pretty/R_0402_1005Metric.kicad_mod', sha(kfp('Resistor_SMD', 'R_0402_1005Metric'))),
     ('Package_TO_SOT_SMD.pretty/SOT-23_PM.kicad_mod', 'OpenHW_Mech:SOT-23_PM', sha(pm_file)),
     # V-006a: 기록 sha 가 CRLF 형태(autocrlf worktree 에서 잼) — 같은 원본으로 통과
     ('Package_TO_SOT_SMD.pretty/SOT-23_OH2.kicad_mod', 'openhw:SOT-23_OH2', hashlib.sha256(open(oh2_file, 'rb').read().replace(b'\r\n', b'\n').replace(b'\n', b'\r\n')).hexdigest()),
@@ -284,6 +286,7 @@ CASES = [
     ('E4c 기록 sha 가 CRLF 형태 — 줄바꿈만 다름 통과', cp.get('SOT-23_OH2', {}).get('ok') is True and cp['SOT-23_OH2'].get('sha_form') == 'crlf'),
     ('E4c 기록 sha 0 은 여전히 불합격(줄바꿈 허용이 틀린 sha 를 통과시키지 않음)', cp.get('R_0603_1608Metric', {}).get('sha_ok') is False),
     ('E4c 불합격 목록 5', len(R['verdict']['E4c_fail']) == 5),
+    ('E4c 이름이 앞부분만 같은 다른 라이브러리(Resistor_SMDX)의 행은 이 라이브러리 것으로 치지 않음(음성)', not any(r.get('name') == 'R_ZZZ' for r in R.get('E4c_silk_copies', []))),
 ]
 fail = 0
 for name, ok in CASES:
