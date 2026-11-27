@@ -167,6 +167,8 @@ def match(rec, rx):
         return False
     if 'area_re' in m and not re.search(m['area_re'], rx['detail']):   # 영역 이름이 정해지지 않은 완화 (O-114 J1 탈출)
         return False
+    if 'rule_re' in m and not re.search(m['rule_re'], rx['rule'] or ''):   # 규칙 이름이 정해지지 않은 완화 (O-119 MDI TX)
+        return False
     return True
 
 
