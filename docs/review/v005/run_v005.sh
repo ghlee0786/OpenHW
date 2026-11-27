@@ -31,6 +31,7 @@ step test_excl "$KPY" -I "$HERE/test_v005_excl.py" "$OUT/test_excl" || bad=1
 step test_relax python -I "$HERE/test_v006_relax.py" "$OUT/test_relax" || bad=1
 step test_fab python -I "$HERE/test_v006_fab.py" "$WORK/hardware/schematic/carrier/carrier.kicad_pcb" "$OUT/test_fab" || bad=1
 step test_esc "$KPY" -I "$HERE/test_v006_esc.py" "$WORK/hardware/schematic/carrier/carrier.kicad_pcb" "$OUT/test_esc" || bad=1
+step test_unc "$KPY" -I "$HERE/test_v006_unc.py" "$WORK/hardware/schematic/carrier/carrier.kicad_pcb" "$OUT/test_unc" || bad=1
 step test_vd001 python -I "$HERE/test_v006_vd001_html.py" "$OUT/test_vd001" || bad=1
 for b in carrier front; do
   P="$WORK/hardware/schematic/$b/$b.kicad_pcb"
@@ -73,5 +74,5 @@ step pre python -I "$HERE/v006a_pre.py" "$OUT" "$C" "$OUT/pre.json" "$OUT/pre.md
 mkdir -p "$MAIN/validation/runtime/vd001/results"
 cp "$OUT/cond2.json" "$MAIN/validation/runtime/vd001/results/cond2-review.json" 2>/dev/null
 for b in carrier front; do [ -f "$OUT/cond3-review-$b.json" ] && cp "$OUT/cond3-review-$b.json" "$MAIN/validation/runtime/vd001/results/"; done
-mkdir -p "$MAIN/validation/runtime/vd001/pre-review/$C" && cp "$OUT/pre.json" "$OUT/pre.md" "$MAIN/validation/runtime/vd001/pre-review/$C/" 2>/dev/null
+mkdir -p "$MAIN/validation/runtime/vd001/pre-review/$C" && cp "$OUT/pre.json" "$OUT/pre.md" "$OUT/areas.md" "$MAIN/validation/runtime/vd001/pre-review/$C/" 2>/dev/null
 echo "결과: $OUT (steps.tsv)"; exit $bad
