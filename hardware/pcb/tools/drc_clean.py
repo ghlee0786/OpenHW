@@ -18,7 +18,7 @@ for v in d["violations"]:
             ids.add(it["uuid"])
             if v["type"] == "track_dangling":
                 dang.add(it["uuid"])
-tracks = [t for t in b.GetTracks() if not any(k in t.GetNetname() for k in KEEP)]
+tracks = [t for t in b.GetTracks() if not any(k in t.GetNetname() for k in KEEP) and not t.IsLocked()]  # 잠근 것(미리 박은 탈출 비아 등)은 안 지운다
 pads = {}
 for fp in b.GetFootprints():
     for p in fp.Pads():
