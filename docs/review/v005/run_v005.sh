@@ -10,15 +10,18 @@
 set -u
 C="${1:?pcb 커밋}"
 ROOT="$(git rev-parse --show-toplevel)"
+# O-100: 결과(validation/runtime)는 main 체크아웃에 — 레인 worktree 안은 accept 때 지워짐. MAIN_ROOT 로 바꿀 수 있음
+MAIN="${MAIN_ROOT:-$(cd "$(git rev-parse --path-format=absolute --git-common-dir)/.." && pwd)}"
 HERE="$ROOT/docs/review/v005"
 KDIR="${KICAD_BIN:-/c/Users/gh/AppData/Local/Programs/KiCad/10.0/bin}"
 KCLI="$KDIR/kicad-cli.exe"; KPY="$KDIR/python.exe"
-OUT="$ROOT/validation/runtime/v005/$C"
+OUT="$MAIN/validation/runtime/v005/$C"
 WORK="${2:-$OUT/snap}"
 mkdir -p "$OUT" "$WORK"
-git -C "$ROOT" archive --format=tar "$C" hardware | tar -xf - -C "$WORK" || { echo "archive 실패"; exit 1; }
+# core.autocrlf=true 이면 archive 가 LF→CRLF 로 바꿔 sha256(E4c·R-010 zip)이 커밋과 달라짐 → 끔 (V-006a)
+git -C "$ROOT" -c core.autocrlf=false archive --format=tar "$C" hardware | tar -xf - -C "$WORK" || { echo "archive 실패"; exit 1; }
 # 제조 산출물(P-004)이 그 커밋에 있으면 함께 푼다(없으면 조건 3은 「산출물 없음」)
-git -C "$ROOT" archive --format=tar "$C" manufacturing 2>/dev/null | tar -xf - -C "$WORK" 2>/dev/null || true
+git -C "$ROOT" -c core.autocrlf=false archive --format=tar "$C" manufacturing 2>/dev/null | tar -xf - -C "$WORK" 2>/dev/null || true
 : > "$OUT/steps.tsv"; bad=0
 step() { local name="$1"; shift; "$@" > "$OUT/$name.log" 2>&1; local rc=$?; printf '%s\t%s\n' "$name" "$rc" >> "$OUT/steps.tsv"; echo "$name exit=$rc"; return $rc; }
 step test_silk "$KPY" -I "$HERE/test_v005_silk.py" "$OUT/test" || bad=1
@@ -45,7 +48,13 @@ for b in carrier front; do
 done
 step html python -I "$HERE/v005_html.py" "$OUT" "$C" "$OUT" || bad=1
 # V-006: VD-001 조건 2 집계 (종료 코드 = 불합격 항목 수, 판정이라 실행 실패로 치지 않음)
-step cond2 python -I "$HERE/v006_cond2.py" "$OUT" "$C" "$OUT/cond2.json" --snap "$WORK" --root "$ROOT"
+# V-006a(O-107): 배선 무관 사전 감수 — R-020 전원 항목·3D 모델 감사(REN-002 audit_models)·참조 지정자 Fab/실크 수 → 수정 요청 목록
+EV="$ROOT/docs/research/r020"
+[ -f "$EV/ev_check.py" ] && step ev "$KPY" -I "$EV/ev_check.py" --config "$EV/ev_config.json" --board carrier="$WORK/hardware/schematic/carrier/carrier.kicad_pcb" --board front="$WORK/hardware/schematic/front/front.kicad_pcb" --json-out "$OUT/ev.json"
+AM="$ROOT/mechanical/ren002/audit_models.py"
+[ -f "$AM" ] && step models python -I -B "$AM" --src "$WORK" --out-json "$OUT/models.json" --no-md
+for b in carrier front; do step "refs_$b" "$KPY" -I "$HERE/v006a_refs.py" "$WORK/hardware/schematic/$b/$b.kicad_pcb" "$OUT/refs_$b.json" || bad=1; done
+step cond2 python -I "$HERE/v006_cond2.py" "$OUT" "$C" "$OUT/cond2.json" --snap "$WORK" --root "$MAIN"
 # V-006: VD-001 조건 3 — R-010 16항 (산출물 폴더 manufacturing/pcb/<보드>/ 또는 <보드>.zip, 종료 코드 = 불합격 수)
 for b in carrier front; do
   F="$WORK/manufacturing/pcb/$b"; [ -d "$F" ] || F="$WORK/manufacturing/pcb/$b.zip"
@@ -56,8 +65,10 @@ for b in carrier front; do
 ' "$b" "$b" >> "$OUT/steps.tsv"; echo "fab_$b 산출물 없음"
   fi
 done
+step pre python -I "$HERE/v006a_pre.py" "$OUT" "$C" "$OUT/pre.json" "$OUT/pre.md" --root "$MAIN"
 # VD-001 결과 자리로 복사 (docs/review/vd001-format.md §1)
-mkdir -p "$ROOT/validation/runtime/vd001/results"
-cp "$OUT/cond2.json" "$ROOT/validation/runtime/vd001/results/cond2-review.json" 2>/dev/null
-for b in carrier front; do [ -f "$OUT/cond3-review-$b.json" ] && cp "$OUT/cond3-review-$b.json" "$ROOT/validation/runtime/vd001/results/"; done
+mkdir -p "$MAIN/validation/runtime/vd001/results"
+cp "$OUT/cond2.json" "$MAIN/validation/runtime/vd001/results/cond2-review.json" 2>/dev/null
+for b in carrier front; do [ -f "$OUT/cond3-review-$b.json" ] && cp "$OUT/cond3-review-$b.json" "$MAIN/validation/runtime/vd001/results/"; done
+mkdir -p "$MAIN/validation/runtime/vd001/pre-review/$C" && cp "$OUT/pre.json" "$OUT/pre.md" "$MAIN/validation/runtime/vd001/pre-review/$C/" 2>/dev/null
 echo "결과: $OUT (steps.tsv)"; exit $bad

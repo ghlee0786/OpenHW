@@ -296,6 +296,9 @@ def resolve_source(src, tsv):
         nick, name = m.group(1), m.group(2)
         if nick == 'openhw' and A.repo_root:
             return os.path.join(A.repo_root, 'hardware', 'libraries', 'openhw.pretty', name + '.kicad_mod')
+        # V-006a: 프로젝트 라이브러리(예: OpenHW_Mech → hardware/pcb/lib/OpenHW_Mech.pretty)가 저장소에 있으면 그것이 원본
+        if A.repo_root and os.path.isdir(os.path.join(A.repo_root, 'hardware', 'pcb', 'lib', nick + '.pretty')):
+            return os.path.join(A.repo_root, 'hardware', 'pcb', 'lib', nick + '.pretty', name + '.kicad_mod')
         return os.path.join(KFP, nick + '.pretty', name + '.kicad_mod')
     if os.path.isabs(s):
         if os.path.exists(s):
@@ -330,7 +333,12 @@ for nick, d in sorted(silk_libs.items()):
         if not os.path.exists(orig):
             row.update(ok=False, error='원본 파일 없음'); copy_rows.append(row); continue
         row['source_sha256'] = sha256(orig)
-        row['sha_ok'] = (row['source_sha256'] == r0['sha256'])
+        # V-006a: core.autocrlf 때문에 같은 커밋 파일도 worktree 에선 CRLF, archive·main 에선 LF 일 수 있음 → 줄바꿈만 다른 형태도 같은 원본으로 본다
+        raw = open(orig, 'rb').read()
+        lf = raw.replace(b'\r\n', b'\n')
+        forms = {'as-is': row['source_sha256'], 'lf': hashlib.sha256(lf).hexdigest(), 'crlf': hashlib.sha256(lf.replace(b'\n', b'\r\n')).hexdigest()}
+        row['sha_form'] = next((k for k, v in forms.items() if v == r0['sha256']), None)
+        row['sha_ok'] = row['sha_form'] is not None
         a = load_fp(d, name)
         o = load_fp(os.path.dirname(orig), os.path.splitext(os.path.basename(orig))[0])
         if a is None or o is None:

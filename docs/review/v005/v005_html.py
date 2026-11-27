@@ -81,7 +81,7 @@ def cell(v, good):
 rows.append(('DRC 위반 (kicad-cli pcb drc --severity-all --schematic-parity)', [(len(D[b]['violations']), len(D[b]['violations']) == 0) for b in BOARDS]))
 rows.append(('미연결', [(len(D[b]['unconnected_items']), len(D[b]['unconnected_items']) == 0) for b in BOARDS]))
 rows.append(('회로도 일치 문제', [(len(D[b].get('schematic_parity', [])), len(D[b].get('schematic_parity', [])) == 0) for b in BOARDS]))
-for k, lab in (('S1_on_mask_open', 'S1 패드·노출 동박 위 실크(잘림)'), ('S1v_over_via', 'S1v 비아 위 실크'), ('S1h_over_hole', 'S1h 구멍 위 실크'),
+for k, lab in (('S1_on_mask_open', 'S1 패드·노출 동박 위 실크(잘림)'), ('S1v_over_via', 'S1v 안 덮인 비아 위 실크(덮인 비아 허용 #58)'), ('S1h_over_hole', 'S1h 열린 구멍 위 실크'),
                ('S2_clear_lt_0p15', 'S2 실크–마스크 개구 < 0.15mm'), ('S3_line_lt_0p15', 'S3 실크 선폭 < 0.15mm'),
                ('S4_text', 'S4 글자 높이 < 1.0 · 획 < 0.15'), ('S4r_ratio_lt_1to5', 'S4r 획/높이 < 1:5 (획 0.2)'), ('S5_edge', 'S5 보드 외곽까지 < 0.30mm'),
                ('S6_ref_hidden', 'S6 부품 아래 숨는 참조'), ('S6a_ref_far', 'S6a 자기 부품에서 먼 참조(>2mm)'), ('S6a_ref_ambiguous', 'S6a 다른 부품이 더 가까운 참조'),
