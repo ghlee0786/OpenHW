@@ -28,7 +28,7 @@
 | VSMA1085400 | Vishay 데이터시트 Document Number 80294 Rev. 1.4 (08-Jul-2022), https://www.vishay.com/docs/80294/vsma1085400.pdf (sha256 `642c5635c26b48e48d4f095e0907963a4e54c5f9936d3810f06d6aa0798692b3`, 2026-11-27 읽음) | — |
 | SG2002 | `hardware/datasheets/sophgo/01_SG2002_Datasheet_V1.0_EN.docx` (Preliminary 1.0-alpha, 온도 표) | `hardware/datasheets/INDEX.md` |
 | 원장 | `orchestration/request-ledger.md` (orch 레인 `harness/t-20261126-144334-727e`) | `2151f63` (main의 원장은 빈 틀) |
-| 이미지 | `C:/Users/gh/.local/share/openhw-tools/recamera-sdk/out-f010/` (저장소 밖) — F-006 이미지(ethtool) + vo 노드 gpio 속성 삭제 | F-010 (`0004-openhw-vo-gpio.patch`) |
+| 이미지 | `%USERPROFILE%/.local/share/openhw-tools/recamera-sdk/out-f010/` (저장소 밖) — F-006 이미지(ethtool) + vo 노드 gpio 속성 삭제 | F-010 (`0004-openhw-vo-gpio.patch`) |
 
 시험점 번호는 `boards.py` 시험점 목록 순서다(캐리어 L135–138, 전면 L237–239). 위치(좌표)는 PCB 배치가 main에 없어 **미기재**이므로, 실물 실크로 찾는다.
 - **캐리어:** TP1 12V_IN · TP2 5V_SYS · TP3 12V_IR · TP4 CORE_3V3 · TP5 SD_PWR_3V3 · TP6/7 GND · TP8/9 USB_DP/DN · TP10 USB_DET · TP11 nRESET · TP12 UPGRAD_KEY · TP13 STATUS_LED · TP14 IR_LED_EN · TP15 SPARE1 · TP16/17 I2C1 SDA/SCL · TP18/19 RESERVE1/2 · TP20–23 UART1 RX/TX/CTS/RTS · TP24/25 DEBUG_UART0 TX/RX · TP26 ALS_INT_RSV
@@ -318,9 +318,9 @@ A만 시험했을 때의 상한(계산값 × 1.25): 방열판(내부) 21.3 K · 
 - 모두 Python 3 표준 라이브러리만 쓴다. 외부 명령은 `ffprobe`·`ffmpeg`(① 도구)과 `mosquitto_sub`(② 직접 구독)이다.
 - 장치의 1883은 루프백 전용이다(D-003 #30). 그래서 이벤트·invoke는 **ssh 파이프 + `--stdin`**으로 받는다.
 - **설치 (F-008, 사용자 허가 2026-11-27 · orch O-79):** ffmpeg/ffprobe만 설치했다.
-  - 위치: `C:/Users/gh/tools/ffmpeg/9.0.2/ffmpeg-9.0.2-essentials_build/bin/` (`ffmpeg.exe`·`ffprobe.exe`·`ffplay.exe`).
+  - 위치: `%USERPROFILE%/tools/ffmpeg/9.0.2/ffmpeg-9.0.2-essentials_build/bin/` (`ffmpeg.exe`·`ffprobe.exe`·`ffplay.exe`).
     - 사용자 홈 아래 격리 설치이고, PATH·시스템 설정은 바꾸지 않았다.
-    - 받은 zip은 빈 폴더 `C:/Users/gh/tools/ffmpeg/_download-9.0.2/`에 두었다.
+    - 받은 zip은 빈 폴더 `%USERPROFILE%/tools/ffmpeg/_download-9.0.2/`에 두었다.
   - 배포처: ffmpeg.org 다운로드 페이지(https://ffmpeg.org/download.html)가 링크하는 gyan.dev Windows 빌드.
   - 버전: **9.0.2 essentials** — `https://www.gyan.dev/ffmpeg/builds/packages/ffmpeg-9.0.2-essentials_build.zip`.
     - 서버 Last-Modified: 2026-09-19 07:10:16 GMT. 공개된 지 2주를 넘겼다.
@@ -332,7 +332,7 @@ A만 시험했을 때의 상한(계산값 × 1.25): 방열판(내부) 21.3 K · 
     - `ffplay.exe`: `befbbd00a25965365f7fb3eed6ad5aa5f805eb70fabc567883a006de3b26c06f`
   - 압축 해제 전 zip 안의 경로를 검사했다(절대경로·`..` 0건, 49개).
   - **쓰는 법:** PATH를 바꾸지 않는다. 다음 둘 중 하나로 bin 폴더를 준다.
-    - `rtsp_check.py --ffmpeg-dir C:/Users/gh/tools/ffmpeg/9.0.2/ffmpeg-9.0.2-essentials_build/bin <하위 명령> …` (하위 명령 앞에 둔다)
+    - `rtsp_check.py --ffmpeg-dir <ffmpeg bin 폴더> <하위 명령> …` (하위 명령 앞에 둔다)
     - 환경 변수 `OPENHW_FFMPEG_DIR`
     - 둘 다 없으면 PATH를 본다.
   - **설치하지 않은 것:**

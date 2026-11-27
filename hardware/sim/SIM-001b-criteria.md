@@ -2,7 +2,7 @@
 
 - 배정: orch t18r SIM-001b (VD-001 7), O-80 · O-81) · 작성: firmware t18w · 레인 `t-20261127-041440-3ed1` · 2026-11-27
 - 회로 값: main 회로도 생성기 `hardware/schematic/tools/boards.py` = `front.kicad_sch` (C-013 `656b50a`), 계약 `hw-fw-contract.md` v1.11
-- 도구: ngspice-47 (`C:/Users/gh/tools/ngspice/47/Spice64/bin/ngspice_con.exe`, sha256 `22d5cae2bd32b2e39157a8d27bf457122f68285b72a9ebefdf41551b628233ab`; 7z sha256 `59225971…`, md5 = SourceForge 게시값)
+- 도구: ngspice-47 (`ngspice_con.exe` — 환경 변수 `NGSPICE` 로 지정, sha256 `22d5cae2bd32b2e39157a8d27bf457122f68285b72a9ebefdf41551b628233ab`; 7z sha256 `59225971…`, md5 = SourceForge 게시값)
 - 결과: `hardware/sim/results/SIM-B*.json`(orch O-81 공통 형식), 파형 `hardware/sim/png/`, 넷리스트 `hardware/sim/SIM-B*.cir`, 실행 `python hardware/sim/sim001b/run.py`(종료 코드 = fail + error 수)
 - **이 문서의 기준은 결과를 보기 전에 정했고, 결과를 본 뒤 바꾸지 않는다.**
   - 기준이 틀렸으면 그 사실과 새 기준을 별도 커밋으로 남기고 재판정한다.
