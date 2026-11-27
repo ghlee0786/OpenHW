@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 550" width="100%" role="img" aria-labelledby="t d">
-<!-- 생성: docs/readme/tools/make_svgs.py · 수치 기준 main 1898e1f -->
+<!-- 생성: docs/readme/tools/make_svgs.py · 수치 기준 main 995b872 -->
 <!-- 출처 전원: docs/decisions/D-003-working-defaults.md #10 #22 · carrier.kicad_pcb 넷 /12V_IN → U1 · U2 → /12V_IR → J7 -->
 <!-- 출처 네트워크: D-003 #11 -->
 <!-- 출처 센서: D-003 #5 #17 -->

@@ -1,4 +1,4 @@
-<!-- 수치는 저장소 결과 파일에서 읽은 값이다(기준 커밋 main c0f0eb5, 2026-11-27). 값마다 출처 경로를 표 각주와 docs/readme/*.svg 주석에 적었다. -->
+<!-- 수치는 저장소 결과 파일에서 읽은 값이다(기준 커밋 main 995b872, 2026-11-27). 값마다 출처 경로를 표 각주와 docs/readme/*.svg 주석에 적었다. -->
 
 <div align="center">
 
@@ -21,12 +21,12 @@
 > and a 40×54 mm carrier board (12 V input and protection, 5 V buck, 10/100 Ethernet, USB-C, microSD).
 > The device runs Linux and detects people on the on-chip NPU.
 > The project is in the virtual-design stage: schematics pass ERC with zero violations, 25 of 25 circuit simulations pass,
-> and the front board passes DRC with zero violations and zero unconnected items, while carrier routing is still in progress.
+> and both boards pass DRC with zero violations and zero unconnected items.
 > Hardware design files are released under the Apache License 2.0.
 
 ## 진행 상태
 
-<p align="center"><img src="docs/readme/pipeline.svg" width="880" alt="설계 흐름 8단계: 요구사항·회로도·시뮬레이션 완료, PCB 배선·DRC·3D 검증·케이스 진행 중, 렌더 대기"></p>
+<p align="center"><img src="docs/readme/pipeline.svg" width="880" alt="설계 흐름 8단계: 요구사항·회로도·시뮬레이션·PCB 배선·DRC 완료, 3D 검증·케이스 진행 중, 렌더 대기"></p>
 
 | 단계 | 상태 | 근거 (결과 파일) |
 |---|---|---|
@@ -34,12 +34,12 @@
 | 회로도 2장 | ✅ ERC 위반 0 | [`carrier-erc.json`](hardware/schematic/carrier/carrier-erc.json) · [`front-erc.json`](hardware/schematic/front/front-erc.json) |
 | 회로 시뮬레이션 | ✅ 25/25 통과 (ngspice-47) | [`hardware/sim/results/`](hardware/sim/results) |
 | 전면 보드 PCB | ✅ DRC 위반 0 · 미연결 0 · 회로도 일치 0 | [`front-drc.json`](hardware/pcb/drc/front-drc.json) |
-| 캐리어 보드 PCB | 🔧 배선 마무리 중 — DRC 위반 7 · 미연결 35 | [`carrier-drc.json`](hardware/pcb/drc/carrier-drc.json) |
+| 캐리어 보드 PCB | ✅ DRC 위반 0 · 미연결 0 · 회로도 일치 0 | [`carrier-drc.json`](hardware/pcb/drc/carrier-drc.json) |
 | 3D 조립 판정 | 🔧 모델 빠짐 0 · 판정 실패 0 (중간 보드 기준, 최종 보드로 다시) | [`judge.md`](mechanical/m007/judge.md) |
 | 케이스 | 🔧 1차 초안 — 최종 보드 기준 확정 대기 | [`m003-enclosure.md`](mechanical/m003/m003-enclosure.md) |
 | 최종 렌더 · 실물 제작 | ⏳ 가상 설계가 끝난 뒤 | — |
 
-<p align="center"><img src="docs/readme/numbers.svg" width="880" alt="핵심 수치 카드: ERC 0, 시뮬레이션 25/25, 전면 DRC 0·0, 캐리어 DRC 7·35, 3D 모델 빠짐 0, 4층 1.6 mm"></p>
+<p align="center"><img src="docs/readme/numbers.svg" width="880" alt="핵심 수치 카드: ERC 0, 시뮬레이션 25/25, 전면 DRC 0·0, 캐리어 DRC 0·0, 3D 모델 빠짐 0, 4층 1.6 mm"></p>
 
 ## 주요 기능
 
@@ -57,13 +57,15 @@
 
 캐리어 보드(아래) – 코어 모듈 – 전면 보드(위)를 0.5 mm 60핀 BTB 커넥터 두 쌍으로 바로 꽂는다(결합 높이 8.0 mm). 전면과 캐리어 사이 IR 전원·제어는 GH 6핀 하니스로 잇는다.
 
+<p align="center"><a href="docs/readme/media/stack_spin.gif"><img src="docs/readme/media/stack_spin.gif" width="480" alt="3층 적층 회전 애니메이션: 캐리어 보드, 코어 모듈 자리, 전면 보드를 KiCad 3D로 쌓아 돌린 모습"></a><br><sub>실제 보드 파일로 쌓은 3층 적층 회전 (KiCad 3D 렌더)</sub></p>
+
 ### 시스템 블록도
 
 <p align="center"><img src="docs/readme/block.svg" width="880" alt="시스템 블록도: 12 V 입력, 보호, 5 V 강압, eFuse, SG2002, 이미지 센서, IR-cut, 조도센서, IR LED, 이더넷, USB-C, microSD"></p>
 
 ## 갤러리
 
-### 전면 보드 3D
+### 3D — 전면 보드
 
 <table>
 <tr>
@@ -74,7 +76,22 @@
 <tr>
 <td align="center"><a href="docs/renders/p005/front-top.png"><img src="docs/renders/p005/front-top.png" width="260" alt="전면 보드 윗면 3D 렌더"></a><br><sub>윗면</sub></td>
 <td align="center"><a href="docs/renders/p005/front-bottom.png"><img src="docs/renders/p005/front-bottom.png" width="260" alt="전면 보드 아랫면 3D 렌더"></a><br><sub>아랫면</sub></td>
-<td align="center"><sub><b>캐리어 보드</b><br>배선 마무리 중<br>(DRC 0 뒤 3D·회전 그림 추가)</sub></td>
+<td align="center"><sub>캐리어 보드 3D는 아래 표<br>3층 적층 회전은 <a href="#3층-적층">아키텍처</a></sub></td>
+</tr>
+</table>
+
+### 3D — 캐리어 보드
+
+<table>
+<tr>
+<td align="center" width="33%"><a href="docs/renders/carrier/carrier-iso.png"><img src="docs/renders/carrier/carrier-iso.png" width="260" alt="캐리어 보드 비스듬한 앞면 3D 렌더"></a><br><sub>비스듬한 윗면 — BTB·5 V 강압·USB-C</sub></td>
+<td align="center" width="33%"><a href="docs/renders/carrier/carrier-iso-back.png"><img src="docs/renders/carrier/carrier-iso-back.png" width="260" alt="캐리어 보드 비스듬한 뒤쪽 3D 렌더"></a><br><sub>비스듬한 뒤쪽 — RJ45·DC 잭·microSD</sub></td>
+<td align="center" width="33%"><a href="docs/readme/media/carrier_spin.gif"><img src="docs/readme/media/carrier_spin.gif" width="260" alt="캐리어 보드 360도 회전 애니메이션"></a><br><sub>360° 회전</sub></td>
+</tr>
+<tr>
+<td align="center"><a href="docs/renders/carrier/carrier-top.png"><img src="docs/readme/media/carrier_top.png" width="260" alt="캐리어 보드 윗면 3D 렌더"></a><br><sub>윗면 — 누르면 큰 그림</sub></td>
+<td align="center"><a href="docs/renders/carrier/carrier-bottom.png"><img src="docs/readme/media/carrier_bottom.png" width="260" alt="캐리어 보드 아랫면 3D 렌더"></a><br><sub>아랫면 — 누르면 큰 그림</sub></td>
+<td align="center"><sub>캐리어 40 × 54 mm · 4층<br>DRC 위반 0 · 미연결 0<br>(<a href="hardware/pcb/drc/carrier-drc.json">carrier-drc.json</a>)</sub></td>
 </tr>
 </table>
 

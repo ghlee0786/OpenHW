@@ -8,14 +8,14 @@ python -I docs/readme/tools/make_svgs.py
 from pathlib import Path
 
 OUT = Path(__file__).resolve().parents[1]
-BASE = "main 1898e1f"  # 수치를 읽은 커밋
+BASE = "main 995b872"  # 수치를 읽은 커밋
 
 # 값, 출처 (저장소 루트 기준 경로 — 이 파일들의 값을 그대로 옮긴다)
 FACTS = {
     "erc": ("0", "hardware/schematic/carrier/carrier-erc.json · hardware/schematic/front/front-erc.json (violations 0, KiCad 10.0.8)"),
     "sim": ("25/25", "hardware/sim/results/SIM-*.json (25개 모두 verdict pass)"),
     "front_drc": ("0 · 0", "hardware/pcb/drc/front-drc.json (violations 0 · unconnected_items 0 · schematic_parity 0)"),
-    "carrier_drc": ("7 · 35", "hardware/pcb/drc/carrier-drc.json (violations 7 · unconnected_items 35 — 배선 진행 중)"),
+    "carrier_drc": ("0 · 0", "hardware/pcb/drc/carrier-drc.json (violations 0 · unconnected_items 0 · schematic_parity 0, 2026-11-27T15:40)"),
     "models": ("0", "mechanical/m007/judge.md (캐리어·전면 원본 3D 모델 빠짐 0, 03_judge 실패 0)"),
     "stackup": ("4층", "docs/decisions/D-003-working-defaults.md #21 (4층 1.6 mm) · #25 (캐리어 40×54, 전면 40×40)"),
 }
@@ -149,8 +149,8 @@ STAGES = [  # (이름, 상태, 한 줄) — 2026-11-27 기준
     ("요구사항", "ok", "제품 기획·기본값"),
     ("회로도", "ok", "ERC 0 (2장)"),
     ("시뮬레이션", "ok", "25/25 통과"),
-    ("PCB 배선", "wip", "전면 완료 · 캐리어 진행"),
-    ("DRC", "wip", "전면 0 · 캐리어 7"),
+    ("PCB 배선", "ok", "전면 · 캐리어 완료"),
+    ("DRC", "ok", "두 보드 0 · 0"),
     ("3D 검증", "wip", "모델 빠짐 0 · 최종 보드 재판정"),
     ("케이스", "wip", "1차 설계 · 최종 보드 대기"),
     ("렌더", "todo", "최종 보드 뒤"),
@@ -203,7 +203,7 @@ def numbers():
         ("erc", "okc", "회로도 ERC 위반", "캐리어 · 전면 (KiCad 10)"),
         ("sim", "okc", "회로 시뮬레이션 통과", "ngspice-47 · 결과 파일 25개"),
         ("front_drc", "okc", "전면 DRC 위반 · 미연결", "parity 0"),
-        ("carrier_drc", "wipc", "캐리어 DRC 위반 · 미연결", "배선 진행 중"),
+        ("carrier_drc", "okc", "캐리어 DRC 위반 · 미연결", "parity 0"),
         ("models", "okc", "3D 모델 빠짐", "두 보드 · 조립 판정 실패 0"),
         ("stackup", "okc", "1.6 mm PCB", "전면 40×40 · 캐리어 40×54 mm"),
     ]
