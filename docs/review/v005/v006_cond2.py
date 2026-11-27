@@ -49,6 +49,12 @@ if A.d003 and os.path.exists(A.d003):
             TX_UNC_MAX = float(_m.group(1)) if _m else None
         if re.match(r'\|\s*63\s*\|', _l) and 'DP_BRK' in _l and 'DP_TUNE' in _l and '결합으로' in _l:
             UNC63 = True
+PIN8_MAX = None   # D-003 #64 보완(O-123): ESD GND 핀 8 은 같은 부품의 GND 핀 3 을 거쳐 비아에 닿는 길이 ≤N mm 허용 — 그 문구가 있을 때만
+if A.d003 and os.path.exists(A.d003):
+    for _l in open(A.d003, encoding='utf-8'):
+        if re.match(r'\|\s*64\s*\|', _l):
+            _m = re.search(r'핀 8[^|]*?핀 3을 거쳐[^|]*?≤\s*([\d.]+)\s*mm', _l)
+            PIN8_MAX = float(_m.group(1)) if _m else None
 AREA_GAP_MAX = {'DP_BRK': 2.2, 'DP_TUNE': 1.0}   # D-003 #46 — 보드 규칙 값은 v006_relax 가 #46 기록과 대조한다
 ABASE = json.load(open(A.area_baseline, encoding='utf-8')) if os.path.exists(A.area_baseline) else {}
 area_rows = []
@@ -181,10 +187,26 @@ for b in BOARDS:
                 add('2.V5', b, '0.50/0.20 영역이 그 부품 둘레 안 (부품 외곽 상자 + 3.0 [가정])', max([a['beyond_j1'] or 0 for a in ev_['areas']] or [0]), '≤3.0', bool(an) and not far, [frr])
         eg = (ru.get('esd_gnd') or {}).get('pads')
         if eg:   # O-121 / D-003 #64: ESD 어레이 GND — 핀마다 조건 맞는 비아(패드→비아 ≤1.0 · 폭 ≥0.25) 1개 이상, 가능하면 2개
-            none_ = ['%s.%s' % (x['ref'], x['pad']) for x in eg if x['n_ok'] == 0]
-            one_ = ['%s.%s' % (x['ref'], x['pad']) for x in eg if x['n_ok'] == 1]
-            add('2.V6', b, 'ESD 어레이(U4·U5) GND 핀 %d개: 핀마다 조건 맞는 비아 ≥1 (패드→비아 ≤%g · 폭 ≥%g, D-003 #64)' % (len(eg), ru['esd_gnd']['len_max'], ru['esd_gnd']['width_min']),
-                len(none_), 0, not none_, [frr], '; '.join(x for x in (('조건 맞는 비아 없음: ' + ', '.join(none_)) if none_ else '', ('비아 1개뿐(가능하면 2개): ' + ', '.join(one_)) if one_ else '') if x))
+            lm_, wm_ = ru['esd_gnd']['len_max'], ru['esd_gnd']['width_min']
+
+            def nq(x):   # 조건 맞는 비아 수. 핀 8 은 #64 보완 문구가 있으면 핀 3 을 거친 경로를 PIN8_MAX 까지 인정
+                if not x.get('vias'):
+                    return x['n_ok']
+                k_ = 0
+                for v_ in x['vias']:
+                    wok = v_['min_w'] is None or v_['min_w'] >= wm_ - 1e-6
+                    lim_ = PIN8_MAX if (PIN8_MAX is not None and x['pad'] == '8' and '3' in v_.get('through', [])) else lm_
+                    k_ += 1 if (wok and v_['len'] <= lim_ + 1e-6) else 0
+                return k_
+            none_ = ['%s.%s' % (x['ref'], x['pad']) for x in eg if nq(x) == 0]
+            one_ = ['%s.%s' % (x['ref'], x['pad']) for x in eg if nq(x) == 1]
+            p8_ = ['%s.8 %g mm' % (x['ref'], min(v_['len'] for v_ in x['vias'] if '3' in v_.get('through', []))) for x in eg
+                   if x['pad'] == '8' and any('3' in v_.get('through', []) for v_ in x.get('vias', []))]
+            add('2.V6', b, 'ESD 어레이(U4·U5) GND 핀 %d개: 핀마다 조건 맞는 비아 ≥1 (패드→비아 ≤%g · 폭 ≥%g%s, D-003 #64)'
+                % (len(eg), lm_, wm_, (' · 핀 8 은 핀 3 경유 ≤%g' % PIN8_MAX) if PIN8_MAX is not None else ''),
+                len(none_), 0, not none_, [frr], '; '.join(x for x in (('조건 맞는 비아 없음: ' + ', '.join(none_)) if none_ else '',
+                                                                  ('비아 1개뿐(가능하면 2개): ' + ', '.join(one_)) if one_ else '',
+                                                                  ('핀 3 경유: ' + ', '.join(p8_)) if p8_ else '') if x))
         for l in ru.get('ir_leds', []):
             add('2.A12', b, 'IR LED 열 비아 %s' % l['ref'], l['thermal_vias'], '≥4 (D-003 #29)', l['thermal_vias'] >= 4, [frr])
         for e in ru.get('exposed_pads', []):
