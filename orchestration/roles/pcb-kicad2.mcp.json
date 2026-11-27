@@ -1,0 +1,20 @@
+{
+  "mcpServers": {
+    "kicad": {
+      "command": "C:/tools/node-v24.22.2-win-x64/node.exe",
+      "args": [
+        "C:/Users/gh/tools/kicad-mcp-server/dist/index.js"
+      ],
+      "env": {
+        "KICAD_PYTHON": "C:/Users/gh/tools/kicad-mcp-server/.venv/Scripts/python.exe",
+        "PYTHONPATH": "C:/Users/gh/AppData/Local/Programs/KiCad/10.0/bin/Lib/site-packages",
+        "KICAD_BACKEND": "auto",
+        "KICAD_AUTO_LAUNCH": "false",
+        "NODE_ENV": "production",
+        "LOG_LEVEL": "info",
+        "PYTHONIOENCODING": "utf-8",
+        "PYTHONUTF8": "1"
+      }
+    }
+  }
+}
