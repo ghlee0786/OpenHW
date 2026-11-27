@@ -394,6 +394,14 @@ def check_texts(b, edge, log):
                 log.setdefault("conflicts", []).append({"ref": fp.GetReference(), "side": s, "text": True})
 
 
+def board_edge(b):
+    """보드 외곽(Edge.Cuts 선의 중심선) 사각형 mm. GetBoardEdgesBoundingBox 는 선폭 반만큼 바깥이라 그만큼 줄인다
+    (검토 17 · 18회차: 외곽 0.30 을 선 바깥에서 재서 실제 외곽까지 0.25~0.29 인 실크가 남았다)."""
+    eb = b.GetBoardEdgesBoundingBox()
+    h = TO(max([d.GetWidth() for d in b.GetDrawings() if d.GetLayer() == pcbnew.Edge_Cuts] or [0])) / 2
+    return (TO(eb.GetLeft()) + h, TO(eb.GetTop()) + h, TO(eb.GetRight()) - h, TO(eb.GetBottom()) - h)
+
+
 def main():
     """mode refs: 배선 전에 참조 지정자를 실크에 놓고 저장(route_export 가 글자 둘레를 비아 금지로 내보낸다).
     mode check: 배선 뒤 실크 선 · 글자의 남은 충돌(비아 · 외곽 · 이웃 패드)만 판정 — 보드는 바꾸지 않는다.
@@ -401,8 +409,7 @@ def main():
     path, rep = sys.argv[1], sys.argv[2]
     mode = sys.argv[3] if len(sys.argv) > 3 else "refs"
     b = pcbnew.LoadBoard(path)
-    eb = b.GetBoardEdgesBoundingBox()
-    edge = (TO(eb.GetLeft()), TO(eb.GetTop()), TO(eb.GetRight()), TO(eb.GetBottom()))
+    edge = board_edge(b)
     log = {"marks": [], "widened": 0, "clipped": {}, "dots_fail": [], "other_shapes": [], "marks_moved": [], "refs_silk": [], "refs_fab_only": []}
     if mode == "refs":
         place_refs(b, edge, log)
