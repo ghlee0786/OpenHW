@@ -83,9 +83,9 @@ def main():
                             os.path.join(V, 'pcbsrc', b, 'hardware', 'schematic', b, b + '.kicad_pcb')])
     if any(s['blocked'] for s in steps):
         return finish(a, rc5)
-    step('Blender 스틸 10', [BLENDER, '-b', '--factory-startup', '--python', os.path.join(M, 'ren002', 'scene.py'), '--', '--mode', 'stills'], timeout=7200)
+    step('Blender 스틸 10', [BLENDER, '-b', '--factory-startup', '--python-exit-code', '1', '--python', os.path.join(M, 'ren002', 'scene.py'), '--', '--mode', 'stills'], timeout=7200)
     step('치수선 겹침', PY + [os.path.join(M, 'ren002', 'scripts', '04_dims_overlay.py')])
-    step('턴테이블 .blend', [BLENDER, '-b', '--factory-startup', '--python', os.path.join(M, 'ren002', 'scene.py'), '--', '--mode', 'blend'])
+    step('턴테이블 .blend', [BLENDER, '-b', '--factory-startup', '--python-exit-code', '1', '--python', os.path.join(M, 'ren002', 'scene.py'), '--', '--mode', 'blend'])
     for p in glob.glob(os.path.join(R, 'blender', 'ren002_turntable.mp4')) + glob.glob(os.path.join(R, 'blender', 'turntable', '*.png')):   # 남은 프레임·MP4 는 render_chunks 가 건너뜀
         os.remove(p)
     step('턴테이블 렌더·MP4', [sys.executable, CHUNKS, '--blend', os.path.join(R, 'blender', 'turntable.blend'), '--out', os.path.join(R, 'blender', 'turntable'),

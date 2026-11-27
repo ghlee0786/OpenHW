@@ -1,19 +1,19 @@
 # M-007 기계 판정 = VD-001 조건 5 (run_all.py 출력 — 종료 코드 = 불합격 항목 수 0: 03_judge 실패 0 + 3D 모델 빠짐 보드 0 + J3 삽입 0)
 
 - 결과 파일 validation/runtime/vd001/results/cond5-mechanical.json (docs/review/vd001-format.md §1)
-- carrier pcb 6df2865: 원본 3D 모델 빠짐 0 · apply_models 사본 changed footprints 0
+- carrier pcb 995b872: 원본 3D 모델 빠짐 0 · apply_models 사본 changed footprints 0
 - kicad-cli carrier rc 0 (사본 감사 빠짐 0 , kicad-cli 경고 0 )
-- front pcb be3125d: 원본 3D 모델 빠짐 0 · apply_models 사본 changed footprints 0
+- front pcb 995b872: 원본 3D 모델 빠짐 0 · apply_models 사본 changed footprints 0
 - kicad-cli front rc 0 (사본 감사 빠짐 0 , kicad-cli 경고 0 )
-- pcb commit carrier 6df2865 · front be3125d
+- pcb commit 995b872
 - 커넥터 (pcb fab): {"rj_x": [-10.475, 5.565], "rj_y": [-33.455, -12.155], "dc_x": [10.68, 19.68], "dc_y": [-33.705, -19.705], "usb_x": [-20.455, -13.155], "usb_y": [-4.47, 4.47], "sd_x": [-6.955, 6.895], "sd_y": [3.44, 19.6], "sd_front": [19.6]}
-- 02_assembly rc 0 ASSEMBLY True 18c1fb0c6f4650b17e9ff59381e621504d7219da4305d5919af14163c86a494d harness path 24.72 slack 10.28
-BOARDS {'carrier': 'ad0dfc27fffc7c8867d00d34737477df5514ba9128b97a8feaf0908312b25d09', 'front': '079c78bffc2ee2ba86daedd99a6755e4c6fd2ab41856c5a21654aa00f3ec276a'}
+- 02_assembly rc 0 ASSEMBLY True 4826d5ab136b46f612b09cb363a5a912a1fd8a45182af921c0f8d0de761a5319 harness path 24.72 slack 10.28
+BOARDS {'carrier': 'd141704ca7e992b1f50fc6a37677f4d165dfd601e072c9f35e3517a71b177048', 'front': 'ae9e5d1455fce65e407fb2aca9ad336817fd17492dacb1067fafac3faef4386e'}
 - 03_judge rc 0 JUDGE fail 0
 
 - 판정에서 뺀 대체 블록 (그 보드 3D 모델 연결 사본 감사 빠짐 0 — asm_spec.SUBST_BLOCKS): BLK_J5_RJ45 BLK_J3_USBC BLK_L1_SRP7028A BLK_CAR_Q3 BLK_CAR_Q4 BLK_FR_X1 BLK_FR_Q3 BLK_FR_Q5 BLK_FR_Q7
 
-## J1 바디 쌍 간섭 (바디 219개)
+## J1 바디 쌍 간섭 (바디 218개)
 
 | 쌍 | 부피 mm³ | 위치 x/y/z | 판정 |
 |---|---|---|---|
@@ -51,9 +51,7 @@ BOARDS {'carrier': 'ad0dfc27fffc7c8867d00d34737477df5514ba9128b97a8feaf0908312b2
 | SPACER_M008 ↔ BOARD_PART:M12_Holder_20mm_CLA216-ICR | 7.124 | [-12.2, 12.2, -8.65, 11.65, 12.66, 12.7] | 의도 — M-008 스페이서 ↔ MH1 모델 (같은 부품) |
 | ICR_LEAD_M008 ↔ ICR_PADS_M008 | 0.004 | [15.62, 15.92, 8.69, 9.86, 11.5, 11.7] | 의도 — 리드 끝이 납땜 패드에 붙음 |
 | ICR_LEAD_M008 ↔ BOARD_PART:M12_Holder_20mm_CLA216-ICR | 9.265 | [7.95, 16.37, 8.67, 9.9, 11.34, 14.06] | 의도 — ICR 리드 ↔ MH1 모델의 리드 (같은 부품) |
-| ICR_LEAD_M008 ↔ BOARD_PART:PinHeader_1x02_P254mm_Vertical | 1.785 | [14.73, 16.39, 8.67, 9.89, 11.34, 13.61] | 의도 — 전면 J2 = 리드 납땜 패드, 헤더 실장 안 함 — KiCad 헤더 모델이 자리에 그려짐 (F5: 헤더 몸체 없는 풋프린트로 바뀌면 없어짐) |
 | ICR_PADS_M008 ↔ BOARD_PART:M12_Holder_20mm_CLA216-ICR | 0.007 | [15.6, 15.96, 8.68, 9.87, 11.46, 11.7] | 의도 — 납땜 패드 ↔ MH1 모델 리드 끝 (같은 부품) |
-| ICR_PADS_M008 ↔ BOARD_PART:PinHeader_1x02_P254mm_Vertical | 2.270 | [15.15, 16.85, 7.15, 11.39, 11.2, 11.7] | 의도 — 위와 같음 |
 | DF30_M008 ↔ BOARD_PART:Hirose_DF30FC-24DS-0.4V_2x12_P0.4mm | 22.092 | [-3.48, 3.48, -13.4, -9.7, 11.2, 12.06] | 의도 — DF30 결합 외형 ↔ 전면 J3 모델 (같은 부품) |
 | DF30_M008 ↔ BOARD_PART:Hirose_DF30FC-24DS-0.4V_2x12_P0.4mm | 2.356 | [-2.32, 2.31, -13.95, -9.15, 11.2, 11.31] | 의도 — DF30 결합 외형 ↔ 전면 J3 모델 (같은 부품) |
 
@@ -96,6 +94,6 @@ BOARDS {'carrier': 'ad0dfc27fffc7c8867d00d34737477df5514ba9128b97a8feaf0908312b2
 
 ## 입력·산출 해시
 
-- m007_assembly.step 18c1fb0c6f4650b17e9ff59381e621504d7219da4305d5919af14163c86a494d
-- boards/carrier.step ad0dfc27fffc7c8867d00d34737477df5514ba9128b97a8feaf0908312b25d09
-- boards/front.step 079c78bffc2ee2ba86daedd99a6755e4c6fd2ab41856c5a21654aa00f3ec276a
+- m007_assembly.step 4826d5ab136b46f612b09cb363a5a912a1fd8a45182af921c0f8d0de761a5319
+- boards/carrier.step d141704ca7e992b1f50fc6a37677f4d165dfd601e072c9f35e3517a71b177048
+- boards/front.step ae9e5d1455fce65e407fb2aca9ad336817fd17492dacb1067fafac3faef4386e
