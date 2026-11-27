@@ -486,7 +486,10 @@ for fp in b.Footprints():
     else:
         p1n = '1' if '1' in nums else ('A1' if 'A1' in nums else nums[0])
         p1 = pad_centroid(fp, [p1n])
-        c = (mm(fp.GetPosition().x), mm(fp.GetPosition().y))
+        # 사분면 중심 = 패드 전체의 가운데. 풋프린트 원점은 쓰지 않는다 — 핀 헤더류는 원점이 1번 패드라 치우침을 가릴 수 없다 (V-006b)
+        _px = [mm(p.GetPosition().x) for p in fp.Pads()]
+        _py = [mm(p.GetPosition().y) for p in fp.Pads()]
+        c = ((min(_px) + max(_px)) / 2, (min(_py) + max(_py)) / 2)
         th = fp.GetOrientation().AsRadians()
         ex_ = (math.cos(th), -math.sin(th))
         ey_ = (math.sin(th), math.cos(th))

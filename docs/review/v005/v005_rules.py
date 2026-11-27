@@ -481,5 +481,85 @@ for m in bmask:
 R['bmask_openings'] = [m['bbox'] for m in bmask]
 R['bmask_other_net_exposed'] = expo
 
+# ---------- 7. 작은 비아 (D-003 #21 0.65/0.30, #60 J1 탈출 비아 0.50/0.20 영역 한정 — O-114) ----------
+# 영역 = 이름이 ESC_PREFIX 로 시작하는 규칙 영역. 「영역 안」 = 비아 구리 원 둘레 16점과 중심이 모두 영역 안(KiCad enclosedByArea 와 같은 뜻).
+ESC_PREFIX = 'J1_'
+VIA_STD, ESC_MIN = (0.65, 0.30), (0.50, 0.20)   # 지름/드릴
+VIA_PWR = (0.60, 0.30)   # D-003 #21(2026-11-27): 열 비아·GND 이음 비아는 0.60/0.30 허용 (신호 비아는 0.65/0.30)
+GND_NETS = ('/GND', 'GND')
+th_z = [z for z in b.Zones() if not z.GetIsRuleArea() and z.GetZoneName().startswith('THERMAL')]
+ESC_RING, ESC_HOLE_GAP, ESC_REACH = 0.15, 0.28, 3.0   # 링, 구멍 가장자리 사이, 영역이 J1 외곽 상자 밖으로 나가도 되는 거리 [가정]
+esc_z = [z for z in b.Zones() if z.GetIsRuleArea() and z.GetZoneName().startswith(ESC_PREFIX)]
+j1 = next((fp for fp in b.Footprints() if fp.GetReference() == 'J1'), None)
+j1_nets = set(p.GetNetname() for p in j1.Pads()) if j1 else set()
+j1_bb = j1.GetBoundingBox(False) if j1 else None
+holes_all = [(mm(v.GetPosition().x), mm(v.GetPosition().y), mm(v.GetDrill()) / 2, 'via') for v in vias]
+for fp in b.Footprints():
+    for p in fp.Pads():
+        ds = p.GetDrillSize()
+        if ds.x > 0:
+            holes_all.append((mm(p.GetPosition().x), mm(p.GetPosition().y), mm(max(ds.x, ds.y)) / 2, '%s.%s' % (fp.GetReference(), p.GetNumber())))
+
+
+def via_area_state(v):
+    """'in' = 영역 안에 다 들어감, 'straddle' = 걸침, 'out' = 밖 (영역 이름과 함께)"""
+    x, y, r = mm(v.GetPosition().x), mm(v.GetPosition().y), mm(v.GetWidth(pcbnew.F_Cu)) / 2
+    pts = [(x, y)] + [(x + r * math.cos(2 * math.pi * k / 16), y + r * math.sin(2 * math.pi * k / 16)) for k in range(16)]
+    best = ('out', None)
+    for z in esc_z:
+        n = sum(1 for (px, py) in pts if z.Outline().Contains(V(px, py)))
+        if n == len(pts):
+            return 'in', z.GetZoneName()
+        if n:
+            best = ('straddle', z.GetZoneName())
+    return best
+
+
+esc = dict(prefix=ESC_PREFIX, std=VIA_STD, pwr=VIA_PWR, esc_min=ESC_MIN, ring_min=ESC_RING, hole_gap_min=ESC_HOLE_GAP, areas=[], small_total=0, allowed_060=[],
+           inside=[], inside_fail=[], outside_small=[], straddle_small=[], non_j1_net=[])
+for z in esc_z:
+    bb = z.GetBoundingBox()
+    beyond = None
+    if j1_bb is not None:
+        beyond = round(max(mm(j1_bb.GetX() - bb.GetX()), mm(bb.GetRight() - j1_bb.GetRight()), mm(j1_bb.GetY() - bb.GetY()), mm(bb.GetBottom() - j1_bb.GetBottom()), 0.0), 3)
+    esc['areas'].append(dict(name=z.GetZoneName(), layers=[b.GetLayerName(l) for l in z.GetLayerSet().Seq()],
+                             bbox=[round(mm(bb.GetX()), 3), round(mm(bb.GetY()), 3), round(mm(bb.GetRight()), 3), round(mm(bb.GetBottom()), 3)],
+                             beyond_j1=beyond, beyond_ok=(beyond is not None and beyond <= ESC_REACH + 1e-6)))
+for v in vias:
+    d, dr = mm(v.GetWidth(pcbnew.F_Cu)), mm(v.GetDrill())
+    if d >= VIA_STD[0] - 1e-6 and dr >= VIA_STD[1] - 1e-6:
+        continue
+    esc['small_total'] += 1
+    x, y = mm(v.GetPosition().x), mm(v.GetPosition().y)
+    state, zname = via_area_state(v)
+    rec = dict(at=[round(x, 3), round(y, 3)], net=v.GetNetname(), dia=round(d, 3), drill=round(dr, 3), ring=round((d - dr) / 2, 4), area=zname)
+    if state != 'in':
+        # 열 비아(같은 넷 THERMAL 구리 영역 안) · GND 이음 비아는 0.60/0.30 이상이면 허용 (#21)
+        kind = 'GND' if v.GetNetname() in GND_NETS else ('열' if any(z.GetNetname() == v.GetNetname() and z.Outline().Contains(v.GetPosition()) for z in th_z) else None)
+        if kind and d >= VIA_PWR[0] - 1e-6 and dr >= VIA_PWR[1] - 1e-6:
+            esc['allowed_060'].append(dict(rec, kind=kind))
+            continue
+        esc['outside_small'].append(rec)
+        if state == 'straddle':
+            esc['straddle_small'].append(rec)
+        continue
+    gap = min([math.hypot(x - hx, y - hy) - dr / 2 - hr for (hx, hy, hr, _) in holes_all if not (abs(hx - x) < 1e-6 and abs(hy - y) < 1e-6 and abs(hr - dr / 2) < 1e-6)] or [1e9])
+    rec['hole_gap'] = round(gap, 4)
+    why = []
+    if d < ESC_MIN[0] - 1e-6:
+        why.append('지름 < %g' % ESC_MIN[0])
+    if dr < ESC_MIN[1] - 1e-6:
+        why.append('드릴 < %g' % ESC_MIN[1])
+    if rec['ring'] < ESC_RING - 1e-6:
+        why.append('링 < %g' % ESC_RING)
+    if gap < ESC_HOLE_GAP - 1e-6:
+        why.append('구멍 간격 < %g' % ESC_HOLE_GAP)
+    esc['inside'].append(rec)
+    if why:
+        esc['inside_fail'].append(dict(rec, why=why))
+    if v.GetNetname() not in j1_nets:
+        esc['non_j1_net'].append(rec)
+R['esc_vias'] = esc
+
 json.dump(R, open(out, 'w', encoding='utf-8'), ensure_ascii=False, indent=1, default=str)
 print('ok', out)
