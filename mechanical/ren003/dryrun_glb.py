@@ -1,5 +1,5 @@
 """REN-003 재질 배정 건식 점검 — 보드 GLB(kicad-cli export glb)를 파일로만 읽어 materials.py 규칙이 어떤 재질을 주는지 표로 (렌더·Blender·Fusion 없이).
-  python -I -B mechanical/ren003/dryrun_glb.py [GLB 폴더]   (기본: main 체크아웃 validation/runtime/vd001/render/mesh)
+  python -I -B mechanical/ren003/dryrun_glb.py [GLB 폴더] [출력 md]   (기본: main 체크아웃 validation/runtime/vd001/render/mesh)
 출력: mechanical/ren003/assign_glb.md. 종료 코드 = 'keep'(규칙이 못 가른 색) 바디 종류 수."""
 import json, os, struct, sys, collections, subprocess
 
@@ -38,7 +38,7 @@ def main():
          '- 규칙: `mechanical/ren003/materials.py` `classify()` → `body` 이면 `PART_RULES`(모델 이름 → 참조 번호)', '',
          '| 보드 | 모델 (GLB 메시 이름) | 파일 색 (선형) | 재질 | 바디 수 |', '|---|---|---|---|---|']
     L += ['| %s | %s | %s | %s %s | %d |' % (b, mo, col, k, g['MATS'][k]['label'] if k in g['MATS'] else '(원래 색 유지)', n) for (b, mo, col, k), n in sorted(rows.items())]
-    open(os.path.join(HERE, 'assign_glb.md'), 'w', encoding='utf-8').write('\n'.join(L) + '\n')
+    open(sys.argv[2] if len(sys.argv) > 2 else os.path.join(HERE, 'assign_glb.md'), 'w', encoding='utf-8').write('\n'.join(L) + '\n')
     print('rows', len(rows), 'keep', sorted(keep))
     return len(keep)
 
