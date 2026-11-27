@@ -7,7 +7,12 @@
 값은 보기용 가정이다(측정값 아님). 좌표 단위: 객체 좌표 = m."""
 
 EXT_MATS = {
-    'ir_glass':  dict(label='IR 투과 앞유리 (짙은 검정 반투과 아크릴, 코팅)', rgb=(0.004, 0.0035, 0.005), rough=0.03, trans=0.3, ior=1.49, coat=0.3),
+    'ir_glass':  dict(label='IR 투과 앞유리 (짙은 스모크, 가시광 투과 약 25 % — 면당 0.5, 렌즈 앞은 투명 원형 창)', rgb=(0.004, 0.0035, 0.005), rough=0.02, ior=1.49,
+                      smoke=0.5, window_r=7.5),
+    'petg_shell': dict(label='본체 무광 흑색 플라스틱 (차콜 — 두 톤 가운데 밝은 쪽)', rgb=(0.024, 0.024, 0.026), rough=0.55, spec=0.4),
+    'lightpipe_on': dict(label='상태 LED 광 파이프 (켜짐, 청록)', rgb=(0.05, 0.6, 0.5), rough=0.3, emit=((0.05, 1.0, 0.75), 2.5)),
+    'floor':     dict(label='무한 배경 (밝은 회색, 약한 반사)', rgb=(0.62, 0.62, 0.63), rough=0.55, spec=0.3, coat=0.25),
+    'anod_grey': dict(label='알루미늄 스페이스 그레이 양극산화 (중간 회색, 헤어라인)', rgb=(0.20, 0.205, 0.215), metal=1.0, rough=0.34),
     'rubber':    dict(label='고무 가스킷 (흑색 실리콘)', rgb=(0.012, 0.012, 0.013), rough=0.85, spec=0.25),
     'backdrop':  dict(label='무한 배경 (밝은 회색 종이)', rgb=(0.62, 0.62, 0.63), rough=0.75, spec=0.2),
     'wall':      dict(label='사용 장면 벽 (무광 도장)', rgb=(0.72, 0.71, 0.68), rough=0.8, spec=0.2),
@@ -17,22 +22,25 @@ EXT_MATS = {
 
 # (이름 조각, 재질) — 앞쪽이 먼저. NAME_RULES 가 못 가른 이름에만 쓴다(시안에서 쓸 법한 이름).
 EXT_NAME_RULES = [('IR_GLASS', 'ir_glass'), ('FRONT_GLASS', 'ir_glass'), ('GLASS_FRONT', 'ir_glass'), ('GLASS_IR', 'ir_glass'),
-                  ('SHELL_PLASTIC', 'petg'), ('SHELL_ALU', 'anod'), ('GASKET', 'rubber'), ('ORING', 'rubber'),
-                  ('LIGHT_PIPE', 'lightpipe'), ('LIGHTPIPE', 'lightpipe'), ('BRACKET', 'bracket'), ('HEATSINK', 'anod'), ('HS_SHELL', 'anod'),
-                  ('SHELL_AL', 'anod'), ('SCREW', 'steel'), ('LENS_RING', 'lens'), ('SUNSHIELD', 'petg'), ('GLAND', 'plastic'), ('BODY', 'petg'),
+                  ('SHELL_PLASTIC', 'petg_shell'), ('LENS_RING', 'al'), ('SHELL_ALU', 'anod_grey'), ('GASKET', 'rubber'), ('ORING', 'rubber'),
+                  ('LIGHT_PIPE', 'lightpipe_on'), ('LIGHTPIPE', 'lightpipe_on'), ('BRACKET', 'bracket'), ('HEATSINK', 'anod'), ('HS_SHELL', 'anod'),
+                  ('SHELL_AL', 'anod'), ('SCREW', 'steel'), ('SUNSHIELD', 'petg'), ('GLAND', 'plastic'), ('BODY', 'petg'),
                   ('COVER', 'petg')]
 
 # 재질 키 → 질감 종류
-LOOK = {'lightpipe': 'clear_coat', 'plug_clear': 'clear_coat', 'petg': 'matte_plastic', 'plastic': 'matte_plastic', 'holder': 'matte_plastic', 'conn_black': 'matte_plastic', 'bracket': 'matte_plastic',
-        'anod': 'hairline', 'mount': 'hairline', 'al': 'hairline',
+LOOK = {'lightpipe': 'clear_coat', 'plug_clear': 'clear_coat', 'petg': 'matte_plastic', 'petg_shell': 'matte_plastic', 'floor': 'studio_floor', 'plastic': 'matte_plastic', 'holder': 'matte_plastic', 'conn_black': 'matte_plastic', 'bracket': 'matte_plastic',
+        'anod': 'hairline', 'anod_grey': 'hairline_cut', 'mount': 'hairline', 'al': 'hairline_cut',
         'steel': 'machined', 'brass': 'machined', 'shield': 'machined',
-        'pmma': 'clear_coat', 'ir_glass': 'coated_glass', 'glass': 'lens_coating', 'lens': 'machined',
+        'pmma': 'clear_coat', 'ir_glass': 'smoke_glass', 'glass': 'lens_coating', 'lens': 'machined',
         'foam': 'soft', 'rubber': 'soft', 'backdrop': 'paper', 'wall': 'paper'}
 
-BEVEL_SKIP = ('PAD', 'FOAM', 'GASKET', 'HARNESS', 'FPC', 'PMMA', 'GLASS')
+BEVEL_SKIP = ('PAD', 'FOAM', 'GASKET', 'HARNESS', 'FPC', 'PMMA', 'GLASS', 'LIGHT_PIPE', 'LENS_CIL093')
+# 시안 렌더에 같이 넣는 내부 부품(같은 적층) — 앞유리 너머로 렌즈 경통 · 유리가 보이게. 이름 앞부분.
+DESIGN_INTERNALS = ('LENS_CIL093', 'SENSOR_BLOCK', 'PEDESTAL', 'CORE_MODULE', 'FPC_M008')
 
 
-def detail(bpy, m, kind):
+def detail(bpy, m, kind, spec=None):
+    spec = spec or {}
     """Principled 재질 m 에 미세 질감을 덧입힌다. 반환: 넣은 것 이름."""
     nt = m.node_tree
     p = nt.nodes.get('Principled BSDF')
@@ -84,7 +92,7 @@ def detail(bpy, m, kind):
     if kind == 'matte_plastic':     # 미세 요철(입자 약 0.12 mm) + 거칠기 0.45~0.55 얼룩
         bump(noise(1.0 / 0.00012, 3.0).outputs["Fac"], 0.05, 0.00001)
         L(ramp(noise(140.0, 4.0, 0.6).outputs['Fac'], 0.45, 0.55), p.inputs['Roughness'])
-    elif kind == 'hairline':        # 양극산화 알루미늄 헤어라인: 한 방향으로 길게 늘인 잡음 + 이방성 반사
+    elif kind in ('hairline', 'hairline_cut'):   # 양극산화 알루미늄 헤어라인: 한 방향으로 길게 늘인 잡음 + 이방성 반사
         mp = N('ShaderNodeMapping')
         mp.inputs['Scale'].default_value = (60.0, 9000.0, 9000.0)       # X 로 길게(결 방향 = 객체 X)
         L(tc.outputs['Object'], mp.inputs['Vector'])
@@ -97,6 +105,25 @@ def detail(bpy, m, kind):
         tg.direction_type = 'RADIAL'
         tg.axis = 'Y'
         L(tg.outputs['Tangent'], p.inputs['Tangent'])
+        if kind == 'hairline_cut':   # 모서리 다이아컷: 볼록한 모서리(베벨 면)만 밝고 매끈하게 — Cycles Pointiness
+            geo = N('ShaderNodeNewGeometry')
+            mr = N('ShaderNodeMapRange')
+            mr.inputs['From Min'].default_value = 0.53
+            mr.inputs['From Max'].default_value = 0.60
+            L(geo.outputs['Pointiness'], mr.inputs['Value'])
+            col = N('ShaderNodeMix')
+            col.data_type = 'RGBA'
+            col.inputs['A'].default_value = p.inputs['Base Color'].default_value
+            col.inputs['B'].default_value = (0.88, 0.89, 0.90, 1)
+            L(mr.outputs['Result'], col.inputs['Factor'])
+            L(col.outputs['Result'], p.inputs['Base Color'])
+            ro = N('ShaderNodeMix')
+            ro.data_type = 'FLOAT'
+            src = p.inputs['Roughness'].links[0].from_socket
+            L(src, ro.inputs['A'])
+            ro.inputs['B'].default_value = 0.07
+            L(mr.outputs['Result'], ro.inputs['Factor'])
+            L(ro.outputs['Result'], p.inputs['Roughness'])
     elif kind == 'machined':        # 나사 · 쉘: 가는 가공 결 + 거칠기 얼룩
         L(ramp(noise(2500.0, 3.0).outputs['Fac'], max(0.05, base - 0.08), base + 0.08), p.inputs['Roughness'])
         p.inputs['Anisotropic'].default_value = 0.35
@@ -121,6 +148,61 @@ def detail(bpy, m, kind):
         bump(noise(1.0 / 0.0002, 2.0).outputs['Fac'], 0.2, 0.00002)
         if 'Sheen Weight' in p.inputs:
             p.inputs['Sheen Weight'].default_value = 0.15
+    elif kind == 'smoke_glass':     # 스모크 앞유리: 직진 투과(면당 smoke) + 프레넬 반사. 광축 둘레 window_r mm 원 안은 투명 + 코팅 반사색
+        out = next(n for n in nt.nodes if n.type == 'OUTPUT_MATERIAL')
+        t = spec.get('smoke', 0.45)
+        r = spec.get('window_r', 7.5) * 0.001
+        flat = N('ShaderNodeVectorMath')
+        flat.operation = 'MULTIPLY'
+        flat.inputs[1].default_value = (1, 1, 0)
+        L(tc.outputs['Object'], flat.inputs[0])
+        ln = N('ShaderNodeVectorMath')
+        ln.operation = 'LENGTH'
+        L(flat.outputs['Vector'], ln.inputs[0])
+        mask = N('ShaderNodeMath')
+        mask.operation = 'LESS_THAN'
+        mask.inputs[1].default_value = r
+        L(ln.outputs['Value'], mask.inputs[0])
+        tcol = N('ShaderNodeMix')
+        tcol.data_type = 'RGBA'
+        tcol.inputs['A'].default_value = (t * 0.97, t * 0.98, t * 1.0, 1)
+        tcol.inputs['B'].default_value = (0.97, 0.97, 0.97, 1)
+        L(mask.outputs['Value'], tcol.inputs['Factor'])
+        tr = N('ShaderNodeBsdfTransparent')
+        L(tcol.outputs['Result'], tr.inputs['Color'])
+        lw = N('ShaderNodeLayerWeight')
+        lw.inputs['Blend'].default_value = 0.45
+        cr = N('ShaderNodeValToRGB')            # 다층 코팅 반사색: 보라 → 초록
+        cr.color_ramp.elements[0].color = (0.50, 0.22, 0.85, 1)
+        cr.color_ramp.elements[1].color = (0.22, 0.85, 0.50, 1)
+        L(lw.outputs['Facing'], cr.inputs['Fac'])
+        gcol = N('ShaderNodeMix')
+        gcol.data_type = 'RGBA'
+        gcol.inputs['A'].default_value = (1, 1, 1, 1)
+        L(cr.outputs['Color'], gcol.inputs['B'])
+        L(mask.outputs['Value'], gcol.inputs['Factor'])
+        gl = N('ShaderNodeBsdfGlossy')
+        gl.inputs['Roughness'].default_value = spec.get('rough', 0.02)
+        L(gcol.outputs['Result'], gl.inputs['Color'])
+        fr = N('ShaderNodeFresnel')
+        fr.inputs['IOR'].default_value = spec.get('ior', 1.49)
+        geo = N('ShaderNodeNewGeometry')
+        front = N('ShaderNodeMath')                 # 뒷면에서는 반사 0(직진 투과만) — 안쪽 전반사로 검게 죽지 않게
+        front.operation = 'SUBTRACT'
+        front.inputs[0].default_value = 1.0
+        L(geo.outputs['Backfacing'], front.inputs[1])
+        fac = N('ShaderNodeMath')
+        fac.operation = 'MULTIPLY'
+        L(fr.outputs['Fac'], fac.inputs[0])
+        L(front.outputs['Value'], fac.inputs[1])
+        mx = N('ShaderNodeMixShader')
+        L(fac.outputs['Value'], mx.inputs['Fac'])
+        L(tr.outputs['BSDF'], mx.inputs[1])
+        L(gl.outputs['BSDF'], mx.inputs[2])
+        L(mx.outputs['Shader'], out.inputs['Surface'])
+    elif kind == 'studio_floor':    # 바닥: 약한 반사(코팅) + 넓은 얼룩
+        p.inputs['Coat Roughness'].default_value = 0.12
+        L(ramp(noise(8.0, 3.0).outputs['Fac'], base - 0.05, base + 0.05), p.inputs['Roughness'])
     elif kind == 'paper':           # 배경지 · 도장 벽: 넓은 얼룩만
         L(ramp(noise(8.0, 3.0).outputs['Fac'], base - 0.05, base + 0.05), p.inputs['Roughness'])
     return kind

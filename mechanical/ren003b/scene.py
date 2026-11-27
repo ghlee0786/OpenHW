@@ -3,7 +3,7 @@
   blender -b --factory-startup --python-exit-code 1 --python mechanical/ren003b/scene.py -- --mesh <메시 폴더> --out <출력 폴더>
       [--cuts hero,front,rear,exploded,section,inuse] [--turntable N] [--engine cycles|eevee] [--res 3840x2160] [--tt-res 1920x1080]
       [--samples 256] [--hdri <.hdr>] [--hdri-strength 0.7] [--hdri-rot 110] [--exposure 0.0] [--fstop 8] [--bevel 0.3] [--label OpenHW]
-      [--z-carrier -9.6] [--z-front 9.6] [--frame-radius mm] [--save-blend <새 .blend>]
+      [--z-carrier -9.6] [--z-front 9.6] [--frame-radius mm] [--override 이름조각=재질,…] [--save-blend <새 .blend>]
 
 - 입력 = prep.py 가 만든 폴더: board_carrier.glb · board_front.glb · <부품>.stl(mm) · index.json
 - 재질 = mechanical/ren003/materials.py MATS 전부(읽기만) + materials_ext.py(새 재질 · 미세 질감).
@@ -52,6 +52,7 @@ EXPOSURE = float(arg('--exposure', '0.0'))
 FSTOP = float(arg('--fstop', '8'))
 BEVEL = float(arg('--bevel', '0.3'))
 LABEL = arg('--label', 'OpenHW')
+OVERRIDE = [kv.split('=') for kv in arg('--override', '').split(',') if '=' in kv]     # 이름 조각=재질 — 모든 규칙보다 먼저(비교용 색 바꾸기)
 FRAME_R = float(arg('--frame-radius', '0'))      # mm — 0 이 아니면 카메라 거리 · 조명을 이 반지름에 맞춘다(시안끼리 같은 카메라 · 조명)
 MM = 0.001
 
@@ -90,6 +91,9 @@ def mat(name, v):
     p.inputs['IOR'].default_value = v.get('ior', 1.45)
     p.inputs['Specular IOR Level'].default_value = v.get('spec', 0.5)
     p.inputs['Coat Weight'].default_value = v.get('coat', 0.0)
+    if v.get('emit'):
+        p.inputs['Emission Color'].default_value = (*v['emit'][0], 1)
+        p.inputs['Emission Strength'].default_value = v['emit'][1]
     if v.get('trans', 0.0) > 0 and hasattr(m, 'use_raytrace_refraction'):
         m.use_raytrace_refraction = True
     return m
@@ -98,7 +102,7 @@ def mat(name, v):
 M = {k: mat('m_' + k, v) for k, v in T['MATS'].items()}
 N_BASE = len(M)
 M.update({k: mat('x_' + k, v) for k, v in X.EXT_MATS.items()})
-LOOKS = {k: X.detail(bpy, M[k], kind) for k, kind in X.LOOK.items() if k in M}
+LOOKS = {k: X.detail(bpy, M[k], kind, X.EXT_MATS.get(k)) for k, kind in X.LOOK.items() if k in M}
 WIRES = ['wire_k', 'wire_r', 'wire_y', 'wire_y', 'wire_r', 'wire_k']
 REPORT = {'mats_defined': N_BASE, 'mats_ext': len(X.EXT_MATS), 'looks': LOOKS, 'enclosure': [], 'boards': {}, 'missing': [], 'used': {}, 'cuts': {}}
 
@@ -149,7 +153,7 @@ for it in index['items']:
     name = it['file'][:-4]
     o.name = name
     o.parent = prod
-    mk = next((v for key, v in T['NAME_RULES'] if key in name), None)
+    mk = next((v for key, v in OVERRIDE if key in name), None) or next((v for key, v in T['NAME_RULES'] if key in name), None)
     if mk is None and name.startswith('HARNESS_GH6P__'):     # 보충 규칙(REN-002 scene.py 와 같음): 하니스 6선 색
         mk = WIRES[int(name.split('__')[1]) % len(WIRES)]
     if mk is None:
@@ -255,6 +259,24 @@ if LABEL and cover:
     lab.data.materials.append(M['silk'])
     use('silk')
     REPORT['label'] = LABEL
+
+# ---------------- 앞유리 안쪽 보조광 (렌더 전용) ----------------
+# 스모크 앞유리(ir_glass)가 있으면 유리 바로 뒤 위 · 아래에 약한 점광 2개 — 렌즈 경통 · IR LED 가 은은히 비치게. 화면 · 반사에는 안 보인다.
+GLASS = [o for n, o in parts.items() if o.type == 'MESH' and o.data.materials and o.data.materials[0] == M['ir_glass']]
+if GLASS:
+    gl, gh = bounds(GLASS, prod.matrix_world)
+    for i, fy in enumerate((0.78, 0.22)):
+        ld = bpy.data.lights.new('INSIDE_%d' % i, 'POINT')
+        ld.energy = float(arg('--inside-w', '0.03'))
+        ld.color = (1.0, 0.96, 0.9)
+        ld.shadow_soft_size = 0.004
+        lo_ = bpy.data.objects.new('INSIDE_%d' % i, ld)
+        scn.collection.objects.link(lo_)
+        lo_.parent = prod
+        lo_.location = ((gl.x + gh.x) / 2, gl.y + (gh.y - gl.y) * fy, gl.z - 0.004)
+        lo_.visible_camera = False
+        lo_.visible_glossy = False
+    REPORT['inside_lights'] = 2
 
 # ---------------- 사용 장면 소품: 벽 브래킷 (제품 좌표 mm, PRODUCT 자식, 기본 숨김) ----------------
 ACC = []
@@ -364,7 +386,7 @@ def cyclorama(name, mk, depth_front, depth_back, radius, height, width):
 
 
 S = (FRAME_R * MM if FRAME_R else RAD) / 0.06          # 장면 크기를 제품 크기에 맞춤 (기준: 반지름 60 mm)
-cyc = cyclorama('CYC', 'backdrop', 1.6 * S, 0.45 * S, 0.5 * S, 1.2 * S, 5.0 * S)
+cyc = cyclorama('CYC', 'floor', 1.6 * S, 0.45 * S, 0.5 * S, 1.2 * S, 5.0 * S)
 wall = cyclorama('WALL', 'wall', 2.0 * S, 0.0, 0.004 * S, 2.5 * S, 6.0 * S)     # 사용 장면: 바닥 없이 벽만 보이게 쓴다
 wall.hide_render = True
 LIGHTS = {}
@@ -524,7 +546,7 @@ REPORT.update(frame_radius_mm=FRAME_R or None, engine=scn.render.engine, res=RES
               beveled=sum(1 for e in REPORT['enclosure'] if e['bevel']), frames_requested=TT)
 
 # (컷, 제품 yaw°, 고도°, 렌즈 mm, 여유, 3분할 이동, 카메라 방위°)
-CUT_SPEC = {'hero': (34, 16, 90, 0.9, -0.55, 0), 'front': (0, 4, 100, 0.9, 0.0, 0), 'rear': (146, 18, 90, 0.92, -0.45, 0),
+CUT_SPEC = {'hero': (34, 24, 90, 0.9 if not FRAME_R else 0.7, -0.18, 0), 'front': (0, 4, 100, 0.9, 0.0, 0), 'rear': (146, 18, 90, 0.92, -0.45, 0),
             'exploded': (-42, 20, 85, 0.82, 0.0, 0), 'section': (78, 12, 100, 0.9, 0.0, 0), 'inuse': (0, -12, 85, 1.0, 0.5, 36)}
 
 

@@ -112,6 +112,7 @@ def main():
     ap.add_argument('--boards-from', default=None, help='이미 만든 board_*.glb 폴더 (내보내기 건너뜀)')
     ap.add_argument('--extra', default=None, help='덧붙일 STL 폴더 — --enclosure 에 없는 이름만 복사 (렌즈 · 나사 · 하니스 등)')
     ap.add_argument('--deflection', type=float, default=DEFLECTION, help='STEP 삼각화 곡면 오차 mm')
+    ap.add_argument('--extra-only', default=None, help='--extra 에서 이 이름 앞부분(쉼표)으로 시작하는 STL 만')
     ap.add_argument('--stl-only', action='store_true', help='외함 폴더의 STEP 은 쓰지 않는다(부품별 STL 과 통짜 STEP 이 같이 있는 시안 폴더)')
     a = ap.parse_args()
     DEFLECTION = a.deflection
@@ -138,9 +139,16 @@ def main():
     if not names:
         print('외함 메시 없음:', a.enclosure)
         bad += 1
+    import re
+    for n in [n for n in names if re.search(r' \(\d+\)$', n)]:      # 내려받기 중복 이름 「이름 (1)」 은 쓰지 않는다
+        print('건너뜀(중복 이름):', n)
+        del names[n]
     if a.extra:
+        only = tuple(a.extra_only.split(',')) if a.extra_only else None
         for p in sorted(glob.glob(os.path.join(a.extra, '*.stl'))):
-            names.setdefault(os.path.splitext(os.path.basename(p))[0], p)
+            n = os.path.splitext(os.path.basename(p))[0]
+            if only is None or n.startswith(only):
+                names.setdefault(n, p)
     for name, p in sorted(names.items()):
         o = os.path.join(a.out, name + '.stl')
         try:
