@@ -78,6 +78,8 @@ def main():
         base_x = {}
         log(f"{net}: 덩어리 {base_n} 남음 (바로 이은 트랙 {len(tr)})")
         cands = [n for n, _ in sorted(pr.BLOCKERS.items(), key=lambda kv: -kv[1]) if n.startswith("/") and not LOCK.fullmatch(n) and n != net]
+        if os.environ.get("P5_CANDS"):  # 후보를 손으로 지정(쉼표)
+            cands = [c for c in os.environ["P5_CANDS"].split(",") if c != net]
         log(f"{net}: 막힘 — 뜯을 후보 {cands}")
         done = False
         for k in range(1, maxk + 1):
