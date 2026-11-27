@@ -2,8 +2,9 @@
 보드(REF_CARRIER/REF_FRONT)는 KiCad GLB 로 따로 만들므로 빼고, 숨김(대체된) 바디·판정 블록도 뺀다."""
 import adsk.core, adsk.fusion, os, json
 
-LANE = r"C:\workspace_python\OpenHW\.harness-worktrees\t-20261127-040816-30c6"
-OUT = LANE + r"\validation\runtime\vd001\render\mesh"
+LANE = r"C:\workspace_python\OpenHW"   # 소스 체크아웃 — mechanical/fusion_run.py 가 실행하는 스크립트의 체크아웃으로 바꿈
+MAIN = r"C:\workspace_python\OpenHW"   # 산출물(validation/runtime) — main 체크아웃 (O-100)
+OUT = MAIN + r"\validation\runtime\vd001\render\mesh"
 SKIP = ('REF_CARRIER', 'REF_FRONT', 'ENC_BLOCKS', 'BLK_J4_CARD', 'PRINT_COUPON')
 SKIP_STACK = ('KEEPIN', 'ENVELOPE', 'HARNESS_CORRIDOR', 'DF30_SITE')
 

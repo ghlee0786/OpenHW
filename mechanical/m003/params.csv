@@ -23,9 +23,9 @@ dc_y,input,"(-33.705, -19.705)","[pcb] fab, [DS] XKB 14×9×11"
 dc_h,input,11.0,"[pcb] fab, [DS] XKB 14×9×11"
 dc_axis_below,input,6.5,[DS] 구멍 중심 PCB 아래 6.50
 dc_open_d,input,10.5,[가정] 플러그 오버몰드 Ø≤10 통과
-usb_x,input,"(-19.455, -12.155)","[pcb] fab, [DS] HRO 7.35×8.94×3.26"
-usb_y,input,"(-4.47, 4.47)","[pcb] fab, [DS] HRO 7.35×8.94×3.26"
-usb_h,input,3.26,"[pcb] fab, [DS] HRO 7.35×8.94×3.26"
+usb_x,input,"(-20.455, -13.155)","[pcb] fab (O-61: pcb 6df2865 J3 x −1.0, M-010), [DS] HRO 7.35×8.94×3.26"
+usb_y,input,"(-4.47, 4.47)","[pcb] fab (O-61: pcb 6df2865 J3 x −1.0, M-010), [DS] HRO 7.35×8.94×3.26"
+usb_h,input,3.26,"[pcb] fab (O-61: pcb 6df2865 J3 x −1.0, M-010), [DS] HRO 7.35×8.94×3.26"
 usb_open_w,input,12.8,[가정] USB-C 오버몰드 12.35×6.5 + 여유
 usb_open_h,input,7.0,[가정] USB-C 오버몰드 12.35×6.5 + 여유
 sd_x,input,"(-6.96, 6.91)",[pcb] KiCad DM3AT 모델 측정

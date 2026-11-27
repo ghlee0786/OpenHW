@@ -35,7 +35,21 @@ INTENDED = [
     # (이름1, 이름2, 이유, 겹친 곳 가운데가 이 상자 안일 때만) — KiCad 일반 BarrelJack 모델과 XKB 대체 블록이 같은 잭을 두 번 그림
     ('BLK_J2_DC', 'BOARD_PART', 'DC 잭: KiCad 일반 BarrelJack 모델 ↔ XKB 대체 블록 (같은 부품)', (8.0, 21.0, -35.0, -18.0, -22.0, -8.0)),
     ('BLK_J2_PLUG', 'BOARD_PART', 'DC 잭 일반 모델 앞면이 XKB 앞면보다 0.1 나옴 (같은 부품)', (8.0, 21.0, -35.0, -33.5, -22.0, -8.0)),
+    # M-010: pcb 보드에 실제 3D 모델이 연결됨 → 우리 자리 표시(판정 J2·J5 에 쓰므로 남김)와 같은 부품이 두 번 그려짐. 보드 바디는 KiCad 모델 이름으로 맞춘다
+    ('J1_MATED_ENVELOPE', 'BOARD_PART:BTB_ST-BTB-058060-B', '짝 BTB 외형 ↔ 전면 J1 소켓 모델 (같은 부품)'),
+    ('J2_MATED_ENVELOPE', 'BOARD_PART:BTB_ST-BTB-058060-A', '짝 BTB 외형 ↔ 캐리어 J1 플러그 모델 (같은 부품)'),
+    ('LED_', 'BOARD_PART:Vishay_VSMA1085600', 'IR LED 자리 표시 ↔ 전면 D_IR VSMA 모델 (같은 부품)'),
+    ('CLA216_M008', 'BOARD_PART:M12_Holder_20mm_CLA216-ICR', 'M-008 홀더 ↔ 전면 MH1 홀더 모델 (REN-002 모델 = 같은 M-008 형상)'),
+    ('SPACER_M008', 'BOARD_PART:M12_Holder_20mm_CLA216-ICR', 'M-008 스페이서 ↔ MH1 모델 (같은 부품)'),
+    ('ICR_LEAD_M008', 'BOARD_PART:M12_Holder_20mm_CLA216-ICR', 'ICR 리드 ↔ MH1 모델의 리드 (같은 부품)'),
+    ('ICR_PADS_M008', 'BOARD_PART:M12_Holder_20mm_CLA216-ICR', '납땜 패드 ↔ MH1 모델 리드 끝 (같은 부품)'),
+    ('ICR_LEAD_M008', 'BOARD_PART:PinHeader_1x02', '전면 J2 = 리드 납땜 패드, 헤더 실장 안 함 — KiCad 헤더 모델이 자리에 그려짐 (F5: 헤더 몸체 없는 풋프린트로 바뀌면 없어짐)'),
+    ('ICR_PADS_M008', 'BOARD_PART:PinHeader_1x02', '위와 같음'),
 ]
+# M-010: 「3D 모델 없는 부품 대체 블록」(m003/geom.py) — 그 보드의 3D 모델 연결 사본 감사 빠짐이 0 이면 판정에서 뺀다 (실제 모델이 같은 자리에 있음).
+#   BLK_J2_DC 는 남김: 보드 모델은 KiCad 일반 BarrelJack, 블록이 XKB 실제 치수. *_PLUG · *_CARD 는 삽입 공간이라 남김.
+SUBST_BLOCKS = {'carrier': ['BLK_J5_RJ45', 'BLK_J3_USBC', 'BLK_L1_SRP7028A', 'BLK_CAR_Q3', 'BLK_CAR_Q4'],
+                'front': ['BLK_FR_X1', 'BLK_FR_Q3', 'BLK_FR_Q5', 'BLK_FR_Q7']}
 # 기준 STEP 중 이번 조립에서 대체된 바디 (숨기고 검사에서 뺌)
 SUPERSEDED = ['CARRIER_40x54', 'FRONT_40x40', 'WINDOW_PMMA', 'LIGHT_COLLAR', 'AL_SPREADER_TAB_PX', 'THERMAL_PILLAR_A',
               'THERMAL_PILLAR_B', 'INS_PAD_A', 'INS_PAD_B1', 'INS_PAD_B2',

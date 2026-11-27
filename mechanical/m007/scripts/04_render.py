@@ -2,8 +2,9 @@
 화면 위 = +Y, 광축 +Z = 앞. 대체된 바디·플러그 블록·하니스 통로는 숨긴다(끝나면 되돌림)."""
 import adsk.core, adsk.fusion, os
 
-LANE = r"C:\workspace_python\OpenHW\.harness-worktrees\t-20261127-040816-30c6"
-OUT = LANE + r"\validation\runtime\vd001\render_m007"
+LANE = r"C:\workspace_python\OpenHW"   # 소스 체크아웃 — mechanical/fusion_run.py 가 실행하는 스크립트의 체크아웃으로 바꿈
+MAIN = r"C:\workspace_python\OpenHW"   # 산출물(validation/runtime) — main 체크아웃 (O-100)
+OUT = MAIN + r"\validation\runtime\vd001\render_m007"
 HIDE_PREFIX = ('ENC_BLOCKS', 'BLK_J4_CARD', 'HARNESS_CORRIDOR', 'KEEPIN', 'ENVELOPE', 'PRINT_COUPON')
 EXPLODE = {'FRONT_COVER': (0, 0, 45), 'LENS_WIN_PMMA': (0, 0, 70), 'WIN_A_PMMA': (0, 0, 70), 'WIN_B_PMMA': (0, 0, 70),
            'ALS_WIN_PMMA': (0, 0, 70), 'FOAM_LENS_RING': (0, 0, 25), 'FOAM_ALS_GASKET': (0, 0, 25), 'HS_EXTRUSION': (45, 0, 0),
