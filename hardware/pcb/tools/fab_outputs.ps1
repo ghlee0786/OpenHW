@@ -1,17 +1,26 @@
 # P-004 manufacturing outputs (R-010 checklist, review docs/review/vd001-format.md section 3). Run in an hc terminal after both boards pass DRC.
-# Usage: powershell -NoProfile -ExecutionPolicy Bypass -File hardware/pcb/tools/fab_outputs.ps1
+# Usage: powershell -NoProfile -ExecutionPolicy Bypass -File hardware/pcb/tools/fab_outputs.ps1 [-Boards carrier,front]
+#   -Boards: boards to regenerate (default both). A board left out is only read for its KiCad BOM csv (temp folder, no repo file changes).
+#   KiCad tools: environment KICAD_BIN (folder with kicad-cli.exe and python.exe), default %LOCALAPPDATA%\Programs\KiCad\10.0\bin
 # Writes manufacturing/pcb/<board>/ (gerber + drill, top/bottom pos, pcbway bom, assembly pdf, step, README.md, SHA256SUMS) and manufacturing/pcb/<board>.zip
 # Files only: no upload, no quote, no login.
+param([string[]]$Boards = @("carrier", "front"))
 $ErrorActionPreference = "Continue"
 $root = (Resolve-Path "$PSScriptRoot\..\..\..").Path
 Set-Location $root
-$kpy = "C:\Users\gh\AppData\Local\Programs\KiCad\10.0\bin\python.exe"
-$cli = "C:\Users\gh\AppData\Local\Programs\KiCad\10.0\bin\kicad-cli.exe"
+$bin = if ($env:KICAD_BIN) { $env:KICAD_BIN } else { Join-Path $env:LOCALAPPDATA "Programs\KiCad\10.0\bin" }
+$kpy = Join-Path $bin "python.exe"
+$cli = Join-Path $bin "kicad-cli.exe"
 $fab = Join-Path $root "manufacturing\pcb"
 $tmp = Join-Path $env:TEMP "openhw-fab-bom"
 New-Item -ItemType Directory -Force $fab, $tmp | Out-Null
 $layers = "F.Cu,In1.Cu,In2.Cu,B.Cu,F.Paste,B.Paste,F.Silkscreen,B.Silkscreen,F.Mask,B.Mask,Edge.Cuts"
 foreach ($b in "carrier", "front") {
+    if ($Boards -notcontains $b) {
+        & $cli sch export bom --fields 'Reference,Value,Footprint,${QUANTITY},${DNP}' --labels 'Refs,Value,Footprint,Qty,DNP' --group-by 'Value,Footprint,${DNP}' --ref-range-delimiter '""' -o "$tmp\$b-kicad-bom.csv" "hardware\schematic\$b\$b.kicad_sch" | Out-Null
+        "== $b (bom csv only) exit=$LASTEXITCODE"
+        continue
+    }
     $pcb = "hardware\schematic\$b\$b.kicad_pcb"
     $out = Join-Path $fab $b
     if (Test-Path $out) { Remove-Item -Recurse -Force $out }
@@ -31,7 +40,7 @@ foreach ($b in "carrier", "front") {
     & $cli pcb export step --user-origin "100x100mm" --subst-models -f -o "hardware\pcb\step\$b.step" $pcb 2>&1 | Select-String -Pattern "model|Model" | Select-Object -First 5
     "step exit=$LASTEXITCODE"
     Copy-Item "hardware\pcb\step\$b.step" "$out\$b.step"
-    & $cli sch export bom --fields 'Reference,Value,Footprint,${QUANTITY},${DNP}' --labels 'Refs,Value,Footprint,Qty,DNP' --group-by 'Value,Footprint,${DNP}' --ref-range-delimiter '' -o "$tmp\$b-kicad-bom.csv" "hardware\schematic\$b\$b.kicad_sch" | Out-Null
+    & $cli sch export bom --fields 'Reference,Value,Footprint,${QUANTITY},${DNP}' --labels 'Refs,Value,Footprint,Qty,DNP' --group-by 'Value,Footprint,${DNP}' --ref-range-delimiter '""' -o "$tmp\$b-kicad-bom.csv" "hardware\schematic\$b\$b.kicad_sch" | Out-Null
     "kicad bom exit=$LASTEXITCODE"
 }
 # PCBWay BOM: research R-011 generator and bom-full.csv from main (read-only copies in TEMP, not committed here)
@@ -39,7 +48,7 @@ cmd /c "git show main:manufacturing/bom/make_pcbway_bom.py > `"$tmp\make_pcbway_
 cmd /c "git show main:manufacturing/bom/inputs/bom-full.csv > `"$tmp\bom-full.csv`""
 python -I "$tmp\make_pcbway_bom.py" --bom-full "$tmp\bom-full.csv" --kicad-carrier "$tmp\carrier-kicad-bom.csv" --kicad-front "$tmp\front-kicad-bom.csv" --out $tmp
 "pcbway bom exit=$LASTEXITCODE"
-foreach ($b in "carrier", "front") {
+foreach ($b in $Boards) {
     $out = Join-Path $fab $b
     Copy-Item "$tmp\$b-pcbway.csv" "$out\$b-pcbway.csv"
     Copy-Item "hardware\pcb\fab-readme-$b.md" "$out\README.md"
