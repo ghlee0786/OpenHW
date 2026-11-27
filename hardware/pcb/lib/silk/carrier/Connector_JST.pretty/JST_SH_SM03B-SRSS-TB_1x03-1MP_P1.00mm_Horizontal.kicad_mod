@@ -45,7 +45,7 @@
 			(type solid)
 		)
 		(layer "F.SilkS")
-		(uuid "d1d6e6ae-979a-4474-b9ad-5675b7114394")
+		(uuid "8786dc12-ff3d-4abd-87a9-9cc3a6b3d642")
 	)
 	(fp_line
 		(start -2.61 0.695)
@@ -55,7 +55,7 @@
 			(type solid)
 		)
 		(layer "F.SilkS")
-		(uuid "bb664c8b-3ef9-43f8-b7ee-6d6578cd0110")
+		(uuid "7294b132-d43a-4582-9382-2f7f7faa5406")
 	)
 	(fp_line
 		(start -1.44 2.685)
@@ -65,7 +65,7 @@
 			(type solid)
 		)
 		(layer "F.SilkS")
-		(uuid "226ed489-528b-4d96-ba8e-6495ee22d284")
+		(uuid "3cece48b-993c-4489-9964-5bb8e8cb1a45")
 	)
 	(fp_line
 		(start 2.61 -1.785)
@@ -75,7 +75,7 @@
 			(type solid)
 		)
 		(layer "F.SilkS")
-		(uuid "e7fb100f-7ad6-493e-86d1-3f13575cb51d")
+		(uuid "b7038a39-5157-4325-8505-1daad9e07b25")
 	)
 	(fp_line
 		(start 2.61 0.695)
@@ -85,7 +85,7 @@
 			(type solid)
 		)
 		(layer "F.SilkS")
-		(uuid "a070442d-d5ef-4db5-b9c0-4e8bfd26125e")
+		(uuid "c2b5ea65-0167-48a3-98de-82a5a7937921")
 	)
 	(fp_line
 		(start -3.4 0.47)
