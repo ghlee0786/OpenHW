@@ -37,7 +37,7 @@
 | 캐리어 보드 PCB | ✅ DRC 위반 0 · 미연결 0 · 회로도 일치 0 | [`carrier-drc.json`](hardware/pcb/drc/carrier-drc.json) |
 | 3D 조립 판정 | ✅ 보드 995b872 + 케이스 시안 A: 27항목 불합격 0 · 간섭 0 | [`run_A.md`](mechanical/m010/run_A.md) · [`judge.md`](mechanical/m007/judge.md) |
 | 케이스 | ✅ 시안 A 상세 설계 (54 × 75.5 × 71.7 mm, 앞 스모크 유리 · 뒤 알루미늄 방열 쉘) | [`o126_a.md`](mechanical/design/o126_a.md) · [`o126_thermal.md`](mechanical/design/o126_thermal.md) |
-| 최종 렌더 | 🔧 시안 A 6컷 + 회전 영상 완성 — 사실감 · 유리 너머 기판 비침은 사람 확인 대기 | [`docs/renders/final/`](docs/renders/final) |
+| 최종 렌더 | ✅ 시안 A 6컷 + 회전 영상 — 사실감 · 유리 너머 기판 비침 · 브래킷 광축 사용자 확인 완료(2026-11-28) | [`docs/renders/final/`](docs/renders/final) |
 | 실물 제작 | ⏳ 이번 범위(가상 설계) 밖 | — |
 
 <p align="center"><img src="docs/readme/numbers.svg" width="880" alt="핵심 수치 카드: ERC 0, 시뮬레이션 25/25, 전면 DRC 0·0, 캐리어 DRC 0·0, 3D 모델 빠짐 0, 4층 1.6 mm"></p>

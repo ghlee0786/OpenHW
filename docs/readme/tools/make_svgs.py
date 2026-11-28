@@ -153,7 +153,7 @@ STAGES = [  # (이름, 상태, 한 줄) — 2026-11-28 기준
     ("DRC", "ok", "두 보드 0 · 0"),
     ("3D 검증", "ok", "27항목 불합격 0 · 간섭 0"),
     ("케이스", "ok", "시안 A 상세 설계"),
-    ("렌더", "wip", "6컷 + 영상 · 사람 확인 중"),
+    ("렌더", "ok", "6컷 + 영상 · 사용자 확인 완료"),
 ]
 
 
@@ -190,7 +190,7 @@ def pipeline():
     src = [("회로도", FACTS["erc"][1]), ("시뮬레이션", FACTS["sim"][1]), ("DRC", FACTS["front_drc"][1] + " · " + FACTS["carrier_drc"][1]),
            ("3D", "mechanical/m010/run_A.md (run_case.py 두 보드 995b872 · 케이스 A 종료 0, 조건 5 27항목 불합격 0)"),
            ("케이스", "mechanical/design/o126_a.md · docs/decisions/D-003-working-defaults.md #67 (O-126 시안 A)"),
-           ("렌더", "docs/renders/final/blender-*.png · blender-turntable.mp4 (O-126, 사실감 · 기판 비침은 사람 확인)")]
+           ("렌더", "docs/renders/final/blender-*.png · blender-turntable.mp4 (O-126, 사용자 확인 2026-11-28)")]
     return svg("pipeline.svg", 900, 260, "설계 흐름과 진행 상태", "요구사항부터 렌더까지 8단계의 완료·진행 중·대기 상태", css, body, src)
 
 
