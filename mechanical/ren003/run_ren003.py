@@ -3,7 +3,7 @@
   python -I -B mechanical/ren003/run_ren003.py [--docs <폴더>]
 순서: ① 렌더용 보드 STEP (층 포함) ② M007 문서 활성 ③ 01 보드 가져오기 ④ 02 재질 ⑤ 03 로컬 렌더 6장 ⑥ 확인·manifest·대표본
 산출: main 체크아웃 validation/runtime/vd001/render/fusion/ (O-100). 종료 코드 = 막힌 단계 + 불합격 수."""
-import argparse, hashlib, json, os, shutil, struct, subprocess, sys
+import argparse, hashlib, json, os, shutil, struct, subprocess, sys, time
 
 sys.stdout.reconfigure(encoding='utf-8')
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -39,9 +39,24 @@ def main():
     if bad:
         return bad
     for s, extra in (('m010/scripts/00_activate.py', ['--set', 'DOC=M007_assembly']), ('ren003/scripts/01_render_boards.py', []),
-                     ('ren003/scripts/02_appearance.py', []), ('ren003/scripts/03_render.py', [])):
+                     ('ren003/scripts/02_appearance.py', [])):
         if sh(FRUN + [os.path.join(LANE, 'mechanical', *s.split('/'))] + extra):
             return 1
+    # ⑤ 로컬 렌더: 보기 하나씩 시작 → 파일이 생기고 크기가 멈출 때까지 기다림 → 다음 (분해 위치는 다음 보기에서 되돌림)
+    r3 = os.path.join(LANE, 'mechanical', 'ren003', 'scripts', '03_render.py')
+    for v in VIEWS:
+        if sh(FRUN + [r3, '--set', 'VIEW=' + v]):
+            sh(FRUN + [r3, '--set', 'VIEW=restore']); return 1
+        p = os.path.join(F, 'ren003_%s.png' % v)
+        t0, last = time.time(), -1
+        while time.time() - t0 < 3600:
+            time.sleep(10)
+            n = os.path.getsize(p) if os.path.exists(p) else -1
+            if n > 0 and n == last:
+                break
+            last = n
+        print('[render %s] %s B, %.0f s' % (v, last, time.time() - t0), flush=True)
+    sh(FRUN + [r3, '--set', 'VIEW=restore'])
     # ⑥ 확인 (파일·해상도) · manifest (사람 확인 항목) · 대표본
     man_p = os.path.join(V, 'render', 'manifest.json')
     man = [m for m in (json.load(open(man_p, encoding='utf-8')) if os.path.exists(man_p) else []) if not m.get('path', '').startswith('validation/runtime/vd001/render/fusion/')]
