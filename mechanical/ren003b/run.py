@@ -272,10 +272,11 @@ def main():
             im = Image.open(os.path.join(out, 'stills', c + '.png')).convert('RGB')      # 4K 원본에서 바로 줄인다(JPEG 을 거치지 않음)
             im.resize((1600, round(1600 * im.size[1] / im.size[0])), Image.LANCZOS).save(os.path.join(d, n), optimize=True)
             docs.append('docs/renders/final/' + n)
-        shutil.copy2(mp4, os.path.join(d, 'blender-turntable.mp4'))
-        im = Image.open(os.path.join(out, 'turntable', 'frame_0001.png')).convert('RGB')
-        im.resize((1600, round(1600 * im.size[1] / im.size[0])), Image.LANCZOS).save(os.path.join(d, 'blender-turntable-poster.jpg'), quality=90)
-        docs += ['docs/renders/final/blender-turntable.mp4', 'docs/renders/final/blender-turntable-poster.jpg']
+        if frames:      # --frames 0 (정지 컷만 다시 뽑기)이면 턴테이블 대표본은 그대로 둔다
+            shutil.copy2(mp4, os.path.join(d, 'blender-turntable.mp4'))
+            im = Image.open(os.path.join(out, 'turntable', 'frame_0001.png')).convert('RGB')
+            im.resize((1600, round(1600 * im.size[1] / im.size[0])), Image.LANCZOS).save(os.path.join(d, 'blender-turntable-poster.jpg'), quality=90)
+            docs += ['docs/renders/final/blender-turntable.mp4', 'docs/renders/final/blender-turntable-poster.jpg']
     if a.design and a.final and not a.full and all(c['pass'] for c in checks):     # 시안 히어로(4K 만 — 미리보기가 덮어쓰지 않게): design/<이름>_hero.png · _hero_1600.jpg
         d = os.path.join(BASE, 'design')
         shutil.copy2(stills[0], os.path.join(d, a.design + suf + '_hero.png'))

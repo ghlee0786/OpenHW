@@ -192,18 +192,18 @@ def section_open(S):
 def hero_dolly(S):
     dur = 6.0
     pc = (S.PL + S.PH) / 2
-    top = Vector((pc.x, S.PH.y - 0.012, pc.z - 0.006))
+    top = Vector((pc.x, pc.y + 0.014, pc.z - 0.006))             # 목표는 제품 중심 가까이 둔다 — 위 · 아래가 화면 밖으로 잘리지 않게
     lp = [o for n, o in S.parts.items() if 'LIGHT_PIPE' in n]
     if lp:      # 상태 LED(광 파이프 윗면) 쪽으로 반쯤 당긴다
         l, h = S.bounds(lp, S.prod.matrix_world)
-        top = top.lerp(Vector(((l.x + h.x) / 2, h.y, (l.z + h.z) / 2)), 0.5)
-    front = Vector((0, 0, S.PH.z - 0.004))
+        top = top.lerp(Vector(((l.x + h.x) / 2, top.y, (l.z + h.z) / 2)), 0.5)
+    front = Vector((pc.x, pc.y, S.PH.z - 0.004))
     if S.LENS_OBJS:
         l, h = S.bounds(S.LENS_OBJS, S.prod.matrix_world)
-        front = Vector(((l.x + h.x) / 2, (l.y + h.y) / 2, S.PH.z - 0.004))
-    a = {'yaw': 148.0, 'el': 14.0, 'p': Vector((pc.x, pc.y, S.PL.z + 0.012)), 'r': 0.050}       # 뒤: 방열 핀
-    b = {'yaw': 92.0, 'el': 32.0, 'p': top, 'r': 0.058}                                         # 위: 상태 LED
-    c = {'yaw': 26.0, 'el': 8.0, 'p': front, 'r': 0.034}                                        # 앞: 렌즈
+        front = Vector(((l.x + h.x) / 2, (pc.y + (l.y + h.y) / 2) / 2, S.PH.z - 0.004))
+    a = {'yaw': 148.0, 'el': 14.0, 'p': Vector((pc.x, pc.y, S.PL.z + 0.012)), 'r': 0.058}       # 뒤: 방열 핀
+    b = {'yaw': 92.0, 'el': 32.0, 'p': top, 'r': 0.062}                                         # 위: 상태 LED
+    c = {'yaw': 26.0, 'el': 8.0, 'p': front, 'r': 0.047}                                        # 앞: 렌즈
 
     def pose(t):
         u = t / dur
@@ -236,7 +236,7 @@ def bracket(S):
     l, h = S.bounds([o for o in S.children(prod) if o.type == 'MESH'])
     c0, r0 = (l + h) / 2, (h - l).length / 2
     l, h = S.bounds([o for o in S.children(prod) if o.type == 'MESH'], prod.matrix_world)
-    q = {'yaw': 0, 'el': -10, 'az': 36, 'p': (l + h) / 2, 'w': 0, 'r': r0 * 0.84, 'k': 1.0, 'fb': 0.35}
+    q = {'yaw': 0, 'el': -10, 'az': 36, 'p': (l + h) / 2, 'w': 0, 'r': r0 * 1.0, 'k': 1.0, 'fb': 0.35}
     aim(S, q, light=(c0, r0))
     wall0 = S.wall.location.copy()
     amp = (28.0, 12.0)              # 팬 · 틸트 진폭(°) — 보기용 값(설계 가동 범위가 아니다)
