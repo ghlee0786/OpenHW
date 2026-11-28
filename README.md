@@ -163,6 +163,7 @@
 </tr>
 <tr>
 <td align="center" width="50%"><a href="docs/renders/final/video/hero-dolly.mp4"><img src="docs/renders/final/video/hero-dolly.gif" width="400" alt="케이스 시안 A 주위를 카메라가 움직이며 보여 주는 모습(움직이는 GIF, 누르면 1080p MP4)"></a><br><sub>카메라 이동 — 제품 히어로 · Hero dolly shot</sub></td>
+<td align="center" width="50%"><a href="docs/renders/final/video/bracket.mp4"><img src="docs/renders/final/video/bracket.gif" width="400" alt="케이스 시안 A 벽 브래킷의 팬과 틸트 움직임(움직이는 GIF, 누르면 1080p MP4)"></a><br><sub>브래킷 팬 · 틸트 · Wall bracket pan &amp; tilt</sub></td>
 </tr>
 </table>
 
