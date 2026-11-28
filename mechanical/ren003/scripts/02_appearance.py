@@ -41,12 +41,13 @@ def run(_c):
         if a is None:
             a = design.appearances.addByCopy(lib.appearances.itemById(v['fusion']), 'ren003_' + k)
             r, g, b = T['srgb255'](v['rgb'])
+            done_color = False
             for i in range(a.appearanceProperties.count):
                 p = a.appearanceProperties.item(i)
-                if isinstance(p, adsk.core.ColorProperty) and p.value is not None:
-                    p.value = adsk.core.Color.create(r, g, b, 255)
-                elif isinstance(p, adsk.core.FloatProperty) and 'roughness' in p.id.lower():
-                    p.value = v.get('rough', 0.5)       # [미확인] Prism 외관의 거칠기 속성 id — 첫 실행 때 이름 출력으로 확인
+                if not done_color and isinstance(p, adsk.core.ColorProperty) and p.value is not None:
+                    p.value = adsk.core.Color.create(r, g, b, 255); done_color = True   # 첫 색 = 바탕색(opaque_albedo · 금속 f0) 만 — 반사 색은 그대로
+                elif isinstance(p, adsk.core.FloatProperty) and p.id == 'surface_roughness':
+                    p.value = v.get('rough', 0.5)       # Prism 외관 거칠기 (Fusion 2705 에서 확인)
         made[k] = a
         return a
 
