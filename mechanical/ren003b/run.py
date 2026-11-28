@@ -1,10 +1,10 @@
 """REN-003b 한 명령 (O-125 2단계) — 메시 준비 → HDRI 확인 → Blender 컷 · 턴테이블 → 1600px 축소 · MP4 → 판정.
 
   python -I -B mechanical/ren003b/run.py [--case <외함 STEP/STL 폴더>] [--extra <STL 폴더>] [--boards-from <GLB 폴더> | --pcb <커밋>]
-        [--final] [--hero-only] [--design A [--alu grey|black]] [--tag 이름] [--cuts a,b] [--frames N] [--res WxH] [--samples N] [--engine cycles|eevee] [--no-label]
+        [--final] [--hero-only] [--design A [--alu grey|black] [--full] [--glass-t 0.15]] [--tag 이름] [--cuts a,b] [--frames N] [--res WxH] [--samples N] [--engine cycles|eevee] [--no-label]
 
 - 메시 (기본값은 main 체크아웃 validation/runtime/vd001/ 의 M-010 최종 산출):
-    --case        외함 STEP/STL 폴더. 기본 case/step (STEP → 곡면 오차 ≤ 0.01 mm 삼각화). 시안은 design/A 같은 폴더를 준다.
+    --case        외함 STEP/STL 폴더(--design 과 같이 쓰면 그 시안의 상세 설계 메시 폴더). 기본 case/step (STEP → 곡면 오차 ≤ 0.01 mm 삼각화). 시안은 design/A 같은 폴더를 준다.
     --extra       외함 폴더에 없는 부품 STL (렌즈 · 나사 · 하니스 · 코어 등). 기본 render/mesh. 시안 폴더가 다 갖고 있으면 --extra none.
     --boards-from 보드 GLB 폴더. 기본 render/mesh. 없으면 --pcb <커밋> 으로 새로 내보낸다(prep.py).
 - 기본 = 저해상도 시험(Cycles 960×540 · 48 샘플 · 턴테이블 24프레임 480×270).
@@ -13,7 +13,7 @@
   --design A = 시안 폴더 design/A 의 부품 STL(+ 보드)로 히어로 1장 → render/blender-b/design/A_hero.png · A_hero_1600.jpg. 시안끼리 카메라 · 조명이 같다.
 - 출력: main 체크아웃 validation/runtime/vd001/render/blender-b/<tag>/ (O-100)
     stills/<컷>.png(원본) · web/<컷>.jpg(긴 변 1600px) · turntable/ · turntable.mp4 · scene_report.json · report.json
-- 대표본(--final, 이 체크아웃): docs/renders/final/blender-product.png(히어로 1600px) · blender-turntable.mp4
+- 대표본(--final 전체 세트, 이 체크아웃, 1600px): docs/renders/final/blender-{product,front,rear,exploded,section,inuse}.png · blender-turntable.mp4 · blender-turntable-poster.jpg
 - 도구: BLENDER(실행 파일) 또는 %ProgramFiles%/Blender Foundation/Blender 5.2, FFMPEG_BIN(폴더) 또는 ~/tools/ffmpeg 아래 격리 판,
         HDRI = fetch_hdri.py 가 받은 CC0 파일(assets.json 의 sha256 과 같아야 함). Fusion · Docker · 클라우드 렌더 · 유료 에셋은 쓰지 않는다.
 종료 코드 = 불합격 항목 수 (기계 증거만: 단계 종료 코드 · 샘플 수 · 해상도 · 재질 빠짐 0 · 프레임 수 · HDRI sha256). 사실감 · 보기 품질은 판정하지 않는다."""
@@ -71,7 +71,7 @@ def png_size(p):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument('--case', default=os.path.join(V, 'case', 'step'))
+    ap.add_argument('--case')
     ap.add_argument('--extra', default=os.path.join(V, 'render', 'mesh'))
     ap.add_argument('--boards-from', default=os.path.join(V, 'render', 'mesh'))
     ap.add_argument('--pcb')
@@ -86,11 +86,14 @@ def main():
     ap.add_argument('--no-label', action='store_true')
     ap.add_argument('--design', help='시안 이름(A · B · C): design/<이름>/ 의 부품 STL 로 히어로 1장 — 같은 카메라 · 조명(틀 반지름 80 mm)')
     ap.add_argument('--alu', choices=['grey', 'black'], default='grey', help='시안 알루미늄 색: grey = 스페이스 그레이(기본) · black = 흑색 아노다이즈(출력 이름에 _black)')
+    ap.add_argument('--full', action='store_true', help='--design 과 같이: 히어로 1장 대신 컷 전부 + 턴테이블(제품 크기에 맞춘 틀). 출력 design/<이름>_preview 또는 _final')
+    ap.add_argument('--glass-t', type=float, help='스모크 앞유리 가시광 투과율(두 면 합, 예 0.15). 없으면 materials_ext 값(약 0.25)')
     a = ap.parse_args()
     if a.design:
-        a.case, a.hero_only, a.no_label = os.path.join(V, 'design', a.design), True, True     # 내부 부품(렌즈 등)은 --extra 에서 골라 넣는다
+        a.case, a.hero_only, a.no_label = a.case or os.path.join(V, 'design', a.design), not a.full, True     # 내부 부품(렌즈 등)은 --extra 에서 골라 넣는다
         suf = '' if a.alu == 'grey' else '_black'
-        a.tag = a.tag or os.path.join('design', a.design + suf + '_work')
+        a.tag = a.tag or os.path.join('design', a.design + suf + ('_work' if not a.full else '_final' if a.final else '_preview'))
+    a.case = a.case or os.path.join(V, 'case', 'step')
     cuts = a.cuts.split(',') if a.cuts else (['hero'] if a.hero_only else ALL_CUTS)
     res = a.res or ('3840x2160' if a.final else '960x540')
     tt_res = '1920x1080' if a.final else '480x270'
@@ -137,7 +140,8 @@ def main():
     # ③ Blender
     for f in glob.glob(os.path.join(out, 'stills', '*.png')) + glob.glob(os.path.join(out, 'web', '*')):
         os.remove(f)
-    sig = hashlib.sha256(json.dumps([items, res, tt_res, samples, frames, a.engine, a.no_label, a.alu], sort_keys=True).encode()).hexdigest()
+    sig = hashlib.sha256(json.dumps([items, res, tt_res, samples, frames, a.engine, a.no_label, a.alu, a.glass_t, a.full,
+                                      [hashlib.sha256(open(os.path.join(HERE, f), 'rb').read()).hexdigest() for f in ('scene.py', 'materials_ext.py')]], sort_keys=True).encode()).hexdigest()
     sp = os.path.join(out, 'scene_report.json')
     if not (os.path.exists(sp) and json.load(open(sp, encoding='utf-8')).get('sig') == sig):
         shutil.rmtree(os.path.join(out, 'turntable'), ignore_errors=True)       # 메시나 설정이 바뀌면 옛 프레임을 지운다
@@ -146,7 +150,7 @@ def main():
     rc = sh('Blender 장면 · 렌더', [BLENDER, '-b', '--factory-startup', '--python-exit-code', '1', '--python', os.path.join(HERE, 'scene.py'), '--',
                                 '--mesh', mesh, '--out', out, '--cuts', ','.join(cuts), '--turntable', str(frames), '--engine', a.engine, '--res', res,
                                 '--tt-res', tt_res, '--samples', str(samples), '--hdri', hdri, '--label', '' if a.no_label else 'OpenHW']
-                               + (['--frame-radius', '80'] if a.design else []) + (['--override', 'SHELL_ALU=anod'] if a.design and a.alu == 'black' else []),
+                               + (['--frame-radius', '80'] if a.design and not a.full else []) + (['--glass-t', str(a.glass_t)] if a.glass_t else []) + (['--override', 'SHELL_ALU=anod'] if a.design and a.alu == 'black' else []),
             os.path.join(out, 'blender.log')) if items else 1
     chk('Blender 종료 코드 (--python-exit-code 1)', rc, rc == 0)
     rep = json.load(open(sp, encoding='utf-8')) if rc == 0 and os.path.exists(sp) else {}
@@ -177,6 +181,9 @@ def main():
     if 'section' in cuts:
         n = (rep.get('cuts', {}).get('section') or {}).get('section_objects')
         chk('단면 컷에서 잘린 객체 수', n, bool(n))
+        sc = rep.get('section_check') or {}
+        chk('단면 컷: 안 잘린 객체 %s · 처리 못 한 객체 %s (닫히지 않은 작은 부품: 숨김 %s · 통째로 둠 %s)' % (sc.get('n_uncut'), sc.get('n_unresolved'), sc.get('lost_hidden'), sc.get('lost_kept_whole')),
+            sc.get('uncut', [])[:6], sc.get('n_uncut') == 0 and sc.get('n_unresolved') == 0)
 
     # ④ 1600px 축소 (README 용)
     web = []
@@ -194,6 +201,24 @@ def main():
         chk('축소본 수 (긴 변 ≤ 1600)', len(web), len(web) == len(cuts))
     except ImportError:
         chk('축소본 (PIL 없음)', 0, False)
+
+    # ④b 유리 너머 기판 비침 확인 그림 (스모크 앞유리가 있을 때): 원본 | 밝기 3배 — 사람이 본다
+    pcb = []
+    if rep.get('glass_aids') and web:
+        from PIL import Image
+        shutil.rmtree(os.path.join(out, 'pcb_check'), ignore_errors=True)
+        os.makedirs(os.path.join(out, 'pcb_check'), exist_ok=True)
+        for c in ('hero', 'front'):
+            p = os.path.join(out, 'web', c + '.jpg')
+            if c in cuts and os.path.exists(p):
+                im = Image.open(p).convert('RGB')
+                pair = Image.new('RGB', (im.width * 2, im.height))
+                pair.paste(im, (0, 0))
+                pair.paste(im.point(lambda v: min(255, v * 3)), (im.width, 0))
+                q = os.path.join(out, 'pcb_check', c + '_x3.jpg')
+                pair.save(q, quality=90)
+                pcb.append(rel(q))
+        chk('유리 너머 기판 비침 0 (확인 그림: 원본 | 밝기 3배)', pcb, True, verifiable=False)
 
     # ⑤ 턴테이블 MP4 (격리 ffmpeg, libx264)
     mp4 = os.path.join(out, 'turntable.mp4')
@@ -230,10 +255,14 @@ def main():
         d = os.path.join(LANE, 'docs', 'renders', 'final')
         os.makedirs(d, exist_ok=True)
         from PIL import Image
-        Image.open(os.path.join(out, 'web', 'hero.jpg')).save(os.path.join(d, 'blender-product.png'))
+        for c in cuts:      # 커밋본 = 1600px (4K 원본은 validation/runtime 에만). 이름은 VD-001 HTML · README 가 참조하는 고정 이름
+            n = 'blender-%s.png' % ('product' if c == 'hero' else c)
+            Image.open(os.path.join(out, 'web', c + '.jpg')).save(os.path.join(d, n))
+            docs.append('docs/renders/final/' + n)
         shutil.copy2(mp4, os.path.join(d, 'blender-turntable.mp4'))
-        docs = ['docs/renders/final/blender-product.png', 'docs/renders/final/blender-turntable.mp4']
-    if a.design and all(c['pass'] for c in checks):     # 시안 히어로: design/<이름>_hero.png (원본) · _hero_1600.jpg
+        Image.open(os.path.join(out, 'turntable', 'frame_0001.png')).convert('RGB').save(os.path.join(d, 'blender-turntable-poster.jpg'), quality=90)
+        docs += ['docs/renders/final/blender-turntable.mp4', 'docs/renders/final/blender-turntable-poster.jpg']
+    if a.design and a.final and not a.full and all(c['pass'] for c in checks):     # 시안 히어로(4K 만 — 미리보기가 덮어쓰지 않게): design/<이름>_hero.png · _hero_1600.jpg
         d = os.path.join(BASE, 'design')
         shutil.copy2(stills[0], os.path.join(d, a.design + suf + '_hero.png'))
         shutil.copy2(web[0], os.path.join(d, a.design + suf + '_hero_1600.jpg'))

@@ -22,7 +22,7 @@ EXT_MATS = {
 
 # (이름 조각, 재질) — 앞쪽이 먼저. NAME_RULES 가 못 가른 이름에만 쓴다(시안에서 쓸 법한 이름).
 EXT_NAME_RULES = [('IR_GLASS', 'ir_glass'), ('FRONT_GLASS', 'ir_glass'), ('GLASS_FRONT', 'ir_glass'), ('GLASS_IR', 'ir_glass'),
-                  ('SHELL_PLASTIC', 'petg_shell'), ('LENS_RING', 'al'), ('SHELL_ALU', 'anod_grey'), ('GASKET', 'rubber'), ('ORING', 'rubber'),
+                  ('SHELL_PLASTIC', 'petg_shell'), ('LENS_RING', 'al'), ('SHELL_ALU', 'anod_grey'), ('GASKET', 'rubber'), ('ORING', 'rubber'), ('GROMMET', 'rubber'), ('INSERT', 'brass'), ('MASK', 'foam'),
                   ('LIGHT_PIPE', 'lightpipe_on'), ('LIGHTPIPE', 'lightpipe_on'), ('BRACKET', 'bracket'), ('HEATSINK', 'anod'), ('HS_SHELL', 'anod'),
                   ('SHELL_AL', 'anod'), ('SCREW', 'steel'), ('SUNSHIELD', 'petg'), ('GLAND', 'plastic'), ('BODY', 'petg'),
                   ('COVER', 'petg')]
@@ -199,7 +199,50 @@ def detail(bpy, m, kind, spec=None):
         L(fac.outputs['Value'], mx.inputs['Fac'])
         L(tr.outputs['BSDF'], mx.inputs[1])
         L(gl.outputs['BSDF'], mx.inputs[2])
-        L(mx.outputs['Shader'], out.inputs['Surface'])
+        # 하이라이트 띠(스튜디오 반사 카드를 재질 안에서 계산): 반사 방향의 CARD_U 성분이 CARD_S0 ± CARD_HW 안이면 밝게. 값은 scene.py stage() 가 컷마다 넣는다.
+        cu = N('ShaderNodeCombineXYZ')
+        cu.name = 'CARD_U'
+        vals = {}
+        for nm, dv in (('CARD_S0', 0.0), ('CARD_HW', 0.01), ('CARD_GAIN', 0.0)):
+            vals[nm] = N('ShaderNodeValue')
+            vals[nm].name = nm
+            vals[nm].outputs[0].default_value = dv
+        dt = N('ShaderNodeVectorMath')
+        dt.operation = 'DOT_PRODUCT'
+        L(tc.outputs['Reflection'], dt.inputs[0])
+        L(cu.outputs['Vector'], dt.inputs[1])
+        df = N('ShaderNodeMath')
+        df.operation = 'SUBTRACT'
+        L(dt.outputs['Value'], df.inputs[0])
+        L(vals['CARD_S0'].outputs[0], df.inputs[1])
+        ab = N('ShaderNodeMath')
+        ab.operation = 'ABSOLUTE'
+        L(df.outputs['Value'], ab.inputs[0])
+        inner = N('ShaderNodeMath')
+        inner.operation = 'MULTIPLY'
+        inner.inputs[1].default_value = 0.35
+        L(vals['CARD_HW'].outputs[0], inner.inputs[0])
+        band = N('ShaderNodeMapRange')
+        band.interpolation_type = 'SMOOTHSTEP'
+        band.inputs['To Min'].default_value = 1.0
+        band.inputs['To Max'].default_value = 0.0
+        L(ab.outputs['Value'], band.inputs['Value'])
+        L(inner.outputs['Value'], band.inputs['From Min'])
+        L(vals['CARD_HW'].outputs[0], band.inputs['From Max'])
+        st = N('ShaderNodeMath')
+        st.operation = 'MULTIPLY'
+        L(band.outputs['Result'], st.inputs[0])
+        L(vals['CARD_GAIN'].outputs[0], st.inputs[1])
+        st2 = N('ShaderNodeMath')
+        st2.operation = 'MULTIPLY'
+        L(st.outputs['Value'], st2.inputs[0])
+        L(front.outputs['Value'], st2.inputs[1])
+        em = N('ShaderNodeEmission')
+        L(st2.outputs['Value'], em.inputs['Strength'])
+        ad = N('ShaderNodeAddShader')
+        L(mx.outputs['Shader'], ad.inputs[0])
+        L(em.outputs['Emission'], ad.inputs[1])
+        L(ad.outputs['Shader'], out.inputs['Surface'])
     elif kind == 'studio_floor':    # 바닥: 약한 반사(코팅) + 넓은 얼룩
         p.inputs['Coat Roughness'].default_value = 0.12
         L(ramp(noise(8.0, 3.0).outputs['Fac'], base - 0.05, base + 0.05), p.inputs['Roughness'])

@@ -3,7 +3,7 @@
   blender -b --factory-startup --python-exit-code 1 --python mechanical/ren003b/scene.py -- --mesh <메시 폴더> --out <출력 폴더>
       [--cuts hero,front,rear,exploded,section,inuse] [--turntable N] [--engine cycles|eevee] [--res 3840x2160] [--tt-res 1920x1080]
       [--samples 256] [--hdri <.hdr>] [--hdri-strength 0.7] [--hdri-rot 110] [--exposure 0.0] [--fstop 8] [--bevel 0.3] [--label OpenHW]
-      [--z-carrier -9.6] [--z-front 9.6] [--frame-radius mm] [--override 이름조각=재질,…] [--save-blend <새 .blend>]
+      [--z-carrier -9.6] [--z-front 9.6] [--frame-radius mm] [--override 이름조각=재질,…] [--glass-t 0.15] [--card-gain 0.6] [--lens-fill-w 8] [--save-blend <새 .blend>]
 
 - 입력 = prep.py 가 만든 폴더: board_carrier.glb · board_front.glb · <부품>.stl(mm) · index.json
 - 재질 = mechanical/ren003/materials.py MATS 전부(읽기만) + materials_ext.py(새 재질 · 미세 질감).
@@ -11,7 +11,7 @@
     보드: GLB 재질 원값 + 모델 이름 + 참조 번호 → body_key(). 'keep'(못 가른 색)은 빠짐.
 - 메시: 겹친 꼭짓점 합침 → 30° 넘는 모서리만 날카롭게 → 베벨(--bevel mm, 3단) → Weighted Normal.
 - 조명: HDRI(--hdri, CC0) 월드 + KEY · RIM 면광. 무한 배경(바닥이 곡면으로 벽이 됨) 위에 제품을 세운다.
-    스모크 앞유리가 있으면 거울 반사 방향에 띠 조명(GLASS_STRIP, 반사에만 잡힘)과 유리 안쪽 보조광 2개를 더한다.
+    스모크 앞유리가 있으면 유리 재질 안의 하이라이트 띠(컷마다 거울 반사 방향에 맞춤)와 렌즈에만 비추는 면광 1개를 더한다.
 - 카메라: 85~100 mm, 피사계 심도(--fstop), 3분할 구도(hero · inuse 는 주제를 3분할선에). 색 관리 AgX, 노출 --exposure.
 - 컷: hero(앞 3/4) · front(정면) · rear(뒤 3/4, 포트 · 방열) · exploded(분해) · section(단면) · inuse(벽 브래킷) + 턴테이블(제품만 돈다).
 - 출력: <out>/stills/<컷>.png · <out>/turntable/frame_0001.png …(있는 프레임은 건너뜀) · <out>/scene_report.json
@@ -53,6 +53,7 @@ EXPOSURE = float(arg('--exposure', '0.0'))
 FSTOP = float(arg('--fstop', '8'))
 BEVEL = float(arg('--bevel', '0.3'))
 LABEL = arg('--label', 'OpenHW')
+GLASS_T = arg('--glass-t')                        # 스모크 앞유리 가시광 투과율(두 면 합, 0~1) — 없으면 materials_ext 값
 OVERRIDE = [kv.split('=') for kv in arg('--override', '').split(',') if '=' in kv]     # 이름 조각=재질 — 모든 규칙보다 먼저(비교용 색 바꾸기)
 FRAME_R = float(arg('--frame-radius', '0'))      # mm — 0 이 아니면 카메라 거리 · 조명을 이 반지름에 맞춘다(시안끼리 같은 카메라 · 조명)
 MM = 0.001
@@ -103,6 +104,8 @@ def mat(name, v):
 M = {k: mat('m_' + k, v) for k, v in T['MATS'].items()}
 N_BASE = len(M)
 M.update({k: mat('x_' + k, v) for k, v in X.EXT_MATS.items()})
+if GLASS_T:
+    X.EXT_MATS['ir_glass']['smoke'] = math.sqrt(float(GLASS_T))      # 면당 투과 = √(전체 투과)
 LOOKS = {k: X.detail(bpy, M[k], kind, X.EXT_MATS.get(k)) for k, kind in X.LOOK.items() if k in M}
 WIRES = ['wire_k', 'wire_r', 'wire_y', 'wire_y', 'wire_r', 'wire_k']
 REPORT = {'mats_defined': N_BASE, 'mats_ext': len(X.EXT_MATS), 'looks': LOOKS, 'enclosure': [], 'boards': {}, 'missing': [], 'used': {}, 'cuts': {}}
@@ -211,7 +214,8 @@ for b, z in (('carrier', Z_CARRIER), ('front', Z_FRONT)):
     parts['BOARD_' + b.upper()] = root
     REPORT['boards'][b] = {'meshes': sum(1 for o in new if o.type == 'MESH'), 'slots': cnt, 'z_mm': z}
 
-prod.rotation_euler = (math.radians(90), 0, 0)        # 서 있는 자세
+UPRIGHT = (math.radians(90), 0, 0)
+prod.rotation_euler = UPRIGHT        # 서 있는 자세
 
 
 # ---------------- 범위 ----------------
@@ -243,6 +247,18 @@ for n, o in parts.items():      # 제품 좌표(mm) 범위 — 보드가 외함 
     REPORT.setdefault('bbox_mm', {})[n] = [round(v / MM, 2) for v in (*l2, *h2)]
 PL, PH = bounds(children(prod), prod.matrix_world)       # 제품 좌표 범위 (m)
 
+# 사용 장면 자세: 시안의 브래킷 부품이 제품 아래(−Y)로 뻗어 있으면(바닥 나사 자리 → 기둥 → 판) 그 판을 벽에 붙인다
+#   = 제품 −Y 가 벽 쪽(월드 +Y), 광축 +Z 가 아래(월드 −Z) — 벽에서 내려다보는 설치. 뒤(−Z)로 뻗은 브래킷 · 내장 소품은 서 있는 자세 그대로.
+INUSE_ROT = UPRIGHT
+if OWN_BRACKET:
+    inv = prod.matrix_world.inverted()
+    pts = [inv @ (o.matrix_world @ Vector(c)) for o in OWN_BRACKET for c in o.bound_box]
+    below, behind = PL.y - min(p.y for p in pts), PL.z - min(p.z for p in pts)
+    if below > behind and below > 0:
+        INUSE_ROT = (math.radians(180), 0, 0)
+    REPORT['inuse_pose'] = {'bracket_below_mm': round(below / MM, 1), 'bracket_behind_mm': round(behind / MM, 1),
+                            'pose': 'lens_down_on_wall' if INUSE_ROT != UPRIGHT else 'upright'}
+
 # ---------------- 라벨 (실크 인쇄) ----------------
 cover = parts.get('FRONT_COVER') or parts.get('HOUSING')
 if LABEL and cover:
@@ -261,23 +277,30 @@ if LABEL and cover:
     use('silk')
     REPORT['label'] = LABEL
 
-# ---------------- 앞유리 안쪽 보조광 (렌더 전용) ----------------
-# 스모크 앞유리(ir_glass)가 있으면 유리 바로 뒤 위 · 아래에 약한 점광 2개 — 렌즈 경통 · IR LED 가 은은히 비치게. 화면 · 반사에는 안 보인다.
+# ---------------- 앞유리 · 렌즈 보조 (렌더 전용) ----------------
+# 스모크 앞유리(ir_glass)가 있으면:
+#   ① 유리 재질 안의 하이라이트 띠(materials_ext smoke_glass 의 CARD_* 노드) — stage() 가 컷마다 거울 반사 방향에 맞춘다. 조명이 아니라 바닥 · 차양에 가리지 않는다.
+#   ② 렌즈에만 비추는 면광 1개(빛 연결, 카메라 쪽에서) — 렌즈 앞 투명 창 너머로 경통 앞면이 읽히게. 기판 · 부품은 스모크 너머로 어둡게 남는다.
 GLASS = [o for n, o in parts.items() if o.type == 'MESH' and o.data.materials and o.data.materials[0] == M['ir_glass']]
+LENS_OBJS = [o for n, o in parts.items() if n.startswith('LENS_CIL093')]
+LENS_FILL = None
+CARD_GAIN = float(arg('--card-gain', '0.6'))
 if GLASS:
     gl, gh = bounds(GLASS, prod.matrix_world)
-    for i, fy in enumerate((0.78, 0.22)):
-        ld = bpy.data.lights.new('INSIDE_%d' % i, 'POINT')
-        ld.energy = float(arg('--inside-w', '0.03'))
-        ld.color = (1.0, 0.96, 0.9)
-        ld.shadow_soft_size = 0.004
-        lo_ = bpy.data.objects.new('INSIDE_%d' % i, ld)
-        scn.collection.objects.link(lo_)
-        lo_.parent = prod
-        lo_.location = ((gl.x + gh.x) / 2, gl.y + (gh.y - gl.y) * fy, gl.z - 0.004)
-        lo_.visible_camera = False
-        lo_.visible_glossy = False
-    REPORT['inside_lights'] = 2
+    GLASS_HALF = min(gh.x - gl.x, gh.y - gl.y) / 2
+    GLASS_Z = gh.z
+    if LENS_OBJS:
+        ld = bpy.data.lights.new('LENS_FILL', 'AREA')
+        ld.size = 0.03
+        ld.energy = float(arg('--lens-fill-w', '8'))
+        LENS_FILL = bpy.data.objects.new('LENS_FILL', ld)
+        scn.collection.objects.link(LENS_FILL)
+        LENS_FILL.visible_camera = False
+        lcol = bpy.data.collections.new('LENS_ONLY')
+        for o_ in LENS_OBJS:
+            lcol.objects.link(o_)
+        LENS_FILL.light_linking.receiver_collection = lcol
+    REPORT['glass_aids'] = {'highlight_card': CARD_GAIN, 'lens_fill': bool(LENS_FILL)}
 
 # ---------------- 사용 장면 소품: 벽 브래킷 (제품 좌표 mm, PRODUCT 자식, 기본 숨김) ----------------
 ACC = []
@@ -406,22 +429,6 @@ def area(name, energy, size, color=(1, 1, 1)):
 
 area('KEY', 14 * S * S, 0.35 * S, (1, 0.97, 0.93))
 area('RIM', 10 * S * S, 0.22 * S)
-# 유리 하이라이트용 띠 조명: 앞유리의 거울 반사 방향에 두는 긴 면광. 반사(glossy)에만 잡히고 확산 조명에는 기여하지 않는다 — 유리가 유리로 읽히게.
-STRIP_D = 0.55 * S                                  # 유리에서 띠 조명까지 (m)
-STRIP_W = 2 * STRIP_D * math.tan(math.radians(0.7))  # 유리에서 본 띠 폭 약 1.4° — 유리(지름 약 3~4°) 위에 띠로 걸친다
-STRIP = area('GLASS_STRIP', float(arg('--strip-radiance', '45')) * math.pi * STRIP_W * (0.9 * S) * 4, 0.5 * S)
-STRIP.data.shape = 'RECTANGLE'
-STRIP.data.size = STRIP_W
-STRIP.data.size_y = 0.9 * S
-STRIP.visible_diffuse = False
-STRIP.visible_camera = False
-STRIP.hide_render = True
-if GLASS:       # 유리에만 비친다(빛 연결) — 본체 플라스틱 · 알루미늄의 밝기는 그대로
-    gcol = bpy.data.collections.new('GLASS_ONLY')
-    for o_ in GLASS:
-        gcol.objects.link(o_)
-    STRIP.light_linking.receiver_collection = gcol
-    STRIP.light_linking.blocker_collection = gcol      # 바닥 · 차양에 가리지 않는다(카메라가 내려다보면 거울 방향이 바닥 아래다) — 스튜디오 반사 카드 구실
 
 # ---------------- 카메라 ----------------
 cd = bpy.data.cameras.new('CAM')
@@ -433,7 +440,7 @@ cd.dof.use_dof = True
 cd.dof.aperture_fstop = FSTOP
 
 
-def stage(yaw, el, lens, fit, thirds=0.0, az=0.0, target=None, res=None, focus_bias=0.35):
+def stage(yaw, el, lens, fit, thirds=0.0, az=0.0, target=None, res=None, focus_bias=0.35, radius=None):
     """제품을 yaw° 돌리고(양수 = 제품 +X 면이 카메라 쪽) 카메라를 정면(−Y)에서 방위 az° · 고도 el° 로 둔다. 바닥 · 조명도 다시 맞춘다."""
     res = res or RES
     tt.rotation_euler = (0, 0, math.radians(-yaw))
@@ -441,7 +448,7 @@ def stage(yaw, el, lens, fit, thirds=0.0, az=0.0, target=None, res=None, focus_b
     objs = [o for o in children(prod) if o.type == 'MESH']
     l, h = bounds(objs)
     c = Vector(target) if target else (l + h) / 2
-    r = FRAME_R * MM if FRAME_R else (h - l).length / 2
+    r = radius or (FRAME_R * MM if FRAME_R else (h - l).length / 2)
     cyc.location = (c.x, c.y, l.z - 0.0002)
     wall.location = (c.x, h.y, l.z - 1.2 * (r / 0.06))      # 사용 장면: 벽 = 브래킷 판 뒷면(+Y 끝), 바닥은 화면 밖 아래
     cd.lens = lens
@@ -456,23 +463,34 @@ def stage(yaw, el, lens, fit, thirds=0.0, az=0.0, target=None, res=None, focus_b
         o = LIGHTS[name]
         o.location = c + Vector(off) * (r / 0.06)
         o.rotation_euler = (c - o.location).to_track_quat('-Z', 'Y').to_euler()
-    STRIP.hide_render = not GLASS
-    if GLASS:       # 유리 중심에서 카메라 쪽 방향을 유리 법선으로 거울 반사한 곳 + 옆으로 0.5° 비켜서(하이라이트 띠가 유리 한쪽에 걸리게)
+    if GLASS:       # 유리 하이라이트 띠: 유리 중심의 거울 반사 방향을 기준으로, 옆으로 유리 반폭의 0.55 자리에 폭 약 12 % (렌즈를 피해 한쪽에)
         gl_, gh_ = bounds(GLASS)
         gc = (gl_ + gh_) / 2
         nrm = (prod.matrix_world.to_3x3() @ Vector((0, 0, 1))).normalized()
         v = (cam.location - gc).normalized()
         rfl = (2 * nrm.dot(v) * nrm - v).normalized()
         side = rfl.cross(Vector((0, 0, 1))).normalized()
-        dirn = (rfl + side * math.tan(math.radians(0.5))).normalized()
-        STRIP.location = gc + dirn * STRIP_D
-        STRIP.rotation_euler = (gc - STRIP.location).to_track_quat('-Z', 'Y').to_euler()
+        dg = (cam.location - gc).length
+        nd = M['ir_glass'].node_tree.nodes
+        for i_ in range(3):
+            nd['CARD_U'].inputs[i_].default_value = side[i_]
+        nd['CARD_S0'].outputs[0].default_value = 0.55 * GLASS_HALF / dg     # 반사 방향의 옆 성분은 유리 위에서 (위치 / 카메라 거리)만큼 변한다
+        nd['CARD_HW'].outputs[0].default_value = 0.12 * GLASS_HALF / dg
+        nd['CARD_GAIN'].outputs[0].default_value = CARD_GAIN
+        if LENS_FILL:   # 렌즈 중심에서 카메라 쪽으로 0.25 m, 위로 조금 비켜서
+            lc = prod.matrix_world @ Vector((0, 0, GLASS_Z))
+            vc = (cam.location - lc).normalized()
+            LENS_FILL.location = lc + (vc + Vector((0, 0, 0.18))).normalized() * 0.25
+            LENS_FILL.rotation_euler = (lc - LENS_FILL.location).to_track_quat('-Z', 'Y').to_euler()
     return c, r, d
 
 
 EXPLODE = [('FRONT_COVER', (0, 0, 46)), ('PMMA', (0, 0, 70)), ('IR_GLASS', (0, 0, 70)), ('FOAM', (0, 0, 24)), ('LENS_CIL093', (0, 0, 18)),
            ('HS_EXTRUSION', (46, 0, 0)), ('HS_PEDESTAL', (26, 0, 0)), ('GAP_PAD', (15, 0, 0)), ('HW_M16', (0, 0, 84)),
-           ('HOUSING', (0, 0, -62)), ('BOARD_CARRIER', (0, 0, -34)), ('BOARD_FRONT', (0, 0, 6)), ('HW_M25', (0, 0, -74))]   # 제품 좌표 mm
+           ('HOUSING', (0, 0, -62)), ('BOARD_CARRIER', (0, 0, -34)), ('BOARD_FRONT', (0, 0, 6)), ('HW_M25', (0, 0, -74)),
+           # 시안 부품(앞 플라스틱 쉘 · 뒤 알루미늄 쉘 · 앞유리 · 광 파이프 · 렌즈 링) — 위 이름에 안 걸린 것만 여기로 온다
+           ('GLASS_IR', (0, 0, 95)), ('LENS_RING', (0, 0, 108)), ('SHELL_PLASTIC', (0, 0, 60)), ('LIGHT_PIPE', (0, 0, 60)),
+           ('SHELL_ALU', (0, 0, -75))]   # 제품 좌표 mm
 
 
 def explode(on):
@@ -485,6 +503,9 @@ def explode(on):
         o.location = Vector(o['base_loc']) + (Vector(v) * MM if on else Vector((0, 0, 0)))
     if 'LABEL' in bpy.data.objects:
         bpy.data.objects['LABEL'].hide_render = on
+
+
+SECTION_HIDDEN = []
 
 
 def section(on):
@@ -508,14 +529,45 @@ def section(on):
             md.operation = 'DIFFERENCE'
             md.object = bpy.data.objects['CUTTER']
             md.solver = 'EXACT'
-            wnm = o.modifiers.get('WN')
-            if wnm:     # 단면 뒤에 노멀 다시
-                bpy.context.view_layer.objects.active = o
-                bpy.ops.object.modifier_move_to_index(modifier='WN', index=len(o.modifiers) - 1)
+            bpy.context.view_layer.objects.active = o     # 불리언을 맨 앞에: 원래 메시에서 자르고 그 뒤에 베벨 · 노멀
+            bpy.ops.object.modifier_move_to_index(modifier='CUT', index=0)
         if md:
             md.show_render = on
             md.show_viewport = on
             n += on
+    if on:      # 잘렸는지 기계 확인: 계산된 메시가 x > 0.05 mm 에 남았거나(안 잘림), 통째로 사라졌는데 원래 x < 0 쪽이 있던 것(잃음)
+        dg_ = bpy.context.evaluated_depsgraph_get()
+        inv = prod.matrix_world.inverted()
+        uncut, lost = [], []
+        for o in children(prod):
+            if o.type != 'MESH' or o.name == 'CUTTER' or o.name.startswith('ACC_') or o.hide_render or not o.modifiers.get('CUT'):
+                continue
+            e = o.evaluated_get(dg_)
+            m = inv @ e.matrix_world
+            xs = [(m @ v.co).x for v in e.data.vertices]
+            mo = inv @ o.matrix_world
+            x0 = min((mo @ v.co).x for v in o.data.vertices) if o.data.vertices else 0.0     # 원래 메시의 실제 범위(경계 상자는 돌아간 부품에서 헐겁다)
+            if not xs and x0 < -0.00005:
+                lost.append(o.name)
+            elif xs and max(xs) > 0.00005:
+                uncut.append(o.name)
+        kept, hidden = [], []
+        for nm in lost:     # 정밀 계산이 빈 메시를 낸 부품(닫히지 않은 메시 — 보드의 작은 부품): 자르지 않고, 중심이 잘라 낸 쪽이면 숨기고 남는 쪽이면 통째로 둔다
+            ob = bpy.data.objects[nm]
+            ob.modifiers['CUT'].show_render = ob.modifiers['CUT'].show_viewport = False
+            mo = inv @ ob.matrix_world
+            if sum((mo @ v.co).x for v in ob.data.vertices) / len(ob.data.vertices) > 0:
+                ob.hide_render = True
+                SECTION_HIDDEN.append(ob)
+                hidden.append(nm)
+            else:
+                kept.append(nm)
+        REPORT['section_check'] = {'uncut': uncut[:20], 'n_uncut': len(uncut), 'n_lost': len(lost), 'lost_hidden': len(hidden), 'lost_kept_whole': len(kept),
+                                   'n_unresolved': len(lost) - len(hidden) - len(kept)}
+    else:
+        for ob in SECTION_HIDDEN:
+            ob.hide_render = False
+        SECTION_HIDDEN.clear()
     return n
 
 
@@ -569,7 +621,7 @@ scn.render.image_settings.file_format = 'PNG'
 scn.view_settings.view_transform = 'AgX'
 scn.view_settings.look = 'AgX - Medium High Contrast'
 scn.view_settings.exposure = EXPOSURE
-REPORT.update(frame_radius_mm=FRAME_R or None, engine=scn.render.engine, res=RES, tt_res=TT_RES, samples=SAMPLES, fstop=FSTOP, exposure=EXPOSURE, bevel_mm=BEVEL,
+REPORT.update(glass_t=float(GLASS_T) if GLASS_T else None, frame_radius_mm=FRAME_R or None, engine=scn.render.engine, res=RES, tt_res=TT_RES, samples=SAMPLES, fstop=FSTOP, exposure=EXPOSURE, bevel_mm=BEVEL,
               view_transform=scn.view_settings.view_transform, radius_mm=round(RAD / MM, 1), objects=len([o for o in PROD_OBJS if o.type == 'MESH']),
               beveled=sum(1 for e in REPORT['enclosure'] if e['bevel']), frames_requested=TT)
 
@@ -590,11 +642,15 @@ for name in CUTS:
     explode(name == 'exploded')
     ncut = section(name == 'section')
     accessories(name == 'inuse')
+    prod.rotation_euler = INUSE_ROT if name == 'inuse' else UPRIGHT
+    if LENS_FILL:       # 렌즈 보조광은 유리 너머로 볼 때만 — 분해 · 단면에서는 경통이 회색으로 떠 보인다
+        LENS_FILL.hide_render = name in ('exploded', 'section')
     stage(yaw, el, lens, fit, thirds, az, res=RES)
     shot(os.path.join(OUT, 'stills', name + '.png'), RES)
     REPORT['cuts'][name] = {'res': RES, 'samples': SAMPLES, 'lens_mm': lens, 'fstop': FSTOP, 'yaw': yaw, 'elev': el, 'thirds': thirds,
                             'section_objects': ncut if name == 'section' else None}
 explode(False)
+prod.rotation_euler = UPRIGHT
 section(False)
 accessories(False)
 
@@ -608,12 +664,13 @@ done = {'turntable_new': 0, 'turntable_skipped': 0}
 if TT:
     os.makedirs(os.path.join(OUT, 'turntable'), exist_ok=True)
     yaw0, el, lens, fit = CUT_SPEC['hero'][:4]
+    c0, r0, _ = stage(yaw0, el, lens, 1.05, 0.0, res=TT_RES)     # 중심 · 틀 크기는 첫 자세로 고정 — 프레임마다 범위 상자로 다시 잡으면 제품이 흔들리고 크기가 변한다
     for i in range(TT):
         f = os.path.join(OUT, 'turntable', 'frame_%04d.png' % (i + 1))
         if os.path.exists(f) and os.path.getsize(f) > 0:      # 다시 돌리면 끝난 프레임은 건너뜀
             done['turntable_skipped'] += 1
             continue
-        stage(yaw0 + 360.0 * i / TT, el, lens, 1.05, 0.0, res=TT_RES)
+        stage(yaw0 + 360.0 * i / TT, el, lens, 1.05, 0.0, res=TT_RES, target=c0, radius=r0)
         # 턴테이블은 바닥 · 초점이 프레임마다 흔들리지 않게 제품 중심 기준으로 고정
         cyc.location = (C.x, C.y, lo.z - 0.0002)
         shot(f, TT_RES)
