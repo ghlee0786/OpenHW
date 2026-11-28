@@ -156,6 +156,8 @@
 
 <p align="center"><a href="docs/renders/final/blender-turntable.mp4"><img src="docs/readme/gallery/case-a/turntable.gif" width="640" alt="케이스 시안 A 360도 회전 영상(움직이는 GIF, 누르면 1080p MP4)"></a><br><sub>360도 회전 (움직이는 GIF) — 누르면 1080p MP4</sub></p>
 
+<sub>렌더 · 영상 속 코어 모듈 형상은 원 설계에서 가져왔고, 이 렌더 · 영상 파일은 CC BY-SA 4.0이다 — 출처 [NOTICE](docs/renders/final/NOTICE.md) · The core-module geometry in these renders and videos comes from the original design; these render and video files are CC BY-SA 4.0 — see [NOTICE](docs/renders/final/NOTICE.md).</sub>
+
 ## 기술 스택
 
 | 분야 | 도구 · 구성 | 근거 |
@@ -245,7 +247,7 @@
 
 ## 라이선스 · 제3자 고지
 
-- 이 저장소의 설계 파일과 문서는 [Apache License 2.0](LICENSE)을 따른다.
+- 이 저장소의 설계 파일과 문서는 [Apache License 2.0](LICENSE)을 따른다. 예외: 코어 모듈 형상이 들어간 렌더 · 영상 파일(아래 표).
 - 제3자 자료는 각 폴더의 라이선스를 그대로 유지한다. 저작권 표기는 각 폴더의 `LICENSE*` 파일 원문을 따른다. 근거는 [`hardware/datasheets/INDEX.md`](hardware/datasheets/INDEX.md)다.
 
 | 경로 | 라이선스 | 비고 |
@@ -255,6 +257,7 @@
 | `hardware/datasheets/antmicro/` | Apache 2.0 | 참고 풋프린트 원본 |
 | `hardware/libraries/` 파생 풋프린트 | Apache 2.0 | 원저작물 고지는 [`hardware/libraries/README.md`](hardware/libraries/README.md) · [`licenses/Apache-2.0.txt`](hardware/libraries/licenses/Apache-2.0.txt) |
 | 사람 감지 모델 YOLOX-Nano | Apache 2.0 | [D-003](docs/decisions/D-003-working-defaults.md) #19 |
+| `docs/renders/final/` · `video/` · `docs/readme/gallery/case-a/` 렌더 · 영상 | CC BY-SA 4.0 | 코어 모듈 형상(STEP, 저장소에는 넣지 않음)의 출처 · 커밋 · 바꾼 것은 [`NOTICE.md`](docs/renders/final/NOTICE.md) · Core-module geometry source and changes: see NOTICE |
 
 라이선스가 표기되지 않았거나 배포가 제한된 데이터시트는 저장소에 넣지 않았고, 링크와 sha256만 [INDEX.md](hardware/datasheets/INDEX.md)에 남겼다.
 
