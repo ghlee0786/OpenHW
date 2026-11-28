@@ -145,15 +145,15 @@ def block():
     return svg("block.svg", 900, 550, "시스템 블록도", "12V 입력에서 코어 모듈까지 전원, 센서와 네트워크 신호 흐름", css, body, src)
 
 
-STAGES = [  # (이름, 상태, 한 줄) — 2026-11-27 기준
+STAGES = [  # (이름, 상태, 한 줄) — 2026-11-28 기준
     ("요구사항", "ok", "제품 기획·기본값"),
     ("회로도", "ok", "ERC 0 (2장)"),
     ("시뮬레이션", "ok", "25/25 통과"),
     ("PCB 배선", "ok", "전면 · 캐리어 완료"),
     ("DRC", "ok", "두 보드 0 · 0"),
-    ("3D 검증", "wip", "모델 빠짐 0 · 최종 보드 재판정"),
-    ("케이스", "wip", "1차 설계 · 최종 보드 대기"),
-    ("렌더", "todo", "최종 보드 뒤"),
+    ("3D 검증", "ok", "27항목 불합격 0 · 간섭 0"),
+    ("케이스", "ok", "시안 A 상세 설계"),
+    ("렌더", "wip", "6컷 + 영상 · 사람 확인 중"),
 ]
 
 
@@ -184,12 +184,13 @@ def pipeline():
     legend = ('<circle class="ok" cx="40" cy="236" r="7"/><text class="m" x="54" y="240">완료</text>'
               '<circle class="wip" cx="110" cy="236" r="7"/><text class="m" x="124" y="240">진행 중</text>'
               '<circle class="todo" cx="196" cy="236" r="7"/><text class="m" x="210" y="240">대기</text>'
-              '<text class="m" x="880" y="240" text-anchor="end">2026-11-27 기준 · 가상 설계 단계 (실물 제작 전)</text>')
+              '<text class="m" x="880" y="240" text-anchor="end">2026-11-28 기준 · 가상 설계 단계 (실물 제작 전)</text>')
     body = ('<text class="t" x="28" y="40">설계 흐름</text><text class="s" x="28" y="62">요구 → 회로도 → 시뮬레이션 → PCB → DRC → 3D → 케이스 → 렌더</text>\n'
             + "\n".join(parts) + "\n" + legend)
     src = [("회로도", FACTS["erc"][1]), ("시뮬레이션", FACTS["sim"][1]), ("DRC", FACTS["front_drc"][1] + " · " + FACTS["carrier_drc"][1]),
-           ("3D", FACTS["models"][1] + " · mechanical/m010/m010.md (최종 pcb 커밋으로 다시 판정)"),
-           ("케이스", "mechanical/m003/m003-enclosure.md (2차) · docs/decisions/D-003-working-defaults.md #53"), ("렌더", "D-003 #51 #53")]
+           ("3D", "mechanical/m010/run_A.md (run_case.py 두 보드 995b872 · 케이스 A 종료 0, 조건 5 27항목 불합격 0)"),
+           ("케이스", "mechanical/design/o126_a.md · docs/decisions/D-003-working-defaults.md #67 (O-126 시안 A)"),
+           ("렌더", "docs/renders/final/blender-*.png · blender-turntable.mp4 (O-126, 사실감 · 기판 비침은 사람 확인)")]
     return svg("pipeline.svg", 900, 260, "설계 흐름과 진행 상태", "요구사항부터 렌더까지 8단계의 완료·진행 중·대기 상태", css, body, src)
 
 

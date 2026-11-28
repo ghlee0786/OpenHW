@@ -90,6 +90,7 @@ def main():
 
     c2 = load(a.cond2)
     c5 = load(a.cond5) if a.cond5 else None
+    c5_fail = 0 if not c5 else sum(1 for i in c5["items"] if i.get("pass") is False)
     ev = load(a.ev)
     drc, erc, sim, man = drc_rows(), erc_rows(), sim_rows(), manifest_rows(a.manifest)
     c2_items = c2["items"]
@@ -113,6 +114,8 @@ def main():
         card(f"통과 {c2_pass}/{len(c2_items)} · 불합격 {c2_fail}", "review 조건 2 판정 항목", f"사람 확인 {len(c2_human)}", c2_fail == 0),
         card(f"{len(man)}개", "P-004 제조 산출물 파일", E(a.manifest_src), True),
         card(f"{ev['fails']}/{len(ev['items'])}", "ev_check 불합격/판정 항목", "조건 4", ev["fails"] == 0),
+        *([card(f"{c5_fail}/{len(c5['items'])}", "기구 불합격/판정 항목", f"조건 5 · 케이스 시안 A · 종료 코드 {c5['exit_code']}",
+                c5_fail == 0 and c5["exit_code"] == 0)] if c5 else []),
         card(f"{sim_pass}/{len(sim)}", "회로 시뮬레이션 통과", "조건 7", sim_pass == len(sim)),
     ])
 
@@ -142,20 +145,33 @@ def main():
     for name, imgs in renders:
         th = "".join(f"<a href='{p}'><img src='{p}' alt='{E(name)} {os.path.basename(p)}' loading='lazy'></a>" for p in imgs)
         human.append(check(name, "그림이 보드와 맞고 모델 빠짐·색 이상이 없는가", f"<div class='th'>{th}</div>"))
-    fusion = [("Fusion 케이스 조립 간섭(눈 확인)", "docs/renders/final/fusion-case-section.png"),
-              ("Fusion 케이스 외관·재질", "docs/renders/final/fusion-case-iso.png"),
-              ("Fusion 분해도·조립 순서", "docs/renders/final/fusion-case-exploded.png"),
-              ("Blender 제품 렌더(정지)", "docs/renders/final/blender-product.png"),
-              ("Blender 회전 영상", "docs/renders/final/blender-turntable.mp4")]
-    for name, slot in fusion:
-        human.append(check(name, "verifiable 아니오 — 자리만", f"<span class='slot'>자리: <code>{slot}</code> (파일 없음, 만들면 이 이름으로)</span>"))
+    fin = "../renders/final/"
+    fusion = [fin + f"fusion-case-A-{v}.png" for v in ("front", "back", "section")]
+    blender = [fin + f"blender-{v}.png" for v in ("product", "front", "rear", "exploded", "section", "inuse")]
+    movie = (f"<a href='{fin}blender-turntable.mp4'><img src='{fin}blender-turntable-poster.jpg' alt='시안 A 회전 영상 첫 장면' loading='lazy'></a>")
+
+    def thumbs(name, imgs):
+        return "".join(f"<a href='{p}'><img src='{p}' alt='{E(name)} {os.path.basename(p)}' loading='lazy'></a>" for p in imgs)
+    finals = [("Fusion 시안 A 뷰포트", "형상이 설계 문서(o126_a.md)와 맞고 바디 빠짐이 없는가", thumbs("Fusion 시안 A", fusion)),
+              ("Blender 시안 A 최종 렌더", "재질·사실감이 맞고 모델 빠짐·색 이상이 없는가 (회전 영상 포함)", thumbs("Blender 시안 A", blender) + movie),
+              ("유리 너머 PCB 비침 0", "앞 스모크 유리 너머로 기판이 보이지 않는가 (렌즈·LED 띠 뒤는 검정 마스크)",
+               thumbs("유리 비침", [fin + "blender-front.png", fin + "blender-product.png"])),
+              ("브래킷 광축 수평", "벽 브래킷에 달았을 때 광축이 수평 앞을 향하는가", thumbs("브래킷", [fin + "blender-inuse.png"]))]
+    for name, label, th in finals:
+        human.append(check(name, label, f"<div class='th'>{th}</div>"))
 
     unr_note = ("" if not ev_unr_script else
                 "<p class='s'>ev_check 자체 연결 근사(구리면 넷 제외)가 섬으로 본 넷: "
                 + E(", ".join(f"{k} {list(v)}" for k, v in ev_unr_script.items()))
                 + " — 판정 항목이 아니고 KiCad 미연결은 0(위 DRC)이다.</p>")
-    c5_txt = "" if not c5 else (f"<p>조건 5(mechanical): {len(c5['items'])}항목 · 불합격 {sum(1 for i in c5['items'] if i.get('pass') is False)} · 종료 코드 {c5['exit_code']} · "
-                                f"입력 <code>{E(c5['commit'])}</code> · 명령 <code>{E(c5['command'])}</code> (중간 보드 기준 — 최종 보드로 다시)</p>")
+    c5_txt = "" if not c5 else (f"<p>조건 5(mechanical): {len(c5['items'])}항목 · 불합격 {c5_fail} · 종료 코드 {c5['exit_code']} · "
+                                f"입력 <code>{E(c5['commit'])}</code> · 생성 {E(c5['generated'])} · 명령 <code>{E(c5['command'])}</code> · "
+                                f"케이스 <a href='{rel('mechanical/design/o126_a.md')}'>시안 A 설계</a> · <a href='{rel('mechanical/m010/run_A.md')}'>판정 기록</a></p>"
+                                "<details><summary>조건 5 항목 전체</summary><table><tr><th>id</th><th>보드</th><th>항목</th><th>값</th><th>한도</th><th>결과</th></tr>"
+                                + "".join(f"<tr class='{'' if i.get('pass') is not False else 'bad'}'><td>{E(i['id'])}</td><td>{E(i.get('board', ''))}</td>"
+                                          f"<td>{E(i['title'][:110])}</td><td>{E(str(i.get('value', ''))[:40])}</td><td>{E(str(i.get('limit', ''))[:30])}</td>"
+                                          f"<td>{'통과' if i.get('pass') is True else ('불합격' if i.get('pass') is False else '사람 확인')}</td></tr>" for i in c5["items"])
+                                + "</table></details>")
 
     page = f"""<!doctype html>
 <html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
@@ -208,8 +224,9 @@ ul.cl{{list-style:none;padding:0}} li.chk{{border:1px solid var(--ln);border-rad
 <p>{sim_pass}/{len(sim)} 통과 — <a href="{rel('hardware/sim/results/')}">hardware/sim/results/</a> · 실행 방법 <a href="{rel('hardware/sim/README.md')}">hardware/sim/README.md</a></p>
 <details><summary>시뮬레이션 항목 ({len(sim)})</summary><table><tr><th>id</th><th>내용</th><th>판정</th><th>기준 커밋</th></tr>{t_sim}</table></details>
 
-<h2>최종 렌더 (자리)</h2>
-<p class="s">Fusion 케이스 렌더와 Blender 렌더는 아직 없다. 위 「사람 확인」의 자리 파일 이름으로 만들면 이 페이지를 다시 생성해 그림을 붙인다.</p>
+<h2>최종 렌더 · 케이스 시안 A</h2>
+<p class="s">Fusion 뷰포트 3장과 Blender 대표본 6컷 · 회전 영상(<code>docs/renders/final/</code>, 1600 px). 사실감 · 비침 · 광축은 위 「사람 확인」에서 체크한다.</p>
+<div class="th">{thumbs("Fusion 시안 A", fusion)}</div><div class="th">{thumbs("Blender 시안 A", blender)}{movie}</div>
 </main>
 <script>
 (function(){{var boxes=document.querySelectorAll('input[data-id]');function key(b){{return 'vd001:'+b.getAttribute('data-id');}}
