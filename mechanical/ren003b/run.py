@@ -86,6 +86,8 @@ def main():
     ap.add_argument('--no-label', action='store_true')
     ap.add_argument('--design', help='시안 이름(A · B · C): design/<이름>/ 의 부품 STL 로 히어로 1장 — 같은 카메라 · 조명(틀 반지름 80 mm)')
     ap.add_argument('--alu', choices=['grey', 'black'], default='grey', help='시안 알루미늄 색: grey = 스페이스 그레이(기본) · black = 흑색 아노다이즈(출력 이름에 _black)')
+    ap.add_argument('--core-step', default=os.environ.get('OPENHW_CORE_STEP') or next((p for p in [os.path.join(V, 'third_party', 'Recamera Core 2002.step')] if os.path.exists(p)), None),
+                    help='Seeed 코어 STEP(저장소 밖) — 있으면 코어 덩어리 대신 실형상. 기본: OPENHW_CORE_STEP 또는 validation/runtime/vd001/third_party/. none 이면 덩어리')
     ap.add_argument('--no-docs', action='store_true', help='--final 이어도 docs/renders/final 대표본을 쓰지 않는다(메시 확정 전)')
     ap.add_argument('--full', action='store_true', help='--design 과 같이: 히어로 1장 대신 컷 전부 + 턴테이블(제품 크기에 맞춘 틀). 출력 design/<이름>_preview 또는 _final')
     ap.add_argument('--glass-t', type=float, help='스모크 앞유리 가시광 투과율(두 면 합, 예 0.15). 없으면 materials_ext 값(약 0.25)')
@@ -115,13 +117,20 @@ def main():
     if a.extra and a.extra != 'none':
         cmd += ['--extra', os.path.abspath(a.extra)]
     cmd += ['--pcb', a.pcb] if a.pcb else ['--boards-from', os.path.abspath(a.boards_from)]
+    if a.core_step and a.core_step != 'none':
+        cmd += ['--core-step', os.path.abspath(a.core_step)]
     if a.design:
         sys.path.insert(0, HERE)
         import materials_ext
         cmd += ['--stl-only', '--extra-only', ','.join(materials_ext.DESIGN_INTERNALS)]
     rc = sh('메시 준비', cmd, os.path.join(out, 'prep.log'))
     chk('메시 준비 종료 코드', rc, rc == 0)
-    items = json.load(open(os.path.join(mesh, 'index.json'), encoding='utf-8'))['items'] if os.path.exists(os.path.join(mesh, 'index.json')) else []
+    idx = json.load(open(os.path.join(mesh, 'index.json'), encoding='utf-8')) if os.path.exists(os.path.join(mesh, 'index.json')) else {}
+    items = idx.get('items', [])
+    if a.core_step and a.core_step != 'none':
+        cs = idx.get('core_step') or {}
+        chk('코어 실형상(STEP sha256 = assets.json) · 솔리드 수 · 뺀 무선 부품 수', '%s… · %s · %s' % (str(cs.get('sha256'))[:12], cs.get('solids_kept'), len(cs.get('hidden', []))),
+            bool(cs) and cs.get('solids_kept', 0) > 0 and any('ANT-SPRING' in h for h in cs.get('hidden', [])) and any('AP6212' in h for h in cs.get('hidden', [])))
     nb = sum(1 for i in items if i['kind'] == 'board')
     enc = [i for i in items if i['kind'] == 'enclosure']
     chk('보드 GLB 수', nb, nb == 2)
