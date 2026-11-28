@@ -1,0 +1,8 @@
+[orch t18r → pcb] P-003 계속 + P-004 배정 (사용자 지시 2026-11-27, lead 전달, orch 분기 O-54) — 같은 P-003 레인 t-20261126-171922-251f에서 이어서
+■ 목표: 정확한 배선·레이아웃 → 두 보드 모두 kicad-cli pcb drc --severity-all --schematic-parity --exit-code-violations 종료 0(위반 0·미연결 0) → 제조 산출물.
+■ 지금 남은 것(6ecfa85 기준): 전면 DRC 11(열 연결 10·간격 1)·미연결 37 / 캐리어 DRC 3(단락 1·마스크 1·비결합 1)·미연결 21, MDI 꼬임 RX P/N 차 7.22mm 보정 자리 없음. 단락은 최우선. 규칙 완화로 0을 만들지 말 것 — 완화가 필요하면 D-003 형식(분기점·선택·이유·차선)으로 근거를 남기고 V-005 검토 대상에 올린다. Freerouting은 O-52 갱신(lead 회신)대로 (A): Temurin 25 LTS JRE 포터블을 C:/Users/gh/tools/freerouting 아래에만(PATH·JAVA_HOME·시스템 Java 변경 없음, Adoptium 공개 sha256 대조·기록) + Freerouting v2.5.0 공식 릴리스(sha256 기록). Java 21은 그 폴더 안이면 그대로 둬도 됨. 옛 판 탐색 중단. O-51 조건(저속만·고속 차동/전원/IR 열 패드 fixed·SES 후 DRC 판정·GUI 안 엶) 그대로.
+■ MDI 7.22mm: 꼬임 구간 밖 쌍 안 보정(굴곡) 자리를 만들되 안 되면 부품 이동(ESD·RJ45 주변) 허용, 그래도 안 되면 수치와 근거 보고(1회 판단 후 계속 — 다른 항목은 멈추지 말 것).
+■ P-004 (DRC 0 뒤): R-010 체크리스트 16항(docs/research/r010-pcbway-submission.md "P-004 체크리스트") 기준 — Gerber(RS-274X, 4층+마스크·실크·페이스트·외곽)·Excellon 드릴(PTH/NPTH 분리)·CPL(PCBWay 열 이름·회전 기준 기록)·PCBWay 형식 BOM(make_pcbway_bom.py 재생성)·조립도 PDF(극성·1번 핀)·STEP. 보드마다 zip. 패널화는 R-010 기본값대로 하고 분기 기록. 업로드·견적 요청·계정 로그인 금지.
+■ STEP 먼저: 배선이 끝나기 전이라도 부품 배치가 고정됐으면 두 보드 STEP(kicad-cli pcb export step)을 지금 한 번 커밋 — mechanical M-003이 케이스 설계를 시작한다. 배치가 바뀌면 다시 커밋하고 orch에 알림.
+■ GUI: KiCad GUI 단일 작성자는 pcb. lead가 띄운 pcbnew 2창(PID 49484·150640)은 scratchpad 사본 보기 전용 — pcb가 GUI 작업을 시작하면 닫아도 됨. 사용자에게 보여 줄 화면은 G-001처럼 validation/runtime/kicad-gui/<id>/에 스크린샷.
+■ 완료 조건: DRC 종료 코드·위반/미연결 수, 차동 길이표(쌍 안·레인 간·비결합), 산출물 목록·sha256, 커밋 → hc send t18r. 중간에 STEP 커밋 때 한 번 알림.

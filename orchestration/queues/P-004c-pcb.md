@@ -1,0 +1,11 @@
+[orch t18r → pcb] P-004 추가 묶음 (orch 분기 O-86, 2026-11-27) — 주 경로(DRC 0·미연결 0·산출물) 안에서 적용. 우선순위: ①② 배치 → 재배선 → ③④⑤.
+■ ① 회로도 C-016 반영: schematic 레인 t-20261127-041255-b9cd 커밋 ea1336b(+1902144·1f632b6 문서) — git show로 hardware/schematic/{carrier,front}/*.kicad_sch·*.net·tools/boards.py·hw-fw-contract.md(v1.12) 가져옴. 변경: 캐리어 J1-32 미연결(풀 없음), 전면 R15 삭제, TP24 추가(ALS_INT_RSV), 전면 J2 → PinHeader_1x02_P2.54mm 납땜 패드(넷 ICR_A 1번 사각/ICR_B, BOM·CPL 제외). parity 0. (곧 C-017 — SIM 수정으로 전면 저항·콘덴서 몇 개와 R6 값이 또 바뀜, 오면 전달)
+■ ② 전면 배치 M-008(mechanical 레인 t-20261127-040816-30c6 969d169, mechanical/m008/m008-g2-fix.md §3 표 그대로, KiCad X=100+x, Y=100−y): F1–F3 R9·R10·R11 → y +12.450(KiCad Y 87.550), F4 J3 DF30 → (100.000, 111.550) 180°, F5 J2 납땜 패드 → (116, 92)·(116, 89.46), F6 MH1 courtyard 갱신, 금지 영역(스페이서·몸체·귀 높이 0, FPC 홈, 리드 길 ≤1.5) — 규칙 영역으로 넣어 DRC가 판정하게. ★ O-61(캐리어 J3 USB-C −X 1.0mm)이 3012bf3에도 아직 안 들어감(mechanical M-007 판정 실패) — 이번에 반드시.
+■ ③ 3D 모델 연결(M-007 d7dd179/cdce9bd, mechanical/m007/m007-assembly.md §1): 캐리어 J3·J5·L1·Q3/Q4, 전면 X1·Q3/Q5/Q7에 ${KIPRJMOD}/../../../mechanical/models/<파일>.step (원점·회전·오프셋 0, 배율 1) — 모델 파일은 그 레인에서 git show로 가져와 pcb 레인에 같은 경로로 커밋. 두 보드 STEP 내보내기 경고 '모델 없음' 0.
+■ ④ 규칙 완화 정리(review V-006 3d88931, docs/review/v006-vd001-prep.md 조건2-①): D-003 기록 없는 완화 = 불합격 →
+  - .kicad_pro ignore: footprint_filters_mismatch만 유지(회로도 심벌 필터 경고, 제조 무관 — D-003 기록 요청), 나머지 4종(footprint_type_mismatch·missing_courtyard·track_not_centered_on_via·tuning_profile_track_geometries)은 ignore 풀고 원인을 고침(속성 SMD/THT 맞춤·openhw 풋프린트 courtyard 추가(O-74b 사본 규칙)·비아 중심 맞춤). 못 고치는 게 남으면 수·이유 보고.
+  - csi/mdi_100_pair track_width min 0.14 → 0.15(#21)로 되돌리고 0.14 구간 고침.
+  - DP_BRK(쌍 간격 2.2·간격 0.16)·DP_TUNE(간격 1.0): 커넥터·패드 탈출 구간 한정 완화로 보고 유지 — 영역·이유·규칙 원문을 문서로 보내면 lead가 D-003에 기록(DP_TWIST와 같은 방식, enclosedByArea로 한정).
+  - 캐리어 u2_htssop_thermal_vias 구멍 0.20 → 0.30(#21)으로, 패드에 안 들어가면 수·이유 보고(그때 D-003 기록).
+■ ⑤ 산출물(review 사전 발견): CPL 좌표 원점 = 보드 왼쪽 아래(R-010 #4), 회전 0~360 — 보조 원점은 STEP용 코어 중심 그대로 두고, CPL은 생성 스크립트에서 보드 외곽 최소 X/Y 기준으로 변환. STEP은 --user-origin(코어 중심)으로 명시. 산출물 자리·이름: review docs/review/vd001-format.md §3(manufacturing/pcb/<보드>/ + <보드>.zip).
+■ RQ-17~19(R-020 전원) 포함 기존 RQ 그대로. 완료 조건 VD-001 2·3. 커밋마다 짧게 hc send t18r.
