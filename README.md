@@ -152,7 +152,7 @@
 </tr>
 </table>
 
-<p align="center"><a href="docs/renders/final/blender-turntable.mp4"><img src="docs/readme/gallery/case-a/turntable-poster.jpg" width="480" alt="케이스 시안 A 회전 영상 첫 장면"></a><br><sub>회전 영상 (8초 · MP4) — 누르면 재생</sub></p>
+<p align="center"><a href="docs/renders/final/blender-turntable.mp4"><img src="docs/readme/gallery/case-a/turntable.gif" width="640" alt="케이스 시안 A 360도 회전 영상(움직이는 GIF, 누르면 1080p MP4)"></a><br><sub>360도 회전 (움직이는 GIF) — 누르면 1080p MP4</sub></p>
 
 ## 기술 스택
 
