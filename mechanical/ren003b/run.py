@@ -1,7 +1,7 @@
 """REN-003b 한 명령 (O-125 2단계) — 메시 준비 → HDRI 확인 → Blender 컷 · 턴테이블 → 1600px 축소 · MP4 → 판정.
 
   python -I -B mechanical/ren003b/run.py [--case <외함 STEP/STL 폴더>] [--extra <STL 폴더>] [--boards-from <GLB 폴더> | --pcb <커밋>]
-        [--final] [--hero-only] [--design A [--alu grey|black] [--full] [--glass-t 0.15]] [--tag 이름] [--cuts a,b] [--frames N] [--res WxH] [--samples N] [--engine cycles|eevee] [--no-label]
+        [--final] [--hero-only] [--design A [--alu grey|black] [--full] [--glass-t 0.15] [--no-docs]] [--tag 이름] [--cuts a,b] [--frames N] [--res WxH] [--samples N] [--engine cycles|eevee] [--no-label]
 
 - 메시 (기본값은 main 체크아웃 validation/runtime/vd001/ 의 M-010 최종 산출):
     --case        외함 STEP/STL 폴더(--design 과 같이 쓰면 그 시안의 상세 설계 메시 폴더). 기본 case/step (STEP → 곡면 오차 ≤ 0.01 mm 삼각화). 시안은 design/A 같은 폴더를 준다.
@@ -86,6 +86,7 @@ def main():
     ap.add_argument('--no-label', action='store_true')
     ap.add_argument('--design', help='시안 이름(A · B · C): design/<이름>/ 의 부품 STL 로 히어로 1장 — 같은 카메라 · 조명(틀 반지름 80 mm)')
     ap.add_argument('--alu', choices=['grey', 'black'], default='grey', help='시안 알루미늄 색: grey = 스페이스 그레이(기본) · black = 흑색 아노다이즈(출력 이름에 _black)')
+    ap.add_argument('--no-docs', action='store_true', help='--final 이어도 docs/renders/final 대표본을 쓰지 않는다(메시 확정 전)')
     ap.add_argument('--full', action='store_true', help='--design 과 같이: 히어로 1장 대신 컷 전부 + 턴테이블(제품 크기에 맞춘 틀). 출력 design/<이름>_preview 또는 _final')
     ap.add_argument('--glass-t', type=float, help='스모크 앞유리 가시광 투과율(두 면 합, 예 0.15). 없으면 materials_ext 값(약 0.25)')
     a = ap.parse_args()
@@ -175,6 +176,8 @@ def main():
             v = bb.get(b)
             chk('%s 가 외함 범위 안 (mm, 커넥터 돌출 여유 −3/+6)' % b, v,
                 bool(v) and all(v[i] >= hs[i] - 3.0 for i in range(3)) and all(v[i + 3] <= hs[i + 3] + 6.0 for i in range(3)))
+    fr_mm = {k: v.get('frame_radius_mm') for k, v in rep.get('cuts', {}).items()}
+    chk('컷마다 틀 반지름 mm (유한 · 1 m 미만)', fr_mm, bool(fr_mm) and all(isinstance(v, (int, float)) and 0 < v < 1000 for v in fr_mm.values()))
     stills = [os.path.join(out, 'stills', c + '.png') for c in cuts]
     chk('컷 수', '%d / %d %s' % (sum(os.path.exists(p) for p in stills), len(cuts), cuts), all(os.path.exists(p) for p in stills))
     chk('컷 해상도', sorted({png_size(p) for p in stills if os.path.exists(p)}), all(os.path.exists(p) and png_size(p) == (W, H) for p in stills))
@@ -182,8 +185,8 @@ def main():
         n = (rep.get('cuts', {}).get('section') or {}).get('section_objects')
         chk('단면 컷에서 잘린 객체 수', n, bool(n))
         sc = rep.get('section_check') or {}
-        chk('단면 컷: 안 잘린 객체 %s · 처리 못 한 객체 %s (닫히지 않은 작은 부품: 숨김 %s · 통째로 둠 %s)' % (sc.get('n_uncut'), sc.get('n_unresolved'), sc.get('lost_hidden'), sc.get('lost_kept_whole')),
-            sc.get('uncut', [])[:6], sc.get('n_uncut') == 0 and sc.get('n_unresolved') == 0)
+        chk('단면 컷: 자른 쪽에 남은 객체 수 (통째로 빠진 부품 %s · 단면이 열린 채 남은 작은 부품 %s)' % (sc.get('removed_whole'), sc.get('open_caps')),
+            sc.get('n_uncut'), sc.get('n_uncut') == 0)
 
     # ④ 1600px 축소 (README 용)
     web = []
@@ -251,16 +254,18 @@ def main():
 
     # ⑥ 대표본 (--final 이고 전부 통과일 때만) · 기록
     docs = []
-    if a.final and not a.hero_only and all(c['pass'] for c in checks):
+    if a.final and not a.hero_only and not a.no_docs and all(c['pass'] for c in checks):
         d = os.path.join(LANE, 'docs', 'renders', 'final')
         os.makedirs(d, exist_ok=True)
         from PIL import Image
         for c in cuts:      # 커밋본 = 1600px (4K 원본은 validation/runtime 에만). 이름은 VD-001 HTML · README 가 참조하는 고정 이름
             n = 'blender-%s.png' % ('product' if c == 'hero' else c)
-            Image.open(os.path.join(out, 'web', c + '.jpg')).save(os.path.join(d, n))
+            im = Image.open(os.path.join(out, 'stills', c + '.png')).convert('RGB')      # 4K 원본에서 바로 줄인다(JPEG 을 거치지 않음)
+            im.resize((1600, round(1600 * im.size[1] / im.size[0])), Image.LANCZOS).save(os.path.join(d, n), optimize=True)
             docs.append('docs/renders/final/' + n)
         shutil.copy2(mp4, os.path.join(d, 'blender-turntable.mp4'))
-        Image.open(os.path.join(out, 'turntable', 'frame_0001.png')).convert('RGB').save(os.path.join(d, 'blender-turntable-poster.jpg'), quality=90)
+        im = Image.open(os.path.join(out, 'turntable', 'frame_0001.png')).convert('RGB')
+        im.resize((1600, round(1600 * im.size[1] / im.size[0])), Image.LANCZOS).save(os.path.join(d, 'blender-turntable-poster.jpg'), quality=90)
         docs += ['docs/renders/final/blender-turntable.mp4', 'docs/renders/final/blender-turntable-poster.jpg']
     if a.design and a.final and not a.full and all(c['pass'] for c in checks):     # 시안 히어로(4K 만 — 미리보기가 덮어쓰지 않게): design/<이름>_hero.png · _hero_1600.jpg
         d = os.path.join(BASE, 'design')
