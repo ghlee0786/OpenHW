@@ -7,13 +7,14 @@
 - kicad-cli front rc 0 (사본 감사 빠짐 0 , kicad-cli 경고 0 )
 - pcb commit 995b872
 - 커넥터 (pcb fab): {"rj_x": [-10.475, 5.565], "rj_y": [-33.455, -12.155], "dc_x": [10.68, 19.68], "dc_y": [-33.705, -19.705], "usb_x": [-20.455, -13.155], "usb_y": [-4.47, 4.47], "sd_x": [-6.955, 6.895], "sd_y": [3.44, 19.6], "sd_front": [19.6]}
-- 02_assembly rc 0 ASSEMBLY True 4826d5ab136b46f612b09cb363a5a912a1fd8a45182af921c0f8d0de761a5319 harness path 24.72 slack 10.28
-BOARDS {'carrier': 'd141704ca7e992b1f50fc6a37677f4d165dfd601e072c9f35e3517a71b177048', 'front': 'ae9e5d1455fce65e407fb2aca9ad336817fd17492dacb1067fafac3faef4386e'}
+- 02_assembly rc 0 CASE_A bodies 22
+ASSEMBLY True 81c176c09e78482412b620b7faed40636e3a2bc9821e7087e75ff339d9000f97 harness path 24.72 slack 10.28
+BOARDS {'carrier': '1ffaa95243bd6aed808604b8124904d5bb51abfedf846b2d1c5974491270640d', 'front': '2657c02ec6d086e74ac5bd59fc63b3bb8894bd2b52130f3526b7ff45280740d3'}
 - 03_judge rc 0 JUDGE fail 0
 
 - 판정에서 뺀 대체 블록 (그 보드 3D 모델 연결 사본 감사 빠짐 0 — asm_spec.SUBST_BLOCKS): BLK_J5_RJ45 BLK_J3_USBC BLK_L1_SRP7028A BLK_CAR_Q3 BLK_CAR_Q4 BLK_FR_X1 BLK_FR_Q3 BLK_FR_Q5 BLK_FR_Q7
 
-## J1 바디 쌍 간섭 (바디 218개)
+## J1 바디 쌍 간섭 (바디 229개)
 
 | 쌍 | 부피 mm³ | 위치 x/y/z | 판정 |
 |---|---|---|---|
@@ -40,6 +41,8 @@ BOARDS {'carrier': 'd141704ca7e992b1f50fc6a37677f4d165dfd601e072c9f35e3517a71b17
 | HARNESS_CORRIDOR_MX ↔ HARNESS_GH6P_W4 | 19.156 | [-24.7, -21.0, -24.75, -7.65, -6.38, 7.97] | 의도 — 하니스가 하니스 통로 안을 지남 (통로는 자리 표시) |
 | HARNESS_CORRIDOR_MX ↔ HARNESS_GH6P_W5 | 19.156 | [-24.7, -21.0, -23.15, -6.05, -6.38, 7.97] | 의도 — 하니스가 하니스 통로 안을 지남 (통로는 자리 표시) |
 | HARNESS_CORRIDOR_MX ↔ HARNESS_GH6P_W6 | 19.156 | [-24.7, -21.0, -21.55, -4.45, -6.38, 7.97] | 의도 — 하니스가 하니스 통로 안을 지남 (통로는 자리 표시) |
+| COVER_USBC ↔ BLK_J3_PLUG | 224.770 | [-27.8, -25.0, -6.18, 6.18, -14.48, -7.98] | 의도 — USB-C 정비 덮개는 플러그를 꽂을 때 뺌 (삽입 공간과 겹치는 것이 정상) |
+| COVER_MICROSD ↔ BLK_J4_CARD | 30.800 | [-5.53, 5.47, 33.5, 36.3, -11.05, -10.05] | 의도 — microSD 정비 덮개는 카드를 넣을 때 뺌 |
 | BLK_J2_DC ↔ BOARD_PART:BarrelJack_Horizontal | 620.815 | [10.68, 19.68, -33.7, -20.11, -20.38, -9.6] | 의도 — DC 잭: KiCad 일반 BarrelJack 모델 ↔ XKB 대체 블록 (같은 부품) |
 | BLK_J2_DC ↔ BOARD_PART:BarrelJack_Horizontal | 48.906 | [12.54, 17.82, -33.7, -19.7, -18.73, -9.6] | 의도 — DC 잭: KiCad 일반 BarrelJack 모델 ↔ XKB 대체 블록 (같은 부품) |
 | BLK_J2_DC ↔ BOARD_PART:BarrelJack_Horizontal | 17.164 | [12.68, 17.68, -32.58, -22.55, -13.22, -9.62] | 의도 — DC 잭: KiCad 일반 BarrelJack 모델 ↔ XKB 대체 블록 (같은 부품) |
@@ -59,18 +62,23 @@ BOARDS {'carrier': 'd141704ca7e992b1f50fc6a37677f4d165dfd601e072c9f35e3517a71b17
 
 | 쌍 | 최소 틈 mm | 기준 | 판정 |
 |---|---|---|---|
-| LENS_CIL093 ↔ FRONT_COVER | 0.6 | ≥ 0.3 | 통과 |
-| LENS_CIL093 ↔ LENS_WIN_PMMA | 0.5 | ≥ 0.3 | 통과 |
-| HS_PEDESTAL ↔ HOUSING | 0.3 | ≥ 0.2 | 통과 |
-| SPREADER_M003 ↔ HOUSING | 1.0 | ≥ 0.3 | 통과 |
-| HARNESS_GH6P ↔ HOUSING | 0.3 | ≥ 0.1 | 통과 |
+| LENS_CIL093 ↔ LENS_WIN_CLEAR | 1.515 | ≥ 0.3 | 통과 |
+| LENS_CIL093 ↔ GLASS_MASK | 3.101 | ≥ 0.3 | 통과 |
+| LENS_CIL093 ↔ INNER_MASK_PLATE | 3.204 | ≥ 0.3 | 통과 |
+| CLA216_M008 ↔ INNER_MASK_PLATE | 0.5 | ≥ 0.3 | 통과 |
+| HW_M16_HEADS ↔ INNER_MASK_PLATE | 1.8 | ≥ 0.2 | 통과 |
+| LED_A1 ↔ INNER_MASK_PLATE | 1.692 | ≥ 0.5 | 통과 |
+| SPREADER_M003 ↔ SHELL_ALU | 0.75 | ≥ 0.3 | 통과 |
+| HARNESS_GH6P ↔ SHELL | 0.3 | ≥ 0.1 | 통과 |
 | HARNESS_GH6P ↔ SPREADER_M003 | 4.296 | ≥ 0.1 | 통과 |
-| BLK_J3_PLUG ↔ HOUSING | 0.225 | ≥ 0.0 | 통과 |
-| BLK_J5_PLUG ↔ HOUSING | 2.0 | ≥ 0.0 | 통과 |
-| BLK_J2_PLUG ↔ HOUSING | 0.25 | ≥ 0.0 | 통과 |
-| BLK_J4_CARD ↔ HOUSING | 0.65 | ≥ 0.0 | 통과 |
-| FOAM_ALS_GASKET ↔ FRONT_COVER | 0.0 | ≥ -0.01 | 통과 |
-| LED_A1 ↔ FRONT_COVER | 10.348 | ≥ 1.0 | 통과 |
+| BLK_J3_PLUG ↔ SHELL | 0.3 | ≥ 0.0 | 통과 |
+| BLK_J5_PLUG ↔ SHELL | 2.0 | ≥ 0.0 | 통과 |
+| BLK_J2_PLUG ↔ SHELL | 0.1 | ≥ 0.0 | 통과 |
+| BLK_J4_CARD ↔ SHELL | 0.25 | ≥ 0.0 | 통과 |
+| BLK_J5_PLUG ↔ CABLE_GROMMET | 0.5 | ≥ 0.0 | 통과 |
+| BLK_J2_PLUG ↔ CABLE_GROMMET | 0.5 | ≥ 0.0 | 통과 |
+| BLK_J5_PLUG ↔ WALL_BRACKET | 12.745 | ≥ 0.0 | 통과 |
+| BLK_J2_PLUG ↔ WALL_BRACKET | 13.526 | ≥ 0.0 | 통과 |
 | CLA216_M008 ↔ LED_A1 | 2.65 | ≥ 1.0 | 통과 |
 | CLA216_M008 ↔ LED_A2 | 2.65 | ≥ 1.0 | 통과 |
 | DF30_M008 ↔ LED_B1 | 2.173 | ≥ 1.0 | 통과 |
@@ -85,8 +93,8 @@ BOARDS {'carrier': 'd141704ca7e992b1f50fc6a37677f4d165dfd601e072c9f35e3517a71b17
 
 ## J5 LED 직접광 (광선 추적, LED A+B, 시야 19 × 13 방향)
 
-- 직접광이 닿는 방향 97.6 % (기준 86 %, analysis2 · O-69) → 통과
-- 막은 바디(LED·방향 수): {'HOUSING': 200, 'FRONT_COVER': 254, 'LENS_CIL093': 66, 'FOAM_LENS_RING': 2}
+- 직접광이 닿는 방향 100.0 % (기준 86 %, analysis2 · O-69) → 통과
+- 막은 바디(LED·방향 수): {'SHELL_PLASTIC': 182, 'GLASS_MASK': 290, 'LENS_CIL093': 66}
 
 ## J6 짝 BTB 결합 높이
 
@@ -94,6 +102,6 @@ BOARDS {'carrier': 'd141704ca7e992b1f50fc6a37677f4d165dfd601e072c9f35e3517a71b17
 
 ## 입력·산출 해시
 
-- m007_assembly.step 4826d5ab136b46f612b09cb363a5a912a1fd8a45182af921c0f8d0de761a5319
-- boards/carrier.step d141704ca7e992b1f50fc6a37677f4d165dfd601e072c9f35e3517a71b177048
-- boards/front.step ae9e5d1455fce65e407fb2aca9ad336817fd17492dacb1067fafac3faef4386e
+- m007_assembly.step 81c176c09e78482412b620b7faed40636e3a2bc9821e7087e75ff339d9000f97
+- boards/carrier.step 1ffaa95243bd6aed808604b8124904d5bb51abfedf846b2d1c5974491270640d
+- boards/front.step 2657c02ec6d086e74ac5bd59fc63b3bb8894bd2b52130f3526b7ff45280740d3

@@ -65,6 +65,7 @@ def main():
     ap.add_argument('--pcb-carrier'); ap.add_argument('--pcb-front')
     ap.add_argument('--pcb-lane', default=PCB_LANE)
     ap.add_argument('--skip-build', action='store_true')
+    ap.add_argument('--case', default='M003', choices=['M003', 'A'], help='O-126: A = 시안 A 케이스(case/A/A.step) 로 조립·판정')
     ap.add_argument('--no-fusion', action='store_true', help='O-107: 보드 사본·모델 감사·STEP·커넥터까지만 (Fusion 조립·판정·judge.md·조건 5 결과 파일 안 씀)')
     a = ap.parse_args()
     os.makedirs(os.path.join(OUT, 'boards'), exist_ok=True)
@@ -105,6 +106,7 @@ def main():
         commit = commits['carrier'] if commits['carrier'] == commits['front'] else 'carrier %s · front %s' % (commits['carrier'], commits['front'])
         cmd = 'python -I -B mechanical/m007/run_all.py ' + ('--pcb %s' % commits['carrier'] if commits['carrier'] == commits['front']
                                                             else '--pcb-carrier %s --pcb-front %s' % (commits['carrier'], commits['front']))
+        cmd += ' --case A' if a.case == 'A' else ''
         log.append('pcb commit ' + commit)
         json.dump({'pcb': commit, 'command': cmd, 'missing': missing, 'missing_after_apply': aud},
                   open(os.path.join(OUT, 'boards', 'models_missing.json'), 'w', encoding='utf-8'), indent=1)
@@ -131,7 +133,7 @@ def main():
         log.append('커넥터 (pcb fab): ' + json.dumps(conn))
         if a.no_fusion:
             print('\n'.join(log)); return 0
-        rc, o = sh([sys.executable, '-I', '-B', FRUN, os.path.join(HERE, 'scripts', '02_assembly.py')]); log.append('02_assembly rc %d %s' % (rc, o.strip()[-300:]))
+        rc, o = sh([sys.executable, '-I', '-B', FRUN, os.path.join(HERE, 'scripts', '02_assembly.py'), '--set', 'CASE=' + a.case]); log.append('02_assembly rc %d %s' % (rc, o.strip()[-300:]))
         if rc:
             print('\n'.join(log)); return 98
     rc, o = sh([sys.executable, '-I', '-B', FRUN, os.path.join(HERE, 'scripts', '03_judge.py')]); log.append('03_judge rc %d %s' % (rc, o.strip()[-200:]))
