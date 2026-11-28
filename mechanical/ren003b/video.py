@@ -1,6 +1,6 @@
 """VID-001 영상 한 명령 (O-129 · O-130) — 메시 준비 → HDRI · 글꼴 확인 → Blender 프레임(video_anim.py) → 자막 → MP4 · GIF · 포스터 → 판정.
 
-  python -I -B mechanical/ren003b/video.py [--names concept-explode,section-open,hero-dolly] [--final] [--case <상세 설계 메시 폴더>]
+  python -I -B mechanical/ren003b/video.py [--names concept-explode,section-open,hero-dolly,bracket] [--final] [--case <상세 설계 메시 폴더>]
         [--glass-t 0.15] [--procs N] [--samples N] [--fps N] [--res WxH] [--no-docs]
 
 - 메시: 기본은 main 체크아웃 validation/runtime/vd001/case/A (고른 시안의 상세 설계) + render/mesh 의 보드 GLB · 내부 부품. run.py --design 과 같은 방식.
@@ -26,7 +26,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))      # -I 로 돌
 import materials_ext  # noqa: E402
 import run as R  # noqa: E402
 
-NAMES = ['concept-explode', 'section-open', 'hero-dolly']
+NAMES = ['concept-explode', 'section-open', 'hero-dolly', 'bracket']
 GIF_LIMIT = {'concept-explode': 5.0e6}       # 바이트 — 나머지는 2.0e6 (README 이미지 합 예산, D-003 #69)
 GIF_STEPS = [(640, 15, 160, 'bayer:bayer_scale=5'), (640, 12, 128, 'bayer:bayer_scale=5'), (560, 12, 128, 'bayer:bayer_scale=5'), (480, 12, 128, 'bayer:bayer_scale=5'),
              (480, 12, 128, 'none'), (480, 10, 128, 'none'), (400, 10, 128, 'none'), (400, 10, 96, 'none'), (360, 10, 96, 'none')]     # (폭 px, fps, 색 수, 디더링)

@@ -3,6 +3,7 @@
   concept-explode  완제품 히어로 → 순간 분해 → 부품 6개 차례로(앞으로 떠올라 제 축으로 돌고, 카메라는 둘레를 돌며 다가감) → 다시 조립 → 로고 컷
   section-open     외함이 평면에 잘려 나가며 안의 보드 3층 · 렌즈가 드러남
   hero-dolly       뒤(방열 핀) → 위(상태 LED) → 앞(렌즈)으로 천천히 돌며 다가감
+  bracket          벽 브래킷에 달린 채 팬(좌우) · 틸트(위아래)로 움직임 — 브래킷 부품(ARM · PAN · TILT · PIN)이 있는 시안만
 
 - 프레임: `--video-dir`(없으면 <out>/video)/<이름>/frames/frame_0001.png … (TT_RES, `--video-fps`). 있는 프레임은 건너뛴다.
   `--video-part k/n` = 프레임 번호를 n 으로 나눈 나머지가 k 인 것만(여러 프로세스가 나눠 렌더).
@@ -48,12 +49,12 @@ def track(keys, t):
     return dict(keys[-1][1])
 
 
-def aim(S, q, lift=Vector((0, 0, 0))):
+def aim(S, q, lift=Vector((0, 0, 0)), light=None):
     """q = yaw · el · az(°) · p(목표, 제품 좌표 m) · w(들어 올림 0~1) · r(틀 반높이 m) · k(심도 배율) · fb(초점을 앞으로 당기는 비율)"""
     S.tt.rotation_euler = (0, 0, math.radians(-q['yaw']))
     bpy.context.view_layer.update()
     tgt = S.prod.matrix_world @ q['p'] + lift * q['w']
-    _, _, d = S.stage(q['yaw'], q['el'], LENS, 1.0, az=q['az'], target=tgt, res=S.TT_RES, focus_bias=q['fb'], radius=q['r'], light=(S.C, S.RAD))
+    _, _, d = S.stage(q['yaw'], q['el'], LENS, 1.0, az=q['az'], target=tgt, res=S.TT_RES, focus_bias=q['fb'], radius=q['r'], light=light or (S.C, S.RAD))
     S.cyc.location = (S.C.x, S.C.y, S.lo.z - 0.0002)
     S.cd.dof.aperture_fstop = max(2.8, 4900.0 / (q['k'] * d / MM))
 
@@ -213,7 +214,53 @@ def hero_dolly(S):
             'meta': {'path': [{k: ([round(x / MM, 1) for x in v] if isinstance(v, Vector) else v) for k, v in q.items()} for q in (a, b, c)]}}
 
 
-CLIPS = {'concept-explode': concept, 'section-open': section_open, 'hero-dolly': hero_dolly}
+# ---------------- bracket (O-129 ⑤) ----------------
+def bracket(S):
+    dur = 6.0
+    prod = S.prod
+    S.accessories(True)
+    bpy.context.view_layer.update()
+
+    def box(frag):
+        objs = [o for o in S.OWN_BRACKET if frag in o.name]
+        assert objs, '브래킷 부품이 없다: ' + frag
+        l, h = S.bounds(objs, prod.matrix_world)
+        return objs, (l + h) / 2
+
+    arm, _ = box('ARM')
+    pan, pp = box('PAN')            # 팬 축: PAN 기둥 중심을 지나는 제품 Y(세로) 축
+    _, pt = box('PIN')              # 틸트 축: PIN 중심을 지나는 제품 X(가로) 축
+    moving = [o for o in prod.children if o not in arm]
+    base = {o: o.matrix_basis.copy() for o in moving}
+    pinv = {o: o.matrix_parent_inverse.copy() for o in moving}
+    l, h = S.bounds([o for o in S.children(prod) if o.type == 'MESH'])
+    c0, r0 = (l + h) / 2, (h - l).length / 2
+    l, h = S.bounds([o for o in S.children(prod) if o.type == 'MESH'], prod.matrix_world)
+    q = {'yaw': 0, 'el': -10, 'az': 36, 'p': (l + h) / 2, 'w': 0, 'r': r0 * 1.02, 'k': 1.0, 'fb': 0.35}
+    aim(S, q, light=(c0, r0))
+    wall0 = S.wall.location.copy()
+    amp = (28.0, 12.0)              # 팬 · 틸트 진폭(°) — 보기용 값(설계 가동 범위가 아니다)
+
+    def pose(t):
+        u = t / dur                 # 한 바퀴 돌아 처음 자세로 온다(GIF 가 이어지게)
+        a, b = math.radians(amp[0] * math.sin(2 * math.pi * u)), math.radians(amp[1] * math.sin(4 * math.pi * u))
+        rp = Matrix.Translation(pp) @ Matrix.Rotation(a, 4, 'Y') @ Matrix.Translation(-pp)
+        rt = Matrix.Translation(pt) @ Matrix.Rotation(b, 4, 'X') @ Matrix.Translation(-pt)
+        for o in moving:
+            o.matrix_basis = pinv[o].inverted() @ (rp if o in pan else rp @ rt) @ pinv[o] @ base[o]
+        aim(S, q, light=(c0, r0))
+        S.wall.location = wall0     # 벽은 움직이지 않는다(stage 가 프레임마다 범위로 다시 잡는 것을 되돌림)
+
+    def done():
+        for o in moving:
+            o.matrix_basis = base[o]
+        S.accessories(False)
+
+    return {'dur': dur, 'pose': pose, 'done': done, 'animated': [], 'blur': [],
+            'meta': {'pan_axis_mm': [round(pp.x / MM, 2), round(pp.z / MM, 2)], 'tilt_axis_mm': [round(pt.y / MM, 2), round(pt.z / MM, 2)], 'amplitude_deg': amp}}
+
+
+CLIPS = {'concept-explode': concept, 'section-open': section_open, 'hero-dolly': hero_dolly, 'bracket': bracket}
 
 
 def run(S, names):
