@@ -9,6 +9,8 @@
 EXT_MATS = {
     'ir_glass':  dict(label='IR 투과 앞유리 (짙은 스모크, 가시광 투과 약 25 % — 면당 0.5, 렌즈 앞은 투명 원형 창)', rgb=(0.004, 0.0035, 0.005), rough=0.02, ior=1.49,
                       smoke=0.5, window_r=7.5),
+    'win_clear': dict(label='투명 창 (렌즈 · 조도 센서 앞, 코팅) — 앞유리와 같은 방식(직진 투과 + 앞면 프레넬 반사)이라 창만 뿌옇게 뜨지 않는다', rgb=(0.9, 0.9, 0.9), rough=0.02, ior=1.49,
+                      smoke=0.98, window_r=1000.0),
     'petg_shell': dict(label='본체 무광 흑색 플라스틱 (차콜 — 두 톤 가운데 밝은 쪽)', rgb=(0.024, 0.024, 0.026), rough=0.55, spec=0.4),
     'lightpipe_on': dict(label='상태 LED 광 파이프 (켜짐, 청록)', rgb=(0.05, 0.6, 0.5), rough=0.3, emit=((0.05, 1.0, 0.75), 2.5)),
     'floor':     dict(label='무한 배경 (밝은 회색, 약한 반사)', rgb=(0.62, 0.62, 0.63), rough=0.55, spec=0.3, coat=0.25),
@@ -21,7 +23,7 @@ EXT_MATS = {
 }
 
 # (이름 조각, 재질) — 앞쪽이 먼저. NAME_RULES 가 못 가른 이름에만 쓴다(시안에서 쓸 법한 이름).
-EXT_NAME_RULES = [('IR_GLASS', 'ir_glass'), ('FRONT_GLASS', 'ir_glass'), ('GLASS_FRONT', 'ir_glass'), ('GLASS_IR', 'ir_glass'),
+EXT_NAME_RULES = [('WIN_CLEAR', 'win_clear'), ('BRACKET_SCREW', 'steel'), ('BRACKET_PIN', 'steel'), ('IR_GLASS', 'ir_glass'), ('FRONT_GLASS', 'ir_glass'), ('GLASS_FRONT', 'ir_glass'), ('GLASS_IR', 'ir_glass'),
                   ('SHELL_PLASTIC', 'petg_shell'), ('LENS_RING', 'al'), ('SHELL_ALU', 'anod_grey'), ('GASKET', 'rubber'), ('ORING', 'rubber'), ('GROMMET', 'rubber'), ('INSERT', 'brass'), ('MASK', 'foam'),
                   ('LIGHT_PIPE', 'lightpipe_on'), ('LIGHTPIPE', 'lightpipe_on'), ('BRACKET', 'bracket'), ('HEATSINK', 'anod'), ('HS_SHELL', 'anod'),
                   ('SHELL_AL', 'anod'), ('SCREW', 'steel'), ('SUNSHIELD', 'petg'), ('GLAND', 'plastic'), ('BODY', 'petg'),
@@ -31,10 +33,10 @@ EXT_NAME_RULES = [('IR_GLASS', 'ir_glass'), ('FRONT_GLASS', 'ir_glass'), ('GLASS
 LOOK = {'lightpipe': 'clear_coat', 'plug_clear': 'clear_coat', 'petg': 'matte_plastic', 'petg_shell': 'matte_plastic', 'floor': 'studio_floor', 'plastic': 'matte_plastic', 'holder': 'matte_plastic', 'conn_black': 'matte_plastic', 'bracket': 'matte_plastic',
         'anod': 'hairline', 'anod_grey': 'hairline_cut', 'mount': 'hairline', 'al': 'hairline_cut',
         'steel': 'machined', 'brass': 'machined', 'shield': 'machined',
-        'pmma': 'clear_coat', 'ir_glass': 'smoke_glass', 'glass': 'lens_coating', 'lens': 'machined',
+        'pmma': 'clear_coat', 'ir_glass': 'smoke_glass', 'win_clear': 'smoke_glass', 'glass': 'lens_coating', 'lens': 'barrel_black',
         'foam': 'soft', 'rubber': 'soft', 'backdrop': 'paper', 'wall': 'paper'}
 
-BEVEL_SKIP = ('PAD', 'FOAM', 'GASKET', 'HARNESS', 'FPC', 'PMMA', 'GLASS', 'LIGHT_PIPE', 'LENS_CIL093')
+BEVEL_SKIP = ('PAD', 'FOAM', 'GASKET', 'HARNESS', 'FPC', 'PMMA', 'GLASS', 'LIGHT_PIPE', 'LENS_CIL093', 'WIN_CLEAR', 'MASK', 'INSERT')
 # 시안 렌더에 같이 넣는 내부 부품(같은 적층) — 앞유리 너머로 렌즈 경통 · 유리가 보이게. 이름 앞부분.
 DESIGN_INTERNALS = ('LENS_CIL093', 'SENSOR_BLOCK', 'PEDESTAL', 'CORE_MODULE', 'FPC_M008')
 
@@ -137,13 +139,63 @@ def detail(bpy, m, kind, spec=None):
         if 'Thin Film Thickness' in p.inputs:
             p.inputs['Thin Film Thickness'].default_value = 110.0   # 반사를 줄이는 쪽(반사 방지 코팅 기미)
             p.inputs['Thin Film IOR'].default_value = 1.38
-    elif kind == 'lens_coating':    # 렌즈 다층 코팅: 박막 간섭(보라 · 초록 기미)
-        p.inputs['Coat Weight'].default_value = 1.0
+    elif kind == 'lens_coating':    # 렌즈 앞알: 속이 어두운 유리 + 다층 코팅 반사(박막 간섭, 보라 · 초록 기미). 평평한 원판 메시에 볼록한 노멀을 줘 조명이 알처럼 맺히게 한다
+        p.inputs['Base Color'].default_value = (0.004, 0.005, 0.010, 1)    # 렌즈 속은 어둡다(재질 표의 투명 유리 값 대신)
+        p.inputs['Transmission Weight'].default_value = 0.0
+        p.inputs['Roughness'].default_value = 0.02
+        p.inputs['Specular IOR Level'].default_value = 0.5
+        p.inputs['Coat Weight'].default_value = 0.3
         p.inputs['Coat Roughness'].default_value = 0.0
         if 'Thin Film Thickness' in p.inputs:
             p.inputs['Thin Film Thickness'].default_value = 420.0
             p.inputs['Thin Film IOR'].default_value = 1.38
-        shadow_pass(0.9)
+        sp = N('ShaderNodeSeparateXYZ')                 # 객체 좌표 = 제품 좌표(m), 광축 = Z. 반지름 DOME 의 구면 노멀
+        L(tc.outputs['Object'], sp.inputs[0])
+        dome = spec.get('dome_r', 9.0) * 0.001
+        comp = []
+        for ax in ('X', 'Y'):
+            d = N('ShaderNodeMath')
+            d.operation = 'DIVIDE'
+            d.inputs[1].default_value = dome
+            L(sp.outputs[ax], d.inputs[0])
+            comp.append(d)
+        sq = N('ShaderNodeVectorMath')
+        sq.operation = 'DOT_PRODUCT'
+        cxy = N('ShaderNodeCombineXYZ')
+        L(comp[0].outputs[0], cxy.inputs['X'])
+        L(comp[1].outputs[0], cxy.inputs['Y'])
+        L(cxy.outputs[0], sq.inputs[0])
+        L(cxy.outputs[0], sq.inputs[1])
+        one = N('ShaderNodeMath')
+        one.operation = 'SUBTRACT'
+        one.inputs[0].default_value = 1.0
+        L(sq.outputs['Value'], one.inputs[1])
+        mxz = N('ShaderNodeMath')
+        mxz.operation = 'MAXIMUM'
+        mxz.inputs[1].default_value = 0.05
+        L(one.outputs[0], mxz.inputs[0])
+        rt = N('ShaderNodeMath')
+        rt.operation = 'SQRT'
+        L(mxz.outputs[0], rt.inputs[0])
+        nrm = N('ShaderNodeCombineXYZ')
+        L(comp[0].outputs[0], nrm.inputs['X'])
+        L(comp[1].outputs[0], nrm.inputs['Y'])
+        L(rt.outputs[0], nrm.inputs['Z'])
+        vt = N('ShaderNodeVectorTransform')
+        vt.vector_type = 'NORMAL'
+        vt.convert_from = 'OBJECT'
+        vt.convert_to = 'WORLD'
+        L(nrm.outputs[0], vt.inputs[0])
+        nz = N('ShaderNodeVectorMath')
+        nz.operation = 'NORMALIZE'
+        L(vt.outputs[0], nz.inputs[0])
+        L(nz.outputs['Vector'], p.inputs['Normal'])
+        L(nz.outputs['Vector'], p.inputs['Coat Normal'])
+    elif kind == 'barrel_black':    # 렌즈 경통: 무광 검정(창 안쪽이 밝은 링으로 뜨지 않게)
+        p.inputs['Metallic'].default_value = 0.0
+        p.inputs['Roughness'].default_value = 0.7
+        p.inputs['Specular IOR Level'].default_value = 0.25
+        p.inputs['Base Color'].default_value = (0.012, 0.012, 0.013, 1)
     elif kind == 'soft':            # 폼 · 고무: 번들거림 없는 미세 요철
         bump(noise(1.0 / 0.0002, 2.0).outputs['Fac'], 0.2, 0.00002)
         if 'Sheen Weight' in p.inputs:
