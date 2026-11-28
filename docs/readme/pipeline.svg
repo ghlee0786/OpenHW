@@ -3,9 +3,9 @@
 <!-- 출처 회로도: hardware/schematic/carrier/carrier-erc.json · hardware/schematic/front/front-erc.json (violations 0, KiCad 10.0.8) -->
 <!-- 출처 시뮬레이션: hardware/sim/results/SIM-*.json (25개 모두 verdict pass) -->
 <!-- 출처 DRC: hardware/pcb/drc/front-drc.json (violations 0 · unconnected_items 0 · schematic_parity 0) · hardware/pcb/drc/carrier-drc.json (violations 0 · unconnected_items 0 · schematic_parity 0, 2026-11-27T15:40) -->
-<!-- 출처 3D: mechanical/m007/judge.md (캐리어·전면 원본 3D 모델 빠짐 0, 03_judge 실패 0) · mechanical/m010/m010.md (최종 pcb 커밋으로 다시 판정) -->
-<!-- 출처 케이스: mechanical/m003/m003-enclosure.md (2차) · docs/decisions/D-003-working-defaults.md #53 -->
-<!-- 출처 렌더: D-003 #51 #53 -->
+<!-- 출처 3D: mechanical/m010/run_A.md (run_case.py 두 보드 995b872 · 케이스 A 종료 0, 조건 5 27항목 불합격 0) -->
+<!-- 출처 케이스: mechanical/design/o126_a.md · docs/decisions/D-003-working-defaults.md #67 (O-126 시안 A) -->
+<!-- 출처 렌더: docs/renders/final/blender-*.png · blender-turntable.mp4 (O-126, 사실감 · 기판 비침은 사람 확인) -->
 <title id="t">설계 흐름과 진행 상태</title><desc id="d">요구사항부터 렌더까지 8단계의 완료·진행 중·대기 상태</desc>
 <style>
 :root{--bg:#ffffff;--card:#f6f8fa;--fg:#1f2328;--mut:#59636e;--ln:#d0d7de;--pcb:#1a7f37;--pcb2:#2da44e;--pcbs:#116329;
@@ -26,7 +26,7 @@ text{font-family:system-ui,-apple-system,"Segoe UI","Noto Sans KR","Apple SD Got
 <rect class="bg" x="0.5" y="0.5" width="899" height="259" rx="14"/>
 <text class="t" x="28" y="40">설계 흐름</text><text class="s" x="28" y="62">요구 → 회로도 → 시뮬레이션 → PCB → DRC → 3D → 케이스 → 렌더</text>
 <line class="ln" x1="70" y1="140" x2="840" y2="140"/>
-<line class="pr" x1="70" y1="140" x2="620" y2="140"/>
+<line class="pr" x1="70" y1="140" x2="840" y2="140"/>
 <circle class="ok" cx="70" cy="140" r="16"/>
 <path class="ck" d="M63,140 l5,5 l9,-10"/>
 <text class="l" x="70" y="110" text-anchor="middle">요구사항</text>
@@ -49,20 +49,20 @@ text{font-family:system-ui,-apple-system,"Segoe UI","Noto Sans KR","Apple SD Got
 <text class="l" x="510" y="110" text-anchor="middle">DRC</text>
 <text class="m" x="510" y="178" text-anchor="middle">두 보드 0</text>
 <text class="m" x="510" y="194" text-anchor="middle">0</text>
-<circle class="ring" cx="620" cy="140" r="16" style="animation-delay:1.25s"/>
-<circle class="wip" cx="620" cy="140" r="16"/>
-<circle cx="620" cy="140" r="5" fill="#fff"/>
+<circle class="ok" cx="620" cy="140" r="16"/>
+<path class="ck" d="M613,140 l5,5 l9,-10"/>
 <text class="l" x="620" y="110" text-anchor="middle">3D 검증</text>
-<text class="m" x="620" y="178" text-anchor="middle">모델 빠짐 0</text>
-<text class="m" x="620" y="194" text-anchor="middle">최종 보드 재판정</text>
-<circle class="ring" cx="730" cy="140" r="16" style="animation-delay:1.50s"/>
-<circle class="wip" cx="730" cy="140" r="16"/>
-<circle cx="730" cy="140" r="5" fill="#fff"/>
+<text class="m" x="620" y="178" text-anchor="middle">27항목 불합격 0</text>
+<text class="m" x="620" y="194" text-anchor="middle">간섭 0</text>
+<circle class="ok" cx="730" cy="140" r="16"/>
+<path class="ck" d="M723,140 l5,5 l9,-10"/>
 <text class="l" x="730" y="110" text-anchor="middle">케이스</text>
-<text class="m" x="730" y="178" text-anchor="middle">1차 설계</text>
-<text class="m" x="730" y="194" text-anchor="middle">최종 보드 대기</text>
-<circle class="todo" cx="840" cy="140" r="16"/>
+<text class="m" x="730" y="178" text-anchor="middle">시안 A 상세 설계</text>
+<circle class="ring" cx="840" cy="140" r="16" style="animation-delay:1.75s"/>
+<circle class="wip" cx="840" cy="140" r="16"/>
+<circle cx="840" cy="140" r="5" fill="#fff"/>
 <text class="l" x="840" y="110" text-anchor="middle">렌더</text>
-<text class="m" x="840" y="178" text-anchor="middle">최종 보드 뒤</text>
-<circle class="ok" cx="40" cy="236" r="7"/><text class="m" x="54" y="240">완료</text><circle class="wip" cx="110" cy="236" r="7"/><text class="m" x="124" y="240">진행 중</text><circle class="todo" cx="196" cy="236" r="7"/><text class="m" x="210" y="240">대기</text><text class="m" x="880" y="240" text-anchor="end">2026-11-27 기준 · 가상 설계 단계 (실물 제작 전)</text>
+<text class="m" x="840" y="178" text-anchor="middle">6컷 + 영상</text>
+<text class="m" x="840" y="194" text-anchor="middle">사람 확인 중</text>
+<circle class="ok" cx="40" cy="236" r="7"/><text class="m" x="54" y="240">완료</text><circle class="wip" cx="110" cy="236" r="7"/><text class="m" x="124" y="240">진행 중</text><circle class="todo" cx="196" cy="236" r="7"/><text class="m" x="210" y="240">대기</text><text class="m" x="880" y="240" text-anchor="end">2026-11-28 기준 · 가상 설계 단계 (실물 제작 전)</text>
 </svg>

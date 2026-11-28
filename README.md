@@ -26,7 +26,7 @@
 
 ## 진행 상태
 
-<p align="center"><img src="docs/readme/pipeline.svg" width="880" alt="설계 흐름 8단계: 요구사항·회로도·시뮬레이션·PCB 배선·DRC 완료, 3D 검증·케이스 진행 중, 렌더 대기"></p>
+<p align="center"><img src="docs/readme/pipeline.svg" width="880" alt="설계 흐름 8단계: 요구사항·회로도·시뮬레이션·PCB 배선·DRC·3D 검증·케이스 완료, 렌더는 사람 확인 중"></p>
 
 | 단계 | 상태 | 근거 (결과 파일) |
 |---|---|---|
@@ -35,9 +35,10 @@
 | 회로 시뮬레이션 | ✅ 25/25 통과 (ngspice-47) | [`hardware/sim/results/`](hardware/sim/results) |
 | 전면 보드 PCB | ✅ DRC 위반 0 · 미연결 0 · 회로도 일치 0 | [`front-drc.json`](hardware/pcb/drc/front-drc.json) |
 | 캐리어 보드 PCB | ✅ DRC 위반 0 · 미연결 0 · 회로도 일치 0 | [`carrier-drc.json`](hardware/pcb/drc/carrier-drc.json) |
-| 3D 조립 판정 | 🔧 모델 빠짐 0 · 판정 실패 0 (중간 보드 기준, 최종 보드로 다시) | [`judge.md`](mechanical/m007/judge.md) |
-| 케이스 | 🔧 1차 초안 — 최종 보드 기준 확정 대기 | [`m003-enclosure.md`](mechanical/m003/m003-enclosure.md) |
-| 최종 렌더 · 실물 제작 | ⏳ 가상 설계가 끝난 뒤 | — |
+| 3D 조립 판정 | ✅ 보드 995b872 + 케이스 시안 A: 27항목 불합격 0 · 간섭 0 | [`run_A.md`](mechanical/m010/run_A.md) · [`judge.md`](mechanical/m007/judge.md) |
+| 케이스 | ✅ 시안 A 상세 설계 (54 × 75.5 × 71.7 mm, 앞 스모크 유리 · 뒤 알루미늄 방열 쉘) | [`o126_a.md`](mechanical/design/o126_a.md) · [`o126_thermal.md`](mechanical/design/o126_thermal.md) |
+| 최종 렌더 | 🔧 시안 A 6컷 + 회전 영상 완성 — 사실감 · 유리 너머 기판 비침은 사람 확인 대기 | [`docs/renders/final/`](docs/renders/final) |
+| 실물 제작 | ⏳ 이번 범위(가상 설계) 밖 | — |
 
 <p align="center"><img src="docs/readme/numbers.svg" width="880" alt="핵심 수치 카드: ERC 0, 시뮬레이션 25/25, 전면 DRC 0·0, 캐리어 DRC 0·0, 3D 모델 빠짐 0, 4층 1.6 mm"></p>
 
@@ -134,17 +135,24 @@
 </tr>
 </table>
 
-### 케이스 — 1차 초안 (최종 아님)
+### 케이스 — 시안 A 최종 렌더
 
-> 최종 보드가 확정되면 그 STEP으로 다시 맞춘다. 아래는 중간 보드 기준 초안이다.
+> 둥근 박스 54 × 75.5 × 71.7 mm · 앞면 스모크 유리(가시광 투과 약 15 %, 안쪽 검정 마스크) · 뒤쪽 알루미늄 방열 쉘 + 무광 흑색 플라스틱 · 벽 브래킷. 누르면 1600 px 원본. 근거: [시안 A 설계](mechanical/design/o126_a.md) · [조립 판정 기록](mechanical/m010/run_A.md)
 
 <table>
 <tr>
-<td align="center" width="33%"><a href="mechanical/m003/render/m003_front_iso.png"><img src="docs/readme/gallery/mech/case-front-iso.png" width="260" alt="케이스 1차 초안 앞쪽 비스듬한 모습"></a><br><sub>앞쪽 — 1차 초안</sub></td>
-<td align="center" width="33%"><a href="mechanical/m003/render/m003_exploded.png"><img src="docs/readme/gallery/mech/case-exploded.png" width="260" alt="케이스 1차 초안 분해도"></a><br><sub>분해도 — 1차 초안</sub></td>
-<td align="center" width="33%"><a href="mechanical/m003/render/m003_section_x0.png"><img src="docs/readme/gallery/mech/case-section.png" width="260" alt="케이스 1차 초안 단면"></a><br><sub>단면 — 1차 초안</sub></td>
+<td align="center" width="33%"><a href="docs/renders/final/blender-product.png"><img src="docs/readme/gallery/case-a/product.png" width="260" alt="케이스 시안 A 비스듬한 앞쪽 제품 렌더"></a><br><sub>제품 — 비스듬한 앞쪽</sub></td>
+<td align="center" width="33%"><a href="docs/renders/final/blender-front.png"><img src="docs/readme/gallery/case-a/front.png" width="260" alt="케이스 시안 A 정면 렌더"></a><br><sub>정면 — 스모크 유리 · 렌즈 창</sub></td>
+<td align="center" width="33%"><a href="docs/renders/final/blender-rear.png"><img src="docs/readme/gallery/case-a/rear.png" width="260" alt="케이스 시안 A 뒤쪽 렌더"></a><br><sub>뒤쪽 — 알루미늄 방열 핀</sub></td>
+</tr>
+<tr>
+<td align="center" width="33%"><a href="docs/renders/final/blender-exploded.png"><img src="docs/readme/gallery/case-a/exploded.png" width="260" alt="케이스 시안 A 분해도 렌더"></a><br><sub>분해도 — 쉘 · 보드 · 유리</sub></td>
+<td align="center" width="33%"><a href="docs/renders/final/blender-section.png"><img src="docs/readme/gallery/case-a/section.png" width="260" alt="케이스 시안 A 단면 렌더"></a><br><sub>단면 — 내부 적층</sub></td>
+<td align="center" width="33%"><a href="docs/renders/final/blender-inuse.png"><img src="docs/readme/gallery/case-a/inuse.png" width="260" alt="케이스 시안 A 벽 브래킷 설치 모습 렌더"></a><br><sub>설치 — 벽 브래킷, 광축 수평</sub></td>
 </tr>
 </table>
+
+<p align="center"><a href="docs/renders/final/blender-turntable.mp4"><img src="docs/readme/gallery/case-a/turntable-poster.jpg" width="480" alt="케이스 시안 A 회전 영상 첫 장면"></a><br><sub>회전 영상 (8초 · MP4) — 누르면 재생</sub></p>
 
 ## 기술 스택
 
@@ -229,7 +237,7 @@
 | [HW/FW 인터페이스](docs/decisions/hw-fw-interface.md) | 핀·버스·전원 계약 |
 | [PCB 배치 계획](hardware/pcb/layout-plan.md) | 보드 배치·적층 기준 |
 | [시뮬레이션](hardware/sim/README.md) | 시뮬레이션 실행 방법과 결과 |
-| [3D 조립 판정](mechanical/m007/m007-assembly.md) · [케이스 설계](mechanical/m003/m003-enclosure.md) | 기구 판정과 케이스 1차 초안 |
+| [3D 조립 판정](mechanical/m007/m007-assembly.md) · [케이스 시안 A](mechanical/design/o126_a.md) | 기구 판정과 케이스 상세 설계 |
 | [PCB 독립 검토](docs/review/v005-pcb-review.md) | 규칙·완화 검토 |
 | [데이터시트 목록](hardware/datasheets/INDEX.md) | 출처·리비전·sha256 |
 
