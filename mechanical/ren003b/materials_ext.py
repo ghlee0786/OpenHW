@@ -149,9 +149,9 @@ def detail(bpy, m, kind, spec=None):
         if 'Thin Film Thickness' in p.inputs:
             p.inputs['Thin Film Thickness'].default_value = 420.0
             p.inputs['Thin Film IOR'].default_value = 1.38
-        sp = N('ShaderNodeSeparateXYZ')                 # 객체 좌표 = 제품 좌표(m), 광축 = Z. 반지름 DOME 의 구면 노멀
+        sp = N('ShaderNodeSeparateXYZ')                 # 객체 좌표 = 제품 좌표(mm), 광축 = Z. 반지름 DOME 의 구면 노멀
         L(tc.outputs['Object'], sp.inputs[0])
-        dome = spec.get('dome_r', 9.0) * 0.001
+        dome = spec.get('dome_r', 9.0)              # 객체 좌표 단위 = mm (STL 은 배율 0.001 이 객체에 걸려 들어온다 — m 로 나누면 노멀이 옆으로 누워 부채꼴 무늬가 난다)
         comp = []
         for ax in ('X', 'Y'):
             d = N('ShaderNodeMath')
