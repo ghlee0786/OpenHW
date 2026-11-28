@@ -124,6 +124,8 @@ def refine(o, bevel_mm):
     bm = bmesh.new()
     bm.from_mesh(o.data)
     bmesh.ops.remove_doubles(bm, verts=bm.verts, dist=1e-7)
+    if o.name.startswith('CORE_MODULE__'):      # 코어 STEP 에서 온 메시는 면 방향이 고르지 않을 수 있다
+        bmesh.ops.recalc_face_normals(bm, faces=bm.faces)
     lim = math.radians(30)
     for e in bm.edges:
         e.smooth = not (len(e.link_faces) == 2 and e.calc_face_angle(0.0) > lim) and len(e.link_faces) == 2
@@ -161,7 +163,8 @@ for it in index['items']:
     name = it['file'][:-4]
     o.name = name
     o.parent = prod
-    mk = next((v for key, v in OVERRIDE if key in name), None) or next((v for key, v in T['NAME_RULES'] if key in name), None)
+    mk = next((v for key, v in OVERRIDE if key in name), None) or (it.get('mat') if it.get('mat') in M else None) \
+        or next((v for key, v in T['NAME_RULES'] if key in name), None)        # 'mat' = prep.py 가 정한 재질(코어 STEP 실형상)
     if mk is None and name.startswith('HARNESS_GH6P__'):     # 보충 규칙(REN-002 scene.py 와 같음): 하니스 6선 색
         mk = WIRES[int(name.split('__')[1]) % len(WIRES)]
     if mk is None:

@@ -36,9 +36,19 @@ LOOK = {'lightpipe': 'clear_coat', 'plug_clear': 'clear_coat', 'petg': 'matte_pl
         'pmma': 'clear_coat', 'ir_glass': 'smoke_glass', 'win_clear': 'smoke_glass', 'glass': 'lens_coating', 'lens': 'barrel_black',
         'foam': 'soft', 'rubber': 'soft', 'backdrop': 'paper', 'wall': 'paper'}
 
-BEVEL_SKIP = ('PAD', 'FOAM', 'GASKET', 'HARNESS', 'FPC', 'PMMA', 'GLASS', 'LIGHT_PIPE', 'LENS_CIL093', 'WIN_CLEAR', 'MASK', 'INSERT')
+BEVEL_SKIP = ('PAD', 'FOAM', 'GASKET', 'HARNESS', 'FPC', 'PMMA', 'GLASS', 'LIGHT_PIPE', 'LENS_CIL093', 'WIN_CLEAR', 'MASK', 'INSERT', 'CORE_MODULE__')
 # 시안 렌더에 같이 넣는 내부 부품(같은 적층) — 앞유리 너머로 렌즈 경통 · 유리가 보이게. 이름 앞부분.
 DESIGN_INTERNALS = ('LENS_CIL093', 'SENSOR_BLOCK', 'PEDESTAL', 'CORE_MODULE', 'FPC_M008')
+
+
+def core_key(part_key, label, model, ref):
+    """코어 STEP(KiCad 3D 내보내기) 솔리드의 재질 — 판 = 녹색 솔더마스크(STEP 의 판 색도 녹색), BTB = 흑색 LCP,
+    나머지는 materials.py 부품 규칙(모델 이름 → 참조 번호). 모델 파일의 색은 쓰지 않는다(사용자 라이브러리 모델마다 제각각)."""
+    if label.endswith('_PCB'):
+        return 'mask'
+    if 'BTB' in model or 'BTB' in label:
+        return 'conn_black'
+    return part_key(model or label, ref, 'core')
 
 
 def detail(bpy, m, kind, spec=None):

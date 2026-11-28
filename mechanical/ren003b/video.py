@@ -108,6 +108,8 @@ def main():
     ap.add_argument('--extra', default=os.path.join(R.V, 'render', 'mesh'))
     ap.add_argument('--boards-from', default=os.path.join(R.V, 'render', 'mesh'))
     ap.add_argument('--final', action='store_true')
+    ap.add_argument('--core-step', default=os.environ.get('OPENHW_CORE_STEP') or next((p for p in [os.path.join(R.V, 'third_party', 'Recamera Core 2002.step')] if os.path.exists(p)), None),
+                    help='Seeed 코어 STEP(저장소 밖) — 있으면 코어 덩어리 대신 실형상. 기본: OPENHW_CORE_STEP 또는 validation/runtime/vd001/third_party/. none 이면 덩어리')
     ap.add_argument('--glass-t', type=float, default=0.15)
     ap.add_argument('--procs', type=int, default=1)
     ap.add_argument('--samples', type=int)
@@ -128,9 +130,11 @@ def main():
     # ① 메시 · HDRI (영상마다 같다)
     mesh = os.path.join(base, 'mesh')
     rc_mesh = R.sh('메시 준비', R.PY + [os.path.join(R.HERE, 'prep.py'), '--enclosure', os.path.abspath(a.case), '--out', mesh, '--extra', os.path.abspath(a.extra),
-                                   '--boards-from', os.path.abspath(a.boards_from), '--stl-only', '--extra-only', ','.join(materials_ext.DESIGN_INTERNALS)],
+                                   '--boards-from', os.path.abspath(a.boards_from), '--stl-only', '--extra-only', ','.join(materials_ext.DESIGN_INTERNALS)]
+                   + (['--core-step', os.path.abspath(a.core_step)] if a.core_step and a.core_step != 'none' else []),
                    os.path.join(base, 'prep.log'))
-    items = json.load(open(os.path.join(mesh, 'index.json'), encoding='utf-8'))['items'] if rc_mesh == 0 else []
+    idx = json.load(open(os.path.join(mesh, 'index.json'), encoding='utf-8')) if rc_mesh == 0 else {}
+    items, cs = idx.get('items', []), idx.get('core_step') or {}
     rc_hdri = R.sh('HDRI 확인 (Poly Haven CC0)', R.PY + [os.path.join(R.HERE, 'fetch_hdri.py')], os.path.join(base, 'hdri.log'))
     rec = json.load(open(os.path.join(R.HERE, 'assets.json'), encoding='utf-8'))['hdri'][0]
     hdri = os.path.join(os.environ.get('OPENHW_HDRI_DIR') or os.path.join(os.path.expanduser('~'), 'tools', 'hdri', 'polyhaven'), rec['file'])
@@ -148,6 +152,9 @@ def main():
         chk('메시 준비 종료 코드 · 부품 수', '%d · 보드 %d · 부품 %d' % (rc_mesh, sum(i['kind'] == 'board' for i in items), sum(i['kind'] == 'enclosure' for i in items)),
             rc_mesh == 0 and sum(i['kind'] == 'board' for i in items) == 2)
         chk('HDRI 받음 · sha256 이 assets.json 과 같음', rec['file'], rc_hdri == 0 and os.path.exists(hdri))
+        if a.core_step and a.core_step != 'none':
+            chk('코어 실형상(STEP sha256 = assets.json) · 솔리드 수 · 뺀 무선 부품 수', '%s… · %s · %s' % (str(cs.get('sha256'))[:12], cs.get('solids_kept'), len(cs.get('hidden', []))),
+                bool(cs) and cs.get('solids_kept', 0) > 0 and any('ANT-SPRING' in h for h in cs.get('hidden', [])) and any('AP6212' in h for h in cs.get('hidden', [])))
 
         # ② Blender 프레임
         sig = hashlib.sha256(json.dumps([items, res, samples, fps, a.glass_t, [hashlib.sha256(open(os.path.join(R.HERE, f), 'rb').read()).hexdigest()
