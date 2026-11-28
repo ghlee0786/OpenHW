@@ -130,7 +130,7 @@
 | DES-001 | lead O-125 → orch | mechanical t18x | 디자인 시안 A·B·C 덩어리(Fusion, 시안당 30분, 적층 간섭 0) → STEP/고해상도 STL | 새 레인, 출력 validation/runtime/vd001/design/{A,B,C} | 간섭 0 숫자, sha256, 시안마다 보고 | completed(1단계) — 레인 t-20261128-080746-ab04 182812f(mechanical/design/o125_design.md): A 둥근 박스 48.0×61.5×71.5, B 퍽/큐브 48.4×70.9×72.2(렌즈 링 분리), C 원통 불릿 79.1×77.6×102.0 — 셋 다 간섭 0mm³(179 바디), 최소 거리 A 1.586/0.815/1.315·B 0.814/4.2/1.315·C 0.815/3.305/1.315. OpenHW 음각 위치 고쳐 A·B 다시 냄. orch sha256 확인. e9afcb8: C 광 파이프가 원통 위 4mm에 떠 있던 결함 고침(차양 뒤 원통 맨 위), 중간판 C_SHELL_PLASTIC (1).stl → stale/, 간섭 0 |
 | DES-002 | lead O-126 → orch | mechanical t18x | 시안 A 상세 설계(스모크 15%+검정 마스크, 숨은 나사·가스킷·브래킷·그로밋·정비 덮개, 방열 #26 재계산) → run_case 조건 5 → STEP/STL/f3d | start --from ab04, 출력 validation/runtime/vd001/case/A | 조건 5 종료 0, 커밋 | completed — 레인 t-20261128-093624-7abf 797887d·50a8e0b: 바디 22(마스크·가림판·투명 창·가스킷·인서트·그로밋·덮개·2축 브래킷), 외형 54×75.5×71.7(+핀 8), run_case --case A 종료 0, cond5 27항목 불합격 0(orch 결과 파일 확인), 방열 5.7 K/W(뒤 핀 7×8), 바깥 방열판 없앰. orch: 렌더용 STL 22개 판정 전후 sha256 같음(A.step만 재내보내기) → batch 가능 |
 | REN-004b | lead O-126 → orch | schematic t1bn | A 최종 7컷+턴테이블(4K/1080p), 대표본 docs/renders/final, PCB 비침 0 확인 그림 | 레인 89ce 이어서 | 종료 코드·재질 빠짐 0, 커밋 | completed — 레인 t-20261128-095335-1776 39ab5d7: --final 종료 0, 4K 컷 6/6·턴테이블 200/200(orch ffprobe h264 1920×1080 200프레임), 재질 빠짐 0, 대표본 docs/renders/final 8개(PNG 638~751KB·MP4 1.76MB). 사람 확인: PCB 비침(3배에서 IR LED 창 2곳만 희미)·브래킷 광축 수평 — 시트 A_final_sheet.jpg. batch 가능 |
-| R-032 | lead O-126 → orch | research t18s | README 갤러리 케이스 교체·VD-001 HTML 렌더 자리 채우기 | 새 레인(렌더 뒤) | check_readme 0 | running(1776 렌더 도착 뒤 시작) |
+| R-032 | lead O-126 → orch | research t18s | README 갤러리 케이스 교체·VD-001 HTML 렌더 자리 채우기 | 새 레인(렌더 뒤) | check_readme 0 | completed — 레인 t-20261128-112915-a60c edce66d: README 케이스 갤러리 시안 A 2×3(800px 사본)·회전 영상, 진행 표·pipeline.svg, VD-001 HTML 렌더 자리·사람 확인 칸 12. orch check_readme 종료 0(링크 129/129·이미지 40·10.01MB), 로컬 경로 0. 렌더 단계 🔧(사람 확인 대기) → batch 요청 |
 
 ## 운영 변경 (2026-11-26, 사용자 지시 · lead 전달)
 - 의견 묻지 않고 진행: 사람 쪽 미정값은 D-003(lead 레인 t-20261126-144135-5470 docs/decisions/D-003-working-defaults.md, 커밋 8ac5ce5) 값으로 확정 취급. 새 갈림길은 기본값 선택 → 아래 「분기 기록」에 분기점·선택·이유·차선책 → lead 요약 보고. 문제 시 해당 행으로 돌아가 차선책.
@@ -334,3 +334,4 @@
 - [x] 병합 main 41c59e1 (d387 P-004 제조 파일 + b318 판정기 + 5c94 VD-001 HTML 틀) — KiCad 단계 완료
 - [x] 병합 main 14ccad6 (b93b M-010 최종 — 현 외함 기능 판정 기준선)
 - [x] 병합 main a748240 (727e orch 원장 + cd5a R-029), 7abf A 상세 설계 → main — 사용자 지시: git에 다 올림(커밋·병합·PR 허용)
+- [x] 병합 main e7dbb32 (1776 시안 A 최종 렌더)
