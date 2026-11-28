@@ -262,5 +262,78 @@
 | 포스터 (프레임 79) | (1920, 1080) · 105008 바이트 | 예 | 통과 |
 | 연출 · 자막 가독성 · 보기 품질 | 사람 확인 필요 — validation/runtime/vd001/render/blender-b/video/concept-explode/concept-explode.mp4 | 아니오 | 사람 확인 전 |
 
+### section-open — 종료 코드 0
+
+| 판정 항목 | 값 | verifiable | 판정 |
+|---|---|---|---|
+| 메시 준비 종료 코드 · 부품 수 | 0 · 보드 2 · 부품 34 | 예 | 통과 |
+| HDRI 받음 · sha256 이 assets.json 과 같음 | studio_small_09_2k.hdr | 예 | 통과 |
+| 코어 실형상(STEP sha256 = assets.json) · 솔리드 수 · 뺀 무선 부품 수 | 7de9f15f29d9… · 208 · 16 | 예 | 통과 |
+| Blender 종료 코드 (--python-exit-code 1, 프로세스 2개) | [0, 0] | 예 | 통과 |
+| 재질 정의 수 = materials.py MATS · 재질 빠짐 | 37 / 37 (+확장 11) · 빠짐 0 | 예 | 통과 |
+| 엔진 · 장치 · 디노이저 · 샘플 | CYCLES · OPTIX · OPTIX · 128 | 예 | 통과 |
+| HDRI 가 장면에 쓰임 (sha256 일치) · 색 관리 | studio_small_09_2k.hdr · AgX | 예 | 통과 |
+| 프레임 수 (길이 6.0 s × 30 fps) | 180 / 180 | 예 | 통과 |
+| 프레임 해상도 · 빈 파일 없음 | [[1920, 1080]] | 예 | 통과 |
+| 서로 다른 프레임 수 (움직임 있음, 멈춘 구간은 같을 수 있다) | 180 / 180 | 예 | 통과 |
+| 단면: 마지막 프레임에서 자른 쪽에 남은 객체 수 (자른 부품 17 · 평면 x = 0.0 mm) | 0 | 예 | 통과 |
+| 격리 ffmpeg 찾음 | True | 예 | 통과 |
+| MP4 ffprobe: 프레임 수 · 길이 · 해상도 · 코덱 · fps | 180 · 6.00 s · 1920x1080 · h264 · 30/1 | 예 | 통과 |
+| MP4 1080p · 30 fps · 길이 6~10 s | 1080p · 30 fps · 6.00 s · 1743881 바이트 | 예 | 통과 |
+| GIF 크기 ≤ 2.0 MB · 무한 반복 (설정: 한도에 드는 첫 단계) | 1932308 바이트 · 560px · 12 fps · 128색 · 디더링 bayer · 72프레임 · 반복 무한 | 예 | 통과 |
+| 포스터 (프레임 180) | (1920, 1080) · 96061 바이트 | 예 | 통과 |
+| 연출 · 자막 가독성 · 보기 품질 | 사람 확인 필요 — validation/runtime/vd001/render/blender-b/video/section-open/section-open.mp4 | 아니오 | 사람 확인 전 |
+
+### hero-dolly — 종료 코드 0
+
+| 판정 항목 | 값 | verifiable | 판정 |
+|---|---|---|---|
+| 메시 준비 종료 코드 · 부품 수 | 0 · 보드 2 · 부품 34 | 예 | 통과 |
+| HDRI 받음 · sha256 이 assets.json 과 같음 | studio_small_09_2k.hdr | 예 | 통과 |
+| 코어 실형상(STEP sha256 = assets.json) · 솔리드 수 · 뺀 무선 부품 수 | 7de9f15f29d9… · 208 · 16 | 예 | 통과 |
+| Blender 종료 코드 (--python-exit-code 1, 프로세스 2개) | [0, 0] | 예 | 통과 |
+| 재질 정의 수 = materials.py MATS · 재질 빠짐 | 37 / 37 (+확장 11) · 빠짐 0 | 예 | 통과 |
+| 엔진 · 장치 · 디노이저 · 샘플 | CYCLES · OPTIX · OPTIX · 128 | 예 | 통과 |
+| HDRI 가 장면에 쓰임 (sha256 일치) · 색 관리 | studio_small_09_2k.hdr · AgX | 예 | 통과 |
+| 프레임 수 (길이 6.0 s × 30 fps) | 180 / 180 | 예 | 통과 |
+| 프레임 해상도 · 빈 파일 없음 | [[1920, 1080]] | 예 | 통과 |
+| 서로 다른 프레임 수 (움직임 있음, 멈춘 구간은 같을 수 있다) | 180 / 180 | 예 | 통과 |
+| 격리 ffmpeg 찾음 | True | 예 | 통과 |
+| MP4 ffprobe: 프레임 수 · 길이 · 해상도 · 코덱 · fps | 180 · 6.00 s · 1920x1080 · h264 · 30/1 | 예 | 통과 |
+| MP4 1080p · 30 fps · 길이 6~10 s | 1080p · 30 fps · 6.00 s · 1587356 바이트 | 예 | 통과 |
+| GIF 크기 ≤ 2.0 MB · 무한 반복 (설정: 한도에 드는 첫 단계 — 지시 범위 480px · 12fps · 128색 아래로 내려감) | 1935120 바이트 · 480px · 10 fps · 128색 · 디더링 none · 60프레임 · 반복 무한 | 예 | 통과 |
+| 포스터 (프레임 180) | (1920, 1080) · 77792 바이트 | 예 | 통과 |
+| 연출 · 자막 가독성 · 보기 품질 | 사람 확인 필요 — validation/runtime/vd001/render/blender-b/video/hero-dolly/hero-dolly.mp4 | 아니오 | 사람 확인 전 |
+
+### bracket — 종료 코드 0
+
+| 판정 항목 | 값 | verifiable | 판정 |
+|---|---|---|---|
+| 메시 준비 종료 코드 · 부품 수 | 0 · 보드 2 · 부품 34 | 예 | 통과 |
+| HDRI 받음 · sha256 이 assets.json 과 같음 | studio_small_09_2k.hdr | 예 | 통과 |
+| 코어 실형상(STEP sha256 = assets.json) · 솔리드 수 · 뺀 무선 부품 수 | 7de9f15f29d9… · 208 · 16 | 예 | 통과 |
+| Blender 종료 코드 (--python-exit-code 1, 프로세스 2개) | [0, 0] | 예 | 통과 |
+| 재질 정의 수 = materials.py MATS · 재질 빠짐 | 37 / 37 (+확장 11) · 빠짐 0 | 예 | 통과 |
+| 엔진 · 장치 · 디노이저 · 샘플 | CYCLES · OPTIX · OPTIX · 128 | 예 | 통과 |
+| HDRI 가 장면에 쓰임 (sha256 일치) · 색 관리 | studio_small_09_2k.hdr · AgX | 예 | 통과 |
+| 프레임 수 (길이 6.0 s × 30 fps) | 180 / 180 | 예 | 통과 |
+| 프레임 해상도 · 빈 파일 없음 | [[1920, 1080]] | 예 | 통과 |
+| 서로 다른 프레임 수 (움직임 있음, 멈춘 구간은 같을 수 있다) | 180 / 180 | 예 | 통과 |
+| 격리 ffmpeg 찾음 | True | 예 | 통과 |
+| MP4 ffprobe: 프레임 수 · 길이 · 해상도 · 코덱 · fps | 180 · 6.00 s · 1920x1080 · h264 · 30/1 | 예 | 통과 |
+| MP4 1080p · 30 fps · 길이 6~10 s | 1080p · 30 fps · 6.00 s · 1387165 바이트 | 예 | 통과 |
+| GIF 크기 ≤ 2.0 MB · 무한 반복 (설정: 한도에 드는 첫 단계) | 1899553 바이트 · 560px · 12 fps · 128색 · 디더링 bayer · 72프레임 · 반복 무한 | 예 | 통과 |
+| 포스터 (프레임 180) | (1920, 1080) · 73774 바이트 | 예 | 통과 |
+| 연출 · 자막 가독성 · 보기 품질 | 사람 확인 필요 — validation/runtime/vd001/render/blender-b/video/bracket/bracket.mp4 | 아니오 | 사람 확인 전 |
+
 - 사람 확인 필요(통과로 판정하지 않음): 연출 · 속도감, 자막 가독성(MP4 · GIF), 모션 블러 정도, GIF 화질.
 - 렌더 전용(제품에 없는 것): 자막 · 제목 글자, 유리 하이라이트 띠, 무한 배경 · 벽.
+
+## 11. 정지 컷 · 턴테이블 다시 렌더 (O-131 뒤)
+
+- 이유: 렌즈 앞알 노멀 수정과 코어 실형상을 정지 컷 · 턴테이블에도 맞춘다(영상과 같은 모습). §9의 대표본 이름 그대로 교체했다.
+- 명령: `python -I -B mechanical/ren003b/run.py --design A --full --glass-t 0.15 --final --tag design/A_final2 --case <case/A 폴더>` → 종료 코드 0 (4K 컷 6 · 턴테이블 200프레임 · 재질 37/37 · 빠짐 0 · 코어 STEP sha256 일치 · 단면에 남은 객체 0). 정지 컷만 다시 뽑을 때는 `--frames 0`.
+- 출력(커밋 안 함): `validation/runtime/vd001/render/blender-b/design/A_final2/`. 옛 `design/A_final/`(고치기 전)은 그대로 둔다.
+- README 용 턴테이블 GIF(`docs/readme/gallery/case-a/turntable.gif`): 새 MP4에서 640px · 15 fps · 160색 · 디더링 없음, 3,969,126 바이트. `docs/readme/tools/check_readme.py` 실패 0.
+- `docs/readme/gallery/case-a/`의 작은 정지 컷 사본 6장 · 포스터는 이 작업에서 고치지 않았다(README 쪽 담당이 새 대표본에서 다시 줄여야 렌즈 · 코어 모습이 맞는다).
+- 사람 확인 필요(통과로 판정하지 않음): 사실감, 유리 너머 기판 비침(`design/A_final2/pcb_check/{hero,front}_x3.jpg`).
