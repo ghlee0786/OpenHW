@@ -215,6 +215,7 @@
 - 한 명령: `python -I -B mechanical/ren003b/video.py --final [--names concept-explode,section-open,hero-dolly,bracket] [--procs 2]` → 종료 코드 = 불합격 항목 수. `--final` 없이 돌리면 저해상도 시험(640×360 · 24 샘플 · 6 fps).
 - 파일: `video.py`(준비 → 프레임 → 자막 → MP4 · GIF · 포스터 → 판정), `video_anim.py`(영상마다의 움직임 — `scene.py`가 장면을 만든 뒤 `--video`로 부른다). 메시 · 재질 · HDRI · 조명은 정지 컷과 같다.
 - 입력: 고른 시안의 상세 설계 메시(main 체크아웃 `validation/runtime/vd001/case/A/`) + 보드 GLB 2 + 내부 부품. `--case`로 바꾼다.
+- 코어 모듈(O-131): 덩어리 대신 Seeed 코어 STEP 실형상. `--core-step <경로>` 또는 `OPENHW_CORE_STEP`(기본: main 체크아웃 `validation/runtime/vd001/third_party/Recamera Core 2002.step`, 없으면 덩어리). **STEP · 메시는 커밋하지 않는다** — 출처 · sha256 · 라이선스 취급은 `assets.json`의 `step`. 이 형상이 든 렌더 · 영상은 `docs/renders/final/NOTICE.md`(CC BY-SA 4.0 고지) 범위다.
 - 출력(커밋 안 함): `validation/runtime/vd001/render/blender-b/video/<이름>/` — `frames/`(1080p 원본 프레임) · `sub/`(자막 얹은 것) · MP4 · GIF · 포스터 · `report.json`.
 - 대표본(커밋): `docs/renders/final/video/<이름>.mp4` · `.gif` · 포스터(`concept-explode.jpg`, 나머지는 `<이름>-poster.jpg`).
 
@@ -233,16 +234,19 @@
 | 모션 블러 | 분해 · 재조립 구간만(셔터 0.5). 프레임마다 자세를 키프레임으로 찍어 둔다 |
 | 분해 거리 | `video_anim.C_OFF` — 정지 분해도(`scene.EXPLODE`)보다 넓게 벌려 부품을 하나씩 꺼내 돌릴 자리를 둔다. 순서 · 거리 · 회전각은 연출 값이다(조립 공정이 아니다) |
 | 자막 | 프레임에 나중에 얹는다(PIL). 글꼴 Pretendard(SIL OFL 1.1, `assets.json`에 URL · sha256). GIF는 줄인 프레임에 1.7배 크기로 다시 얹는다 |
-| GIF | 무한 반복. 한도(콘셉 5.0 MB, 나머지 2.0 MB — README 이미지 합 예산)에 드는 첫 단계를 쓴다(`video.GIF_STEPS`). 카메라가 움직여 화면 전체가 바뀌는 영상이라 지시 범위(480px · 12 fps · 128색)로는 한도를 넘는다 → 폭 · fps 를 더 낮추고 디더링을 끈다 |
+| GIF | 무한 반복. 한도(콘셉 5.0 MB, 나머지 2.0 MB — README 이미지 합 예산)에 드는 첫 단계를 쓴다(`video.GIF_STEPS`). 카메라가 움직여 화면 전체가 바뀌는 영상이라 지시 범위(480px · 12 fps · 128색)로는 한도를 넘는다 → 폭 · fps · 색 수를 더 낮추고 디더링을 끈다 |
+| 실행 | 긴 렌더는 공용 줄(`node harness/cli.js slot --timeout-min <분> -- …`)에서 돌린다. 도중에 끊겨도 끝난 프레임은 남아 이어 렌더한다(코어 교체 뒤 콘셉 영상: 468/639에서 한 번 끊겨 이어 렌더, 손상 프레임 0) |
+| 코어 모듈 실형상 | `prep.py --core-step`: STEP(KiCad 3D 내보내기)을 gmsh로 솔리드별로 읽어 재질별 STL 5개(`CORE_MODULE__<재질>.stl`)로 묶는다. 위치는 M-001(STEP 좌표 −(60, −65, 0), 회전 없음 → J1 윗면 (0, +11.8), J2 아랫면 (+11.8, 0)). 무선 없는 2002라 스프링 안테나 · U.FL · AP6212(이름 없는 12×12×1.5 솔리드 = M-001 높이 1.58)와 표기 글자를 뺀다(16개). 면만 있는 10×10 형상은 SoC(QFN88, M-001 z 2.517)로 보고 넣는다. 재질은 `materials_ext.core_key`: 판 = 녹색 마스크(STEP의 판 색 — **실물 색 미확인**), BTB = 흑색 LCP, 나머지는 `materials.py` 부품 규칙. 모델 파일 색은 쓰지 않는다 |
 | 렌즈 앞알 | 볼록 노멀 계산의 단위를 고쳤다(STL 은 배율이 객체에 걸려 객체 좌표가 mm 인데 m 로 나누고 있었다 — 클로즈업에서 부채꼴 무늬). §9 정지 컷은 고치기 전 재질로 렌더한 것이다 |
 
 ### concept-explode — 종료 코드 0
 
 | 판정 항목 | 값 | verifiable | 판정 |
 |---|---|---|---|
-| 메시 준비 종료 코드 · 부품 수 | 0 · 보드 2 · 부품 30 | 예 | 통과 |
+| 메시 준비 종료 코드 · 부품 수 | 0 · 보드 2 · 부품 34 | 예 | 통과 |
 | HDRI 받음 · sha256 이 assets.json 과 같음 | studio_small_09_2k.hdr | 예 | 통과 |
-| Blender 종료 코드 (--python-exit-code 1, 프로세스 1개) | [0] | 예 | 통과 |
+| 코어 실형상(STEP sha256 = assets.json) · 솔리드 수 · 뺀 무선 부품 수 | 7de9f15f29d9… · 208 · 16 | 예 | 통과 |
+| Blender 종료 코드 (--python-exit-code 1, 프로세스 2개) | [0, 0] | 예 | 통과 |
 | 재질 정의 수 = materials.py MATS · 재질 빠짐 | 37 / 37 (+확장 11) · 빠짐 0 | 예 | 통과 |
 | 엔진 · 장치 · 디노이저 · 샘플 | CYCLES · OPTIX · OPTIX · 128 | 예 | 통과 |
 | HDRI 가 장면에 쓰임 (sha256 일치) · 색 관리 | studio_small_09_2k.hdr · AgX | 예 | 통과 |
@@ -253,9 +257,9 @@
 | 자막 얹은 프레임 수 (자막 6개 + 제목) | 639 / 639 | 예 | 통과 |
 | 격리 ffmpeg 찾음 | True | 예 | 통과 |
 | MP4 ffprobe: 프레임 수 · 길이 · 해상도 · 코덱 · fps | 639 · 21.30 s · 1920x1080 · h264 · 30/1 | 예 | 통과 |
-| MP4 1080p · 30 fps · 길이 15~22 s | 1080p · 30 fps · 21.30 s · 8937396 바이트 | 예 | 통과 |
-| GIF 크기 ≤ 5.0 MB · 무한 반복 (설정: 한도에 드는 첫 단계 — 지시 범위 480px · 12fps · 128색 아래로 내려감) | 4954296 바이트 · 400px · 10 fps · 128색 · 디더링 none · 213프레임 · 반복 무한 | 예 | 통과 |
-| 포스터 (프레임 79) | (1920, 1080) · 103150 바이트 | 예 | 통과 |
+| MP4 1080p · 30 fps · 길이 15~22 s | 1080p · 30 fps · 21.30 s · 9257206 바이트 | 예 | 통과 |
+| GIF 크기 ≤ 5.0 MB · 무한 반복 (설정: 한도에 드는 첫 단계 — 지시 범위 480px · 12fps · 128색 아래로 내려감) | 4572479 바이트 · 400px · 10 fps · 96색 · 디더링 none · 213프레임 · 반복 무한 | 예 | 통과 |
+| 포스터 (프레임 79) | (1920, 1080) · 105008 바이트 | 예 | 통과 |
 | 연출 · 자막 가독성 · 보기 품질 | 사람 확인 필요 — validation/runtime/vd001/render/blender-b/video/concept-explode/concept-explode.mp4 | 아니오 | 사람 확인 전 |
 
 - 사람 확인 필요(통과로 판정하지 않음): 연출 · 속도감, 자막 가독성(MP4 · GIF), 모션 블러 정도, GIF 화질.
