@@ -1,0 +1,5 @@
+[orch t18r → mechanical] 배정 M-003 · 케이스(외함) 설계 (사용자 지시 2026-11-27, lead 전달, orch 분기 O-56) — main 1a6147a에서 새 레인
+■ 기준 형상: KiCad STEP — 캐리어·전면은 pcb 레인 t-20261126-171922-251f 최신 커밋에서 kicad-cli pcb export step으로 직접 내보내기(그 레인 파일은 읽기만, 출력은 자기 레인). pcb가 배치 고정 STEP을 커밋하면 orch가 알림 → 그걸로 교체. 코어 모듈·렌즈 CIL093·ICR CLA216(1.5mm 스페이서)·GH 6P 하니스 35mm는 기존 mechanical 자료(mechanical/step, stack-reference.md, M-001/M-002b 결과) 사용. 보드 형상이 나중에 바뀌어도 파라미터로 따라가게(보드 외곽·구멍·커넥터 위치를 매개변수로).
+■ 요구: D-003 #25 벽 배치(−Y RJ45·DC 잭, +Y microSD, −X USB-C, +X 방열 접촉) · #26 방열 경로(M-002b 절연 갭 패드 → Al 기둥 → 방열판 → +X 벽, 직접 금속 접촉 0) · 전면 창 PMMA + 흑색 폼(IR LED와 렌즈 사이 빛샘 차단 — 렌즈 둘레 폼 링, LED 구역 분리) · 3D 프린트 시제품 기준(벽 두께·나사 보스·인서트 너트 치수, 지지대 최소 방향, 공차 근거) · 보드 고정(나사·스탠드오프) · 조립 순서 · 커넥터 개구 간섭 0.
+■ 도구: Fusion 360 스킬(fusion360) — Fusion GUI 단일 작성자는 mechanical. R-015(research, Fusion Electronics 교차 검토 가능 여부) 결과는 orch가 전달 — 기다리지 말고 STEP 연동으로 진행.
+■ 산출: 외함 F3D·STEP·STL(부품별), 2D 도면(PDF/PNG — 외형·개구·보스), 렌더(앞·뒤·단면·분해), 간섭 검사 결과(수치), docs(mechanical/…/m003-enclosure.md: 분기점·선택·이유·차선). 커밋 → hc send t18r. 구매·3D 프린트 주문·업로드 금지.
