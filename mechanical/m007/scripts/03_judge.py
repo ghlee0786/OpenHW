@@ -18,8 +18,12 @@ def run(_c):
     design = adsk.fusion.Design.cast(app.activeProduct)
     assert design.attributes.itemByName('openhw', 'doc').value == 'M007_assembly', 'wrong document'
     root = design.rootComponent
+    ca = design.attributes.itemByName('openhw', 'case')
+    CA = s['CASE_A'] if ca and ca.value == 'A' else None   # O-126 시안 A: 판정 쌍·창 이름 (asm_spec.CASE_A)
+    if CA:
+        s['INTENDED'] = s['INTENDED'] + CA['intended']; s['CLEARANCE_PAIRS'] = CA['clearance']
     P3, V3 = adsk.core.Point3D.create, adsk.core.Vector3D.create
-    res = {'fail': 0}
+    res = {'fail': 0, 'case': ca.value if ca else 'M003'}
 
     # ---- 바디 목록: 이름 있는 것(생성물·기준 적층) / 보드 ----
     named, boards = [], []
@@ -36,7 +40,7 @@ def run(_c):
             if tn in ('REF_CARRIER', 'REF_FRONT'):   # 보드 바디는 KiCad 모델 이름으로 (M-010: pcb 가 실제 모델을 연결 → 같은 부품 대체 블록과 구분)
                 boards.append((b, 'BOARD_PART:' + re.sub(r' \(\d+\)$', '', o.component.name)))
             else:
-                nm = o.component.name if tn == 'REF_STACK' else (b.name if tn in ('ENC_BLOCKS', 'HARNESS_GH6P') else tn)
+                nm = o.component.name if tn == 'REF_STACK' else (b.name if tn in ('ENC_BLOCKS', 'HARNESS_GH6P', 'CASE_A') else tn)
                 if tn.endswith('_M008') and tn != 'DF30_M008':
                     nm = tn
                 named.append((b, nm))
@@ -125,7 +129,7 @@ def run(_c):
         bs = bodies_of(name)
         bb = bs[0].boundingBox
         return ((bb.minPoint.x + bb.maxPoint.x) * 5, (bb.minPoint.y + bb.maxPoint.y) * 5)
-    lx, ly = centre('LENS_CIL093'); wx, wy = centre('LENS_WIN_PMMA')
+    lx, ly = centre('LENS_CIL093'); wx, wy = centre(CA['lens_window'] if CA else 'LENS_WIN_PMMA')
     off = math.hypot(lx - wx, ly - wy)
     res['J4'] = {'lens_xy': [round(lx, 3), round(ly, 3)], 'window_xy': [round(wx, 3), round(wy, 3)], 'offset_mm': round(off, 3), 'ok': off <= 0.1}
     res['fail'] += 0 if off <= 0.1 else 1
@@ -136,7 +140,7 @@ def run(_c):
     tH, tV = math.tan(math.radians(HFOV / 2)), math.tan(math.radians(VFOV / 2))
     leds = [(n, centre(n)) for n in ('LED_A1', 'LED_A2', 'LED_B1_DNP', 'LED_B2_DNP')]
     ztop = d['z_led_top'] + 0.05
-    windows = ('LENS_WIN_PMMA', 'WIN_A_PMMA', 'WIN_B_PMMA', 'ALS_WIN_PMMA')
+    windows = CA['windows'] if CA else ('LENS_WIN_PMMA', 'WIN_A_PMMA', 'WIN_B_PMMA', 'ALS_WIN_PMMA')
     lit = 0; blockers = {}
     for i in range(NH):
         for j in range(NV):
