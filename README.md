@@ -137,6 +137,8 @@
 
 ### 케이스 — 시안 A 최종 렌더
 
+<p align="center"><a href="docs/renders/final/video/concept-explode.mp4"><img src="docs/renders/final/video/concept-explode.gif" width="400" alt="케이스 시안 A 콘셉 영상: 분해된 부품이 하나씩 조립되는 모습(움직이는 GIF, 누르면 1080p MP4)"></a><br><sub>콘셉 영상 — 분해에서 조립까지 · Concept film — from exploded parts to the assembled camera (누르면 1080p MP4)</sub></p>
+
 > 둥근 박스 54 × 75.5 × 71.7 mm · 앞면 스모크 유리(가시광 투과 약 15 %, 안쪽 검정 마스크) · 뒤쪽 알루미늄 방열 쉘 + 무광 흑색 플라스틱 · 벽 브래킷. 누르면 1600 px 원본. 근거: [시안 A 설계](mechanical/design/o126_a.md) · [조립 판정 기록](mechanical/m010/run_A.md)
 
 <table>
