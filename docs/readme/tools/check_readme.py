@@ -7,7 +7,7 @@ python -I docs/readme/tools/check_readme.py [--media-root <다른 체크아웃 �
      --media-root : 그림 파일이 아직 이 체크아웃에 없을 때(다른 작업에서 만드는 중) 그 루트에서 같은 경로로 찾는다
   4. README.md · SVG 금지어 — 기본: 로컬 경로·이메일·견적/비용/가격
      --banned-file <파일> : 저장소 밖에 둔 추가 금지어 정규식(한 줄에 하나, # 주석) — 공개 저장소에 이름 목록을 싣지 않으려고
-  5. README 에 보이는 이미지(<img>·![]()): alt 누락 0 · 종류별 크기(svg ≤ 60 KB · png/jpg ≤ 600 KB · gif ≤ 5 MB) · 합 ≤ 15 MB
+  5. README 에 보이는 이미지(<img>·![]()): alt 누락 0 · 종류별 크기(svg ≤ 60 KB · png/jpg ≤ 600 KB · gif ≤ 5 MB) · 합 ≤ 25 MB (D-003 #69)
 """
 import re
 import sys
@@ -19,7 +19,7 @@ README = ROOT / "README.md"
 SVGDIR = ROOT / "docs/readme"
 MEDIA = ("docs/readme/media/", "docs/readme/gallery/")
 IMG_LIMIT = {".svg": 60 * 1024, ".png": 600 * 1024, ".jpg": 600 * 1024, ".gif": 5 * 1024 * 1024}
-IMG_TOTAL = 15 * 1024 * 1024
+IMG_TOTAL = 25 * 1024 * 1024  # D-003 #69 (O-129): 영상 GIF 를 넣으며 15 → 25 MB
 BANNED = [r"견적", r"비용", r"가격", r"[A-Za-z]:[\\/](Users|workspace)", r"[\w.+-]+@[\w-]+\.[\w.]+"]
 # 라이선스 고지 표의 폴더 경로(제3자 저작물 위치)는 금지어 검사에서 뺀다
 ALLOW_PATHS = ["hardware/datasheets/sophgo/", "hardware/datasheets/seeed/", "hardware/datasheets/antmicro/"]
