@@ -106,3 +106,25 @@ def harness_paths(h=HAR):
         out.append(fillet_path(pts, h['R']))
     L = path_len(out[0])
     return L, h['len'] - L, out
+# ---- O-126 시안 A 케이스 (mechanical/design/o126_a.py → main validation/runtime/vd001/case/A/A.f3d). run_all.py --case A ----
+# M003 외함·바깥 방열판·창·폼·방열판 너트 대신 CASE_A 바디를 넣는다. 확산판·갭 패드·절연 패드·스탠드오프·M1.6 머리·대체/삽입 블록·하니스는 그대로.
+CASE_A = {
+    'f3d': r'case\A\A.f3d',   # STEP 은 바디 이름이 빠지고(본체N) 맞닿은 바디가 합쳐짐 → 이름이 남는 f3d 로 가져옴
+    'drop': ['HOUSING', 'HS_EXTRUSION', 'HS_PEDESTAL', 'FRONT_COVER', 'LENS_WIN_PMMA', 'WIN_A_PMMA', 'WIN_B_PMMA', 'ALS_WIN_PMMA',
+             'FOAM_LENS_RING', 'FOAM_ALS_GASKET', 'HW_M25_NUTS'],
+    'lens_window': 'LENS_WIN_CLEAR',
+    'windows': ('LENS_WIN_CLEAR', 'ALS_WIN_CLEAR', 'FRONT_GLASS_IR'),   # J5: 스모크 유리는 IR 투과 — 인쇄 마스크(GLASS_MASK)·안쪽 가림판에 맞으면 막힘
+    'intended': [
+        ('COVER_USBC', 'BLK_J3_PLUG', 'USB-C 정비 덮개는 플러그를 꽂을 때 뺌 (삽입 공간과 겹치는 것이 정상)'),
+        ('COVER_MICROSD', 'BLK_J4_CARD', 'microSD 정비 덮개는 카드를 넣을 때 뺌'),
+    ],
+    'clearance': [
+        ('LENS_CIL093', 'LENS_WIN_CLEAR', 0.3), ('LENS_CIL093', 'GLASS_MASK', 0.3), ('LENS_CIL093', 'INNER_MASK_PLATE', 0.3),
+        ('CLA216_M008', 'INNER_MASK_PLATE', 0.3), ('HW_M16_HEADS', 'INNER_MASK_PLATE', 0.2), ('LED_A1', 'INNER_MASK_PLATE', 0.5),
+        ('SPREADER_M003', 'SHELL_ALU', 0.3), ('HARNESS_GH6P', 'SHELL', 0.1), ('HARNESS_GH6P', 'SPREADER_M003', 0.1),
+        ('BLK_J3_PLUG', 'SHELL', 0.0), ('BLK_J5_PLUG', 'SHELL', 0.0), ('BLK_J2_PLUG', 'SHELL', 0.0), ('BLK_J4_CARD', 'SHELL', 0.0),
+        ('BLK_J5_PLUG', 'CABLE_GROMMET', 0.0), ('BLK_J2_PLUG', 'CABLE_GROMMET', 0.0),
+        ('BLK_J5_PLUG', 'WALL_BRACKET', 0.0), ('BLK_J2_PLUG', 'WALL_BRACKET', 0.0),
+        ('CLA216_M008', 'LED_A1', 1.0), ('CLA216_M008', 'LED_A2', 1.0), ('DF30_M008', 'LED_B1', 1.0),
+    ],
+}

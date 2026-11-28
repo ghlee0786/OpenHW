@@ -47,12 +47,15 @@ def main():
     ap.add_argument('--pcb-front', required=True)
     ap.add_argument('--docs', default=os.path.join(LANE, 'docs', 'renders'))
     ap.add_argument('--skip-render', action='store_true')
+    ap.add_argument('--case', default='M003', choices=['M003', 'A'], help='O-126: A = 시안 A 케이스 (o126_a.py 로 만들고 M-007 조립·판정, M003 외함·Blender 렌더 단계 건너뜀)')
     ap.add_argument('--no-fusion', action='store_true', help='O-107 WIP 사전 점검: Fusion·렌더 단계 건너뜀 (기록은 main validation/runtime/vd001/wip/)')
     a = ap.parse_args()
     if a.no_fusion:
         return wip(a)
     case = os.path.join(V, 'case')
     os.makedirs(case, exist_ok=True)
+    if a.case == 'A':
+        return case_a(a)
     # 1) 보드 STEP + M-007 조립·판정 (조건 5) — 종료 코드 = 불합격 수, 97~99 = 막힘
     rc5, o5 = step('run_all (보드 STEP·M007 조립·J1~J6)', PY + [os.path.join(M, 'm007', 'run_all.py'), '--pcb-carrier', a.pcb_carrier, '--pcb-front', a.pcb_front],
                    ok=range(0, 97))
@@ -103,6 +106,21 @@ def main():
     steps.append({'step': '대표본 복사 → %s' % (rel if not rel.startswith('..') else '(저장소 밖 폴더)'), 'rc': len(big), 'blocked': bool(big), 's': 0,
                   'tail': '복사 %d · 없음/20MB 이상 %s' % (len(reps) - len(big), [os.path.basename(p) for p in big]),
                   'files': {os.path.basename(p): [os.path.getsize(p), sha(p)] for p in reps if p not in big}})
+    return finish(a, rc5)
+
+
+def case_a(a):
+    """O-126 시안 A: 보드 STEP·커넥터(run_all --no-fusion) → 케이스 A 만들기(o126_a.py, 커넥터 자리 = 보드 실제 위치) → M-007 조립·판정 J1~J6 (--case A)
+    → D5 틈 (10_part_gap). 산출물 main validation/runtime/vd001/case/A/. 렌더는 schematic (Blender) 몫."""
+    step('run_all --no-fusion (보드 사본·STEP·커넥터)', PY + [os.path.join(M, 'm007', 'run_all.py'), '--no-fusion', '--pcb-carrier', a.pcb_carrier, '--pcb-front', a.pcb_front])
+    if not any(s['blocked'] for s in steps):
+        step('O-126 시안 A 케이스 (Fusion o126_a.py → case/A)', FRUN + [os.path.join(M, 'design', 'o126_a.py')])
+    rc5 = None
+    if not any(s['blocked'] for s in steps):
+        rc5, o5 = step('run_all --case A (보드 STEP·M007 조립·J1~J6)', PY + [os.path.join(M, 'm007', 'run_all.py'), '--case', 'A', '--pcb-carrier', a.pcb_carrier,
+                                                                     '--pcb-front', a.pcb_front], ok=range(0, 97))
+    if not any(s['blocked'] for s in steps):
+        step('D5 틈 (10_part_gap, 읽기만)', FRUN + [os.path.join(M, 'm010', 'scripts', '10_part_gap.py'), '--readonly'])
     return finish(a, rc5)
 
 
@@ -188,7 +206,7 @@ def finish(a, rc5, wip=False):
     c5 = os.path.join(V, 'results', 'cond5-mechanical.json')
     cond5 = json.load(open(c5, encoding='utf-8')) if os.path.exists(c5) else {}
     rec = {'generated': datetime.datetime.now().isoformat(timespec='seconds'), 'pcb_carrier': a.pcb_carrier, 'pcb_front': a.pcb_front,
-           'command': 'python -I -B mechanical/m010/run_case.py --pcb-carrier %s --pcb-front %s' % (a.pcb_carrier, a.pcb_front),
+           'command': 'python -I -B mechanical/m010/run_case.py --pcb-carrier %s --pcb-front %s%s' % (a.pcb_carrier, a.pcb_front, ' --case A' if a.case == 'A' else ''),
            'exit_code': blocked, 'cond5_exit': rc5, 'cond5_fail': [(x['id'], x['title'], x['value']) for x in cond5.get('items', []) if x['pass'] is False],
            'steps': steps}
     if wip:   # O-107 WIP 사전 점검 — 판정·외함 기록(run.md · m010_run.json)은 건드리지 않음
@@ -197,15 +215,18 @@ def finish(a, rc5, wip=False):
         for s in steps:
             print('-', s['step'], 'rc', s['rc'], '막힘' if s['blocked'] else '', '|', s['tail'][-300:].replace('\n', ' '))
         return sum(1 for s in steps if s['blocked'])
-    json.dump(rec, open(os.path.join(V, 'm010_run.json'), 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
+    sfx = '_A' if a.case == 'A' else ''   # O-126 시안 A 기록은 따로 (M003 최종 기록 run.md 를 덮지 않음)
+    if a.case == 'A' and os.path.exists(os.path.join(V, 'm010_part_gap.json')):
+        rec['d5_gap'] = json.load(open(os.path.join(V, 'm010_part_gap.json'), encoding='utf-8'))
+    json.dump(rec, open(os.path.join(V, 'm010_run%s.json' % sfx), 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
     L = ['# M-010 실행 기록 (run_case.py 출력 — 종료 코드 = 막힌 단계 수 %d)' % blocked, '',
          '- 명령: `%s`' % rec['command'], '- 시각: %s' % rec['generated'],
-         '- 조건 5 (run_all.py) 종료 코드 %d = 불합격 항목 수 — 막힘 아님' % rc5, '',
+         '- 조건 5 (run_all.py) 종료 코드 %s = 불합격 항목 수 — 막힘 아님' % rc5, '',
          '| 단계 | 종료 코드 | 막힘 | 초 |', '|---|---|---|---|']
     L += ['| %s | %d | %s | %s |' % (s['step'], s['rc'], '**예**' if s['blocked'] else '아니오', s['s']) for s in steps]
     L += ['', '## 조건 5 불합격 항목', ''] + ['- %s %s = %s' % x for x in rec['cond5_fail']]
     case = os.path.join(V, 'case')
-    if os.path.exists(os.path.join(case, 'interference.txt')):
+    if a.case != 'A' and os.path.exists(os.path.join(case, 'interference.txt')):
         L += ['', '## M003 외함 문서 간섭 (validation/runtime/vd001/case/interference.txt)', '', '```'] + \
              open(os.path.join(case, 'interference.txt'), encoding='utf-8').read().strip().split('\n') + ['```']
     L += ['', '## 산출 해시 (main 체크아웃 validation/runtime/vd001/)', '']
@@ -213,7 +234,7 @@ def finish(a, rc5, wip=False):
                     + [os.path.join(R, 'blender', 'ren002_turntable.mp4'), os.path.join(R, 'manifest.json')]):
         if os.path.isfile(p):
             L.append('- %s %s' % (os.path.relpath(p, V).replace('\\', '/'), sha(p)))
-    open(os.path.join(HERE, 'run.md'), 'w', encoding='utf-8').write('\n'.join(L) + '\n')
+    open(os.path.join(HERE, 'run%s.md' % sfx), 'w', encoding='utf-8').write('\n'.join(L) + '\n')
     print('\n'.join(L[:8 + len(steps)]))
     return blocked
 

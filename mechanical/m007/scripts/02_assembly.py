@@ -9,6 +9,7 @@ import adsk.core, adsk.fusion, math, os, hashlib
 LANE = None   # 소스 체크아웃 — mechanical/fusion_run.py 가 이 스크립트의 체크아웃 경로로 채움
 MAIN = None   # main 체크아웃 — mechanical/fusion_run.py 가 채움 (산출물 validation/runtime, O-100)
 OUT = MAIN + r"\validation\runtime\vd001"
+CASE = r"M003"   # M003 (옛 외함) 또는 A (O-126 시안 A — asm_spec.CASE_A, run_all.py --case A)
 
 
 def run(_c):
@@ -28,6 +29,7 @@ def run(_c):
     design = adsk.fusion.Design.cast(app.activeProduct)
     design.designType = adsk.fusion.DesignTypes.ParametricDesignType
     design.attributes.add('openhw', 'doc', 'M007_assembly')
+    design.attributes.add('openhw', 'case', CASE)
     root = design.rootComponent
     im = app.importManager
     tb = adsk.fusion.TemporaryBRepManager.get()
@@ -77,10 +79,14 @@ def run(_c):
             o.isLightBulbOn = False
     # 2) 외함·방열판 등 (M-003 형상 정의)
     for name, node in parts.items():
-        if name == 'PRINT_COUPON':
+        if name == 'PRINT_COUPON' or (CASE == 'A' and name in s['CASE_A']['drop']):
             continue
         lst = node if isinstance(node, list) else [(name, node)]
         add_comp(name, [(bn, ev(bnode)) for bn, bnode in lst if not bn.startswith('PRINT_TAB')])
+    if CASE == 'A':   # O-126 시안 A 케이스 바디 (o126_a.py f3d, 바디 이름 그대로)
+        im.importToTarget(im.createFusionArchiveImportOptions(os.path.join(OUT, s['CASE_A']['f3d'])), root)
+        occ = root.occurrences.item(root.occurrences.count - 1); occ.component.name = 'CASE_A'
+        print('CASE_A bodies', sum(o.bRepBodies.count for o in [occ] + list(occ.childOccurrences)))
     add_comp('ENC_BLOCKS', [(bn, ev(bnode)) for bn, bnode in blocks.items()])
     # 2b) M-008 CLA216 방향·스페이서·리드·ICR 패드·DF30·FPC (mechanical/m008/cla216_spec.py)
     m8 = {}
