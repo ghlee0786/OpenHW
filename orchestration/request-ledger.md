@@ -131,6 +131,7 @@
 | DES-002 | lead O-126 → orch | mechanical t18x | 시안 A 상세 설계(스모크 15%+검정 마스크, 숨은 나사·가스킷·브래킷·그로밋·정비 덮개, 방열 #26 재계산) → run_case 조건 5 → STEP/STL/f3d | start --from ab04, 출력 validation/runtime/vd001/case/A | 조건 5 종료 0, 커밋 | completed — 레인 t-20261128-093624-7abf 797887d·50a8e0b: 바디 22(마스크·가림판·투명 창·가스킷·인서트·그로밋·덮개·2축 브래킷), 외형 54×75.5×71.7(+핀 8), run_case --case A 종료 0, cond5 27항목 불합격 0(orch 결과 파일 확인), 방열 5.7 K/W(뒤 핀 7×8), 바깥 방열판 없앰. orch: 렌더용 STL 22개 판정 전후 sha256 같음(A.step만 재내보내기) → batch 가능 |
 | REN-004b | lead O-126 → orch | schematic t1bn | A 최종 7컷+턴테이블(4K/1080p), 대표본 docs/renders/final, PCB 비침 0 확인 그림 | 레인 89ce 이어서 | 종료 코드·재질 빠짐 0, 커밋 | completed — 레인 t-20261128-095335-1776 39ab5d7: --final 종료 0, 4K 컷 6/6·턴테이블 200/200(orch ffprobe h264 1920×1080 200프레임), 재질 빠짐 0, 대표본 docs/renders/final 8개(PNG 638~751KB·MP4 1.76MB). 사람 확인: PCB 비침(3배에서 IR LED 창 2곳만 희미)·브래킷 광축 수평 — 시트 A_final_sheet.jpg. batch 가능 |
 | R-032 | lead O-126 → orch | research t18s | README 갤러리 케이스 교체·VD-001 HTML 렌더 자리 채우기 | 새 레인(렌더 뒤) | check_readme 0 | completed — 레인 t-20261128-112915-a60c edce66d: README 케이스 갤러리 시안 A 2×3(800px 사본)·회전 영상, 진행 표·pipeline.svg, VD-001 HTML 렌더 자리·사람 확인 칸 12. orch check_readme 종료 0(링크 129/129·이미지 40·10.01MB), 로컬 경로 0. 렌더 단계 🔧(사람 확인 대기) → batch 요청 |
+| R-033 | lead → orch | research t18s | VD-001 HTML 사람 확인 칸 3개(사실감·PCB 비침 0·브래킷 광축 수평)를 사용자 확인 완료(D-003 #68)로 표시 | docs/vd001/make_index.py·index.html (레인 t-20261128-122053-9d31) | make_index 0·check_readme 0 | completed — 3a3261e, orch check_readme 종료 0·로컬 경로 0. Fusion 뷰포트 칸은 미체크 유지(#68 근거가 Blender 컷만) |
 
 ## 운영 변경 (2026-11-26, 사용자 지시 · lead 전달)
 - 의견 묻지 않고 진행: 사람 쪽 미정값은 D-003(lead 레인 t-20261126-144135-5470 docs/decisions/D-003-working-defaults.md, 커밋 8ac5ce5) 값으로 확정 취급. 새 갈림길은 기본값 선택 → 아래 「분기 기록」에 분기점·선택·이유·차선책 → lead 요약 보고. 문제 시 해당 행으로 돌아가 차선책.
@@ -273,6 +274,7 @@
 | O-127 | 주간 사용 한도로 mechanical·schematic 칸 멈춤(Dec 2 리셋 대화상자) | 사용자가 계정 재로그인, lead가 대화상자 「1. 멈추고 기다림」으로 닫음(결제 옵션 금지), orch가 두 칸에 이전 컨텍스트로 재개 지시 | 칸 재시작 없이 이어 감 | — |
 | O-125 | 사용자 지적(2026-11-28): 디자인 별로·렌더 비현실적 | lead 사양 O-125-design-render.md(D-003 #66): mechanical 시안 A·B·C 덩어리 → schematic 사실적 Blender 렌더 → 히어로 3장 사용자 선택(답 없으면 A) → 상세 설계·재판정 | 현 외함은 14ccad6 기능 기준선으로 보존 | — |
 | O-126 | 사용자 선택: 시안 A(D-003 #67) | lead 사양 O-126-design-A-final.md: mechanical A 상세 → 조건 5 → schematic 7컷+턴테이블 → research README/HTML | Fusion 만료 전 상세 설계 우선 | — |
+| O-128 | 사용자 확인: 시안 A 최종 렌더 OK(D-003 #68) — 최종 목표(케이스 포함 3D 렌더) 달성 | lead가 README 진행 표·pipeline.svg 렌더 ✅(main 824b907), research가 VD-001 사람 확인 칸 표시(R-033) | 새 작업은 사용자 지시 있을 때까지 대기 | — |
 
 ## 발주 패키지 직전 정리 목록
 - [ ] 회로도 표시 겹침: 캐리어 J2 옆 12V_IN_RAW 라벨, D3 PWR_LED 라벨, J1 품번 문자 (O-32)
@@ -335,3 +337,6 @@
 - [x] 병합 main 14ccad6 (b93b M-010 최종 — 현 외함 기능 판정 기준선)
 - [x] 병합 main a748240 (727e orch 원장 + cd5a R-029), 7abf A 상세 설계 → main — 사용자 지시: git에 다 올림(커밋·병합·PR 허용)
 - [x] 병합 main e7dbb32 (1776 시안 A 최종 렌더)
+- [x] 병합 main (a60c R-032 README·VD-001 교체), main 824b907 (lead 렌더 ✅, D-003 #68)
+- [x] ★ VD-001 최종 목표 달성: 두 보드 PCB(DRC 0·조건 2·3 불합격 0)·제조 파일·KiCad 3D·케이스 시안 A(조건 5 불합격 0)·사실적 렌더(사용자 확인)
+- [x] 2026-11-28 12:2x 정리 확인: 모든 worktree·main 미커밋 0, 작업 칸 6개 셸 저장소 루트. 남은 레인: 9d31(R-033)·25b9(원장) batch 대기, bf55·2cf0은 내용이 main에 있음(ahead 0 — 정리는 lead 판단)
