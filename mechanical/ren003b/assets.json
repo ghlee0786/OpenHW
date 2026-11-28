@@ -28,5 +28,16 @@
    "bytes": 1574352,
    "sha256": "3ffbacde6ab8411f1d2db54bb9b1f0b3ee2a738932033722cf0388c06aed1c93"
   }
+ ],
+ "step": [
+  {
+   "file": "Recamera Core 2002.step",
+   "page": "https://github.com/Seeed-Studio/OSHW-reCamera-Series",
+   "path": "hardware/recamera-2002/core/c1-2002/3D_Printed_Case/Recamera Core 2002.step (커밋 5cf69c43)",
+   "license": "CC BY-SA 4.0 로 취급 (R-034) — 이 형상이 든 렌더 · 영상은 출처 표기 + CC BY-SA 4.0 고지",
+   "bytes": 18887912,
+   "sha256": "7de9f15f29d9645e57321e57cf6ce0f864bc81fdfdc1a1a9490f0500b8ac8785",
+   "note": "저장소에 넣지 않는다. --core-step 또는 OPENHW_CORE_STEP 으로 경로를 준다"
+  }
  ]
 }

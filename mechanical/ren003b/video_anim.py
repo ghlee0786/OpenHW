@@ -69,7 +69,7 @@ C_OFF = [('WIN_CLEAR', (0, 0, 178)), ('GLASS_MASK', (0, 0, 150)), ('GLASS_IR', (
 C_SHOTS = [(('GLASS_IR', 'GLASS_MASK', 'WIN_CLEAR'), -30, 150, 1.15, 'IR 투과 앞유리 · 마스크', 'IR-pass front glass · mask'),
            (('LENS_CIL093',), -88, 12, 1.2, '렌즈 CIL093', 'CIL093 lens'),
            (('BOARD_FRONT', 'SENSOR_BLOCK', 'PEDESTAL', 'FPC'), -15, 165, 1.2, '전면 보드 — 이미지 센서 · IR LED · 조도 센서', 'Front board — image sensor · IR LEDs · ambient light sensor'),
-           (('CORE_MODULE',), -20, 130, 1.45, '코어 모듈 자리', 'Core module bay'),
+           (('CORE_MODULE',), -20, 130, 1.3, '코어 모듈 — SoC · eMMC', 'Core module — SoC · eMMC'),
            (('BOARD_CARRIER',), -20, 160, 1.15, '캐리어 보드 — 커넥터 · microSD · 전원', 'Carrier board — connectors · microSD · power'),
            (('SHELL_ALU', 'LIGHT_PIPE', 'COVER_USBC', 'COVER_MICROSD', 'GROMMET'), 15, 150, 1.05, '알루미늄 방열 쉘', 'Aluminium heat-sink shell')]
 C_T_BURST, C_BURST, C_T0, C_SHOT = 1.5, 0.8, 2.7, 2.5       # 분해 시작 · 분해 길이 · 첫 부품 시작 · 부품 하나 길이 (s)
@@ -236,7 +236,7 @@ def bracket(S):
     l, h = S.bounds([o for o in S.children(prod) if o.type == 'MESH'])
     c0, r0 = (l + h) / 2, (h - l).length / 2
     l, h = S.bounds([o for o in S.children(prod) if o.type == 'MESH'], prod.matrix_world)
-    q = {'yaw': 0, 'el': -10, 'az': 36, 'p': (l + h) / 2, 'w': 0, 'r': r0 * 1.02, 'k': 1.0, 'fb': 0.35}
+    q = {'yaw': 0, 'el': -10, 'az': 36, 'p': (l + h) / 2, 'w': 0, 'r': r0 * 0.84, 'k': 1.0, 'fb': 0.35}
     aim(S, q, light=(c0, r0))
     wall0 = S.wall.location.copy()
     amp = (28.0, 12.0)              # 팬 · 틸트 진폭(°) — 보기용 값(설계 가동 범위가 아니다)
