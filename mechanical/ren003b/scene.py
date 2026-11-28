@@ -55,6 +55,8 @@ BEVEL = float(arg('--bevel', '0.3'))
 LABEL = arg('--label', 'OpenHW')
 GLASS_T = arg('--glass-t')                        # 스모크 앞유리 가시광 투과율(두 면 합, 0~1) — 없으면 materials_ext 값
 OVERRIDE = [kv.split('=') for kv in arg('--override', '').split(',') if '=' in kv]     # 이름 조각=재질 — 모든 규칙보다 먼저(비교용 색 바꾸기)
+VIDEO = [v for v in arg('--video', '').split(',') if v]      # 영상 이름(video_anim.CLIPS) — 컷 · 턴테이블 뒤에 프레임을 뽑는다
+VFPS = int(arg('--video-fps', '30'))
 FRAME_R = float(arg('--frame-radius', '0'))      # mm — 0 이 아니면 카메라 거리 · 조명을 이 반지름에 맞춘다(시안끼리 같은 카메라 · 조명)
 MM = 0.001
 
@@ -444,8 +446,9 @@ cd.dof.use_dof = True
 cd.dof.aperture_fstop = FSTOP
 
 
-def stage(yaw, el, lens, fit, thirds=0.0, az=0.0, target=None, res=None, focus_bias=0.35, radius=None):
-    """제품을 yaw° 돌리고(양수 = 제품 +X 면이 카메라 쪽) 카메라를 정면(−Y)에서 방위 az° · 고도 el° 로 둔다. 바닥 · 조명도 다시 맞춘다."""
+def stage(yaw, el, lens, fit, thirds=0.0, az=0.0, target=None, res=None, focus_bias=0.35, radius=None, light=None):
+    """제품을 yaw° 돌리고(양수 = 제품 +X 면이 카메라 쪽) 카메라를 정면(−Y)에서 방위 az° · 고도 el° 로 둔다. 바닥 · 조명도 다시 맞춘다.
+    light = (중심, 반지름) 을 주면 조명은 카메라 틀과 따로 그 자리에 둔다(영상: 카메라가 다가가도 조명이 변하지 않게)."""
     res = res or RES
     tt.rotation_euler = (0, 0, math.radians(-yaw))
     bpy.context.view_layer.update()
@@ -465,8 +468,9 @@ def stage(yaw, el, lens, fit, thirds=0.0, az=0.0, target=None, res=None, focus_b
     cd.dof.focus_distance = d - r * focus_bias  # 초점은 제품 앞쪽에
     for name, off in (('KEY', (-0.42, -0.50, 0.55)), ('RIM', (0.38, 0.35, 0.50))):
         o = LIGHTS[name]
-        o.location = c + Vector(off) * (r / 0.06)
-        o.rotation_euler = (c - o.location).to_track_quat('-Z', 'Y').to_euler()
+        lc_, lr_ = light or (c, r)
+        o.location = lc_ + Vector(off) * (lr_ / 0.06)
+        o.rotation_euler = (lc_ - o.location).to_track_quat('-Z', 'Y').to_euler()
     if GLASS:       # 유리 하이라이트 띠: 유리 중심의 거울 반사 방향을 기준으로, 옆으로 유리 반폭의 0.55 자리에 폭 약 12 % (렌즈를 피해 한쪽에)
         gl_, gh_ = bounds(GLASS)
         gc = (gl_ + gh_) / 2
@@ -515,8 +519,9 @@ def explode(on):
 SECTION = {}        # 객체 이름 → 원래 메시 (단면 컷 동안만 잘린 사본으로 바꿔 둔다)
 
 
-def section(on):
-    """제품 좌표 x > 0 쪽 절반을 잘라 낸다 — 메시를 평면 x = 0 으로 직접 자르고(bisect) 잘린 테두리를 면으로 메운다. 단면 재질은 그 부품 재질.
+def section(on, x0=0.0, only=None):
+    """제품 좌표 x > x0(m) 쪽을 잘라 낸다 — 메시를 평면 x = x0 으로 직접 자르고(bisect) 잘린 테두리를 면으로 메운다. 단면 재질은 그 부품 재질.
+    only 를 주면 그 객체들만 자른다(영상: 외함만).
     (불리언은 닫히지 않은 메시 · 아주 큰 메시에서 빈 결과나 깨진 면을 냈다.)"""
     if not on:
         for nm, orig in SECTION.items():
@@ -532,12 +537,12 @@ def section(on):
     inv = prod.matrix_world.inverted()
     n = empty = open_caps = uncut = 0
     for o in children(prod):
-        if o.type != 'MESH' or o.name.startswith('ACC_') or o.hide_render or o.name in SECTION:
+        if o.type != 'MESH' or o.name.startswith('ACC_') or o.hide_render or o.name in SECTION or (only is not None and o not in only):
             continue
         m = inv @ o.matrix_world                      # 객체 좌표 → 제품 좌표
         bm = bmesh.new()
         bm.from_mesh(o.data)
-        res = bmesh.ops.bisect_plane(bm, geom=bm.verts[:] + bm.edges[:] + bm.faces[:], dist=1e-7, plane_co=m.inverted() @ Vector((0, 0, 0)),
+        res = bmesh.ops.bisect_plane(bm, geom=bm.verts[:] + bm.edges[:] + bm.faces[:], dist=1e-7, plane_co=m.inverted() @ Vector((x0, 0, 0)),
                                      plane_no=(m.to_3x3().transposed() @ Vector((1, 0, 0))).normalized(), clear_outer=True, clear_inner=False)
         cut = [e for e in res['geom_cut'] if isinstance(e, bmesh.types.BMEdge)]
         for e in cut:
@@ -550,7 +555,7 @@ def section(on):
             open_caps += not caps                     # 닫히지 않은 메시(보드의 작은 부품)는 단면이 열린 채로 남는다
         me = bpy.data.meshes.new(o.data.name + '_SEC')
         bm.to_mesh(me)
-        uncut += any((m @ v.co).x > 0.00005 for v in bm.verts)
+        uncut += any((m @ v.co).x > x0 + 0.00005 for v in bm.verts)
         bm.free()
         for mt in o.data.materials:
             me.materials.append(mt)
@@ -671,6 +676,10 @@ if TT:
         cyc.location = (C.x, C.y, lo.z - 0.0002)
         shot(f, TT_RES)
         done['turntable_new'] += 1
+if VIDEO:      # 영상(O-129 · O-130): 같은 장면 · 재질 · 조명으로 프레임을 뽑는다 — video_anim.py
+    import types
+    import video_anim
+    REPORT['video'] = video_anim.run(types.SimpleNamespace(**globals()), VIDEO)
 REPORT['done'] = done
 REPORT['missing_count'] = len(REPORT['missing'])
 json.dump(REPORT, open(os.path.join(OUT, 'scene_report.json'), 'w', encoding='utf-8'), ensure_ascii=False, indent=1)

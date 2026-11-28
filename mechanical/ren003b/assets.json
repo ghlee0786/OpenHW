@@ -8,5 +8,25 @@
    "bytes": 6312947,
    "sha256": "36724313c0fc66dab126ff90f081b85a0b1ef47be65eda1417bd20b033f0573f"
   }
+ ],
+ "font": [
+  {
+   "file": "Pretendard-SemiBold.otf",
+   "weight": "SemiBold",
+   "page": "https://github.com/orioncactus/pretendard",
+   "url": "https://raw.githubusercontent.com/orioncactus/pretendard/v1.3.9/packages/pretendard/dist/public/static/Pretendard-SemiBold.otf",
+   "license": "SIL Open Font License 1.1 (Pretendard v1.3.9)",
+   "bytes": 1583704,
+   "sha256": "c89bc43027dc7cde5726e96223376f8eec09302b2fc1f8147fd5b57cfc376118"
+  },
+  {
+   "file": "Pretendard-Regular.otf",
+   "weight": "Regular",
+   "page": "https://github.com/orioncactus/pretendard",
+   "url": "https://raw.githubusercontent.com/orioncactus/pretendard/v1.3.9/packages/pretendard/dist/public/static/Pretendard-Regular.otf",
+   "license": "SIL Open Font License 1.1 (Pretendard v1.3.9)",
+   "bytes": 1574352,
+   "sha256": "3ffbacde6ab8411f1d2db54bb9b1f0b3ee2a738932033722cf0388c06aed1c93"
+  }
  ]
 }
