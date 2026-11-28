@@ -73,9 +73,11 @@ def manifest_rows(p):
     return rows
 
 
-def check(cid, label, detail, links=""):
-    return (f'<li class="chk"><label><input type="checkbox" data-id="{E(cid)}"> <b>{E(cid)}</b> {E(label)}</label>'
-            f'<div class="d">{detail}{links}</div></li>')
+def check(cid, label, detail, links="", done=""):
+    box = f'<input type="checkbox" data-id="{E(cid)}"{" checked" if done else ""}>'
+    note = f"<div class='ok'>✅ {done}</div>" if done else ""
+    return (f'<li class="chk"><label>{box} <b>{E(cid)}</b> {E(label)}</label>'
+            f'<div class="d">{note}{detail}{links}</div></li>')
 
 
 def main():
@@ -157,8 +159,11 @@ def main():
               ("유리 너머 PCB 비침 0", "앞 스모크 유리 너머로 기판이 보이지 않는가 (렌즈·LED 띠 뒤는 검정 마스크)",
                thumbs("유리 비침", [fin + "blender-front.png", fin + "blender-product.png"])),
               ("브래킷 광축 수평", "벽 브래킷에 달았을 때 광축이 수평 앞을 향하는가", thumbs("브래킷", [fin + "blender-inuse.png"]))]
+    d68 = (f"사용자 확인 완료 2026-11-28 — <a href='{rel('docs/decisions/D-003-working-defaults.md')}'>D-003 #68</a> "
+           "(시안 A 최종 렌더 6컷 + 회전 영상: 사실감 · 유리 너머 기판 비침 · 브래킷 광축)")
+    confirmed = {"Blender 시안 A 최종 렌더", "유리 너머 PCB 비침 0", "브래킷 광축 수평"}
     for name, label, th in finals:
-        human.append(check(name, label, f"<div class='th'>{th}</div>"))
+        human.append(check(name, label, f"<div class='th'>{th}</div>", done=d68 if name in confirmed else ""))
 
     unr_note = ("" if not ev_unr_script else
                 "<p class='s'>ev_check 자체 연결 근사(구리면 넷 제외)가 섬으로 본 넷: "
@@ -187,13 +192,13 @@ main{{max-width:1100px;margin:0 auto;padding:24px 16px 64px}} a{{color:var(--ac)
 .card.ok .big{{color:var(--ok)}} .card.ng .big{{color:var(--ng)}} .card .l{{font-weight:600}} .card .s{{font-size:12px}}
 table{{border-collapse:collapse;width:100%;font-size:13px;display:block;overflow:auto}} th,td{{border:1px solid var(--ln);padding:4px 8px;text-align:left;vertical-align:top}}
 tr.bad td{{color:var(--ng)}} details{{margin:.6em 0}} summary{{cursor:pointer;font-weight:600}}
-ul.cl{{list-style:none;padding:0}} li.chk{{border:1px solid var(--ln);border-radius:8px;padding:8px 12px;margin:8px 0}} li.chk .d{{margin:.3em 0 0 1.6em;font-size:13px;color:var(--mut)}}
+ul.cl{{list-style:none;padding:0}} li.chk{{border:1px solid var(--ln);border-radius:8px;padding:8px 12px;margin:8px 0}} li.chk .d{{margin:.3em 0 0 1.6em;font-size:13px;color:var(--mut)}} li.chk .ok{{color:var(--ok);font-weight:600}}
 .th img{{height:120px;margin:4px;border:1px solid var(--ln);border-radius:6px;background:#fff}} .slot{{color:var(--mut)}}
 #prog{{font-weight:700}}
 </style></head><body><main>
 <h1>VD-001 가상 설계 요약</h1>
 <p class="s">생성: <code>docs/vd001/make_index.py</code> · 저장소 HEAD <code>{head()}</code> · 판정은 각 도구의 종료 코드와 결과 파일이다. 아래 숫자마다 출처 파일과 커밋을 적었다.
-사람 확인 항목(verifiable 아니오)은 체크해야 통과이며, 체크는 이 브라우저에만 남는다.</p>
+사람 확인 항목(verifiable 아니오)은 체크해야 통과이며, 체크는 이 브라우저에만 남는다. 사용자 확인이 기록된 칸(✅, 근거 링크)은 기본으로 체크돼 있다.</p>
 <div class="cards">{cards}</div>
 
 <h2>사람 확인 <span id="prog"></span></h2>
@@ -225,13 +230,13 @@ ul.cl{{list-style:none;padding:0}} li.chk{{border:1px solid var(--ln);border-rad
 <details><summary>시뮬레이션 항목 ({len(sim)})</summary><table><tr><th>id</th><th>내용</th><th>판정</th><th>기준 커밋</th></tr>{t_sim}</table></details>
 
 <h2>최종 렌더 · 케이스 시안 A</h2>
-<p class="s">Fusion 뷰포트 3장과 Blender 대표본 6컷 · 회전 영상(<code>docs/renders/final/</code>, 1600 px). 사실감 · 비침 · 광축은 위 「사람 확인」에서 체크한다.</p>
+<p class="s">Fusion 뷰포트 3장과 Blender 대표본 6컷 · 회전 영상(<code>docs/renders/final/</code>, 1600 px). 사실감 · 비침 · 광축은 사용자 확인 완료(2026-11-28, D-003 #68).</p>
 <div class="th">{thumbs("Fusion 시안 A", fusion)}</div><div class="th">{thumbs("Blender 시안 A", blender)}{movie}</div>
 </main>
 <script>
 (function(){{var boxes=document.querySelectorAll('input[data-id]');function key(b){{return 'vd001:'+b.getAttribute('data-id');}}
 function prog(){{var n=0;boxes.forEach(function(b){{if(b.checked)n++;}});document.getElementById('prog').textContent='('+n+'/'+boxes.length+')';}}
-boxes.forEach(function(b){{try{{b.checked=localStorage.getItem(key(b))==='1';}}catch(e){{}}
+boxes.forEach(function(b){{try{{var v=localStorage.getItem(key(b));if(v!==null)b.checked=v==='1';}}catch(e){{}}
 b.addEventListener('change',function(){{try{{localStorage.setItem(key(b),b.checked?'1':'0');}}catch(e){{}}prog();}});}});prog();}})();
 </script>
 </body></html>
