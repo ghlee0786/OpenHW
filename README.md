@@ -161,6 +161,9 @@
 <td align="center" width="50%"><a href="docs/renders/final/blender-turntable.mp4"><img src="docs/readme/gallery/case-a/turntable.gif" width="400" alt="케이스 시안 A 360도 회전(움직이는 GIF, 누르면 1080p MP4)"></a><br><sub>360도 회전 · 360° turntable</sub></td>
 <td align="center" width="50%"><a href="docs/renders/final/video/section-open.mp4"><img src="docs/renders/final/video/section-open.gif" width="400" alt="케이스 시안 A 단면이 열리며 내부 적층이 보이는 모습(움직이는 GIF, 누르면 1080p MP4)"></a><br><sub>단면 열림 — 내부 적층 · Section opening — inside the stack</sub></td>
 </tr>
+<tr>
+<td align="center" width="50%"><a href="docs/renders/final/video/hero-dolly.mp4"><img src="docs/renders/final/video/hero-dolly.gif" width="400" alt="케이스 시안 A 주위를 카메라가 움직이며 보여 주는 모습(움직이는 GIF, 누르면 1080p MP4)"></a><br><sub>카메라 이동 — 제품 히어로 · Hero dolly shot</sub></td>
+</tr>
 </table>
 
 <sub>렌더 · 영상 속 코어 모듈 형상은 원 설계에서 가져왔고, 이 렌더 · 영상 파일은 CC BY-SA 4.0이다 — 출처 [NOTICE](docs/renders/final/NOTICE.md) · The core-module geometry in these renders and videos comes from the original design; these render and video files are CC BY-SA 4.0 — see [NOTICE](docs/renders/final/NOTICE.md).</sub>
